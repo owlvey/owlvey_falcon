@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Owlvey.Falcon.Core.Repositories;
+using Owlvey.Falcon.Components.Repositories;
 using Owlvey.Falcon.Data.SQLite.Repositories;
 using Owlvey.Falcon.Data.SQLite.Context;
 using Microsoft.Extensions.HealthChecks;

@@ -1,12 +1,12 @@
 using Owlvey.Falcon.Data.SQLite.Context;
 using Owlvey.Falcon.Core.Entities;
-using Owlvey.Falcon.Core.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Owlvey.Falcon.Components.Repositories;
 
 namespace Owlvey.Falcon.Data.SQLite.Repositories
 {

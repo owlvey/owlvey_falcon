@@ -1,13 +1,12 @@
 using Owlvey.Falcon.Core.Entities;
-using Owlvey.Falcon.Core.Repository;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Owlvey.Falcon.Core.Repositories
+namespace Owlvey.Falcon.Components.Repositories
 {
-    public interface IFeatureRepository : IRepository<FeatureEntity>
+    public interface IFeatureRepository : IBaseRepository<FeatureEntity>
     {
     }
 }

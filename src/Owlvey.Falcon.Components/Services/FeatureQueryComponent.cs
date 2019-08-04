@@ -1,6 +1,6 @@
 using Owlvey.Falcon.Components.Interfaces;
 using Owlvey.Falcon.Components.Models;
-using Owlvey.Falcon.Core.Repositories;
+using Owlvey.Falcon.Components.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;

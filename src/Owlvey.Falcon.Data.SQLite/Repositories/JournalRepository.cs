@@ -1,6 +1,6 @@
 using Owlvey.Falcon.Data.SQLite.Context;
 using Owlvey.Falcon.Core.Entities;
-using Owlvey.Falcon.Core.Repositories;
+using Owlvey.Falcon.Components.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
