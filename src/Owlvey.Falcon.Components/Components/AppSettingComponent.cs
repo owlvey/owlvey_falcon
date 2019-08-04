@@ -14,10 +14,10 @@ namespace Owlvey.Falcon.Components
     public class AppSettingComponent : BaseComponent, IAppSettingComponent
     {
         private readonly IAppSettingRepository _appSettingRepository;
-        private readonly IUserIdentityService _identityService;
+        private readonly IUserIdentityGateway _identityService;
 
         public AppSettingComponent(IAppSettingRepository appSettingRepository,
-            IUserIdentityService identityService)
+            IUserIdentityGateway identityService)
         {
             this._appSettingRepository = appSettingRepository;
             this._identityService = identityService;

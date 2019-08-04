@@ -40,7 +40,7 @@ namespace Owlvey.Falcon.ComponentsTests
 
             mockAppSettingRepository.Setup(x => x.GetAppSettingByKey(appSettingModel.Key)).Returns(Task.FromResult(mock.Object.FirstOrDefault(c => c.Key.Equals(appSettingModel.Key))));
 
-            var mockIdentityService = new Mock<IUserIdentityService>();
+            var mockIdentityService = new Mock<IUserIdentityGateway>();
             mockIdentityService.Setup(x => x.GetIdentity()).Returns("mock-user");
 
             var sut = new AppSettingComponent(mockAppSettingRepository.Object, mockIdentityService.Object);
@@ -67,7 +67,7 @@ namespace Owlvey.Falcon.ComponentsTests
 
             mockAppSettingRepository.Setup(x => x.GetAppSettingByKey(appSettingModel.Key)).Returns(Task.FromResult(mock.Object.FirstOrDefault(c => c.Key.Equals(appSettingModel.Key))));
 
-            var mockIdentityService = new Mock<IUserIdentityService>();
+            var mockIdentityService = new Mock<IUserIdentityGateway>();
             mockIdentityService.Setup(x => x.GetIdentity()).Returns("mock-user");
 
             var sut = new AppSettingComponent(mockAppSettingRepository.Object, mockIdentityService.Object);

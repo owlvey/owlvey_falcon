@@ -52,7 +52,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
         [Fact]
         public void AddProductToCustomerSuccess()
         {
-            var entity = CustomerEntity.Factory.Create("test", DateTime.Now, "test");
+            var entity = TestDataFactory.BuildCustomer();
             var product = ProductEntity.Factory.Create("test", "test", DateTime.Now, "user" );
             entity.AddProduct(product);
             Assert.NotEmpty(entity.Products);

@@ -14,10 +14,10 @@ namespace Owlvey.Falcon.Components
     public class ProductComponent : BaseComponent, IProductComponent
     {
         private readonly IProductRepository _productRepository;
-        private readonly IUserIdentityService _identityService;
+        private readonly IUserIdentityGateway _identityService;
 
         public ProductComponent(IProductRepository productRepository,
-            IUserIdentityService identityService)
+            IUserIdentityGateway identityService)
         {
             this._productRepository = productRepository;
             this._identityService = identityService;

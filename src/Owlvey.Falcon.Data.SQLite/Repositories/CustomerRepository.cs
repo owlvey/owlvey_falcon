@@ -14,7 +14,7 @@ namespace Owlvey.Falcon.Data.SQLite.Repositories
     {
         public CustomerRepository(FalconDbContext context) : base(context)
         {
-
+            
         }
 
     }

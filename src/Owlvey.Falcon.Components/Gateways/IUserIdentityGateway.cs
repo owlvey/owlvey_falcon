@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Owlvey.Falcon.Gateways
 {
-    public interface IUserIdentityService
+    public interface IUserIdentityGateway
     {
         string GetIdentity();
     }

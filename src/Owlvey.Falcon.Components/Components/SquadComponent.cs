@@ -14,10 +14,10 @@ namespace Owlvey.Falcon.Components
     public class SquadComponent : BaseComponent, ISquadComponent
     {
         private readonly ISquadRepository _squadRepository;
-        private readonly IUserIdentityService _identityService;
+        private readonly IUserIdentityGateway _identityService;
 
         public SquadComponent(ISquadRepository squadRepository,
-            IUserIdentityService identityService)
+            IUserIdentityGateway identityService)
         {
             this._squadRepository = squadRepository;
             this._identityService = identityService;

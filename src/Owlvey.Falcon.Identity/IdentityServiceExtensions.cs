@@ -11,7 +11,7 @@ namespace Owlvey.Falcon.Identity
     {
         public static IServiceCollection AddAspNetCoreIndentityService(this IServiceCollection services)
         {
-            services.TryAddTransient<IUserIdentityService, AspNetCoreIdentityService>();
+            services.TryAddTransient<IUserIdentityGateway, AspNetCoreIdentityService>();
 
             return services;
         }
