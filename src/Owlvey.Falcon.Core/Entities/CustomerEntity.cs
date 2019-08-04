@@ -15,6 +15,10 @@ namespace Owlvey.Falcon.Core.Entities
         [Required]
         public string Avatar { get; set; }
 
-        internal virtual ICollection<ProductEntity> Products { get; set; }
+        public virtual ICollection<ProductEntity> Products { get; set; }
+
+        public void AddProduct(ProductEntity entity) {
+            this.Products.Add(entity); 
+        }
     }
 }
