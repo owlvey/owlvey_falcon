@@ -12,13 +12,13 @@ namespace Owlvey.Falcon.Components.Models
 
     public class ServiceGetRp : ServiceBaseRp {
         public string CreatedBy { get; set; }
-        public DateTime CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; set; }
     }
 
     public class ServiceGetListRp : ServiceBaseRp
     {
         public string CreatedBy { get; set; }
-        public DateTime CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; set; }
     }
 
     public class ServicePostRp {

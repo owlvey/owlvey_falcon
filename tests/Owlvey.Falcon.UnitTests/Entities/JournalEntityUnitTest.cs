@@ -19,7 +19,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
             var goodDefinition = Guid.NewGuid().ToString("n");
             var totalDefinition = Guid.NewGuid().ToString("n");
 
-            var journalEntity = JournalEntity.Factory.Create(goodDefinition, totalDefinition, createdBy);
+            var journalEntity = JournalEntity.Factory.Create(goodDefinition, totalDefinition, DateTime.UtcNow, createdBy);
 
             Assert.Equal(goodDefinition, journalEntity.GoodDefinition);
             Assert.Equal(totalDefinition, journalEntity.TotalDefinition);
@@ -35,7 +35,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
 
             Assert.Throws<ApplicationException>(() =>
             {
-                JournalEntity.Factory.Create(goodDefinition, totalDefinition, createdBy);
+                JournalEntity.Factory.Create(goodDefinition, totalDefinition, DateTime.UtcNow, createdBy);
             });
 
         }

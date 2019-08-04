@@ -8,17 +8,18 @@ namespace Owlvey.Falcon.Core.Entities
     {
         public static class Factory {
 
-            public static ServiceEntity Create(string name, string description, float slo, string createdBy)
+            public static ServiceEntity Create(string name, string description, float slo, DateTime on, string user)
             {
                 var entity = new ServiceEntity()
                 {
                     Name = name,
                     Description = description,
                     SLO = slo,
-                    CreatedBy = createdBy
+                    CreatedBy = user,
+                    ModifiedBy = user,
+                    CreatedOn = on,
+                    ModifiedOn = on,
                 };
-
-                entity.Create(createdBy, DateTime.UtcNow);
 
                 return entity;
             }

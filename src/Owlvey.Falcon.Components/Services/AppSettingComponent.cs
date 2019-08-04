@@ -33,7 +33,7 @@ namespace Owlvey.Falcon.Components.Services
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
 
-            var appSetting = AppSettingEntity.Factory.Create(model.Key, model.Value, true, createdBy);
+            var appSetting = AppSettingEntity.Factory.Create(model.Key, model.Value, true, DateTime.UtcNow, createdBy);
 
             var entity = await this._appSettingRepository.GetAppSettingByKey(model.Key);
             if (entity != null)

@@ -12,13 +12,13 @@ namespace Owlvey.Falcon.Components.Models
 
     public class SquadGetRp : SquadBaseRp {
         public string CreatedBy { get; set; }
-        public DateTime CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; set; }
     }
 
     public class SquadGetListRp : SquadBaseRp
     {
         public string CreatedBy { get; set; }
-        public DateTime CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; set; }
     }
 
     public class SquadPostRp {

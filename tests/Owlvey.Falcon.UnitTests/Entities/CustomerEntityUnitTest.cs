@@ -18,7 +18,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
             var createdBy = Guid.NewGuid().ToString("n");
             var name = Faker.Company.Name();
 
-            var customerEntity = CustomerEntity.Factory.Create(name, createdBy);
+            var customerEntity = CustomerEntity.Factory.Create(name, DateTime.UtcNow, createdBy);
 
             Assert.Equal(name, customerEntity.Name);
             Assert.Equal(createdBy, customerEntity.CreatedBy);
@@ -32,9 +32,29 @@ namespace Owlvey.Falcon.UnitTests.Entities
 
             Assert.Throws<ApplicationException>(() =>
             {
-                CustomerEntity.Factory.Create(name, createdBy);
+                CustomerEntity.Factory.Create(name, DateTime.UtcNow, createdBy);
             });
 
+        }
+
+        [Fact]
+        public void CreateCustomerSuccess()
+        {
+            var entity = CustomerEntity.Factory.Create("test", DateTime.Now, "test");
+            Assert.NotNull(entity.CreatedBy);
+            Assert.NotNull(entity.CreatedOn);
+            Assert.NotNull(entity.ModifiedBy);
+            Assert.NotNull(entity.ModifiedOn);
+            Assert.NotNull(entity.Name);
+        }
+
+        [Fact]
+        public void AddProductToCustomerSuccess()
+        {
+            //var entity = CustomerEntity.Factory.Create("test", DateTime.Now, "test");
+            //var product = ProductEntity.Factory.Create("test", DateTime.Now);
+            //entity.AddProduct(product);
+            //Assert.NotEmpty(entity.Products);
         }
     }
 }

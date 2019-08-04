@@ -20,7 +20,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
             var value = Faker.RandomNumber.Next().ToString();
             var isReadOnly = true;
 
-            var appSettingEntity = AppSettingEntity.Factory.Create(id, value, isReadOnly, createdBy);
+            var appSettingEntity = AppSettingEntity.Factory.Create(id, value, isReadOnly, DateTime.UtcNow, createdBy);
 
             Assert.Equal(id, appSettingEntity.Key);
             Assert.Equal(value, appSettingEntity.Value);
@@ -38,7 +38,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
 
             Assert.Throws<ApplicationException>(() =>
             {
-                AppSettingEntity.Factory.Create(id, value, isReadOnly, createdBy);
+                AppSettingEntity.Factory.Create(id, value, isReadOnly, DateTime.UtcNow, createdBy);
             });
 
         }

@@ -8,16 +8,17 @@ namespace Owlvey.Falcon.Core.Entities
     {
         public static class Factory {
 
-            public static JournalEntity Create(string goodDefinition, string totalDefinition, string createdBy)
+            public static JournalEntity Create(string goodDefinition, string totalDefinition, DateTime on, string user)
             {
                 var entity = new JournalEntity()
                 {
                     GoodDefinition = goodDefinition,
                     TotalDefinition = totalDefinition,
-                    CreatedBy = createdBy
+                    CreatedBy = user,
+                    ModifiedBy = user,
+                    CreatedOn = on,
+                    ModifiedOn = on,
                 };
-
-                entity.Create(createdBy, DateTime.UtcNow);
 
                 return entity;
             }

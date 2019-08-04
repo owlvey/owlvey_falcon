@@ -18,7 +18,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
             var createdBy = Guid.NewGuid().ToString("n");
             var name = $"Feature A";
 
-            var featureEntity = FeatureEntity.Factory.Create(name, createdBy);
+            var featureEntity = FeatureEntity.Factory.Create(name, DateTime.UtcNow, createdBy);
 
             Assert.Equal(name, featureEntity.Name);
             Assert.Equal(createdBy, featureEntity.CreatedBy);
@@ -32,7 +32,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
 
             Assert.Throws<ApplicationException>(() =>
             {
-                FeatureEntity.Factory.Create(name, createdBy);
+                FeatureEntity.Factory.Create(name, DateTime.UtcNow, createdBy);
             });
 
         }

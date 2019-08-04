@@ -19,11 +19,22 @@ namespace Owlvey.Falcon.UnitTests.Entities
             var name = Guid.NewGuid().ToString("n");
             var description = Guid.NewGuid().ToString("n");
 
-            var squadEntity = SquadEntity.Factory.Create(name, description, createdBy);
+            var squadEntity = SquadEntity.Factory.Create(name, description, DateTime.UtcNow, createdBy);
 
             Assert.Equal(name, squadEntity.Name);
             Assert.Equal(description, squadEntity.Description);
             Assert.Equal(createdBy, squadEntity.CreatedBy);
+        }
+
+        [Fact]
+        public void CreateUserSuccess()
+        {
+            var entity = SquadEntity.Factory.Create("test", "", DateTime.Now, "test");
+            Assert.NotNull(entity.CreatedBy);
+            Assert.NotNull(entity.CreatedOn);
+            Assert.NotNull(entity.ModifiedBy);
+            Assert.NotNull(entity.ModifiedOn);
+            Assert.NotNull(entity.Name);
         }
 
         [Fact]
@@ -35,7 +46,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
 
             Assert.Throws<ApplicationException>(() =>
             {
-                SquadEntity.Factory.Create(name, description, createdBy);
+                SquadEntity.Factory.Create(name, description, DateTime.UtcNow, createdBy);
             });
 
         }

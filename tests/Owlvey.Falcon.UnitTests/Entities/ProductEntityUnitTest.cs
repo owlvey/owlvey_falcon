@@ -19,7 +19,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
             var name = Guid.NewGuid().ToString("n");
             var description = Guid.NewGuid().ToString("n");
 
-            var productEntity = ProductEntity.Factory.Create(name, description, createdBy);
+            var productEntity = ProductEntity.Factory.Create(name, description, DateTime.UtcNow, createdBy);
 
             Assert.Equal(name, productEntity.Name);
             Assert.Equal(description, productEntity.Description);
@@ -35,7 +35,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
 
             Assert.Throws<ApplicationException>(() =>
             {
-                ProductEntity.Factory.Create(name, description, createdBy);
+                ProductEntity.Factory.Create(name, description, DateTime.UtcNow, createdBy);
             });
 
         }

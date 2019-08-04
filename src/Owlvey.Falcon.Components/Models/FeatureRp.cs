@@ -12,13 +12,13 @@ namespace Owlvey.Falcon.Components.Models
 
     public class FeatureGetRp : FeatureBaseRp {
         public string CreatedBy { get; set; }
-        public DateTime CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; set; }
     }
 
     public class FeatureGetListRp : FeatureBaseRp
     {
         public string CreatedBy { get; set; }
-        public DateTime CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; set; }
     }
 
     public class FeaturePostRp {

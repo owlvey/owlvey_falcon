@@ -12,13 +12,13 @@ namespace Owlvey.Falcon.Components.Models
 
     public class JournalGetRp : JournalBaseRp {
         public string CreatedBy { get; set; }
-        public DateTime CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; set; }
     }
 
     public class JournalGetListRp : JournalBaseRp
     {
         public string CreatedBy { get; set; }
-        public DateTime CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; set; }
     }
 
     public class JournalPostRp {

@@ -19,18 +19,18 @@ namespace Owlvey.Falcon.Core.Entities
             public static AppSettingEntity Create(
                 string key,
                 string value,
-                bool isReadOnly,
-                string createdBy)
+                bool isReadOnly, DateTime on, string user)
             {
                 var entity = new AppSettingEntity()
                 {
                     Key = key,
                     Value = value,
                     IsReadOnly = isReadOnly,
-                    CreatedBy = createdBy
+                    CreatedBy = user,
+                    ModifiedBy = user,
+                    CreatedOn = on,
+                    ModifiedOn = on,
                 };
-
-                entity.Create(createdBy, DateTime.UtcNow);
 
                 return entity;
             }
