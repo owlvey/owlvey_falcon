@@ -1,0 +1,10 @@
+version: '3.4'
+
+services:
+  owlvey.falcon.api:
+    image: ${DOCKER_REGISTRY-}owlveyfalconapi
+    ports:
+      - "5001:80"
+    build:
+      context: .
+      dockerfile: src/Owlvey.Falcon.API/Dockerfile
