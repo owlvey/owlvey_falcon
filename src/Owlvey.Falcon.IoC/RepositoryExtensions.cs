@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Owlvey.Falcon.Core.Repositories;
+using Owlvey.Falcon.Components.Repositories;
 using Owlvey.Falcon.Data.SQLite.Repositories;
 using Owlvey.Falcon.Data.SQLite.Context;
 using Microsoft.Extensions.HealthChecks;
@@ -29,6 +29,11 @@ namespace Owlvey.Falcon.IoC
         {
             //// Infra - Data
             services.AddScoped<IAppSettingRepository, AppSettingRepository>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<IFeatureRepository, FeatureRepository>();
+            services.AddScoped<IServiceRepository, ServiceRepository>();
+            services.AddScoped<IJournalRepository, JournalRepository>();
+            services.AddScoped<ISquadRepository, SquadRepository>();
         }
     }
 }

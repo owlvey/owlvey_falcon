@@ -12,13 +12,13 @@ namespace Owlvey.Falcon.Components.Models
 
     public class AppSettingGetRp : AppSettingBaseRp {
         public string CreatedBy { get; set; }
-        public DateTime CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; set; }
     }
 
     public class AppSettingGetListRp : AppSettingBaseRp
     {
         public string CreatedBy { get; set; }
-        public DateTime CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; set; }
     }
 
     public class AppSettingPostRp {

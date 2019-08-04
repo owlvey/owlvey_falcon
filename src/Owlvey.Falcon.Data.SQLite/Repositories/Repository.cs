@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Owlvey.Falcon.Core.Repository;
+using Owlvey.Falcon.Components.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Owlvey.Falcon.Data.SQLite.Repositories
 {
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
+    public class Repository<TEntity> : IBaseRepository<TEntity> where TEntity : class
     {
         protected DbContext Db;
         protected DbSet<TEntity> DbSet;

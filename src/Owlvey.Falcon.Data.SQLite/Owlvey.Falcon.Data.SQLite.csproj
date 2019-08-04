@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Owlvey.Falcon.Components\Owlvey.Falcon.Components.csproj" />
     <ProjectReference Include="..\Owlvey.Falcon.Core\Owlvey.Falcon.Core.csproj" />
   </ItemGroup>
 

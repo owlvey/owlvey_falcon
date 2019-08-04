@@ -1,5 +1,5 @@
 using Owlvey.Falcon.Data.SQLite.Extensions;
-using Owlvey.Falcon.Core.Models;
+using Owlvey.Falcon.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Owlvey.Falcon.Data.SQLite.Context
@@ -13,6 +13,12 @@ namespace Owlvey.Falcon.Data.SQLite.Context
         }
         
         public DbSet<AppSettingEntity> AppSettings { get; set; }
+        public DbSet<SquadEntity> Squads { get; set; }
+        public DbSet<CustomerEntity> Customers { get; set; }
+        public DbSet<ProductEntity> Products { get; set; }
+        public DbSet<ServiceEntity> Services { get; set; }
+        public DbSet<FeatureEntity> Features { get; set; }
+        public DbSet<JournalEntity> Journals { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

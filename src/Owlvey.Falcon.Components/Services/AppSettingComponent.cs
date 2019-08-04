@@ -1,8 +1,8 @@
 using Owlvey.Falcon.Components.Gateways;
 using Owlvey.Falcon.Components.Interfaces;
 using Owlvey.Falcon.Components.Models;
-using Owlvey.Falcon.Core.Models;
-using Owlvey.Falcon.Core.Repositories;
+using Owlvey.Falcon.Core.Entities;
+using Owlvey.Falcon.Components.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +33,7 @@ namespace Owlvey.Falcon.Components.Services
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
 
-            var appSetting = AppSettingEntity.Factory.Create(model.Key, model.Value, true, createdBy);
+            var appSetting = AppSettingEntity.Factory.Create(model.Key, model.Value, true, DateTime.UtcNow, createdBy);
 
             var entity = await this._appSettingRepository.GetAppSettingByKey(model.Key);
             if (entity != null)
@@ -67,12 +67,11 @@ namespace Owlvey.Falcon.Components.Services
                 result.AddNotFound($"The Key {key} doesn't exists.");
                 return result;
             }
+            
+            appSetting.ModifiedBy = this._identityService.GetIdentity();
+            appSetting.ModifiedOn = DateTime.UtcNow;
 
-            appSetting.Status = EntityStatus.Deleted;
-            appSetting.UpdatedBy = this._identityService.GetIdentity();
-            appSetting.UpdatedOn = DateTime.UtcNow;
-
-            this._appSettingRepository.Update(appSetting);
+            this._appSettingRepository.Remove(appSetting);
 
             await this._appSettingRepository.SaveChanges();
 
@@ -96,8 +95,8 @@ namespace Owlvey.Falcon.Components.Services
             }
 
             appSetting.Value = model.Value;
-            appSetting.UpdatedBy = this._identityService.GetIdentity();
-            appSetting.UpdatedOn = DateTime.UtcNow;
+            appSetting.ModifiedBy = this._identityService.GetIdentity();
+            appSetting.ModifiedOn = DateTime.UtcNow;
 
             this._appSettingRepository.Update(appSetting);
 
