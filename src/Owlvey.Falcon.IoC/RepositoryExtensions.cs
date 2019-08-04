@@ -29,6 +29,11 @@ namespace Owlvey.Falcon.IoC
         {
             //// Infra - Data
             services.AddScoped<IAppSettingRepository, AppSettingRepository>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<IFeatureRepository, FeatureRepository>();
+            services.AddScoped<IServiceRepository, ServiceRepository>();
+            services.AddScoped<IJournalRepository, JournalRepository>();
+            services.AddScoped<ISquadRepository, SquadRepository>();
         }
     }
 }

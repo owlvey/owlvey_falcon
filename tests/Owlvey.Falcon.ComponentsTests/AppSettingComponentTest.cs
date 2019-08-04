@@ -4,7 +4,7 @@ using Moq;
 using Owlvey.Falcon.Components.Gateways;
 using Owlvey.Falcon.Components.Models;
 using Owlvey.Falcon.Components.Services;
-using Owlvey.Falcon.Core.Models;
+using Owlvey.Falcon.Core.Entities;
 using Owlvey.Falcon.Core.Repositories;
 using System;
 using System.Collections.Generic;

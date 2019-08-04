@@ -1,19 +1,19 @@
 using FizzWare.NBuilder;
-using Owlvey.Falcon.Core.Models;
+using Owlvey.Falcon.Core.Entities;
 using System;
 using Xunit;
 
-namespace Owlvey.Falcon.UnitTests
+namespace Owlvey.Falcon.UnitTests.Entities
 {
-    public class AppSettingApplicationTest
+    public class AppSettingEntityTest
     {
-        public AppSettingApplicationTest()
+        public AppSettingEntityTest()
         {
 
         }
 
         [Fact]
-        public void CreateAppSettingSuccess()
+        public void CreateAppSettingEntitySuccess()
         {
             var createdBy = Guid.NewGuid().ToString("n");
             var id = Guid.NewGuid().ToString("n");
@@ -29,18 +29,17 @@ namespace Owlvey.Falcon.UnitTests
         }
 
         [Fact]
-        public void CreateAppSettingFail()
+        public void CreateAppSettingEntityFail()
         {
             var createdBy = Guid.NewGuid().ToString("n");
-            var id = Guid.NewGuid().ToString("n");
+            var id = string.Empty;
             var value = Faker.RandomNumber.Next().ToString();
             var isReadOnly = true;
 
-            var appSettingEntity = AppSettingEntity.Factory.Create(id, value, isReadOnly, createdBy);
-
-            //Assert.Throws<InvalidDomainModelException>(() => {
-            //    AppSetting.Factory.Create(id, value, isReadOnly, createdBy);
-            //});
+            Assert.Throws<ApplicationException>(() =>
+            {
+                AppSettingEntity.Factory.Create(id, value, isReadOnly, createdBy);
+            });
 
         }
     }

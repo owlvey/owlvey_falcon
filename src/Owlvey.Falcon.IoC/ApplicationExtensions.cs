@@ -19,7 +19,22 @@ namespace Owlvey.Falcon.IoC
             // Application
             services.AddTransient<IAppSettingQueryComponent, AppSettingQueryComponent>();
             services.AddTransient<IAppSettingComponent, AppSettingComponent>();
-            
+
+            services.AddTransient<ICustomerQueryComponent, CustomerQueryComponent>();
+            services.AddTransient<ICustomerComponent, CustomerComponent>();
+
+            services.AddTransient<IFeatureQueryComponent, FeatureQueryComponent>();
+            services.AddTransient<IFeatureComponent, FeatureComponent>();
+
+            services.AddTransient<IProductQueryComponent, ProductQueryComponent>();
+            services.AddTransient<IProductComponent, ProductComponent>();
+
+            services.AddTransient<IServiceQueryComponent, ServiceQueryComponent>();
+            services.AddTransient<IServiceComponent, ServiceComponent>();
+
+            services.AddTransient<ISquadQueryComponent, SquadQueryComponent>();
+            services.AddTransient<ISquadComponent, SquadComponent>();
+
             // Infra
             services.AddAspNetCoreIndentityService();
         }

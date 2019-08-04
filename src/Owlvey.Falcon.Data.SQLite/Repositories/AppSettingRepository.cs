@@ -1,5 +1,5 @@
 using Owlvey.Falcon.Data.SQLite.Context;
-using Owlvey.Falcon.Core.Models;
+using Owlvey.Falcon.Core.Entities;
 using Owlvey.Falcon.Core.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -19,7 +19,7 @@ namespace Owlvey.Falcon.Data.SQLite.Repositories
 
         public async Task<AppSettingEntity> GetAppSettingByKey(string key)
         {
-            return await this.DbSet.FirstOrDefaultAsync(c => c.Key.Equals(key) && c.Status != EntityStatus.Deleted);
+            return await this.DbSet.FirstOrDefaultAsync(c => c.Key.Equals(key) );
         }
     }
 }
