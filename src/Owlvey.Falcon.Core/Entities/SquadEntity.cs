@@ -15,5 +15,7 @@ namespace Owlvey.Falcon.Core.Entities
 
         public virtual ICollection<UserEntity> Users { get; set; }
 
+        public virtual CustomerEntity Customer { get; set; }
+
     }
 }

@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Owlvey.Falcon.Core.Entities.CustomerEntity">
+    <Position X="0.5" Y="1.75" Width="1.5" />
+    <NestedTypes>
+      <Class Name="Owlvey.Falcon.Core.Entities.CustomerEntity.Factory" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Factories\CustomerFactory.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAQAAAAAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Entities\CustomerEntity.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Products" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Owlvey.Falcon.Core.Entities.SquadEntity">
+    <Position X="4.25" Y="0.75" Width="1.5" />
+    <NestedTypes>
+      <Class Name="Owlvey.Falcon.Core.Entities.SquadEntity.Factory" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Factories\SquadFactory.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAEAACAAAAAgAAAAAAQAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\SquadEntity.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Customer" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Users" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Owlvey.Falcon.Core.Entities.UserEntity">
+    <Position X="7.75" Y="0.75" Width="1.5" />
+    <NestedTypes>
+      <Class Name="Owlvey.Falcon.Core.Entities.UserEntity.Factory" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Factories\UserFactory.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\UserEntity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Owlvey.Falcon.Core.Entities.ProductEntity">
+    <Position X="4.5" Y="4" Width="1.5" />
+    <NestedTypes>
+      <Class Name="Owlvey.Falcon.Core.Entities.ProductEntity.Factory" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Factories\ProductFactory.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>gAEAAAAAAAAgAAAAAAABAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\ProductEntity.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Features" />
+      <Property Name="Services" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Owlvey.Falcon.Core.Entities.ServiceEntity">
+    <Position X="8" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAgAAAAAAQBAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\ServiceEntity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Owlvey.Falcon.Core.Entities.FeatureEntity">
+    <Position X="7.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAQIAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\FeatureEntity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
