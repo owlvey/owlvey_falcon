@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Owlvey.Falcon.Components.Models
+namespace Owlvey.Falcon.Models
 {
     public class FeatureBaseRp
     {

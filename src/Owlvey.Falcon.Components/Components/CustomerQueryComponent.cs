@@ -1,13 +1,13 @@
-using Owlvey.Falcon.Components.Interfaces;
-using Owlvey.Falcon.Components.Models;
-using Owlvey.Falcon.Components.Repositories;
+using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Models;
+using Owlvey.Falcon.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Owlvey.Falcon.Components.Services
+namespace Owlvey.Falcon.Components
 {
     public class CustomerQueryComponent : BaseComponent, ICustomerQueryComponent
     {

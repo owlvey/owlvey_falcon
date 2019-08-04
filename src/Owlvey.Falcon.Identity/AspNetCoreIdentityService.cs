@@ -1,4 +1,4 @@
-using Owlvey.Falcon.Components.Gateways;
+using Owlvey.Falcon.Gateways;
 using System;
 using System.Linq;
 

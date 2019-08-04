@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Owlvey.Falcon.Components.Repositories;
+using Owlvey.Falcon.Repositories;
 
 namespace Owlvey.Falcon.Data.SQLite.Repositories
 {

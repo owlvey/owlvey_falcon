@@ -1,10 +1,10 @@
-using Owlvey.Falcon.Components.Models;
+using Owlvey.Falcon.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Owlvey.Falcon.Components.Interfaces
+namespace Owlvey.Falcon.Components
 {
     public interface ICustomerComponent
     {

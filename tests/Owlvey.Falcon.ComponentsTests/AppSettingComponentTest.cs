@@ -1,11 +1,11 @@
 using FizzWare.NBuilder;
 using MockQueryable.Moq;
 using Moq;
-using Owlvey.Falcon.Components.Gateways;
-using Owlvey.Falcon.Components.Models;
-using Owlvey.Falcon.Components.Services;
+using Owlvey.Falcon.Gateways;
+using Owlvey.Falcon.Models;
+using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Core.Entities;
-using Owlvey.Falcon.Components.Repositories;
+using Owlvey.Falcon.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -18,7 +18,7 @@ namespace Owlvey.Falcon.Core.Entities
                     CreatedOn = on,
                     ModifiedOn = on,
                 };
-
+                entity.Validate();
                 return entity;
             }
         }

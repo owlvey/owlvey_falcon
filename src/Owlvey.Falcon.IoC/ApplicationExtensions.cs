@@ -3,8 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Owlvey.Falcon.Components.Interfaces;
-using Owlvey.Falcon.Components.Services;
+using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Identity;
 
 namespace Owlvey.Falcon.IoC

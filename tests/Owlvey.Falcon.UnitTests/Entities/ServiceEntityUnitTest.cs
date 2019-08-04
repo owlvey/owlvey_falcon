@@ -1,5 +1,6 @@
 using FizzWare.NBuilder;
 using Owlvey.Falcon.Core.Entities;
+using Owlvey.Falcon.Core.Exceptions;
 using System;
 using Xunit;
 
@@ -36,7 +37,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
             var description = string.Empty;
             float slo = 0;
 
-            Assert.Throws<ApplicationException>(() =>
+            Assert.Throws<InvalidStateException>(() =>
             {
                 ServiceEntity.Factory.Create(name, description, slo, DateTime.UtcNow, createdBy);
             });

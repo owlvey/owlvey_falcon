@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Owlvey.Falcon.Components.Repositories;
+using Owlvey.Falcon.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;

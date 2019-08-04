@@ -2,7 +2,7 @@ using FizzWare.NBuilder;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Owlvey.Falcon.IntegrationTests.Setup;
-using Owlvey.Falcon.Components.Models;
+using Owlvey.Falcon.Models;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;

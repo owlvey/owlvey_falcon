@@ -1,34 +1,34 @@
-using Owlvey.Falcon.Components.Gateways;
-using Owlvey.Falcon.Components.Interfaces;
-using Owlvey.Falcon.Components.Models;
+using Owlvey.Falcon.Gateways;
+using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Core.Entities;
-using Owlvey.Falcon.Components.Repositories;
+using Owlvey.Falcon.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Owlvey.Falcon.Components.Services
+namespace Owlvey.Falcon.Components
 {
-    public class ServiceComponent : BaseComponent, IServiceComponent
+    public class ProductComponent : BaseComponent, IProductComponent
     {
-        private readonly IServiceRepository _serviceRepository;
+        private readonly IProductRepository _productRepository;
         private readonly IUserIdentityService _identityService;
 
-        public ServiceComponent(IServiceRepository serviceRepository,
+        public ProductComponent(IProductRepository productRepository,
             IUserIdentityService identityService)
         {
-            this._serviceRepository = serviceRepository;
+            this._productRepository = productRepository;
             this._identityService = identityService;
         }
 
         /// <summary>
-        /// Create a new Service
+        /// Create a new Product
         /// </summary>
-        /// <param name="model">Service Model</param>
+        /// <param name="model">Product Model</param>
         /// <returns></returns>
-        public async Task<BaseComponentResultRp> CreateService(ServicePostRp model)
+        public async Task<BaseComponentResultRp> CreateProduct(ProductPostRp model)
         {
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
@@ -38,11 +38,11 @@ namespace Owlvey.Falcon.Components.Services
         }
 
         /// <summary>
-        /// Delete Service
+        /// Delete Product
         /// </summary>
-        /// <param name="key">Service Id</param>
+        /// <param name="key">Product Id</param>
         /// <returns></returns>
-        public async Task<BaseComponentResultRp> DeleteService(int id)
+        public async Task<BaseComponentResultRp> DeleteProduct(int id)
         {
             var result = new BaseComponentResultRp();
 
@@ -50,11 +50,11 @@ namespace Owlvey.Falcon.Components.Services
         }
         
         /// <summary>
-        /// Update Service
+        /// Update Product
         /// </summary>
-        /// <param name="model">Service Model</param>
+        /// <param name="model">Product Model</param>
         /// <returns></returns>
-        public async Task<BaseComponentResultRp> UpdateService(int id, ServicePutRp model)
+        public async Task<BaseComponentResultRp> UpdateProduct(int id, ProductPutRp model)
         {
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();

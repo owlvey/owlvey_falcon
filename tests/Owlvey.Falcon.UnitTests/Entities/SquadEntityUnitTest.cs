@@ -1,5 +1,6 @@
 using FizzWare.NBuilder;
 using Owlvey.Falcon.Core.Entities;
+using Owlvey.Falcon.Core.Exceptions;
 using System;
 using Xunit;
 
@@ -29,7 +30,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
         [Fact]
         public void CreateUserSuccess()
         {
-            var entity = SquadEntity.Factory.Create("test", "", DateTime.Now, "test");
+            var entity = SquadEntity.Factory.Create("test", "test", DateTime.Now, "test");
             Assert.NotNull(entity.CreatedBy);
             Assert.NotNull(entity.CreatedOn);
             Assert.NotNull(entity.ModifiedBy);
@@ -44,7 +45,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
             var name = string.Empty;
             var description = string.Empty;
 
-            Assert.Throws<ApplicationException>(() =>
+            Assert.Throws<InvalidStateException>(() =>
             {
                 SquadEntity.Factory.Create(name, description, DateTime.UtcNow, createdBy);
             });

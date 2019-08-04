@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Owlvey.Falcon.Components.Models
+namespace Owlvey.Falcon.Models
 {
     public class BaseComponentResultRp
     {

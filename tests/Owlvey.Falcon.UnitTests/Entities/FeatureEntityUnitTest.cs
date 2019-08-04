@@ -1,5 +1,6 @@
 using FizzWare.NBuilder;
 using Owlvey.Falcon.Core.Entities;
+using Owlvey.Falcon.Core.Exceptions;
 using System;
 using Xunit;
 
@@ -30,7 +31,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
             var createdBy = Guid.NewGuid().ToString("n");
             var name = $"";
 
-            Assert.Throws<ApplicationException>(() =>
+            Assert.Throws<InvalidStateException>(() =>
             {
                 FeatureEntity.Factory.Create(name, DateTime.UtcNow, createdBy);
             });

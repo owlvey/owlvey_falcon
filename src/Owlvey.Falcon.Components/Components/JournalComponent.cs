@@ -1,34 +1,34 @@
-using Owlvey.Falcon.Components.Gateways;
-using Owlvey.Falcon.Components.Interfaces;
-using Owlvey.Falcon.Components.Models;
+using Owlvey.Falcon.Gateways;
+using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Core.Entities;
-using Owlvey.Falcon.Components.Repositories;
+using Owlvey.Falcon.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Owlvey.Falcon.Components.Services
+namespace Owlvey.Falcon.Components
 {
-    public class FeatureComponent : BaseComponent, IFeatureComponent
+    public class JournalComponent : BaseComponent, IJournalComponent
     {
-        private readonly IFeatureRepository _featureRepository;
+        private readonly IJournalRepository _journalRepository;
         private readonly IUserIdentityService _identityService;
 
-        public FeatureComponent(IFeatureRepository featureRepository,
+        public JournalComponent(IJournalRepository journalRepository,
             IUserIdentityService identityService)
         {
-            this._featureRepository = featureRepository;
+            this._journalRepository = journalRepository;
             this._identityService = identityService;
         }
 
         /// <summary>
-        /// Create a new Feature
+        /// Create a new Journal
         /// </summary>
-        /// <param name="model">Feature Model</param>
+        /// <param name="model">Journal Model</param>
         /// <returns></returns>
-        public async Task<BaseComponentResultRp> CreateFeature(FeaturePostRp model)
+        public async Task<BaseComponentResultRp> CreateJournal(JournalPostRp model)
         {
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
@@ -38,11 +38,11 @@ namespace Owlvey.Falcon.Components.Services
         }
 
         /// <summary>
-        /// Delete Feature
+        /// Delete Journal
         /// </summary>
-        /// <param name="key">Feature Id</param>
+        /// <param name="key">Journal Id</param>
         /// <returns></returns>
-        public async Task<BaseComponentResultRp> DeleteFeature(int id)
+        public async Task<BaseComponentResultRp> DeleteJournal(int id)
         {
             var result = new BaseComponentResultRp();
 
@@ -50,11 +50,11 @@ namespace Owlvey.Falcon.Components.Services
         }
         
         /// <summary>
-        /// Update Feature
+        /// Update Journal
         /// </summary>
-        /// <param name="model">Feature Model</param>
+        /// <param name="model">Journal Model</param>
         /// <returns></returns>
-        public async Task<BaseComponentResultRp> UpdateFeature(int id, FeaturePutRp model)
+        public async Task<BaseComponentResultRp> UpdateJournal(int id, JournalPutRp model)
         {
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();

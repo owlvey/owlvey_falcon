@@ -71,6 +71,13 @@
   </Class>
   <Class Name="Owlvey.Falcon.Core.Entities.ServiceEntity">
     <Position X="8" Y="3.25" Width="1.5" />
+    <NestedTypes>
+      <Class Name="Owlvey.Falcon.Core.Entities.ServiceEntity.Factory" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Factories\ServiceFactory.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
     <TypeIdentifier>
       <HashCode>AAAAIAAAAAAgAAAAAAQBAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Entities\ServiceEntity.cs</FileName>
@@ -78,6 +85,13 @@
   </Class>
   <Class Name="Owlvey.Falcon.Core.Entities.FeatureEntity">
     <Position X="7" Y="6.25" Width="1.5" />
+    <NestedTypes>
+      <Class Name="Owlvey.Falcon.Core.Entities.FeatureEntity.Factory" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Factories\FeatureFactory.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
     <TypeIdentifier>
       <HashCode>AAAACAAAAAAAAAAAAAQAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Entities\FeatureEntity.cs</FileName>
@@ -105,6 +119,13 @@
   </Class>
   <Class Name="Owlvey.Falcon.Core.Entities.JournalEntity">
     <Position X="13.5" Y="6.25" Width="1.5" />
+    <NestedTypes>
+      <Class Name="Owlvey.Falcon.Core.Entities.JournalEntity.Factory" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Factories\JournalFactory.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAQAAAAAAAAAAAEAAAAQAAACAAA=</HashCode>
       <FileName>Entities\JournalEntity.cs</FileName>

@@ -1,34 +1,34 @@
-using Owlvey.Falcon.Components.Gateways;
-using Owlvey.Falcon.Components.Interfaces;
-using Owlvey.Falcon.Components.Models;
+using Owlvey.Falcon.Gateways;
+using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Core.Entities;
-using Owlvey.Falcon.Components.Repositories;
+using Owlvey.Falcon.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Owlvey.Falcon.Components.Services
+namespace Owlvey.Falcon.Components
 {
-    public class ProductComponent : BaseComponent, IProductComponent
+    public class FeatureComponent : BaseComponent, IFeatureComponent
     {
-        private readonly IProductRepository _productRepository;
+        private readonly IFeatureRepository _featureRepository;
         private readonly IUserIdentityService _identityService;
 
-        public ProductComponent(IProductRepository productRepository,
+        public FeatureComponent(IFeatureRepository featureRepository,
             IUserIdentityService identityService)
         {
-            this._productRepository = productRepository;
+            this._featureRepository = featureRepository;
             this._identityService = identityService;
         }
 
         /// <summary>
-        /// Create a new Product
+        /// Create a new Feature
         /// </summary>
-        /// <param name="model">Product Model</param>
+        /// <param name="model">Feature Model</param>
         /// <returns></returns>
-        public async Task<BaseComponentResultRp> CreateProduct(ProductPostRp model)
+        public async Task<BaseComponentResultRp> CreateFeature(FeaturePostRp model)
         {
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
@@ -38,11 +38,11 @@ namespace Owlvey.Falcon.Components.Services
         }
 
         /// <summary>
-        /// Delete Product
+        /// Delete Feature
         /// </summary>
-        /// <param name="key">Product Id</param>
+        /// <param name="key">Feature Id</param>
         /// <returns></returns>
-        public async Task<BaseComponentResultRp> DeleteProduct(int id)
+        public async Task<BaseComponentResultRp> DeleteFeature(int id)
         {
             var result = new BaseComponentResultRp();
 
@@ -50,11 +50,11 @@ namespace Owlvey.Falcon.Components.Services
         }
         
         /// <summary>
-        /// Update Product
+        /// Update Feature
         /// </summary>
-        /// <param name="model">Product Model</param>
+        /// <param name="model">Feature Model</param>
         /// <returns></returns>
-        public async Task<BaseComponentResultRp> UpdateProduct(int id, ProductPutRp model)
+        public async Task<BaseComponentResultRp> UpdateFeature(int id, FeaturePutRp model)
         {
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();

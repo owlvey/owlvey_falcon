@@ -1,5 +1,6 @@
 using FizzWare.NBuilder;
 using Owlvey.Falcon.Core.Entities;
+using Owlvey.Falcon.Core.Exceptions;
 using System;
 using Xunit;
 
@@ -16,9 +17,9 @@ namespace Owlvey.Falcon.UnitTests.Entities
         public void CreateCustomerEntitySuccess()
         {
             var createdBy = Guid.NewGuid().ToString("n");
-            var name = Faker.Company.Name();
+            var name = Faker.Company.Name();            
 
-            var customerEntity = CustomerEntity.Factory.Create(name, DateTime.UtcNow, createdBy);
+            var customerEntity = CustomerEntity.Factory.Create(createdBy, DateTime.UtcNow, name);
 
             Assert.Equal(name, customerEntity.Name);
             Assert.Equal(createdBy, customerEntity.CreatedBy);
@@ -30,7 +31,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
             var createdBy = Guid.NewGuid().ToString("n");
             var name = string.Empty;
 
-            Assert.Throws<ApplicationException>(() =>
+            Assert.Throws<InvalidStateException>(() =>
             {
                 CustomerEntity.Factory.Create(name, DateTime.UtcNow, createdBy);
             });
