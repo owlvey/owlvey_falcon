@@ -8,10 +8,19 @@ namespace Owlvey.Falcon.Core.Entities
 {
     public partial class FeatureEntity: BaseEntity
     {
+        public FeatureEntity() {
+            this.Indicators = new List<IndicatorEntity>(); 
+        }
+
         [Required]
         public string Name { get; set; }
         public string Avatar { get; set; }
 
         public virtual ICollection<IndicatorEntity> Indicators { get; set; }
+
+        public void RegisterIndicator(SourceEntity source, DateTime on, string createdBy) {
+            var indicator = IndicatorEntity.Factory.Create(source, on, createdBy);
+            this.Indicators.Add(indicator); 
+        }
     }
 }

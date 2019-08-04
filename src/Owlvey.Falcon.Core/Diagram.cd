@@ -93,7 +93,7 @@
       </Class>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AAAACAAAAAAAAAAAAAQAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAACAAAAAAAAAACAAQAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Entities\FeatureEntity.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
@@ -102,31 +102,51 @@
   </Class>
   <Class Name="Owlvey.Falcon.Core.Entities.IndicatorEntity">
     <Position X="10.25" Y="6.5" Width="1.5" />
+    <NestedTypes>
+      <Class Name="Owlvey.Falcon.Core.Entities.IndicatorEntity.Factory" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Factories\IndicatorFactory.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAgAAAAAAQAAAAAAAAgAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAgAgAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Entities\IndicatorEntity.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Owlvey.Falcon.Core.Entities.SourceItemEntity">
-    <Position X="13.25" Y="3" Width="1.5" />
+    <Position X="16.75" Y="6.5" Width="1.5" />
+    <NestedTypes>
+      <Class Name="Owlvey.Falcon.Core.Entities.SourceItemEntity.Factory" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Factories\SourceItemFactory.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAgQAAAAAAAAAAAAAE=</HashCode>
+      <HashCode>AAIAAAAAAiAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAE=</HashCode>
       <FileName>Entities\SourceItemEntity.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Source" />
+    </ShowAsAssociation>
   </Class>
   <Class Name="Owlvey.Falcon.Core.Entities.SourceEntity">
     <Position X="13.5" Y="6.25" Width="1.5" />
     <NestedTypes>
       <Class Name="Owlvey.Falcon.Core.Entities.SourceEntity.Factory" Collapsed="true">
         <TypeIdentifier>
-          <NewMemberFileName>Factories\JournalFactory.cs</NewMemberFileName>
+          <NewMemberFileName>Factories\SourceFactory.cs</NewMemberFileName>
         </TypeIdentifier>
       </Class>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAQAAAAAAAAAAAEAAAAQAAACAAA=</HashCode>
+      <HashCode>AAAACAAAAAAAAAQAAAQAAAAAAABAAEEAAAAAAAACAAA=</HashCode>
       <FileName>Entities\SourceEntity.cs</FileName>
     </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Indicators" />
+    </ShowAsCollectionAssociation>
   </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

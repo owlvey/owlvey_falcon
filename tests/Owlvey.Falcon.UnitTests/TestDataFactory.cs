@@ -29,6 +29,12 @@ namespace Owlvey.Falcon.UnitTests
             var entity = FeatureEntity.Factory.Create(name, on, createdBy);
             return entity;
         }
+        public static SourceEntity BuildSource(string name="/owlvey", DateTime? on=null, string createdBy="test") {
+
+            on = on ?? DateTime.Now;
+            var entity = SourceEntity.Factory.Create(name, on.Value, createdBy);
+            return entity;
+        }
 
         public static (CustomerEntity, ProductEntity) BuildCustomerProduct() {
             var customer = TestDataFactory.BuildCustomer();
@@ -46,6 +52,34 @@ namespace Owlvey.Falcon.UnitTests
             product.AddService(service);
 
             return (customer, product, service);
+        }
+
+        public static (CustomerEntity, ProductEntity, ServiceEntity, FeatureEntity) BuildCustomerProductServiceFeature()
+        {
+            var customer = TestDataFactory.BuildCustomer();
+            var product = TestDataFactory.BuildProduct();
+            var service = TestDataFactory.BuildService("test", 99, "test", DateTime.Now);
+            var feature = TestDataFactory.BuildFeature("test", "test", DateTime.Now);
+            customer.AddProduct(product);
+            product.AddService(service);
+            product.AddFeature(feature); 
+            return (customer, product, service, feature);
+        }
+
+        public static ICollection<SourceEntity> BuildSources() {
+            var results = new List<SourceEntity>();
+            var userName = "john doe";
+            var tags = "load balancer";
+            var source = TestDataFactory.BuildSource("GET:/owlvey/api/customers", DateTime.Now, userName);
+            source.Tags = tags;
+            results.Add(source);
+            source = TestDataFactory.BuildSource("POST:/owlvey/api/customers", DateTime.Now, userName);
+            source.Tags = tags;
+            results.Add(source);
+            source = TestDataFactory.BuildSource("PUT:/owlvey/api/customers", DateTime.Now, userName);
+            source.Tags = tags;
+            results.Add(source);
+            return results;
         }
 
 
