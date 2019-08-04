@@ -12,7 +12,7 @@ namespace Owlvey.Falcon.Core.Entities
         public int? Id { get; set; }
 
         [Required]
-        public DateTime CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; set; }
         [Required]
         public string CreatedBy { get; set; }
         [Required]
