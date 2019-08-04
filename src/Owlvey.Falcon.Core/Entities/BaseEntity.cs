@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Owlvey.Falcon.Core.Exceptions;
 
 namespace Owlvey.Falcon.Core.Entities
 {
@@ -19,16 +20,7 @@ namespace Owlvey.Falcon.Core.Entities
         public DateTime? ModifiedOn { get; set; }
         [Required]
         public string ModifiedBy { get; set;  }
-
-        public virtual void Create(string user, DateTime on)
-        {
-            this.CreatedBy = user;
-            this.CreatedOn = on;
-            this.ModifiedBy = user;
-            this.ModifiedOn = on;
-            this.Validate();
-        }
-
+        
         public virtual void Delete() {
 
         }
@@ -41,7 +33,7 @@ namespace Owlvey.Falcon.Core.Entities
             if (!isValid)
             {
                 var msg = results.Select(c => c.ErrorMessage).ToList();
-                throw new ApplicationException(String.Join(", ", msg));
+                throw new InvalidStateException(String.Join(", ", msg));
             }
         }
 

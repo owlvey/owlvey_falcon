@@ -10,7 +10,7 @@
       </Class>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAQAQAAAAAAAAAAAAAAAAAAAQ=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAQAQAQAAAAAAAAAAAAAAAAAAAQ=</HashCode>
       <FileName>Entities\CustomerEntity.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
@@ -65,8 +65,8 @@
       <FileName>Entities\ProductEntity.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
-      <Property Name="Features" />
       <Property Name="Services" />
+      <Property Name="Features" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Owlvey.Falcon.Core.Entities.ServiceEntity">
@@ -77,11 +77,41 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Owlvey.Falcon.Core.Entities.FeatureEntity">
-    <Position X="7.75" Y="5.75" Width="1.5" />
+    <Position X="7" Y="6.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAQIAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAACAAAAAAAAAAAAAQAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Entities\FeatureEntity.cs</FileName>
     </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Indicators" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Owlvey.Falcon.Core.Entities.IndicatorEntity">
+    <Position X="10.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAQAAAAAAAAgAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\IndicatorEntity.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Journal" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Owlvey.Falcon.Core.Entities.JournalItemEntity">
+    <Position X="13.25" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAgQAAAAAAAAAAAAAE=</HashCode>
+      <FileName>Entities\JournalItemEntity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Owlvey.Falcon.Core.Entities.JournalEntity">
+    <Position X="13.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAQAAAAAAAAAAAEAAAAQAAACAAA=</HashCode>
+      <FileName>Entities\JournalEntity.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="JournalItems" />
+    </ShowAsCollectionAssociation>
   </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

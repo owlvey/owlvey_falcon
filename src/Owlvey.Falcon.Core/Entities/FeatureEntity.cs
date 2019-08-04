@@ -9,6 +9,6 @@ namespace Owlvey.Falcon.Core.Entities
         public string Name { get; set; }
         public string Avatar { get; set; }
 
-        public virtual ICollection<JournalEntity> JournalEntities { get; set; }
+        public virtual ICollection<IndicatorEntity> Indicators { get; set; }
     }
 }
