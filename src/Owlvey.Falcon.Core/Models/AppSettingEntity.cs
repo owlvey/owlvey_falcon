@@ -33,7 +33,7 @@ namespace Owlvey.Falcon.Core.Models
         /// If it is read-only, it is a system variable
         /// </summary>
         public bool IsReadOnly { get; set; }
-
+        
         public static class Factory
         {
             /// <summary>
@@ -57,6 +57,7 @@ namespace Owlvey.Falcon.Core.Models
                     IsReadOnly = isReadOnly,
                     CreatedBy = createdBy
                 };
+                
 
                 return entity;
             }
