@@ -3,9 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Owlvey.Falcon.Core.Entities
 {
-    public class JournalItemEntity: BaseEntity
+    public class SourceItemEntity: BaseEntity
     {
-        public virtual JournalEntity Journal { get; set; }
+        public virtual SourceEntity Journal { get; set; }
         [Required]
         public int Good { get; set; }
         [Required]

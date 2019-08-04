@@ -7,6 +7,10 @@ namespace Owlvey.Falcon.Core.Entities
 {
     public partial class ProductEntity : BaseEntity
     {
+        public ProductEntity() {
+            this.Services = new List<ServiceEntity>();
+            this.Features = new List<FeatureEntity>(); 
+        }
         [Required]
         public string Name { get; set; }
         [Required]
@@ -17,5 +21,12 @@ namespace Owlvey.Falcon.Core.Entities
         public virtual ICollection<ServiceEntity> Services { get; set; }
 
         public virtual ICollection<FeatureEntity> Features { get; set; }
+
+        public void AddService(ServiceEntity entity) {
+            this.Services.Add(entity);
+        }
+        public void AddFeature(FeatureEntity entity) {
+            this.Features.Add(entity); 
+        }
     }
 }

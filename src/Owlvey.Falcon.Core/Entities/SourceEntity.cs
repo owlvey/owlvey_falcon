@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Owlvey.Falcon.Core.Entities
 {
-    public partial class JournalEntity: BaseEntity
+    public partial class SourceEntity: BaseEntity
     {
         [Required]
         public string GoodDefinition { get; set; }
@@ -13,6 +13,6 @@ namespace Owlvey.Falcon.Core.Entities
         public string TotalDefinition { get; set; }
         public string Avatar { get; set; }               
 
-        public virtual ICollection<JournalItemEntity> JournalItems { get; set; }
+        public virtual ICollection<SourceItemEntity> JournalItems { get; set; }
     }
 }

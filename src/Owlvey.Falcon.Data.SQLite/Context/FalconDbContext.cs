@@ -18,7 +18,7 @@ namespace Owlvey.Falcon.Data.SQLite.Context
         public DbSet<ProductEntity> Products { get; set; }
         public DbSet<ServiceEntity> Services { get; set; }
         public DbSet<FeatureEntity> Features { get; set; }
-        public DbSet<JournalEntity> Journals { get; set; }
+        public DbSet<SourceEntity> Journals { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -37,5 +37,14 @@ namespace Owlvey.Falcon.UnitTests.Entities
             });
 
         }
+
+        [Fact]
+        public void AddServiceEntitySuccess()
+        {
+            var (_, product) = TestDataFactory.BuildCustomerProduct();
+            var feature = TestDataFactory.BuildFeature("test", "user", DateTime.Now);
+            product.AddFeature(feature);
+            Assert.NotEmpty(product.Features);
+        }
     }
 }

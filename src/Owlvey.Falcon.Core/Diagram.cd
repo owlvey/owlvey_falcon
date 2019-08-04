@@ -61,7 +61,7 @@
       </Class>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>gAEAAAAAAAAgAAAAAAABAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>gAEAAAAAAAAgAAAAAAABAAQAAAAAAAABAAAAACAAAAA=</HashCode>
       <FileName>Entities\ProductEntity.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
@@ -106,21 +106,18 @@
       <HashCode>AAAAAAAAAAAgAAAAAAQAAAAAAAAgAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Entities\IndicatorEntity.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="Journal" />
-    </ShowAsAssociation>
   </Class>
-  <Class Name="Owlvey.Falcon.Core.Entities.JournalItemEntity">
+  <Class Name="Owlvey.Falcon.Core.Entities.SourceItemEntity">
     <Position X="13.25" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAgQAAAAAAAAAAAAAE=</HashCode>
-      <FileName>Entities\JournalItemEntity.cs</FileName>
+      <FileName>Entities\SourceItemEntity.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Owlvey.Falcon.Core.Entities.JournalEntity">
+  <Class Name="Owlvey.Falcon.Core.Entities.SourceEntity">
     <Position X="13.5" Y="6.25" Width="1.5" />
     <NestedTypes>
-      <Class Name="Owlvey.Falcon.Core.Entities.JournalEntity.Factory" Collapsed="true">
+      <Class Name="Owlvey.Falcon.Core.Entities.SourceEntity.Factory" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>Factories\JournalFactory.cs</NewMemberFileName>
         </TypeIdentifier>
@@ -128,11 +125,8 @@
     </NestedTypes>
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAQAAAAAAAAAAAEAAAAQAAACAAA=</HashCode>
-      <FileName>Entities\JournalEntity.cs</FileName>
+      <FileName>Entities\SourceEntity.cs</FileName>
     </TypeIdentifier>
-    <ShowAsCollectionAssociation>
-      <Property Name="JournalItems" />
-    </ShowAsCollectionAssociation>
   </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

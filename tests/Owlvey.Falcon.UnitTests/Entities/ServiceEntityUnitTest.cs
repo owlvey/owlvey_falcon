@@ -8,11 +8,6 @@ namespace Owlvey.Falcon.UnitTests.Entities
 {
     public class ServiceEntityUnitTest
     {
-        public ServiceEntityUnitTest()
-        {
-
-        }
-
         [Fact]
         public void CreateServiceEntitySuccess()
         {
@@ -27,6 +22,13 @@ namespace Owlvey.Falcon.UnitTests.Entities
             Assert.Equal(description, serviceEntity.Description);
             Assert.Equal(slo, serviceEntity.SLO);
             Assert.Equal(createdBy, serviceEntity.CreatedBy);
+        }
+        [Fact]
+        public void AddServiceEntitySuccess() {
+             var (customer, product) = TestDataFactory.BuildCustomerProduct();
+            var service = TestDataFactory.BuildService("test", 95, "user", DateTime.Now);
+            product.AddService(service);
+            Assert.NotEmpty(product.Services);             
         }
 
         [Fact]

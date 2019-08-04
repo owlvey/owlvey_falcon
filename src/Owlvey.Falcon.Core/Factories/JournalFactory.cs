@@ -4,13 +4,13 @@ using System.Text;
 
 namespace Owlvey.Falcon.Core.Entities
 {
-    public partial class JournalEntity
+    public partial class SourceEntity
     {
         public static class Factory {
 
-            public static JournalEntity Create(string goodDefinition, string totalDefinition, DateTime on, string user)
+            public static SourceEntity Create(string goodDefinition, string totalDefinition, DateTime on, string user)
             {
-                var entity = new JournalEntity()
+                var entity = new SourceEntity()
                 {
                     GoodDefinition = goodDefinition,
                     TotalDefinition = totalDefinition,

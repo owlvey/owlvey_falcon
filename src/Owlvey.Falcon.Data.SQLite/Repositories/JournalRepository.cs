@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Owlvey.Falcon.Data.SQLite.Repositories
 {
-    public class JournalRepository : Repository<JournalEntity>, IJournalRepository
+    public class JournalRepository : Repository<SourceEntity>, IJournalRepository
     {
         public JournalRepository(FalconDbContext context) : base(context)
         {

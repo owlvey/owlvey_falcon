@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Owlvey.Falcon.Repositories
 {
-    public interface IJournalRepository : IBaseRepository<JournalEntity>
+    public interface IJournalRepository : IBaseRepository<SourceEntity>
     {
     }
 }
