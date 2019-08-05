@@ -15,6 +15,8 @@ namespace Owlvey.Falcon.Core.Entities
         public float SLO { get; set; }
         public string Avatar { get; set; }
 
+        public virtual ProductEntity Product { get; set; }
+
         public virtual ICollection<FeatureEntity> Features { get; set; }
         
     }

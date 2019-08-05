@@ -81,6 +81,28 @@ namespace Owlvey.Falcon.UnitTests
             results.Add(source);
             return results;
         }
+        public static ICollection<SourceEntity> BuildSourcesWithItems()
+        {
+            var results = new List<SourceEntity>();
+            var userName = "john doe";
+            var tags = "load balancer";
+            var source = TestDataFactory.BuildSource("GET:/owlvey/api/customers", DateTime.Now, userName);
+            source.Tags = tags;
+            results.Add(source);
+            source = TestDataFactory.BuildSource("POST:/owlvey/api/customers", DateTime.Now, userName);
+            source.Tags = tags;
+            results.Add(source);
+            source = TestDataFactory.BuildSource("PUT:/owlvey/api/customers", DateTime.Now, userName);
+            source.Tags = tags;
+            results.Add(source);
+            var start = new DateTime(2019, 01, 01);
+            var end = new DateTime(2019, 01, 02);
+            foreach (var item in results)
+            {
+                SourceItemEntity.Factory.Create(item, start, end, 900, 1000, DateTime.Now, "test");
+            }
+            return results;
+        }
 
 
     }

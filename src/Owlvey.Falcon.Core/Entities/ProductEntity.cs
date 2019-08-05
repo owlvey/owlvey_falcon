@@ -23,9 +23,11 @@ namespace Owlvey.Falcon.Core.Entities
         public virtual ICollection<FeatureEntity> Features { get; set; }
 
         public void AddService(ServiceEntity entity) {
+            entity.Product = this;
             this.Services.Add(entity);
         }
         public void AddFeature(FeatureEntity entity) {
+            entity.Product = this;
             this.Features.Add(entity); 
         }
     }

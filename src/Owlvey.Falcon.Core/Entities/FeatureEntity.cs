@@ -16,6 +16,8 @@ namespace Owlvey.Falcon.Core.Entities
         public string Name { get; set; }
         public string Avatar { get; set; }
 
+        public virtual ProductEntity Product { get; set; }
+
         public virtual ICollection<IndicatorEntity> Indicators { get; set; }
 
         public void RegisterIndicator(SourceEntity source, DateTime on, string createdBy) {
