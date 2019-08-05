@@ -7,22 +7,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
+using Owlvey.Falcon.Gateways;
 
 namespace Owlvey.Falcon.Components
 {
     public class CustomerQueryComponent : BaseComponent, ICustomerQueryComponent
     {
         private readonly FalconDbContext _dbContext;
-        public CustomerQueryComponent(FalconDbContext dbContext)
+        private readonly IMapper _mapper;
+        public CustomerQueryComponent(FalconDbContext dbContext, IMapper mapper, IDateTimeGateway dateTimeGateway) : base(dateTimeGateway, mapper)
         {
+            this._mapper = mapper;
             this._dbContext = dbContext;
         }
 
-        /// <summary>
-        /// Get customer by id
-        /// </summary>
-        /// <param name="key">Customer Id</param>
-        /// <returns></returns>
+
         public async Task<CustomerGetRp> GetCustomerById(int id)
         {
             var entities = await this._dbContext.Customers.Where(c => c.Id.Equals(id)).ToListAsync();
@@ -32,11 +32,16 @@ namespace Owlvey.Falcon.Components
             if (entity == null)
                 return null;
 
-            return new CustomerGetRp {
-                CreatedBy = entity.CreatedBy,
-                CreatedOn = entity.CreatedOn
-            };
+            return this._mapper.Map<CustomerGetRp>(entity);
         }
+
+        public async Task<CustomerGetRp> GetCustomerByName(string name)
+        {
+            var entity = await this._dbContext.Customers.SingleAsync(c => c.Name.Equals(name));
+            return this._mapper.Map<CustomerGetRp>(entity);
+        }
+
+
 
         /// <summary>
         /// Get All Customer

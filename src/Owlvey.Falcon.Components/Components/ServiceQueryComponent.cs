@@ -1,5 +1,7 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Gateways;
 using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Repositories;
 using System;
@@ -14,16 +16,11 @@ namespace Owlvey.Falcon.Components
     {
         private readonly FalconDbContext _dbContext;
 
-        public ServiceQueryComponent(FalconDbContext dbContext)
+        public ServiceQueryComponent(FalconDbContext dbContext, IDateTimeGateway dateTimeGateway, IMapper mapper) : base(dateTimeGateway, mapper)
         {
             this._dbContext = dbContext;
         }
 
-        /// <summary>
-        /// Get Service by id
-        /// </summary>
-        /// <param name="key">Service Id</param>
-        /// <returns></returns>
         public async Task<ServiceGetRp> GetServiceById(int id)
         {
             var entity = await this._dbContext.Services.FirstOrDefaultAsync(c=> c.Id.Equals(id));
@@ -37,10 +34,6 @@ namespace Owlvey.Falcon.Components
             };
         }
 
-        /// <summary>
-        /// Get All Service
-        /// </summary>
-        /// <returns></returns>
         public async Task<IEnumerable<ServiceGetListRp>> GetServices()
         {
             var entities = await this._dbContext.Services.ToListAsync();

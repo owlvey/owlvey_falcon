@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Gateways;
@@ -6,6 +7,7 @@ using Owlvey.Falcon.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Owlvey.Falcon.ComponentsTests
@@ -13,27 +15,41 @@ namespace Owlvey.Falcon.ComponentsTests
     public class CustomerComponentTest
     {
         [Fact]
-        public async void SimpleCustomerSetupSuccess()
+        public async Task SimpleCustomerSetupSuccess()
         {
-            var options = new DbContextOptionsBuilder<FalconDbContext>().UseInMemoryDatabase(databaseName: "Owlvey").Options;
-            using (var context = new FalconDbContext(options))
+            var container = ComponentTestFactory.BuildContainer();
+            var customerComponet = container.GetInstance<CustomerComponent>();
+            var customerQueryComponent = container.GetInstance<CustomerQueryComponent>();
+
+            await customerComponet.CreateCustomer(new Models.CustomerPostRp()
             {
-                var mockIdentity = new Mock<IUserIdentityGateway>();
+                Name = "test"
+            });
 
-                mockIdentity.Setup(c => c.GetIdentity()).Returns("test");
+            var customers = await customerQueryComponent.GetCustomers();
 
-                var customerComponet = new CustomerComponent(context, mockIdentity.Object);
-                var customerQueryComponent = new CustomerQueryComponent(context); 
+            Assert.NotEmpty(customers);
 
-                await customerComponet.CreateCustomer(new Models.CustomerPostRp()
-                {
-                    Name = "test"
-                });
+            var customer = await customerQueryComponent.GetCustomerByName("test");
 
-                var customers = await customerQueryComponent.GetCustomers();
+            Assert.NotNull(customer);
 
-                Assert.NotEmpty(customers);                 
-            }            
+            customer = await customerQueryComponent.GetCustomerById(customer.Id);
+
+            Assert.NotNull(customer);
+            
+            await customerComponet.UpdateCustomer(customer.Id, new Models.CustomerPutRp() { Name = "change" });
+
+            customer = await customerQueryComponent.GetCustomerById(customer.Id);
+
+            Assert.Equal("change", customer.Name);
+
+            await customerComponet.DeleteCustomer(customer.Id);
+
+            customer = await customerQueryComponent.GetCustomerById(customer.Id);
+
+            Assert.Null(customer);
+
         }
 
     }

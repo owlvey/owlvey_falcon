@@ -8,7 +8,7 @@ namespace Owlvey.Falcon.Components
 {
     public interface IProductQueryComponent
     {
-        Task<IEnumerable<ProductGetListRp>> GetProducts();
+        Task<IEnumerable<ProductGetListRp>> GetProducts(int customerId);
         Task<ProductGetRp> GetProductById(int id);
     }
 }

@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Gateways;
@@ -15,7 +16,7 @@ namespace Owlvey.Falcon.Components
     {
         private readonly FalconDbContext _dbContext;
         
-        public FeatureQueryComponent(FalconDbContext dbContext)
+        public FeatureQueryComponent(FalconDbContext dbContext, IDateTimeGateway dateTimeGateway, IMapper mapper) : base(dateTimeGateway, mapper)
         {
             this._dbContext = dbContext;
         }

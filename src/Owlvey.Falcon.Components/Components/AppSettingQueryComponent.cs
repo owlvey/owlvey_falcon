@@ -1,5 +1,7 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Gateways;
 using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Repositories;
 using System;
@@ -13,7 +15,8 @@ namespace Owlvey.Falcon.Components
     public class AppSettingQueryComponent : BaseComponent, IAppSettingQueryComponent
     {
         private readonly FalconDbContext _dbContext;
-        public AppSettingQueryComponent(FalconDbContext dbContext)
+        public AppSettingQueryComponent(FalconDbContext dbContext,
+            IDateTimeGateway dateTimeGateway, IMapper mapper) : base(dateTimeGateway, mapper)
         {
             this._dbContext = dbContext;
         }

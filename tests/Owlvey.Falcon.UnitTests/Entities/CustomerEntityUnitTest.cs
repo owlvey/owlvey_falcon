@@ -8,10 +8,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
 {
     public class CustomerEntityUnitTest
     {
-        public CustomerEntityUnitTest()
-        {
-
-        }
+        
 
         [Fact]
         public void CreateCustomerEntitySuccess()
@@ -53,8 +50,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
         public void AddProductToCustomerSuccess()
         {
             var entity = TestDataFactory.BuildCustomer();
-            var product = ProductEntity.Factory.Create("test", "test", DateTime.Now, "user" );
-            entity.AddProduct(product);
+            var product = ProductEntity.Factory.Create("test",  DateTime.Now, "user", entity);            
             Assert.NotEmpty(entity.Products);
         }
     }

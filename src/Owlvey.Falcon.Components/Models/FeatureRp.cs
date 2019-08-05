@@ -22,8 +22,8 @@ namespace Owlvey.Falcon.Models
     }
 
     public class FeaturePostRp {
-        public string Key { get; set; }
-        public string Value { get; set; }
+        public string Name { get; set; }
+        public int ProductId { get; set; }        
     }
 
     public class FeaturePutRp

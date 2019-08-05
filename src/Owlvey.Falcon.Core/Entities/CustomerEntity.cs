@@ -7,18 +7,20 @@ namespace Owlvey.Falcon.Core.Entities
 {
     public partial class CustomerEntity : BaseEntity
     {
-        public CustomerEntity() {
-            this.Products = new List<ProductEntity>();
-        }
         [Required]
         public string Name { get; set; }
         [Required]
         public string Avatar { get; set; }
 
-        public virtual ICollection<ProductEntity> Products { get; set; }
+        public virtual ICollection<ProductEntity> Products { get; set; } = new List<ProductEntity>();
 
-        public void AddProduct(ProductEntity entity) {
-            this.Products.Add(entity); 
+        public void Update(DateTime on, string modifiedBy, string name= null, string avatar = null ) {
+            this.Name = name ?? this.Name;
+            this.Avatar = avatar ?? this.Avatar;
+            this.ModifiedBy = modifiedBy;
+            this.ModifiedOn = on;
+            this.Validate();
         }
+        
     }
 }

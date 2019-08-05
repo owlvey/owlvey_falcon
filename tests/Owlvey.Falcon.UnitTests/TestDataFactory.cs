@@ -11,12 +11,12 @@ namespace Owlvey.Falcon.UnitTests
             var entity = CustomerEntity.Factory.Create("test", DateTime.Now, "test");
             return entity;
         }
-        public static ProductEntity BuildProduct()
+        public static ProductEntity BuildProduct(CustomerEntity entity = null)
         {
+            var customer = entity ?? BuildCustomer();
             var createdBy = Guid.NewGuid().ToString("n");
-            var name = "test product";
-            var description = "test description";
-            var productEntity = ProductEntity.Factory.Create(name, description, DateTime.UtcNow, createdBy);
+            var name = "test product";            
+            var productEntity = ProductEntity.Factory.Create(name, DateTime.UtcNow, createdBy, customer);
             return productEntity;
         }
 
@@ -38,17 +38,15 @@ namespace Owlvey.Falcon.UnitTests
 
         public static (CustomerEntity, ProductEntity) BuildCustomerProduct() {
             var customer = TestDataFactory.BuildCustomer();
-            var product = TestDataFactory.BuildProduct();
-            customer.AddProduct(product);
+            var product = TestDataFactory.BuildProduct(customer);
             return (customer, product);
         }
 
         public static (CustomerEntity, ProductEntity, ServiceEntity) BuildCustomerProductService()
         {
             var customer = TestDataFactory.BuildCustomer();
-            var product = TestDataFactory.BuildProduct();
-            var service = TestDataFactory.BuildService("test", 99, "test", DateTime.Now);
-            customer.AddProduct(product);
+            var product = TestDataFactory.BuildProduct(customer);
+            var service = TestDataFactory.BuildService("test", 99, "test", DateTime.Now);            
             product.AddService(service);
 
             return (customer, product, service);
@@ -57,10 +55,9 @@ namespace Owlvey.Falcon.UnitTests
         public static (CustomerEntity, ProductEntity, ServiceEntity, FeatureEntity) BuildCustomerProductServiceFeature()
         {
             var customer = TestDataFactory.BuildCustomer();
-            var product = TestDataFactory.BuildProduct();
+            var product = TestDataFactory.BuildProduct(customer);
             var service = TestDataFactory.BuildService("test", 99, "test", DateTime.Now);
-            var feature = TestDataFactory.BuildFeature("test", "test", DateTime.Now);
-            customer.AddProduct(product);
+            var feature = TestDataFactory.BuildFeature("test", "test", DateTime.Now);            
             product.AddService(service);
             product.AddFeature(feature); 
             return (customer, product, service, feature);

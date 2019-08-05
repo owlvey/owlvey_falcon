@@ -13,7 +13,7 @@ namespace Owlvey.Falcon.Core.Entities
         }
         [Required]
         public string Name { get; set; }
-        [Required]
+        
         public string Description { get; set; }
 
         public CustomerEntity Customer { get; set; }

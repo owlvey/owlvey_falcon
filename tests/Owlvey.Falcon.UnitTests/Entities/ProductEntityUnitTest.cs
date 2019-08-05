@@ -8,10 +8,6 @@ namespace Owlvey.Falcon.UnitTests.Entities
 {
     public class ProductEntityUnitTest
     {
-        public ProductEntityUnitTest()
-        {
-
-        }
 
         [Fact]
         public void CreateProductEntitySuccess()
@@ -20,7 +16,9 @@ namespace Owlvey.Falcon.UnitTests.Entities
             var name = Guid.NewGuid().ToString("n");
             var description = Guid.NewGuid().ToString("n");
 
-            var productEntity = ProductEntity.Factory.Create(name, description, DateTime.UtcNow, createdBy);
+            var customer = TestDataFactory.BuildCustomer();
+
+            var productEntity = ProductEntity.Factory.Create(name, DateTime.UtcNow, createdBy, customer);
 
             Assert.Equal(name, productEntity.Name);
             Assert.Equal(description, productEntity.Description);
@@ -34,9 +32,11 @@ namespace Owlvey.Falcon.UnitTests.Entities
             var name = string.Empty;
             var description = string.Empty;
 
+            var customer = TestDataFactory.BuildCustomer();
+
             Assert.Throws<InvalidStateException>(() =>
             {
-                ProductEntity.Factory.Create(name, description, DateTime.UtcNow, createdBy);
+                ProductEntity.Factory.Create(name, DateTime.UtcNow, createdBy, customer);
             });
 
         }

@@ -6,8 +6,8 @@ namespace Owlvey.Falcon.Models
 {
     public class ProductBaseRp
     {
-        public string Key { get; set; }
-        public string Value { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 
     public class ProductGetRp : ProductBaseRp {
@@ -17,13 +17,14 @@ namespace Owlvey.Falcon.Models
 
     public class ProductGetListRp : ProductBaseRp
     {
+
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
     }
 
     public class ProductPostRp {
-        public string Key { get; set; }
-        public string Value { get; set; }
+        public string Name { get; set; }
+        public int CustomerId { get; set; }
     }
 
     public class ProductPutRp

@@ -1,5 +1,7 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Gateways;
 using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Repositories;
 using System;
@@ -13,16 +15,11 @@ namespace Owlvey.Falcon.Components
     public class JournalQueryComponent : BaseComponent, IJournalQueryComponent
     {
         private readonly FalconDbContext _dbContext;
-        public JournalQueryComponent(FalconDbContext dbContext)
+        public JournalQueryComponent(FalconDbContext dbContext, IDateTimeGateway dateTimeGateway, IMapper mapper) : base(dateTimeGateway, mapper)
         {
             this._dbContext = dbContext;
         }
-
-        /// <summary>
-        /// Get Journal by id
-        /// </summary>
-        /// <param name="key">Journal Id</param>
-        /// <returns></returns>
+                
         public async Task<JournalGetRp> GetJournalById(int id)
         {
             var entity = await this._dbContext.Journals.FirstOrDefaultAsync(c=> c.Id.Equals(id));
@@ -36,10 +33,6 @@ namespace Owlvey.Falcon.Components
             };
         }
 
-        /// <summary>
-        /// Get All Journal
-        /// </summary>
-        /// <returns></returns>
         public async Task<IEnumerable<JournalGetListRp>> GetJournals()
         {
             var entities = await this._dbContext.Journals.ToListAsync();

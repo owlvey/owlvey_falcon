@@ -11,5 +11,7 @@ namespace Owlvey.Falcon.Components
         Task<BaseComponentResultRp> CreateCustomer(CustomerPostRp model);
         Task<BaseComponentResultRp> UpdateCustomer(int id, CustomerPutRp model);
         Task<BaseComponentResultRp> DeleteCustomer(int id);
+
+   
     }
-}
+}   

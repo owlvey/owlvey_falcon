@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace Owlvey.Falcon.Components
 {
@@ -17,7 +18,7 @@ namespace Owlvey.Falcon.Components
         private readonly IUserIdentityGateway _identityService;
 
         public JournalComponent(FalconDbContext dbContext,
-            IUserIdentityGateway identityService)
+            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway, IMapper mapper) : base(dateTimeGateway, mapper)
         {
             this._dbContext = dbContext;
             this._identityService = identityService;

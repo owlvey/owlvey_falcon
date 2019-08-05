@@ -21,7 +21,7 @@ namespace Owlvey.Falcon.Core.Entities
         [Required]
         public string ModifiedBy { get; set;  }
         
-        public virtual void Delete() {
+        public virtual void Delete(DateTime on, string ModifiedBy) {
 
         }
                 
