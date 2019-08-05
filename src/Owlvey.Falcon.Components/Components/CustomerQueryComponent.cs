@@ -1,4 +1,5 @@
 using Owlvey.Falcon.Components;
+using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Repositories;
 using System;
@@ -11,10 +12,10 @@ namespace Owlvey.Falcon.Components
 {
     public class CustomerQueryComponent : BaseComponent, ICustomerQueryComponent
     {
-        private readonly ICustomerRepository _customerRepository;
-        public CustomerQueryComponent(ICustomerRepository customerRepository)
+        private readonly FalconDbContext _dbContext;
+        public CustomerQueryComponent(FalconDbContext dbContext)
         {
-            this._customerRepository = customerRepository;
+            this._dbContext = dbContext;
         }
 
         /// <summary>
@@ -24,7 +25,9 @@ namespace Owlvey.Falcon.Components
         /// <returns></returns>
         public async Task<CustomerGetRp> GetCustomerById(int id)
         {
-            var entity = await this._customerRepository.FindFirst(c=> c.Id.Equals(id));
+            var entities = await this._dbContext.Customers.Where(c => c.Id.Equals(id)).ToListAsync();
+
+            var entity = entities.FirstOrDefault();            
 
             if (entity == null)
                 return null;
@@ -40,8 +43,8 @@ namespace Owlvey.Falcon.Components
         /// </summary>
         /// <returns></returns>
         public async Task<IEnumerable<CustomerGetListRp>> GetCustomers()
-        {
-            var entities = await this._customerRepository.GetAll();
+        {            
+            var entities = await this._dbContext.Customers.ToListAsync();
 
             return entities.Select(entity => new CustomerGetListRp {
                 CreatedBy = entity.CreatedBy,

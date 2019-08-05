@@ -13,13 +13,13 @@ namespace Owlvey.Falcon.Components
 {
     public class CustomerComponent : BaseComponent, ICustomerComponent
     {
-        private readonly ICustomerRepository _customerRepository;
+        private readonly FalconDbContext _dbContext;
         private readonly IUserIdentityGateway _identityService;
 
-        public CustomerComponent(ICustomerRepository customerRepository,
+        public CustomerComponent(FalconDbContext dbContext,
             IUserIdentityGateway identityService)
         {
-            this._customerRepository = customerRepository;
+            this._dbContext = dbContext;
             this._identityService = identityService;
         }
 
@@ -32,8 +32,9 @@ namespace Owlvey.Falcon.Components
         {
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
-
-
+            var entity = CustomerEntity.Factory.Create(createdBy, DateTime.Now, model.Name);
+            await this._dbContext.AddAsync(entity);
+            await this._dbContext.SaveChangesAsync();
             return result;
         }
 

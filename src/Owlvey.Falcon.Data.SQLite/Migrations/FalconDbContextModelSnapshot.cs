@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Owlvey.Falcon.Data.SQLite.Context;
+using Owlvey.Falcon.Repositories;
 
 namespace Owlvey.Falcon.Data.SQLite.Migrations
 {

@@ -22,7 +22,7 @@ namespace Owlvey.Falcon.Models
     }
 
     public class CustomerPostRp {
-        public string Key { get; set; }
+        public string Name { get; set; }
         public string Value { get; set; }
     }
 
