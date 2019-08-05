@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Repositories;
@@ -11,10 +12,10 @@ namespace Owlvey.Falcon.Components
 {
     public class AppSettingQueryComponent : BaseComponent, IAppSettingQueryComponent
     {
-        private readonly IAppSettingRepository _appSettingRepository;
-        public AppSettingQueryComponent(IAppSettingRepository appSettingRepository)
+        private readonly FalconDbContext _dbContext;
+        public AppSettingQueryComponent(FalconDbContext dbContext)
         {
-            this._appSettingRepository = appSettingRepository;
+            this._dbContext = dbContext;
         }
 
         /// <summary>
@@ -24,7 +25,7 @@ namespace Owlvey.Falcon.Components
         /// <returns></returns>
         public async Task<AppSettingGetRp> GetAppSettingById(string key)
         {
-            var entity = await this._appSettingRepository.GetAppSettingByKey(key);
+            var entity = await this._dbContext.AppSettings.FirstOrDefaultAsync(c=> c.Key.Equals(key));
 
             if (entity == null)
                 return null;
@@ -43,7 +44,7 @@ namespace Owlvey.Falcon.Components
         /// <returns></returns>
         public async Task<IEnumerable<AppSettingGetListRp>> GetSettings()
         {
-            var entities = await this._appSettingRepository.GetAll();
+            var entities = await this._dbContext.AppSettings.ToListAsync();
 
             return entities.Select(entity => new AppSettingGetListRp {
                 Key = entity.Key,

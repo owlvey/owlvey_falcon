@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Owlvey.Falcon.API;
 using Owlvey.Falcon.API.Controllers;
-using Owlvey.Falcon.Data.SQLite.Context;
 using Owlvey.Falcon.IoC;
 using Owlvey.Falcon.Options;
 using Owlvey.Falcon.Repositories;
@@ -43,8 +42,7 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
             services.AddMvc().AddApplicationPart(typeof(BaseController).Assembly);
 
             services.AddApplicationServices(Configuration);
-            services.AddRepositories(Configuration);
-
+            
             var connectionStringBuilder = new SqliteConnectionStringBuilder()
             {
                 DataSource = ":memory:"

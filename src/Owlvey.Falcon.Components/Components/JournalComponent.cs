@@ -13,13 +13,13 @@ namespace Owlvey.Falcon.Components
 {
     public class JournalComponent : BaseComponent, IJournalComponent
     {
-        private readonly IJournalRepository _journalRepository;
+        private readonly FalconDbContext _dbContext;
         private readonly IUserIdentityGateway _identityService;
 
-        public JournalComponent(IJournalRepository journalRepository,
+        public JournalComponent(FalconDbContext dbContext,
             IUserIdentityGateway identityService)
         {
-            this._journalRepository = journalRepository;
+            this._dbContext = dbContext;
             this._identityService = identityService;
         }
 

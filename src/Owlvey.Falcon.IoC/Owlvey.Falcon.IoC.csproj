@@ -6,16 +6,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.6" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.HealthChecks.SqlServer" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Owlvey.Falcon.Components\Owlvey.Falcon.Components.csproj" />
     <ProjectReference Include="..\Owlvey.Falcon.Identity\Owlvey.Falcon.Identity.csproj" />
     <ProjectReference Include="..\Owlvey.Falcon.Core\Owlvey.Falcon.Core.csproj" />
-    <ProjectReference Include="..\Owlvey.Falcon.Data.SQLite\Owlvey.Falcon.Data.SQLite.csproj" />
     <ProjectReference Include="..\Owlvey.Falcon.Identity\Owlvey.Falcon.Identity.csproj" />
   </ItemGroup>
 

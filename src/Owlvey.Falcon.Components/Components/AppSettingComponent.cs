@@ -8,18 +8,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Owlvey.Falcon.Components
 {
     public class AppSettingComponent : BaseComponent, IAppSettingComponent
     {
-        private readonly IAppSettingRepository _appSettingRepository;
+        private readonly FalconDbContext _dbContext;
         private readonly IUserIdentityGateway _identityService;
 
-        public AppSettingComponent(IAppSettingRepository appSettingRepository,
+        public AppSettingComponent(FalconDbContext dbContext,
             IUserIdentityGateway identityService)
         {
-            this._appSettingRepository = appSettingRepository;
+            this._dbContext = dbContext;
             this._identityService = identityService;
         }
 
@@ -35,16 +36,15 @@ namespace Owlvey.Falcon.Components
 
             var appSetting = AppSettingEntity.Factory.Create(model.Key, model.Value, true, DateTime.UtcNow, createdBy);
 
-            var entity = await this._appSettingRepository.GetAppSettingByKey(model.Key);
+            var entity = await this._dbContext.AppSettings.FirstOrDefaultAsync(c=> c.Key.Equals(model.Key));
             if (entity != null)
             {
                 result.AddConflict($"The Key {model.Key} has already been taken.");
                 return result;
             }
 
-            this._appSettingRepository.Add(appSetting);
-
-            await this._appSettingRepository.SaveChanges();
+            await this._dbContext.AddAsync(appSetting);
+            await this._dbContext.SaveChangesAsync();
 
             result.AddResult("Key", appSetting.Key);
 
@@ -60,7 +60,7 @@ namespace Owlvey.Falcon.Components
         {
             var result = new BaseComponentResultRp();
 
-            var appSetting = await this._appSettingRepository.GetAppSettingByKey(key);
+            var appSetting = await this._dbContext.AppSettings.FirstOrDefaultAsync(c => c.Key.Equals(key));
 
             if (appSetting == null)
             {
@@ -68,12 +68,9 @@ namespace Owlvey.Falcon.Components
                 return result;
             }
             
-            appSetting.ModifiedBy = this._identityService.GetIdentity();
-            appSetting.ModifiedOn = DateTime.UtcNow;
+            this._dbContext.Remove(appSetting);
 
-            this._appSettingRepository.Remove(appSetting);
-
-            await this._appSettingRepository.SaveChanges();
+            await this._dbContext.SaveChangesAsync();
 
             return result;
         }
@@ -86,7 +83,7 @@ namespace Owlvey.Falcon.Components
         public async Task<BaseComponentResultRp> UpdateAppSetting(string key, AppSettingPutRp model)
         {
             var result = new BaseComponentResultRp();
-            var appSetting = await this._appSettingRepository.GetAppSettingByKey(key);
+            var appSetting = await this._dbContext.AppSettings.FirstOrDefaultAsync(c => c.Key.Equals(key));
 
             if (appSetting == null)
             {
@@ -98,9 +95,8 @@ namespace Owlvey.Falcon.Components
             appSetting.ModifiedBy = this._identityService.GetIdentity();
             appSetting.ModifiedOn = DateTime.UtcNow;
 
-            this._appSettingRepository.Update(appSetting);
-
-            await this._appSettingRepository.SaveChanges();
+            this._dbContext.Update(appSetting);
+            await this._dbContext.SaveChangesAsync();
 
             return result;
         }

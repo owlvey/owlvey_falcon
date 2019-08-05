@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Repositories;
@@ -11,10 +12,11 @@ namespace Owlvey.Falcon.Components
 {
     public class SquadQueryComponent : BaseComponent, ISquadQueryComponent
     {
-        private readonly ISquadRepository _squadRepository;
-        public SquadQueryComponent(ISquadRepository squadRepository)
+        private readonly FalconDbContext _dbContext;
+
+        public SquadQueryComponent(FalconDbContext dbContext)
         {
-            this._squadRepository = squadRepository;
+            this._dbContext = dbContext;
         }
 
         /// <summary>
@@ -24,7 +26,7 @@ namespace Owlvey.Falcon.Components
         /// <returns></returns>
         public async Task<SquadGetRp> GetSquadById(int id)
         {
-            var entity = await this._squadRepository.FindFirst(c=> c.Id.Equals(id));
+            var entity = await this._dbContext.Squads.FirstOrDefaultAsync(c=> c.Id.Equals(id));
 
             if (entity == null)
                 return null;
@@ -41,7 +43,7 @@ namespace Owlvey.Falcon.Components
         /// <returns></returns>
         public async Task<IEnumerable<SquadGetListRp>> GetSquads()
         {
-            var entities = await this._squadRepository.GetAll();
+            var entities = await this._dbContext.Squads.ToListAsync();
 
             return entities.Select(entity => new SquadGetListRp {
                 CreatedBy = entity.CreatedBy,

@@ -12,7 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Owlvey.Falcon.API.Extensions;
-using Owlvey.Falcon.Data.SQLite.Context;
 using Owlvey.Falcon.IoC;
 using Owlvey.Falcon.Options;
 using Owlvey.Falcon.Repositories;
@@ -36,7 +35,6 @@ namespace Owlvey.Falcon.API
             services.AddMvc();
             services.AddCors();
             services.AddApplicationServices(Configuration);
-            services.AddRepositories(Configuration);
             services.SetupDataBase(Configuration);
             services.AddCustomSwagger(Configuration, Environment);
         }

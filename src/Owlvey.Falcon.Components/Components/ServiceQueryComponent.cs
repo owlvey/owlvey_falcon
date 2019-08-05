@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Repositories;
@@ -11,10 +12,11 @@ namespace Owlvey.Falcon.Components
 {
     public class ServiceQueryComponent : BaseComponent, IServiceQueryComponent
     {
-        private readonly IServiceRepository _serviceRepository;
-        public ServiceQueryComponent(IServiceRepository serviceRepository)
+        private readonly FalconDbContext _dbContext;
+
+        public ServiceQueryComponent(FalconDbContext dbContext)
         {
-            this._serviceRepository = serviceRepository;
+            this._dbContext = dbContext;
         }
 
         /// <summary>
@@ -24,7 +26,7 @@ namespace Owlvey.Falcon.Components
         /// <returns></returns>
         public async Task<ServiceGetRp> GetServiceById(int id)
         {
-            var entity = await this._serviceRepository.FindFirst(c=> c.Id.Equals(id));
+            var entity = await this._dbContext.Services.FirstOrDefaultAsync(c=> c.Id.Equals(id));
 
             if (entity == null)
                 return null;
@@ -41,7 +43,7 @@ namespace Owlvey.Falcon.Components
         /// <returns></returns>
         public async Task<IEnumerable<ServiceGetListRp>> GetServices()
         {
-            var entities = await this._serviceRepository.GetAll();
+            var entities = await this._dbContext.Services.ToListAsync();
 
             return entities.Select(entity => new ServiceGetListRp {
                 CreatedBy = entity.CreatedBy,

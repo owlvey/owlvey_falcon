@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Moq;
 using Owlvey.Falcon.Components;
-using Owlvey.Falcon.Data.SQLite.Context;
-using Owlvey.Falcon.Data.SQLite.Repositories;
 using Owlvey.Falcon.Gateways;
 using Owlvey.Falcon.Repositories;
 using System;
@@ -24,7 +22,6 @@ namespace Owlvey.Falcon.ComponentsTests
 
                 mockIdentity.Setup(c => c.GetIdentity()).Returns("test");
 
-                var repository = new CustomerRepository(context);
                 var customerComponet = new CustomerComponent(context, mockIdentity.Object);
                 var customerQueryComponent = new CustomerQueryComponent(context); 
 

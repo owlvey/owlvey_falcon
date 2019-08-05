@@ -13,13 +13,13 @@ namespace Owlvey.Falcon.Components
 {
     public class FeatureComponent : BaseComponent, IFeatureComponent
     {
-        private readonly IFeatureRepository _featureRepository;
+        private readonly FalconDbContext _dbContext;
         private readonly IUserIdentityGateway _identityService;
 
-        public FeatureComponent(IFeatureRepository featureRepository,
+        public FeatureComponent(FalconDbContext dbContext,
             IUserIdentityGateway identityService)
         {
-            this._featureRepository = featureRepository;
+            this._dbContext = dbContext;
             this._identityService = identityService;
         }
 

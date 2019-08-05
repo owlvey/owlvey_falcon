@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Repositories;
@@ -11,10 +12,11 @@ namespace Owlvey.Falcon.Components
 {
     public class ProductQueryComponent : BaseComponent, IProductQueryComponent
     {
-        private readonly IProductRepository _productRepository;
-        public ProductQueryComponent(IProductRepository productRepository)
+        private readonly FalconDbContext _dbContext;
+
+        public ProductQueryComponent(FalconDbContext dbContext)
         {
-            this._productRepository = productRepository;
+            this._dbContext = dbContext;
         }
 
         /// <summary>
@@ -24,7 +26,7 @@ namespace Owlvey.Falcon.Components
         /// <returns></returns>
         public async Task<ProductGetRp> GetProductById(int id)
         {
-            var entity = await this._productRepository.FindFirst(c=> c.Id.Equals(id));
+            var entity = await this._dbContext.Products.FirstOrDefaultAsync(c=> c.Id.Equals(id));
 
             if (entity == null)
                 return null;
@@ -41,7 +43,7 @@ namespace Owlvey.Falcon.Components
         /// <returns></returns>
         public async Task<IEnumerable<ProductGetListRp>> GetProducts()
         {
-            var entities = await this._productRepository.GetAll();
+            var entities = await this._dbContext.Products.ToListAsync();
 
             return entities.Select(entity => new ProductGetListRp {
                 CreatedBy = entity.CreatedBy,

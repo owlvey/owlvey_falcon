@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Repositories;
@@ -11,10 +12,10 @@ namespace Owlvey.Falcon.Components
 {
     public class JournalQueryComponent : BaseComponent, IJournalQueryComponent
     {
-        private readonly IJournalRepository _journalRepository;
-        public JournalQueryComponent(IJournalRepository journalRepository)
+        private readonly FalconDbContext _dbContext;
+        public JournalQueryComponent(FalconDbContext dbContext)
         {
-            this._journalRepository = journalRepository;
+            this._dbContext = dbContext;
         }
 
         /// <summary>
@@ -24,7 +25,7 @@ namespace Owlvey.Falcon.Components
         /// <returns></returns>
         public async Task<JournalGetRp> GetJournalById(int id)
         {
-            var entity = await this._journalRepository.FindFirst(c=> c.Id.Equals(id));
+            var entity = await this._dbContext.Journals.FirstOrDefaultAsync(c=> c.Id.Equals(id));
 
             if (entity == null)
                 return null;
@@ -41,7 +42,7 @@ namespace Owlvey.Falcon.Components
         /// <returns></returns>
         public async Task<IEnumerable<JournalGetListRp>> GetJournals()
         {
-            var entities = await this._journalRepository.GetAll();
+            var entities = await this._dbContext.Journals.ToListAsync();
 
             return entities.Select(entity => new JournalGetListRp {
                 CreatedBy = entity.CreatedBy,
