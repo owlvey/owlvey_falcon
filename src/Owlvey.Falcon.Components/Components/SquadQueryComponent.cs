@@ -39,6 +39,13 @@ namespace Owlvey.Falcon.Components
             };
         }
 
+        public async Task<SquadGetRp> GetSquadByName(int customerId, string name)
+        {
+            var entity = await this._dbContext.Squads.SingleOrDefaultAsync(c => c.Customer.Id == customerId && c.Name == name );
+
+            return this._mapper.Map<SquadGetRp>(entity);
+        }
+
         /// <summary>
         /// Get All Squad
         /// </summary>

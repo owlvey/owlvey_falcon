@@ -23,6 +23,8 @@ namespace Owlvey.Falcon.Repositories
         public DbSet<FeatureEntity> Features { get; set; }
         public DbSet<SourceEntity> Journals { get; set; }
 
+        public DbSet<MemberEntity> Members { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             foreach (IMutableEntityType entity in modelBuilder.Model.GetEntityTypes())

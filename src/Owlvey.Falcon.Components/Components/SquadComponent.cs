@@ -32,12 +32,10 @@ namespace Owlvey.Falcon.Components
         {
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
-
             var customer = await this._dbContext.Customers.SingleAsync(c => c.Id == model.CustomerId);
-            var entity = SquadEntity.Factory.Create(model.Name, this._datetimeGateway.GetCurrentDateTime(), createdBy);
+            var entity = SquadEntity.Factory.Create(model.Name, this._datetimeGateway.GetCurrentDateTime(), createdBy, customer);
             this._dbContext.Squads.Add(entity);
             await this._dbContext.SaveChangesAsync();
-
             return result;
         }
 

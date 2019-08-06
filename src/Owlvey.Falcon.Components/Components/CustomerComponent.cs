@@ -28,7 +28,7 @@ namespace Owlvey.Falcon.Components
             await this._dbContext.AddAsync(entity);
             await this._dbContext.SaveChangesAsync();
             return result;
-        }
+        }        
 
         public async Task<BaseComponentResultRp> DeleteCustomer(int id)
         {
