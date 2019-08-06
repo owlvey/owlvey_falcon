@@ -11,11 +11,11 @@ namespace Owlvey.Falcon.API.Controllers
     [Route("services")]
     public class ServiceController : BaseController
     {
-        private readonly IServiceQueryComponent _ServiceQueryService;
-        private readonly IServiceComponent _ServiceService;
+        private readonly ServiceQueryComponent _ServiceQueryService;
+        private readonly ServiceComponent _ServiceService;
         
-        public ServiceController(IServiceQueryComponent ServiceQueryService,
-                                    IServiceComponent ServiceService) : base()
+        public ServiceController(ServiceQueryComponent ServiceQueryService,
+                                 ServiceComponent ServiceService) : base()
         {
             this._ServiceQueryService = ServiceQueryService;
             this._ServiceService = ServiceService;

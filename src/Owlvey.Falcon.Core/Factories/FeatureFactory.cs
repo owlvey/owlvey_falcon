@@ -8,7 +8,8 @@ namespace Owlvey.Falcon.Core.Entities
     {
         public static class Factory {
 
-            public static FeatureEntity Create(string name, DateTime on, string user)
+            public static FeatureEntity Create(string name, DateTime on, string user, 
+                ProductEntity product)
             {
                 var entity = new FeatureEntity()
                 {
@@ -17,6 +18,7 @@ namespace Owlvey.Falcon.Core.Entities
                     ModifiedBy = user,
                     CreatedOn = on,
                     ModifiedOn = on,
+                    Product = product
                 };
                 entity.Validate();
                 return entity;

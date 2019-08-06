@@ -8,13 +8,12 @@ namespace Owlvey.Falcon.Core.Entities
     {
         public static class Factory {
 
-            public static SquadEntity Create(string name, string description, DateTime on, 
+            public static SquadEntity Create(string name, DateTime on, 
                 string user, string avatar = "https://cdn.iconscout.com/icon/free/png-256/avatar-375-456327.png")
             {
                 var entity = new SquadEntity()
                 {
-                    Name = name,
-                    Description = description,
+                    Name = name,                    
                     CreatedBy = user,
                     ModifiedBy = user,
                     CreatedOn = on,

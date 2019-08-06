@@ -1,36 +1,40 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Owlvey.Falcon.Components.CustomerComponent">
-    <Position X="5.5" Y="3" Width="1.5" />
+    <Position X="7.5" Y="7" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAQAQAAAAAABAAAAAAAAAAAAAABAAAABAAAAAA=</HashCode>
+      <HashCode>AAABAAAQAQAAAAAABAAAAAAAAAAAAAABAAAAAAAAAAA=</HashCode>
       <FileName>Components\CustomerComponent.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
   </Class>
   <Class Name="Owlvey.Falcon.Components.SquadComponent">
-    <Position X="1" Y="5.25" Width="1.5" />
+    <Position X="3.5" Y="7" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAgAAAAgAAAAAAAAAAAAAAAAAAABgAAACAAAAAA=</HashCode>
+      <HashCode>AAABAAgAAAAAAAAAAAAAAAAAAAAAAAABgAAACAAAAAA=</HashCode>
       <FileName>Components\SquadComponent.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="_squadRepository" />
-    </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Interface Name="Owlvey.Falcon.Repositories.ISquadRepository" Collapsed="true">
-    <Position X="4" Y="6.5" Width="1.5" />
+  <Class Name="Owlvey.Falcon.Components.BaseComponent">
+    <Position X="5.75" Y="4.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Repositories\ISquadRepository.cs</FileName>
+      <HashCode>AAAAAAAAgAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Components\BaseComponent.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_mapper" />
+      <Field Name="_datetimeGateway" />
+    </ShowAsAssociation>
+  </Class>
+  <Interface Name="AutoMapper.IMapper" Collapsed="true">
+    <Position X="10" Y="4" Width="1.5" />
+    <TypeIdentifier />
   </Interface>
-  <Interface Name="Owlvey.Falcon.Repositories.ICustomerRepository" Collapsed="true">
-    <Position X="9" Y="3" Width="1.5" />
+  <Interface Name="Owlvey.Falcon.Gateways.IDateTimeGateway" Collapsed="true">
+    <Position X="3.25" Y="4.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Repositories\ICustomerRepository.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Gateways\IDateTimeGateway.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Font Name="Segoe UI" Size="9" />

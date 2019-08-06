@@ -20,13 +20,15 @@ namespace Owlvey.Falcon.UnitTests
             return productEntity;
         }
 
-        public static ServiceEntity BuildService(string name, float slo, string createdBy, DateTime on) {            
-            var entity = ServiceEntity.Factory.Create(name, name, slo, on, createdBy);
+        public static ServiceEntity BuildService(string name, float slo, string createdBy, DateTime on) {
+            var (_, product) = TestDataFactory.BuildCustomerProduct();
+            var entity = ServiceEntity.Factory.Create(name, slo, on, createdBy, product);
             return entity;
         }
         public static FeatureEntity BuildFeature(string name, string createdBy, DateTime on)
         {
-            var entity = FeatureEntity.Factory.Create(name, on, createdBy);
+            var (_, product) = TestDataFactory.BuildCustomerProduct();
+            var entity = FeatureEntity.Factory.Create(name, on, createdBy, product);
             return entity;
         }
         public static SourceEntity BuildSource(string name="/owlvey", DateTime? on=null, string createdBy="test") {

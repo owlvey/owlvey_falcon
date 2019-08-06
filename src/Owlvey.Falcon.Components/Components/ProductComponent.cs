@@ -13,16 +13,16 @@ using AutoMapper;
 
 namespace Owlvey.Falcon.Components
 {
-    public class ProductComponent : BaseComponent, IProductComponent
+    public class ProductComponent : BaseComponent
     {
         private readonly FalconDbContext _dbContext;
-        private readonly IUserIdentityGateway _identityService;        
+        
 
         public ProductComponent(FalconDbContext dbContext,
-            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway, IMapper mapper) : base(dateTimeGateway, mapper)
+            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway, IMapper mapper) : base(dateTimeGateway, mapper, identityService)
         {
             this._dbContext = dbContext;
-            this._identityService = identityService;            
+            
         }
         
         public async Task<BaseComponentResultRp> CreateProduct(ProductPostRp model)

@@ -11,11 +11,11 @@ namespace Owlvey.Falcon.API.Controllers
     [Route("products")]
     public class ProductController : BaseController
     {
-        private readonly IProductQueryComponent _productQueryService;
-        private readonly IProductComponent _productService;
+        private readonly ProductQueryComponent _productQueryService;
+        private readonly ProductComponent _productService;
         
-        public ProductController(IProductQueryComponent productQueryService,
-                                    IProductComponent productService) : base()
+        public ProductController(ProductQueryComponent productQueryService,
+                                 ProductComponent productService) : base()
         {
             this._productQueryService = productQueryService;
             this._productService = productService;

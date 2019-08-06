@@ -20,17 +20,16 @@ namespace Owlvey.Falcon.UnitTests.Entities
             var name = Guid.NewGuid().ToString("n");
             var description = Guid.NewGuid().ToString("n");
 
-            var squadEntity = SquadEntity.Factory.Create(name, description, DateTime.UtcNow, createdBy);
+            var squadEntity = SquadEntity.Factory.Create(name, DateTime.UtcNow, createdBy);
 
-            Assert.Equal(name, squadEntity.Name);
-            Assert.Equal(description, squadEntity.Description);
+            Assert.Equal(name, squadEntity.Name);            
             Assert.Equal(createdBy, squadEntity.CreatedBy);
         }
 
         [Fact]
         public void CreateUserSuccess()
         {
-            var entity = SquadEntity.Factory.Create("test", "test", DateTime.Now, "test");
+            var entity = SquadEntity.Factory.Create("test",  DateTime.Now, "test");
             Assert.NotNull(entity.CreatedBy);
             Assert.NotNull(entity.CreatedOn);
             Assert.NotNull(entity.ModifiedBy);
@@ -47,7 +46,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
 
             Assert.Throws<InvalidStateException>(() =>
             {
-                SquadEntity.Factory.Create(name, description, DateTime.UtcNow, createdBy);
+                SquadEntity.Factory.Create(name, DateTime.UtcNow, createdBy);
             });
 
         }

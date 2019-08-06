@@ -9,7 +9,7 @@ namespace Owlvey.Falcon.Core.Entities
     {
         [Required]
         public string Name { get; protected set; }
-        [Required]
+        
         public string Description { get; protected set; }
         public string Avatar { get; protected set; }
 

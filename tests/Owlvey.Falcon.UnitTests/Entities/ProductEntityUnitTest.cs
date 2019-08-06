@@ -13,15 +13,13 @@ namespace Owlvey.Falcon.UnitTests.Entities
         public void CreateProductEntitySuccess()
         {
             var createdBy = Guid.NewGuid().ToString("n");
-            var name = Guid.NewGuid().ToString("n");
-            var description = Guid.NewGuid().ToString("n");
+            var name = Guid.NewGuid().ToString("n");            
 
             var customer = TestDataFactory.BuildCustomer();
 
             var productEntity = ProductEntity.Factory.Create(name, DateTime.UtcNow, createdBy, customer);
 
-            Assert.Equal(name, productEntity.Name);
-            Assert.Equal(description, productEntity.Description);
+            Assert.Equal(name, productEntity.Name);            
             Assert.Equal(createdBy, productEntity.CreatedBy);
         }
 

@@ -2,6 +2,7 @@ using Owlvey.Falcon.Gateways;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Core.Entities;
+using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.Repositories;
 using System;
 using System.Collections.Generic;
@@ -14,14 +15,12 @@ namespace Owlvey.Falcon.Components
 {
     public class SquadComponent : BaseComponent, ISquadComponent
     {
-        private readonly FalconDbContext _dbContext;
-        private readonly IUserIdentityGateway _identityService;
+        private readonly FalconDbContext _dbContext;        
 
         public SquadComponent(FalconDbContext dbContext,
-            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway, IMapper mapper) : base(dateTimeGateway, mapper)
+            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway, IMapper mapper) : base(dateTimeGateway, mapper, identityService)
         {
-            this._dbContext = dbContext;
-            this._identityService = identityService;
+            this._dbContext = dbContext;            
         }
 
         /// <summary>
@@ -34,6 +33,10 @@ namespace Owlvey.Falcon.Components
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
 
+            var customer = await this._dbContext.Customers.SingleAsync(c => c.Id == model.CustomerId);
+            var entity = SquadEntity.Factory.Create(model.Name, this._datetimeGateway.GetCurrentDateTime(), createdBy);
+            this._dbContext.Squads.Add(entity);
+            await this._dbContext.SaveChangesAsync();
 
             return result;
         }

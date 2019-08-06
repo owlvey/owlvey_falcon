@@ -8,6 +8,7 @@ namespace Owlvey.Falcon.Components
     {
         public static void ConfigureMappers(IMapperConfigurationExpression cfg ) {
             cfg.CreateMap<CustomerEntity, Models.CustomerGetRp>();
+            cfg.CreateMap<CustomerEntity, Models.CustomerGetListRp>();
         }
     }
 }

@@ -14,14 +14,12 @@ namespace Owlvey.Falcon.Components
 {
     public class JournalComponent : BaseComponent, IJournalComponent
     {
-        private readonly FalconDbContext _dbContext;
-        private readonly IUserIdentityGateway _identityService;
+        private readonly FalconDbContext _dbContext;        
 
         public JournalComponent(FalconDbContext dbContext,
-            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway, IMapper mapper) : base(dateTimeGateway, mapper)
+            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway, IMapper mapper) : base(dateTimeGateway, mapper, identityService)
         {
-            this._dbContext = dbContext;
-            this._identityService = identityService;
+            this._dbContext = dbContext;            
         }
 
         /// <summary>

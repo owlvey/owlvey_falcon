@@ -51,7 +51,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
         {
             var entity = TestDataFactory.BuildCustomer();
             var product = ProductEntity.Factory.Create("test",  DateTime.Now, "user", entity);            
-            Assert.NotEmpty(entity.Products);
+            Assert.NotNull(product.Customer);
         }
     }
 }

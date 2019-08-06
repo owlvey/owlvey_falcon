@@ -15,8 +15,8 @@ namespace Owlvey.Falcon.Components
     public class SquadQueryComponent : BaseComponent, ISquadQueryComponent
     {
         private readonly FalconDbContext _dbContext;
-
-        public SquadQueryComponent(FalconDbContext dbContext, IDateTimeGateway dateTimeGateway, IMapper mapper) : base(dateTimeGateway, mapper)
+        public SquadQueryComponent(FalconDbContext dbContext, IDateTimeGateway dateTimeGateway, IMapper mapper,
+            IUserIdentityGateway identityService) : base(dateTimeGateway, mapper, identityService)
         {
             this._dbContext = dbContext;
         }
@@ -47,10 +47,7 @@ namespace Owlvey.Falcon.Components
         {
             var entities = await this._dbContext.Squads.ToListAsync();
 
-            return entities.Select(entity => new SquadGetListRp {
-                CreatedBy = entity.CreatedBy,
-                CreatedOn = entity.CreatedOn
-            });
+            return this._mapper.Map<IEnumerable<SquadGetListRp>>(entities);
         }
     }
 }

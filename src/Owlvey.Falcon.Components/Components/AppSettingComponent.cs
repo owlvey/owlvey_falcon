@@ -15,16 +15,14 @@ namespace Owlvey.Falcon.Components
 {
     public class AppSettingComponent : BaseComponent, IAppSettingComponent
     {
-        private readonly FalconDbContext _dbContext;
-        private readonly IUserIdentityGateway _identityService;
+        private readonly FalconDbContext _dbContext;        
 
         public AppSettingComponent(FalconDbContext dbContext,
             IUserIdentityGateway identityService,
             IDateTimeGateway dateTimeGateway,
-            IMapper mapper): base(dateTimeGateway, mapper)
+            IMapper mapper): base(dateTimeGateway, mapper, identityService)
         {
-            this._dbContext = dbContext;
-            this._identityService = identityService;
+            this._dbContext = dbContext;            
         }
 
         /// <summary>

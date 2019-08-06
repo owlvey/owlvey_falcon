@@ -2,6 +2,7 @@ using Owlvey.Falcon.Gateways;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Core.Entities;
+using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.Repositories;
 using System;
 using System.Collections.Generic;
@@ -14,14 +15,13 @@ namespace Owlvey.Falcon.Components
 {
     public class FeatureComponent : BaseComponent, IFeatureComponent
     {
-        private readonly FalconDbContext _dbContext;
-        private readonly IUserIdentityGateway _identityService;
+        private readonly FalconDbContext _dbContext;        
 
         public FeatureComponent(FalconDbContext dbContext,
-            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway, IMapper mapper) : base(dateTimeGateway, mapper)
+            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway, IMapper mapper) : base(dateTimeGateway, mapper, identityService)
         {
             this._dbContext = dbContext;
-            this._identityService = identityService;
+            
         }
 
         /// <summary>
@@ -34,8 +34,13 @@ namespace Owlvey.Falcon.Components
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
 
+            var product = await this._dbContext.Products.SingleAsync(c => c.Id == model.ProductId);
 
+            var entity = FeatureEntity.Factory.Create(model.Name, this._datetimeGateway.GetCurrentDateTime(), createdBy, product);
 
+            this._dbContext.Add(entity);
+
+            await this._dbContext.SaveChangesAsync();
 
             return result;
         }

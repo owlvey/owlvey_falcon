@@ -16,7 +16,7 @@ namespace Owlvey.Falcon.Components
     {
         private readonly FalconDbContext _dbContext;
         
-        public FeatureQueryComponent(FalconDbContext dbContext, IDateTimeGateway dateTimeGateway, IMapper mapper) : base(dateTimeGateway, mapper)
+        public FeatureQueryComponent(FalconDbContext dbContext, IDateTimeGateway dateTimeGateway, IMapper mapper, IUserIdentityGateway userIdentityGateway) : base(dateTimeGateway, mapper, userIdentityGateway)
         {
             this._dbContext = dbContext;
         }
@@ -46,11 +46,7 @@ namespace Owlvey.Falcon.Components
         public async Task<IEnumerable<FeatureGetListRp>> GetFeatures()
         {
             var entities = await this._dbContext.Features.ToListAsync();
-
-            return entities.Select(entity => new FeatureGetListRp {
-                CreatedBy = entity.CreatedBy,
-                CreatedOn = entity.CreatedOn
-            });
+            return this._mapper.Map<IEnumerable< FeatureGetListRp>>(entities);
         }
     }
 }

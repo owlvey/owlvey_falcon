@@ -12,11 +12,11 @@ using System.Threading.Tasks;
 
 namespace Owlvey.Falcon.Components
 {
-    public class ServiceQueryComponent : BaseComponent, IServiceQueryComponent
+    public class ServiceQueryComponent : BaseComponent
     {
         private readonly FalconDbContext _dbContext;
 
-        public ServiceQueryComponent(FalconDbContext dbContext, IDateTimeGateway dateTimeGateway, IMapper mapper) : base(dateTimeGateway, mapper)
+        public ServiceQueryComponent(FalconDbContext dbContext, IDateTimeGateway dateTimeGateway, IMapper mapper, IUserIdentityGateway identityService) : base(dateTimeGateway, mapper, identityService)
         {
             this._dbContext = dbContext;
         }
@@ -37,11 +37,7 @@ namespace Owlvey.Falcon.Components
         public async Task<IEnumerable<ServiceGetListRp>> GetServices()
         {
             var entities = await this._dbContext.Services.ToListAsync();
-
-            return entities.Select(entity => new ServiceGetListRp {
-                CreatedBy = entity.CreatedBy,
-                CreatedOn = entity.CreatedOn
-            });
+            return this._mapper.Map<IEnumerable<ServiceGetListRp>>(entities);
         }
     }
 }

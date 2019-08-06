@@ -27,6 +27,10 @@ namespace Owlvey.Falcon.ComponentsTests
             {
                 CustomerComponentConfiguration.ConfigureMappers(cfg);
                 ProductComponentConfiguration.ConfigureMappers(cfg);
+                FeatureComponentConfiguration.ConfigureMappers(cfg);
+                ServiceComponentConfiguration.ConfigureMappers(cfg);
+                UserComponentConfiguration.ConfigureMappers(cfg);
+                SquadComponentConfiguration.ConfigureMappers(cfg);
             });
             configuration.AssertConfigurationIsValid();
             var mapper = configuration.CreateMapper();
@@ -52,6 +56,18 @@ namespace Owlvey.Falcon.ComponentsTests
             });
             var customer = await customerQueryComponent.GetCustomerByName(name);
             return customer.Id;
+        }
+
+        public static async Task<int> BuildUser(Container container, string email = "test@test.com")
+        {
+            var userComponent = container.GetInstance<UserComponent>();
+            
+            await userComponent.CreateUser(new Models.UserPostRp()
+            {
+                Email = email
+            });
+            var user = await userComponent.GetUserByEmail(email);
+            return user.Id;
         }
 
         public static async Task<(int customer, int product)> BuildProduct(Container container,

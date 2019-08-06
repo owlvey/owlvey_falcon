@@ -12,7 +12,7 @@ namespace Owlvey.Falcon.ComponentsTests
         {
             var container = ComponentTestFactory.BuildContainer();
 
-            var (customerId, productId) = await ComponentTestFactory.BuildProduct(container);
+            var (_, productId) = await ComponentTestFactory.BuildProduct(container);
 
             var featureComponent = container.GetInstance<FeatureComponent>();
             var featureQueryComponent = container.GetInstance<FeatureQueryComponent>();
@@ -21,6 +21,9 @@ namespace Owlvey.Falcon.ComponentsTests
                  Name="test",
                  ProductId=productId                 
             });
+
+            var features = await featureQueryComponent.GetFeatures();
+            Assert.NotEmpty(features);
             
         }
     }

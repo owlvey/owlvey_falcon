@@ -1,33 +1,33 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Owlvey.Falcon.Models
 {
-    public class ServiceBaseRp
+    public class UserBaseRp
     {
-        public string Name { get; set; }
+        public string Email { get; set; }
         public int Id { get; set; }
     }
 
-    public class ServiceGetRp : ServiceBaseRp {
-        public string CreatedBy { get; set; }
-        public DateTime? CreatedOn { get; set; }
-    }
-
-    public class ServiceGetListRp : ServiceBaseRp
+    public class UserGetRp : UserBaseRp
     {
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
     }
 
-    public class ServicePostRp {
-        public string Name { get; set; }
-        public int ProductId { get; set; }
-        public float SLO { get; set; }
+    public class UserGetListRp : UserBaseRp
+    {
+        public string CreatedBy { get; set; }
+        public DateTime? CreatedOn { get; set; }
     }
 
-    public class ServicePutRp
+    public class UserPostRp
+    {
+        public string Email { get; set; }        
+    }
+
+    public class UserPutRp
     {
         public string Value { get; set; }
     }

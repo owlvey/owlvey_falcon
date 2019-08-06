@@ -6,8 +6,8 @@ namespace Owlvey.Falcon.Models
 {
     public class SquadBaseRp
     {
-        public string Key { get; set; }
-        public string Value { get; set; }
+        public string Name { get; set; }
+        public int Id { get; set; }
     }
 
     public class SquadGetRp : SquadBaseRp {
@@ -22,8 +22,8 @@ namespace Owlvey.Falcon.Models
     }
 
     public class SquadPostRp {
-        public string Key { get; set; }
-        public string Value { get; set; }
+        public string Name { get; set; }
+        public int CustomerId { get; set; }
     }
 
     public class SquadPutRp

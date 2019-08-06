@@ -9,7 +9,7 @@ namespace Owlvey.Falcon.Core.Entities
     {
         [Required]
         public string Name { get; set; }
-        [Required]
+        
         public string Description { get; set; }
         [Required]
         public float SLO { get; set; }

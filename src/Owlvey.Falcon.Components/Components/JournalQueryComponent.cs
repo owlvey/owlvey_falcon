@@ -15,7 +15,7 @@ namespace Owlvey.Falcon.Components
     public class JournalQueryComponent : BaseComponent, IJournalQueryComponent
     {
         private readonly FalconDbContext _dbContext;
-        public JournalQueryComponent(FalconDbContext dbContext, IDateTimeGateway dateTimeGateway, IMapper mapper) : base(dateTimeGateway, mapper)
+        public JournalQueryComponent(FalconDbContext dbContext, IDateTimeGateway dateTimeGateway, IMapper mapper, IUserIdentityGateway userIdentityGateway) : base(dateTimeGateway, mapper, userIdentityGateway)
         {
             this._dbContext = dbContext;
         }

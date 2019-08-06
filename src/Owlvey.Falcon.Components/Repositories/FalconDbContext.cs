@@ -18,6 +18,8 @@ namespace Owlvey.Falcon.Repositories
         public DbSet<CustomerEntity> Customers { get; set; }
         public DbSet<ProductEntity> Products { get; set; }
         public DbSet<ServiceEntity> Services { get; set; }
+
+        public DbSet<UserEntity> Users { get; set; }
         public DbSet<FeatureEntity> Features { get; set; }
         public DbSet<SourceEntity> Journals { get; set; }
 

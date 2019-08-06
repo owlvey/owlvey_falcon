@@ -3,6 +3,7 @@ using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Core.Entities;
 using Owlvey.Falcon.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,16 +13,14 @@ using AutoMapper;
 
 namespace Owlvey.Falcon.Components
 {
-    public class ServiceComponent : BaseComponent, IServiceComponent
+    public class ServiceComponent : BaseComponent
     {
-        private readonly FalconDbContext _dbContext;
-        private readonly IUserIdentityGateway _identityService;
+        private readonly FalconDbContext _dbContext;        
 
         public ServiceComponent(FalconDbContext dbContext,
-            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway, IMapper mapper) : base(dateTimeGateway, mapper)
+            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway, IMapper mapper) : base(dateTimeGateway, mapper, identityService)
         {
-            this._dbContext = dbContext;
-            this._identityService = identityService;
+            this._dbContext = dbContext;            
         }
 
         /// <summary>
@@ -34,7 +33,14 @@ namespace Owlvey.Falcon.Components
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
 
+            var product = await this._dbContext.Products.SingleAsync(c => c.Id == model.ProductId);
+                       
+            var service = ServiceEntity.Factory.Create(model.Name, model.SLO, this._datetimeGateway.GetCurrentDateTime(), createdBy, product);
 
+            this._dbContext.Services.Add(service);
+
+            await this._dbContext.SaveChangesAsync();
+            
             return result;
         }
 

@@ -12,13 +12,11 @@ using Owlvey.Falcon.Gateways;
 
 namespace Owlvey.Falcon.Components
 {
-    public class CustomerQueryComponent : BaseComponent, ICustomerQueryComponent
+    public class CustomerQueryComponent : BaseComponent
     {
-        private readonly FalconDbContext _dbContext;
-        private readonly IMapper _mapper;
-        public CustomerQueryComponent(FalconDbContext dbContext, IMapper mapper, IDateTimeGateway dateTimeGateway) : base(dateTimeGateway, mapper)
-        {
-            this._mapper = mapper;
+        private readonly FalconDbContext _dbContext;        
+        public CustomerQueryComponent(FalconDbContext dbContext, IMapper mapper, IDateTimeGateway dateTimeGateway, IUserIdentityGateway identityService) : base(dateTimeGateway, mapper, identityService)
+        {            
             this._dbContext = dbContext;
         }
 

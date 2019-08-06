@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace Owlvey.Falcon.Components
 {
-    public class ProductQueryComponent : BaseComponent, IProductQueryComponent
+    public class ProductQueryComponent : BaseComponent
     {
         private readonly FalconDbContext _dbContext;        
 
         public ProductQueryComponent(FalconDbContext dbContext, IDateTimeGateway dateTimeGateway,
-            IMapper mapper) : base(dateTimeGateway, mapper)
+            IMapper mapper, IUserIdentityGateway identityService) : base(dateTimeGateway, mapper, identityService)
         {
             this._dbContext = dbContext;
         }
