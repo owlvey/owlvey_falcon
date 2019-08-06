@@ -21,10 +21,16 @@ namespace Owlvey.Falcon.Core.Entities
         [Required]
         public string ModifiedBy { get; set;  }
         
-        public virtual void Delete(DateTime on, string ModifiedBy) {
+        public virtual void Delete(DateTime on, string modifiedBy) {
 
         }
-                
+
+        public virtual void Update(DateTime on, string modifiedBy)
+        {
+            this.ModifiedOn  = on;
+            this.ModifiedBy = modifiedBy;
+        }
+
         public virtual void Validate() {
             var context = new ValidationContext(this, serviceProvider: null, items: null);
             var results = new List<ValidationResult>();

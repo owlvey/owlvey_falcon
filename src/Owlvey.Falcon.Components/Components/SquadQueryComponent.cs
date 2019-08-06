@@ -33,10 +33,7 @@ namespace Owlvey.Falcon.Components
             if (entity == null)
                 return null;
 
-            return new SquadGetRp {
-                CreatedBy = entity.CreatedBy,
-                CreatedOn = entity.CreatedOn
-            };
+            return this._mapper.Map<SquadGetRp>(entity);
         }
 
         public async Task<SquadGetRp> GetSquadByName(int customerId, string name)

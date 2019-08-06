@@ -74,6 +74,43 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
 
             dbContext.Database.OpenConnection();
             dbContext.Database.EnsureCreated();
+
+            // Setup Default Data
+            dbContext.Customers.Add(new Core.Entities.CustomerEntity
+            {
+                Id = 9999,
+                Name = "Default Customer",
+                Avatar = "Default",
+                CreatedBy = "test",
+                CreatedOn = DateTime.UtcNow,
+                ModifiedBy = "test",
+                ModifiedOn = DateTime.UtcNow,
+                Products = new List<Core.Entities.ProductEntity> {
+                    new Core.Entities.ProductEntity{
+                        Id = 9999,
+                        Description= "Default Product",
+                        Name = "Default Product",
+                        CreatedBy = "test",
+                        CreatedOn = DateTime.UtcNow,
+                        ModifiedBy = "test",
+                        ModifiedOn = DateTime.UtcNow,
+                    }
+                }
+            });
+
+            dbContext.Users.Add(new Core.Entities.UserEntity
+            {
+                Id = 9999,
+                Email = "user@falcon.com",
+                CreatedBy = "test",
+                CreatedOn = DateTime.UtcNow,
+                ModifiedBy = "test",
+                ModifiedOn = DateTime.UtcNow
+            });
+
+
+            dbContext.SaveChanges();
+
         }
 
 

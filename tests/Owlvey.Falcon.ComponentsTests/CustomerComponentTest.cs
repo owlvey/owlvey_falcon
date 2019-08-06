@@ -23,7 +23,8 @@ namespace Owlvey.Falcon.ComponentsTests
 
             await customerComponet.CreateCustomer(new Models.CustomerPostRp()
             {
-                Name = "test"
+                Name = "test",
+                Avatar = "default"
             });
 
             var customers = await customerQueryComponent.GetCustomers();
@@ -38,7 +39,7 @@ namespace Owlvey.Falcon.ComponentsTests
 
             Assert.NotNull(customer);
             
-            await customerComponet.UpdateCustomer(customer.Id, new Models.CustomerPutRp() { Name = "change" });
+            await customerComponet.UpdateCustomer(customer.Id, new Models.CustomerPutRp() { Name = "change", Avatar = "change" });
 
             customer = await customerQueryComponent.GetCustomerById(customer.Id);
 

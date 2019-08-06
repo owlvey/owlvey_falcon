@@ -42,6 +42,8 @@ namespace Owlvey.Falcon.Components
 
             await this._dbContext.SaveChangesAsync();
 
+            result.AddResult("Id", entity.Id);
+
             return result;
         }
 
@@ -53,6 +55,21 @@ namespace Owlvey.Falcon.Components
         public async Task<BaseComponentResultRp> DeleteFeature(int id)
         {
             var result = new BaseComponentResultRp();
+            var modifiedBy = this._identityService.GetIdentity();
+
+            var feature = await this._dbContext.Features.SingleAsync(c => c.Id == id);
+
+            if (feature == null)
+            {
+                result.AddNotFound($"The Resource {id} doesn't exists.");
+                return result;
+            }
+
+            feature.Delete(this._datetimeGateway.GetCurrentDateTime(), modifiedBy);
+
+            this._dbContext.Features.Remove(feature);
+
+            await this._dbContext.SaveChangesAsync();
 
             return result;
         }
@@ -66,6 +83,24 @@ namespace Owlvey.Falcon.Components
         {
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
+
+            this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
+
+            var feature = await this._dbContext.Features.SingleAsync(c => c.Id == id);
+
+            if (feature == null)
+            {
+                result.AddNotFound($"The Resource {id} doesn't exists.");
+                return result;
+            }
+
+            feature.Name = model.Name ?? feature.Name;
+            feature.Avatar = model.Avatar ?? feature.Avatar;
+            feature.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy);
+
+            this._dbContext.Features.Update(feature);
+
+            await this._dbContext.SaveChangesAsync();
 
             return result;
         }

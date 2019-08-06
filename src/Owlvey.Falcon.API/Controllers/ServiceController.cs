@@ -11,14 +11,14 @@ namespace Owlvey.Falcon.API.Controllers
     [Route("services")]
     public class ServiceController : BaseController
     {
-        private readonly ServiceQueryComponent _ServiceQueryService;
-        private readonly ServiceComponent _ServiceService;
+        private readonly ServiceQueryComponent _serviceQueryService;
+        private readonly ServiceComponent _serviceService;
         
-        public ServiceController(ServiceQueryComponent ServiceQueryService,
-                                 ServiceComponent ServiceService) : base()
+        public ServiceController(ServiceQueryComponent serviceQueryService,
+                                 ServiceComponent serviceService) : base()
         {
-            this._ServiceQueryService = ServiceQueryService;
-            this._ServiceService = ServiceService;
+            this._serviceQueryService = serviceQueryService;
+            this._serviceService = serviceService;
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(ServicePostRp), 200)]
         public async Task<IActionResult> Get()
         {
-            var model = await this._ServiceQueryService.GetServices();
+            var model = await this._serviceQueryService.GetServices();
             return this.Ok(model);
         }
 
@@ -38,14 +38,14 @@ namespace Owlvey.Falcon.API.Controllers
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetServiceId")]
         [ProducesResponseType(typeof(ServiceGetRp), 200)]
         public async Task<IActionResult> GetById(int id)
         {
-            var model = await this._ServiceQueryService.GetServiceById(id);
+            var model = await this._serviceQueryService.GetServiceById(id);
 
             if (model == null)
-                return this.NotFound($"The Key {id} doesn't exists.");
+                return this.NotFound($"The Resource {id} doesn't exists.");
 
             return this.Ok(model);
         }
@@ -66,18 +66,24 @@ namespace Owlvey.Falcon.API.Controllers
         /// <param name="resource"></param>
         /// <returns></returns>
         [HttpPost]
+        [ProducesResponseType(typeof(ServiceGetRp), 200)]
+        [ProducesResponseType(409)]
+        [ProducesResponseType(400)]
         public async Task<IActionResult> Post([FromBody]ServicePostRp resource)
         {
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._ServiceService.CreateService(resource);
+            var response = await this._serviceService.CreateService(resource);
 
             if (response.HasConflicts()) {
                 return this.Conflict(response.GetConflicts());
             }
 
-            return this.Ok();
+            var id = response.GetResult<int>("Id");
+            var newResource = await this._serviceQueryService.GetServiceById(id);
+
+            return this.Created(Url.RouteUrl("GetServiceId", new { id = id }), newResource);
         }
 
         /// <summary>
@@ -87,12 +93,15 @@ namespace Owlvey.Falcon.API.Controllers
         /// <param name="resource"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
+        [ProducesResponseType(409)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
         public async Task<IActionResult> Put(int id, [FromBody]ServicePutRp resource)
         {
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._ServiceService.UpdateService(id, resource);
+            var response = await this._serviceService.UpdateService(id, resource);
 
             if (response.HasNotFounds())
             {
@@ -119,7 +128,7 @@ namespace Owlvey.Falcon.API.Controllers
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._ServiceService.DeleteService(id);
+            var response = await this._serviceService.DeleteService(id);
 
             if (response.HasNotFounds())
             {

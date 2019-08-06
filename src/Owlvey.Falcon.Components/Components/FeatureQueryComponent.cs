@@ -33,10 +33,7 @@ namespace Owlvey.Falcon.Components
             if (entity == null)
                 return null;
 
-            return new FeatureGetRp {
-                CreatedBy = entity.CreatedBy,
-                CreatedOn = entity.CreatedOn
-            };
+            return this._mapper.Map<FeatureGetRp>(entity);
         }
 
         /// <summary>

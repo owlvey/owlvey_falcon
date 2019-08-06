@@ -9,15 +9,22 @@ using Owlvey.Falcon.Models;
 namespace Owlvey.Falcon.API.Controllers
 {
     [Route("squads")]
-    public class SquadController : BaseController
+    public partial class SquadController : BaseController
     {
         private readonly SquadQueryComponent _squadQueryService;
         private readonly SquadComponent _squadService;
-        
-        public SquadController(SquadQueryComponent squadQueryService, SquadComponent squadService) : base()
+        private readonly MemberQueryComponent _memberQueryComponent;
+        private readonly MemberComponent _memberComponent;
+
+        public SquadController(SquadQueryComponent squadQueryService, 
+            SquadComponent squadService,
+            MemberQueryComponent memberQueryComponent,
+            MemberComponent memberComponent) : base()
         {
             this._squadQueryService = squadQueryService;
             this._squadService = squadService;
+            this._memberComponent = memberComponent;
+            this._memberQueryComponent = memberQueryComponent;
         }
 
         /// <summary>
@@ -37,14 +44,14 @@ namespace Owlvey.Falcon.API.Controllers
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetSquadId")]
         [ProducesResponseType(typeof(SquadGetRp), 200)]
         public async Task<IActionResult> GetById(int id)
         {
             var model = await this._squadQueryService.GetSquadById(id);
 
             if (model == null)
-                return this.NotFound($"The Key {id} doesn't exists.");
+                return this.NotFound($"The Resource {id} doesn't exists.");
 
             return this.Ok(model);
         }
@@ -65,6 +72,10 @@ namespace Owlvey.Falcon.API.Controllers
         /// <param name="resource"></param>
         /// <returns></returns>
         [HttpPost]
+        [ProducesResponseType(typeof(SquadGetRp), 200)]
+        [ProducesResponseType(409)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(400)]
         public async Task<IActionResult> Post([FromBody]SquadPostRp resource)
         {
             if (!this.ModelState.IsValid)
@@ -76,7 +87,10 @@ namespace Owlvey.Falcon.API.Controllers
                 return this.Conflict(response.GetConflicts());
             }
 
-            return this.Ok();
+            var id = response.GetResult<int>("Id");
+            var newResource = await this._squadQueryService.GetSquadById(id);
+
+            return this.Created(Url.RouteUrl("GetSquadId", new { id = id }), newResource);
         }
 
         /// <summary>
@@ -86,6 +100,10 @@ namespace Owlvey.Falcon.API.Controllers
         /// <param name="resource"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
+        [ProducesResponseType(typeof(SquadGetRp), 200)]
+        [ProducesResponseType(409)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
         public async Task<IActionResult> Put(int id, [FromBody]SquadPutRp resource)
         {
             if (!this.ModelState.IsValid)

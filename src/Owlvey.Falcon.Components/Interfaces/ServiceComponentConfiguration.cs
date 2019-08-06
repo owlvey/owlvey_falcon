@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Owlvey.Falcon.Interfaces
+namespace Owlvey.Falcon.Components
 {
     public class ServiceComponentConfiguration
     {

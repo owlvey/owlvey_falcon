@@ -40,7 +40,9 @@ namespace Owlvey.Falcon.Components
             this._dbContext.Services.Add(service);
 
             await this._dbContext.SaveChangesAsync();
-            
+
+            result.AddResult("Id", service.Id);
+
             return result;
         }
 
@@ -52,6 +54,21 @@ namespace Owlvey.Falcon.Components
         public async Task<BaseComponentResultRp> DeleteService(int id)
         {
             var result = new BaseComponentResultRp();
+            var modifiedBy = this._identityService.GetIdentity();
+
+            var service = await this._dbContext.Services.SingleAsync(c => c.Id == id);
+
+            if (service == null)
+            {
+                result.AddNotFound($"The Resource {id} doesn't exists.");
+                return result;
+            }
+
+            service.Delete(this._datetimeGateway.GetCurrentDateTime(), modifiedBy);
+
+            this._dbContext.Services.Remove(service);
+
+            await this._dbContext.SaveChangesAsync();
 
             return result;
         }
@@ -65,6 +82,24 @@ namespace Owlvey.Falcon.Components
         {
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
+
+            this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
+
+            var service = await this._dbContext.Services.SingleAsync(c => c.Id == id);
+
+            if (service == null)
+            {
+                result.AddNotFound($"The Resource {id} doesn't exists.");
+                return result;
+            }
+
+            service.Name = model.Name;
+            service.SLO = model.SLO;
+            service.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, model.Name, model.SLO, model.Avatar);
+
+            this._dbContext.Services.Update(service);
+
+            await this._dbContext.SaveChangesAsync();
 
             return result;
         }

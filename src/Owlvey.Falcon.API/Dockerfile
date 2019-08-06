@@ -11,7 +11,6 @@ COPY ["src/Owlvey.Falcon.Components/Owlvey.Falcon.Components.csproj", "src/Owlve
 COPY ["src/Owlvey.Falcon.Core/Owlvey.Falcon.Core.csproj", "src/Owlvey.Falcon.Core/"]
 COPY ["src/Owlvey.Falcon.Options/Owlvey.Falcon.Options.csproj", "src/Owlvey.Falcon.Options/"]
 COPY ["src/Owlvey.Falcon.IoC/Owlvey.Falcon.IoC.csproj", "src/Owlvey.Falcon.IoC/"]
-COPY ["src/Owlvey.Falcon.Data.SQLite/Owlvey.Falcon.Data.SQLite.csproj", "src/Owlvey.Falcon.Data.SQLite/"]
 COPY ["tests/Owlvey.Falcon.ComponentsTests/Owlvey.Falcon.ComponentsTests.csproj", "tests/Owlvey.Falcon.ComponentsTests/"]
 COPY ["tests/Owlvey.Falcon.IntegrationTests/Owlvey.Falcon.IntegrationTests.csproj", "tests/Owlvey.Falcon.IntegrationTests/"]
 COPY ["tests/Owlvey.Falcon.UnitTests/Owlvey.Falcon.UnitTests.csproj", "tests/Owlvey.Falcon.UnitTests/"]

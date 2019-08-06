@@ -45,7 +45,7 @@ namespace Owlvey.Falcon.API.Controllers
             var model = await this._appSettingQueryService.GetAppSettingById(id);
 
             if (model == null)
-                return this.NotFound($"The Key {id} doesn't exists.");
+                return this.NotFound($"The Resource {id} doesn't exists.");
 
             return this.Ok(model);
         }

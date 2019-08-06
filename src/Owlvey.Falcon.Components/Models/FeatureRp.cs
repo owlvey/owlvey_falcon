@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Owlvey.Falcon.Models
@@ -22,12 +23,16 @@ namespace Owlvey.Falcon.Models
     }
 
     public class FeaturePostRp {
+        [Required]
         public string Name { get; set; }
+        [Required]
         public int ProductId { get; set; }        
     }
 
     public class FeaturePutRp
     {
-        public string Value { get; set; }
+        [Required]
+        public string Name { get; set; }
+        public string Avatar { get; set; }
     }
 }

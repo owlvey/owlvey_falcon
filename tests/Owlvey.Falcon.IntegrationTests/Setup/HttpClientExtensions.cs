@@ -25,6 +25,12 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
             string model = content.ReadAsStringAsync().Result;
             return JsonConvert.DeserializeObject<RepresentationCollection<T>>(model).Items;
         }
+
+        public static IReadOnlyList<T> ParseHttpContentToList<T>(HttpContent content)
+        {
+            string model = content.ReadAsStringAsync().Result;
+            return JsonConvert.DeserializeObject<List<T>>(model);
+        }
     }
 
     public class RepresentationCollection<T>

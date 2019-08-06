@@ -6,7 +6,8 @@ namespace Owlvey.Falcon.Models
 {
     public class MemberBaseRp
     {
-        
+        public int Id { get; set; }
+        public string Email { get; set; }
     }
 
     public class MemberGetRp : MemberBaseRp

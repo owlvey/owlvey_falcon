@@ -18,13 +18,14 @@ namespace Owlvey.Falcon.ComponentsTests
             var user = await ComponentTestFactory.BuildUser(container);
 
             var memberComponent = container.GetInstance<MemberComponent>();
+            var memberQueryComponent = container.GetInstance<MemberQueryComponent>();
 
             await memberComponent.CreateMember(new Models.MemberPostRp() {
                  SquadId = squad,
                  UserId = user
             });
 
-            var members = await memberComponent.GetMembers(squad);
+            var members = await memberQueryComponent.GetMembers(squad);
             
             Assert.NotEmpty(members);
         }

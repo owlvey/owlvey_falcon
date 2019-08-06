@@ -36,9 +36,13 @@ namespace Owlvey.Falcon.Components
                 this._datetimeGateway.GetCurrentDateTime(),
                 createdBy, customer);
 
+            entity.Description = model.Description;
+
             this._dbContext.Products.Add(entity);
 
             await this._dbContext.SaveChangesAsync();
+
+            result.AddResult("Id", entity.Id);
 
             return result;
         }
@@ -51,6 +55,21 @@ namespace Owlvey.Falcon.Components
         public async Task<BaseComponentResultRp> DeleteProduct(int id)
         {
             var result = new BaseComponentResultRp();
+            var modifiedBy = this._identityService.GetIdentity();
+
+            var product = await this._dbContext.Products.SingleAsync(c => c.Id == id);
+
+            if (product == null)
+            {
+                result.AddNotFound($"The Resource {id} doesn't exists.");
+                return result;
+            }
+
+            product.Delete(this._datetimeGateway.GetCurrentDateTime(), modifiedBy);
+
+            this._dbContext.Products.Remove(product);
+
+            await this._dbContext.SaveChangesAsync();
 
             return result;
         }
@@ -64,6 +83,24 @@ namespace Owlvey.Falcon.Components
         {
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
+
+            this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
+
+            var product = await this._dbContext.Products.SingleAsync(c => c.Id == id);
+
+            if (product == null)
+            {
+                result.AddNotFound($"The Resource {id} doesn't exists.");
+                return result;
+            }
+
+            product.Name = model.Name ?? product.Name;
+            product.Description = model.Description ?? product.Description;
+            product.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy);
+
+            this._dbContext.Update(product);
+
+            await this._dbContext.SaveChangesAsync();
 
             return result;
         }

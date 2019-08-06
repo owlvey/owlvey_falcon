@@ -38,14 +38,14 @@ namespace Owlvey.Falcon.API.Controllers
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetCustomerId")]
         [ProducesResponseType(typeof(CustomerGetRp), 200)]
         public async Task<IActionResult> GetById(int id)
         {
             var model = await this._customerQueryService.GetCustomerById(id);
 
             if (model == null)
-                return this.NotFound($"The Key {id} doesn't exists.");
+                return this.NotFound($"The Resource {id} doesn't exists.");
 
             return this.Ok(model);
         }
@@ -66,6 +66,9 @@ namespace Owlvey.Falcon.API.Controllers
         /// <param name="resource"></param>
         /// <returns></returns>
         [HttpPost]
+        [ProducesResponseType(typeof(CustomerGetRp), 200)]
+        [ProducesResponseType(409)]
+        [ProducesResponseType(400)]
         public async Task<IActionResult> Post([FromBody]CustomerPostRp resource)
         {
             if (!this.ModelState.IsValid)
@@ -77,7 +80,10 @@ namespace Owlvey.Falcon.API.Controllers
                 return this.Conflict(response.GetConflicts());
             }
 
-            return this.Ok();
+            var id = response.GetResult<int>("Id");
+            var newResource = await this._customerQueryService.GetCustomerById(id);
+
+            return this.Created(Url.RouteUrl("GetCustomerId", new { id = id }), newResource);
         }
 
         /// <summary>
@@ -87,6 +93,9 @@ namespace Owlvey.Falcon.API.Controllers
         /// <param name="resource"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
+        [ProducesResponseType(409)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
         public async Task<IActionResult> Put(int id, [FromBody]CustomerPutRp resource)
         {
             if (!this.ModelState.IsValid)

@@ -28,10 +28,7 @@ namespace Owlvey.Falcon.Components
             if (entity == null)
                 return null;
 
-            return new ServiceGetRp {
-                CreatedBy = entity.CreatedBy,
-                CreatedOn = entity.CreatedOn
-            };
+            return this._mapper.Map<ServiceGetRp>(entity);
         }
 
         public async Task<IEnumerable<ServiceGetListRp>> GetServices()

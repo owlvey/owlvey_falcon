@@ -13,7 +13,6 @@ namespace Owlvey.Falcon.UnitTests.Entities
         {
             var createdBy = Guid.NewGuid().ToString("n");
             var name = Guid.NewGuid().ToString("n");
-            var description = Guid.NewGuid().ToString("n");
             float slo = 99;
 
             var (_, product) = TestDataFactory.BuildCustomerProduct();
@@ -21,7 +20,6 @@ namespace Owlvey.Falcon.UnitTests.Entities
             var serviceEntity = ServiceEntity.Factory.Create(name, slo, DateTime.UtcNow, createdBy, product);
 
             Assert.Equal(name, serviceEntity.Name);
-            Assert.Equal(description, serviceEntity.Description);
             Assert.Equal(slo, serviceEntity.SLO);
             Assert.Equal(createdBy, serviceEntity.CreatedBy);
         }

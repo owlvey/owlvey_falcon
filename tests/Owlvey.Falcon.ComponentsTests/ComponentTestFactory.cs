@@ -4,7 +4,6 @@ using AutoMapper;
 using Moq;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Gateways;
-using Owlvey.Falcon.Interfaces;
 using Owlvey.Falcon.Repositories;
 using SimpleInjector;
 
@@ -81,12 +80,13 @@ namespace Owlvey.Falcon.ComponentsTests
         public static async Task<int> BuildUser(Container container, string email = "test@test.com")
         {
             var userComponent = container.GetInstance<UserComponent>();
-            
+            var userQueryComponent = container.GetInstance<UserQueryComponent>();
+
             await userComponent.CreateUser(new Models.UserPostRp()
             {
                 Email = email
             });
-            var user = await userComponent.GetUserByEmail(email);
+            var user = await userQueryComponent.GetUserByEmail(email);
             return user.Id;
         }
 

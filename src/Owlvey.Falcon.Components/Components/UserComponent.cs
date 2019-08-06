@@ -31,23 +31,10 @@ namespace Owlvey.Falcon.Components
 
             await this._dbContext.SaveChangesAsync();
 
+            result.AddResult("Id", entity.Id);
+
             return result;
         }
-
-        public async Task<IEnumerable<UserGetListRp>> GetUsers()
-        {
-            var entities = await this._dbContext.Users.ToListAsync();
-
-            return this._mapper.Map<IEnumerable<UserGetListRp>>(entities);
-            
-        }
-
-        public async Task<UserGetRp> GetUserByEmail(string email)
-        {
-            var entity = await this._dbContext.Users.SingleAsync(c => c.Email == email);
-            return this._mapper.Map<UserGetRp>(entity);
-        }
-
 
 
     }

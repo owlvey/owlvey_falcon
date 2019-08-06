@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Text;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Identity;
+using Owlvey.Falcon.Gateways;
+using AutoMapper;
 
 namespace Owlvey.Falcon.IoC
 {
@@ -15,7 +17,7 @@ namespace Owlvey.Falcon.IoC
             // ASP.NET HttpContext dependency
             // services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            // Application
+            // Components
             services.AddTransient<AppSettingQueryComponent>();
             services.AddTransient<AppSettingComponent>();
 
@@ -38,9 +40,31 @@ namespace Owlvey.Falcon.IoC
             services.AddTransient<ServiceComponent>();
 
             services.AddTransient<UserComponent>();
+            services.AddTransient<UserQueryComponent>();
+
+            services.AddTransient<MemberComponent>();
+            services.AddTransient<MemberQueryComponent>();
+
+            // Gateways
+            services.AddTransient<IDateTimeGateway, DateTimeGateway>();
 
             // Infra
             services.AddAspNetCoreIndentityService();
+
+            // Automapper
+            var mapperCfg = new MapperConfiguration(cfg =>
+            {
+                CustomerComponentConfiguration.ConfigureMappers(cfg);
+                ProductComponentConfiguration.ConfigureMappers(cfg);
+                FeatureComponentConfiguration.ConfigureMappers(cfg);
+                ServiceComponentConfiguration.ConfigureMappers(cfg);
+                UserComponentConfiguration.ConfigureMappers(cfg);
+                SquadComponentConfiguration.ConfigureMappers(cfg);
+                MemberComponentConfiguration.ConfigureMappers(cfg);
+            });
+
+            IMapper mapper = mapperCfg.CreateMapper();
+            services.AddSingleton(mapper);
         }
     }
 }

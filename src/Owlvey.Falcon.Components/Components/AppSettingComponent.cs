@@ -65,7 +65,7 @@ namespace Owlvey.Falcon.Components
 
             if (appSetting == null)
             {
-                result.AddNotFound($"The Key {key} doesn't exists.");
+                result.AddNotFound($"The Resource {key} doesn't exists.");
                 return result;
             }
             
@@ -88,7 +88,7 @@ namespace Owlvey.Falcon.Components
 
             if (appSetting == null)
             {
-                result.AddNotFound($"The Key {key} doesn't exists.");
+                result.AddNotFound($"The Resource {key} doesn't exists.");
                 return result;
             }
 

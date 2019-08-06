@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Owlvey.Falcon.Models
@@ -24,11 +25,8 @@ namespace Owlvey.Falcon.Models
 
     public class UserPostRp
     {
+        [Required]
         public string Email { get; set; }        
     }
 
-    public class UserPutRp
-    {
-        public string Value { get; set; }
-    }
 }

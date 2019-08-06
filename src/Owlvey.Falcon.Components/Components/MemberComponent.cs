@@ -33,13 +33,29 @@ namespace Owlvey.Falcon.Components
             var entity = MemberEntity.Factory.Create(squad, user, this._datetimeGateway.GetCurrentDateTime(), createdBy);                        
             this._dbContext.Members.Add(entity);
             await this._dbContext.SaveChangesAsync();
+
+            result.AddResult("Id", entity.Id);
+
             return result;
         }
-        public async Task<IEnumerable<MemberGetListRp>> GetMembers(int squadId)
-        {
-            var entities = await this._dbContext.Members.Where(c=>c.Squad.Id == squadId).ToListAsync();
-            return this._mapper.Map<IEnumerable<MemberGetListRp>>(entities);
-        }
 
+        public async Task<BaseComponentResultRp> DeleteMember(int squaId, int userId)
+        {
+            var result = new BaseComponentResultRp();
+            var createdBy = this._identityService.GetIdentity();
+
+            this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
+
+            var member = await this._dbContext.Members.SingleAsync(c => c.Id == userId);
+
+            if (member == null) {
+                result.AddNotFound($"The Resource {userId} doesn't exists.");
+                return result;
+            }
+
+            this._dbContext.Members.Remove(member);
+            await this._dbContext.SaveChangesAsync();
+            return result;
+        }
     }
 }

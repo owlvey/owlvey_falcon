@@ -13,12 +13,12 @@ namespace Owlvey.Falcon.IntegrationTests.AppSetting.Stories
     [Story(AsA = "Admin",
         IWant = "to be able to mantain the appsettings information",
         SoThat = "I can keep updated")]
-    public class AdminWantCRUDSettingStory : IntegrationTestBase, IDisposable, IBaseTest
+    public class AdminWantCRUDStory : IntegrationTestBase, IDisposable, IBaseTest
     {
         private IDisposable _scenario;
         private IContainer _container;
 
-        public AdminWantCRUDSettingStory()
+        public AdminWantCRUDStory()
         {
             this._container = Shell.Instance.Container.CreateChildContainer();
         }

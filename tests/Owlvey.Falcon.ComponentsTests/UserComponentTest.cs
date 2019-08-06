@@ -14,14 +14,15 @@ namespace Owlvey.Falcon.ComponentsTests
         {
             var container = ComponentTestFactory.BuildContainer();
             
-            var userComponent = container.GetInstance<UserComponent>();           
+            var userComponent = container.GetInstance<UserComponent>();
+            var userQueryComponent = container.GetInstance<UserQueryComponent>();
 
             await userComponent.CreateUser(new Models.UserPostRp()
             {
                 Email = "test@test.com"                
             });
 
-            var users = await userComponent.GetUsers();
+            var users = await userQueryComponent.GetUsers();
             Assert.NotEmpty(users);
         }
     }

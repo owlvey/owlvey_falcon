@@ -32,10 +32,7 @@ namespace Owlvey.Falcon.Components
             if (entity == null)
                 return null;
 
-            return new ProductGetRp {
-                CreatedBy = entity.CreatedBy,
-                CreatedOn = entity.CreatedOn
-            };
+            return this._mapper.Map<ProductGetRp>(entity);
         }
 
         /// <summary>

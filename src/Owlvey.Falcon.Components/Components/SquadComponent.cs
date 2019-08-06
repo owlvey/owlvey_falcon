@@ -36,6 +36,9 @@ namespace Owlvey.Falcon.Components
             var entity = SquadEntity.Factory.Create(model.Name, this._datetimeGateway.GetCurrentDateTime(), createdBy, customer);
             this._dbContext.Squads.Add(entity);
             await this._dbContext.SaveChangesAsync();
+
+            result.AddResult("Id", entity.Id);
+
             return result;
         }
 
@@ -47,6 +50,21 @@ namespace Owlvey.Falcon.Components
         public async Task<BaseComponentResultRp> DeleteSquad(int id)
         {
             var result = new BaseComponentResultRp();
+            var modifiedBy = this._identityService.GetIdentity();
+
+            var squad = await this._dbContext.Squads.SingleAsync(c => c.Id == id);
+
+            if (squad == null)
+            {
+                result.AddNotFound($"The Resource {id} doesn't exists.");
+                return result;
+            }
+
+            squad.Delete(this._datetimeGateway.GetCurrentDateTime(), modifiedBy);
+
+            this._dbContext.Squads.Remove(squad);
+
+            await this._dbContext.SaveChangesAsync();
 
             return result;
         }
@@ -60,6 +78,22 @@ namespace Owlvey.Falcon.Components
         {
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
+
+            this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
+
+            var squad = await this._dbContext.Squads.SingleAsync(c => c.Id == id);
+
+            if (squad == null)
+            {
+                result.AddNotFound($"The Resource {id} doesn't exists.");
+                return result;
+            }
+
+            squad.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, model.Name, model.Description, model.Avatar);
+
+            this._dbContext.Update(squad);
+
+            await this._dbContext.SaveChangesAsync();
 
             return result;
         }
