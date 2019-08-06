@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Owlvey.Falcon.Components
 {
-    public class JournalQueryComponent : BaseComponent, IJournalQueryComponent
+    public class JournalQueryComponent : BaseComponent
     {
         private readonly FalconDbContext _dbContext;
         public JournalQueryComponent(FalconDbContext dbContext, IDateTimeGateway dateTimeGateway, IMapper mapper, IUserIdentityGateway userIdentityGateway) : base(dateTimeGateway, mapper, userIdentityGateway)

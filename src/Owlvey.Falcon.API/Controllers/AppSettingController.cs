@@ -11,11 +11,11 @@ namespace Owlvey.Falcon.API.Controllers
     [Route("appsettings")]
     public class AppSettingController : BaseController
     {
-        private readonly IAppSettingQueryComponent _appSettingQueryService;
-        private readonly IAppSettingComponent _appSettingService;
+        private readonly AppSettingQueryComponent _appSettingQueryService;
+        private readonly AppSettingComponent _appSettingService;
         
-        public AppSettingController(IAppSettingQueryComponent appSettingQueryService,
-                                    IAppSettingComponent appSettingService) : base()
+        public AppSettingController(AppSettingQueryComponent appSettingQueryService,
+                                    AppSettingComponent appSettingService) : base()
         {
             this._appSettingQueryService = appSettingQueryService;
             this._appSettingService = appSettingService;

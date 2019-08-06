@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Owlvey.Falcon.Components
 {
-    public class FeatureQueryComponent : BaseComponent, IFeatureQueryComponent
+    public class FeatureQueryComponent : BaseComponent
     {
         private readonly FalconDbContext _dbContext;
         

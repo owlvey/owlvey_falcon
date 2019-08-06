@@ -13,7 +13,7 @@ using AutoMapper;
 
 namespace Owlvey.Falcon.Components
 {
-    public class SquadComponent : BaseComponent, ISquadComponent
+    public class SquadComponent : BaseComponent
     {
         private readonly FalconDbContext _dbContext;        
 

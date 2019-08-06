@@ -11,11 +11,11 @@ namespace Owlvey.Falcon.API.Controllers
     [Route("features")]
     public class FeatureController : BaseController
     {
-        private readonly IFeatureQueryComponent _featureQueryService;
-        private readonly IFeatureComponent _featureService;
+        private readonly FeatureQueryComponent _featureQueryService;
+        private readonly FeatureComponent _featureService;
         
-        public FeatureController(IFeatureQueryComponent featureQueryService,
-                                    IFeatureComponent featureService) : base()
+        public FeatureController(FeatureQueryComponent featureQueryService,
+                                    FeatureComponent featureService) : base()
         {
             this._featureQueryService = featureQueryService;
             this._featureService = featureService;

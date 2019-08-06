@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Owlvey.Falcon.Components
 {
-    public class SquadQueryComponent : BaseComponent, ISquadQueryComponent
+    public class SquadQueryComponent : BaseComponent
     {
         private readonly FalconDbContext _dbContext;
         public SquadQueryComponent(FalconDbContext dbContext, IDateTimeGateway dateTimeGateway, IMapper mapper,

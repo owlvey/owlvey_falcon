@@ -11,11 +11,11 @@ namespace Owlvey.Falcon.API.Controllers
     [Route("journals")]
     public class JournalController : BaseController
     {
-        private readonly IJournalQueryComponent _journalQueryService;
-        private readonly IJournalComponent _journalService;
+        private readonly JournalQueryComponent _journalQueryService;
+        private readonly JournalComponent _journalService;
         
-        public JournalController(IJournalQueryComponent journalQueryService,
-                                    IJournalComponent journalService) : base()
+        public JournalController(JournalQueryComponent journalQueryService,
+                                    JournalComponent journalService) : base()
         {
             this._journalQueryService = journalQueryService;
             this._journalService = journalService;

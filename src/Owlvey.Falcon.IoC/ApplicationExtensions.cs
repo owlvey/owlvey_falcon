@@ -16,14 +16,28 @@ namespace Owlvey.Falcon.IoC
             // services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             // Application
-            services.AddTransient<IAppSettingQueryComponent, AppSettingQueryComponent>();
-            services.AddTransient<IAppSettingComponent, AppSettingComponent>();
-            
-            services.AddTransient<IFeatureQueryComponent, FeatureQueryComponent>();
-            services.AddTransient<IFeatureComponent, FeatureComponent>();            
+            services.AddTransient<AppSettingQueryComponent>();
+            services.AddTransient<AppSettingComponent>();
 
-            services.AddTransient<ISquadQueryComponent, SquadQueryComponent>();
-            services.AddTransient<ISquadComponent, SquadComponent>();
+            services.AddTransient<CustomerQueryComponent>();
+            services.AddTransient<CustomerComponent>();
+
+            services.AddTransient<ProductQueryComponent>();
+            services.AddTransient<ProductComponent>();
+
+            services.AddTransient<JournalQueryComponent>();
+            services.AddTransient<JournalComponent>();
+
+            services.AddTransient<FeatureQueryComponent>();
+            services.AddTransient<FeatureComponent>();            
+
+            services.AddTransient<SquadQueryComponent>();
+            services.AddTransient<SquadComponent>();
+
+            services.AddTransient<ServiceQueryComponent>();
+            services.AddTransient<ServiceComponent>();
+
+            services.AddTransient<UserComponent>();
 
             // Infra
             services.AddAspNetCoreIndentityService();

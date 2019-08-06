@@ -13,7 +13,7 @@ using AutoMapper;
 
 namespace Owlvey.Falcon.Components
 {
-    public class AppSettingComponent : BaseComponent, IAppSettingComponent
+    public class AppSettingComponent : BaseComponent
     {
         private readonly FalconDbContext _dbContext;        
 
