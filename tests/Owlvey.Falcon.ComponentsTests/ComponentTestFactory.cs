@@ -31,6 +31,7 @@ namespace Owlvey.Falcon.ComponentsTests
                 ServiceComponentConfiguration.ConfigureMappers(cfg);
                 UserComponentConfiguration.ConfigureMappers(cfg);
                 SquadComponentConfiguration.ConfigureMappers(cfg);
+                MemberComponentConfiguration.ConfigureMappers(cfg);
             });
             configuration.AssertConfigurationIsValid();
             var mapper = configuration.CreateMapper();
@@ -56,6 +57,25 @@ namespace Owlvey.Falcon.ComponentsTests
             });
             var customer = await customerQueryComponent.GetCustomerByName(name);
             return customer.Id;
+        }
+
+        public static async Task<(int customer, int squad)> BuildCustomerSquad(Container container, string name = "test")
+        {
+            
+            var customer = await ComponentTestFactory.BuildCustomer(container);
+
+            var squadComponent = container.GetInstance<SquadComponent>();
+            var squadQueryComponent = container.GetInstance<SquadQueryComponent>();
+
+            await squadComponent.CreateSquad(new Models.SquadPostRp()
+            {
+                Name = "test",
+                CustomerId = customer
+            });
+
+            var squad = await squadQueryComponent.GetSquadByName(customer, "test");
+
+            return (customer, squad.Id);
         }
 
         public static async Task<int> BuildUser(Container container, string email = "test@test.com")
