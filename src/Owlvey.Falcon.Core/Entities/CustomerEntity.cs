@@ -15,6 +15,7 @@ namespace Owlvey.Falcon.Core.Entities
         public string Avatar { get; set; }
 
         public virtual ICollection<ProductEntity> Products { get; set; } = new List<ProductEntity>();
+        public virtual ICollection<SquadEntity> Squads { get; set; } = new List<SquadEntity>();
 
         public void Update(DateTime on, string modifiedBy, string name= null, string avatar = null ) {
             this.Name = name ?? this.Name;

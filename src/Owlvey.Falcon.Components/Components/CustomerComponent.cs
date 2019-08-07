@@ -71,7 +71,7 @@ namespace Owlvey.Falcon.Components
                 result.AddNotFound($"The Resource {id} doesn't exists.");
                 return result;
             }
-
+            
             customer.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, model.Name, model.Avatar);
 
             this._dbContext.Update(customer);

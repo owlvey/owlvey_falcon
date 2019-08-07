@@ -33,6 +33,14 @@ namespace Owlvey.Falcon.Components
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
             var customer = await this._dbContext.Customers.SingleAsync(c => c.Id == model.CustomerId);
+
+            // Validate if the resource exists.
+            if (customer.Squads.Any(c => c.Name.Equals(model.Name)))
+            {
+                result.AddConflict($"The Resource {model.Name} has already been taken.");
+                return result;
+            }
+
             var entity = SquadEntity.Factory.Create(model.Name, this._datetimeGateway.GetCurrentDateTime(), createdBy, customer);
             this._dbContext.Squads.Add(entity);
             await this._dbContext.SaveChangesAsync();
@@ -81,12 +89,25 @@ namespace Owlvey.Falcon.Components
 
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
 
-            var squad = await this._dbContext.Squads.SingleAsync(c => c.Id == id);
+            var squad = await this._dbContext.Squads.Include(c=> c.Customer).SingleAsync(c => c.Id == id);
 
             if (squad == null)
             {
                 result.AddNotFound($"The Resource {id} doesn't exists.");
                 return result;
+            }
+
+            // Validate if the resource exists.
+            if (!squad.Name.Equals(model.Name, StringComparison.InvariantCultureIgnoreCase))
+            {
+
+                var customer = await this._dbContext.Customers.Include(c=> c.Squads).SingleAsync(c => c.Id.Equals(squad.Customer.Id));
+
+                if (customer.Squads.Any(c => c.Name.Equals(model.Name)))
+                {
+                    result.AddConflict($"The Resource {model.Name} has already been taken.");
+                    return result;
+                }
             }
 
             squad.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, model.Name, model.Description, model.Avatar);

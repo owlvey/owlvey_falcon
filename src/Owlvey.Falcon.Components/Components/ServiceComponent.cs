@@ -32,9 +32,16 @@ namespace Owlvey.Falcon.Components
         {
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
+            
+            var product = await this._dbContext.Products.Include(c=> c.Services).SingleAsync(c => c.Id == model.ProductId);
 
-            var product = await this._dbContext.Products.SingleAsync(c => c.Id == model.ProductId);
-                       
+            // Validate if the resource exists.
+            if (product.Services.Any(c => c.Name.Equals(model.Name)))
+            {
+                result.AddConflict($"The Resource {model.Name} has already been taken.");
+                return result;
+            }
+
             var service = ServiceEntity.Factory.Create(model.Name, model.SLO, this._datetimeGateway.GetCurrentDateTime(), createdBy, product);
 
             this._dbContext.Services.Add(service);
@@ -85,12 +92,24 @@ namespace Owlvey.Falcon.Components
 
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
 
-            var service = await this._dbContext.Services.SingleAsync(c => c.Id == id);
+            var service = await this._dbContext.Services.Include(c=> c.Product).SingleAsync(c => c.Id == id);
 
             if (service == null)
             {
                 result.AddNotFound($"The Resource {id} doesn't exists.");
                 return result;
+            }
+
+            // Validate if the resource exists.
+            if (!service.Name.Equals(model.Name, StringComparison.InvariantCultureIgnoreCase))
+            {
+                var product = await this._dbContext.Products.Include(c=> c.Services).SingleAsync(c => c.Id.Equals(service.Product.Id));
+
+                if (product.Services.Any(c => c.Name.Equals(model.Name)))
+                {
+                    result.AddConflict($"The Resource {model.Name} has already been taken.");
+                    return result;
+                }
             }
 
             service.Name = model.Name;

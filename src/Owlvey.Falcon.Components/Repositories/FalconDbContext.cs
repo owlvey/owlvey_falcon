@@ -32,7 +32,10 @@ namespace Owlvey.Falcon.Repositories
             foreach (IMutableEntityType entity in modelBuilder.Model.GetEntityTypes())
             {
                 entity.Relational().TableName = entity.DisplayName();
-            }            
+            }
+            
+            // Customer Name Unique
+            modelBuilder.Entity<CustomerEntity>().HasIndex(c => c.Name).IsUnique();
 
             base.OnModelCreating(modelBuilder);
         }

@@ -8,6 +8,7 @@ namespace Owlvey.Falcon.IntegrationTests.Constants
     {
         public static int CustomerId { get; set; } = 9999;
         public static int ProductId { get; set; } = 9999;
+        public static string ProductName { get; set; } = "Default Product";
         public static int UserId { get; set; } = 9999;
         public static string UserEmail { get; set; } = "user@falcon.com";
     }

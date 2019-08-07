@@ -30,7 +30,13 @@ namespace Owlvey.Falcon.Components
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
 
-            var customer = await this._dbContext.Customers.SingleAsync(c => c.Id == model.CustomerId);
+            var customer = await this._dbContext.Customers.Include(c=> c.Products).SingleAsync(c => c.Id == model.CustomerId);
+
+            // Validate if the resource exists.
+            if (customer.Products.Any(c => c.Name.Equals(model.Name))) {
+                result.AddConflict($"The Resource {model.Name} has already been taken.");
+                return result;
+            }
 
             var entity = ProductEntity.Factory.Create(model.Name, 
                 this._datetimeGateway.GetCurrentDateTime(),
@@ -86,7 +92,7 @@ namespace Owlvey.Falcon.Components
 
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
 
-            var product = await this._dbContext.Products.SingleAsync(c => c.Id == id);
+            var product = await this._dbContext.Products.Include(c=> c.Customer).SingleAsync(c => c.Id == id);
 
             if (product == null)
             {
@@ -94,6 +100,18 @@ namespace Owlvey.Falcon.Components
                 return result;
             }
 
+            // Validate if the resource exists.
+            if (!product.Name.Equals(model.Name, StringComparison.InvariantCultureIgnoreCase)) {
+
+                var customer = await this._dbContext.Customers.Include(c=> c.Products).SingleAsync(c => c.Id.Equals(product.Customer.Id));
+                
+                if (customer.Products.Any(c => c.Name.Equals(model.Name)))
+                {
+                    result.AddConflict($"The Resource {model.Name} has already been taken.");
+                    return result;
+                }
+            }
+           
             product.Name = model.Name ?? product.Name;
             product.Description = model.Description ?? product.Description;
             product.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy);
