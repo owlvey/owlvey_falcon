@@ -35,6 +35,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Owlvey.Falcon.Components", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Owlvey.Falcon.ComponentsTests", "tests\Owlvey.Falcon.ComponentsTests\Owlvey.Falcon.ComponentsTests.csproj", "{C551127A-AF16-4B16-8A1D-5188B9FD12AF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Owlvey.Falcon.ManualTests", "tests\Owlvey.Falcon.ManualTests\Owlvey.Falcon.ManualTests.csproj", "{7870D92B-A602-4577-ACFE-B2F3F070852F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{C551127A-AF16-4B16-8A1D-5188B9FD12AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C551127A-AF16-4B16-8A1D-5188B9FD12AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C551127A-AF16-4B16-8A1D-5188B9FD12AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7870D92B-A602-4577-ACFE-B2F3F070852F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7870D92B-A602-4577-ACFE-B2F3F070852F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7870D92B-A602-4577-ACFE-B2F3F070852F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7870D92B-A602-4577-ACFE-B2F3F070852F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -86,6 +92,7 @@ Global
 		{C5CF7CF4-BAD2-4F3D-939B-A834AD88DAA0} = {D63B84F9-A213-445D-B2E4-B6BC1B1512FE}
 		{ED92038B-805F-4186-93FB-7A4821352428} = {EF44CE22-16DD-4510-A2BB-D12C7734A76B}
 		{C551127A-AF16-4B16-8A1D-5188B9FD12AF} = {FAB670B9-6AD8-4FBB-A128-1D98153488B2}
+		{7870D92B-A602-4577-ACFE-B2F3F070852F} = {FAB670B9-6AD8-4FBB-A128-1D98153488B2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BD993390-77A7-4442-9BA6-842A755ADD53}

@@ -15,7 +15,7 @@ namespace Owlvey.Falcon.UnitTests
         {
             var customer = entity ?? BuildCustomer();
             var createdBy = Guid.NewGuid().ToString("n");
-            var name = "test product";            
+            var name = "test product";
             var productEntity = ProductEntity.Factory.Create(name, DateTime.UtcNow, createdBy, customer);
             return productEntity;
         }
@@ -31,9 +31,9 @@ namespace Owlvey.Falcon.UnitTests
             var entity = FeatureEntity.Factory.Create(name, on, createdBy, product);
             return entity;
         }
-        public static SourceEntity BuildSource(ProductEntity product, string name="/owlvey", DateTime? on=null, string createdBy="test") {
+        public static SourceEntity BuildSource(ProductEntity product, string name = "/owlvey", DateTime? on = null, string createdBy = "test") {
 
-            on = on ?? DateTime.Now;            
+            on = on ?? DateTime.Now;
             var entity = SourceEntity.Factory.Create(product, name, on.Value, createdBy);
             return entity;
         }
@@ -48,7 +48,7 @@ namespace Owlvey.Falcon.UnitTests
         {
             var customer = TestDataFactory.BuildCustomer();
             var product = TestDataFactory.BuildProduct(customer);
-            var service = TestDataFactory.BuildService("test", 99, "test", DateTime.Now);            
+            var service = TestDataFactory.BuildService("test", 99, "test", DateTime.Now);
             product.AddService(service);
 
             return (customer, product, service);
@@ -59,9 +59,9 @@ namespace Owlvey.Falcon.UnitTests
             var customer = TestDataFactory.BuildCustomer();
             var product = TestDataFactory.BuildProduct(customer);
             var service = TestDataFactory.BuildService("test", 99, "test", DateTime.Now);
-            var feature = TestDataFactory.BuildFeature("test", "test", DateTime.Now);            
+            var feature = TestDataFactory.BuildFeature("test", "test", DateTime.Now);
             product.AddService(service);
-            product.AddFeature(feature); 
+            product.AddFeature(feature);
             return (customer, product, service, feature);
         }
 
@@ -103,6 +103,13 @@ namespace Owlvey.Falcon.UnitTests
             return results;
         }
 
+        public static class Calendar{
 
+            public static DateTime StartJanuary2019 = new DateTime(2019, 01, 01);
+            public static DateTime January201903 = new DateTime(2019, 01, 03);
+            public static DateTime January201905 = new DateTime(2019, 01, 05);
+            public static DateTime EndJanuary2019 = new DateTime(2019, 01, 31);
+
+        }
     }
 }
