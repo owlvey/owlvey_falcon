@@ -10,6 +10,8 @@ namespace Owlvey.Falcon.Core.Entities
     {
         [Required]
         public string Name { get; set; }
+        [Required]
+        public string Description { get; set; }
         public string Avatar { get; set; }
 
         public virtual ProductEntity Product { get; set; }

@@ -8,12 +8,13 @@ namespace Owlvey.Falcon.Core.Entities
     {
         public static class Factory {
 
-            public static FeatureEntity Create(string name, DateTime on, string user, 
+            public static FeatureEntity Create(string name, string description, DateTime on, string user, 
                 ProductEntity product)
             {
                 var entity = new FeatureEntity()
                 {
                     Name = name,
+                    Description = description,
                     CreatedBy = user,
                     ModifiedBy = user,
                     CreatedOn = on,

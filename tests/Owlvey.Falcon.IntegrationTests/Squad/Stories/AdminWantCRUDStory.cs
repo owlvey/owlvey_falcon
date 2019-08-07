@@ -31,6 +31,14 @@ namespace Owlvey.Falcon.IntegrationTests.Squad.Stories
         }
 
         [Fact]
+        public void admin_cannot_create_a_squad_with_an_existing_name()
+        {
+            this._scenario = this._container.GetInstance<AdminCannotCreateSquadWithExistingNameScenario>();
+            this._scenario.BDDfy();
+        }
+
+
+        [Fact]
         public void admin_can_add_an_member()
         {
             this._scenario = this._container.GetInstance<AdminCanAddAnMemberToSquadScenario>();

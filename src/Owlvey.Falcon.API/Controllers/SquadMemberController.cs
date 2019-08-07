@@ -78,7 +78,7 @@ namespace Owlvey.Falcon.API.Controllers
             }
 
             var memberId = response.GetResult<int>("Id");
-            var members = await this._memberQueryComponent.GetMembers(memberId);
+            var members = await this._memberQueryComponent.GetMembers(id);
             var newResource = members.FirstOrDefault(c => c.Id.Equals(memberId));
 
             return this.Created(Url.RouteUrl("GetSquadMemberId", new { id = id, memberId = memberId }), newResource);

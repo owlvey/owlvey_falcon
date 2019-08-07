@@ -31,6 +31,13 @@ namespace Owlvey.Falcon.IntegrationTests.Feature.Stories
         }
 
         [Fact]
+        public void admin_cannot_create_a_feature_with_an_existing_name()
+        {
+            this._scenario = this._container.GetInstance<AdminCannotCreateFeatureWithExistingNameScenario>();
+            this._scenario.BDDfy();
+        }
+
+        [Fact]
         public void admin_can_delete_feature()
         {
             this._scenario = this._container.GetInstance<AdminCanDeleteFeatureScenario>();

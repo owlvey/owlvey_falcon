@@ -34,11 +34,17 @@ namespace Owlvey.Falcon.Components
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
 
-            var product = await this._dbContext.Products.SingleAsync(c => c.Id == model.ProductId);
+            var product = await this._dbContext.Products.Include(c=> c.Features).SingleAsync(c => c.Id == model.ProductId);
 
-            var entity = FeatureEntity.Factory.Create(model.Name, this._datetimeGateway.GetCurrentDateTime(), createdBy, product);
+            // Validate if the resource exists.
+            if (product.Features.Any(c => c.Name.Equals(model.Name)))
+            {
+                result.AddConflict($"The Resource {model.Name} has already been taken.");
+                return result;
+            }
             
-
+            var entity = FeatureEntity.Factory.Create(model.Name, model.Description, this._datetimeGateway.GetCurrentDateTime(), createdBy, product);
+            
             this._dbContext.Add(entity);
 
             await this._dbContext.SaveChangesAsync();
@@ -87,7 +93,7 @@ namespace Owlvey.Falcon.Components
 
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
 
-            var feature = await this._dbContext.Features.SingleAsync(c => c.Id == id);
+            var feature = await this._dbContext.Features.Include(c=> c.Product).SingleAsync(c => c.Id == id);
 
             if (feature == null)
             {
@@ -95,7 +101,20 @@ namespace Owlvey.Falcon.Components
                 return result;
             }
 
+            // Validate if the resource exists.
+            if (!feature.Name.Equals(model.Name, StringComparison.InvariantCultureIgnoreCase))
+            {
+                var product = await this._dbContext.Products.Include(c => c.Features).SingleAsync(c => c.Id.Equals(feature.Product.Id));
+
+                if (product.Features.Any(c => c.Name.Equals(model.Name)))
+                {
+                    result.AddConflict($"The Resource {model.Name} has already been taken.");
+                    return result;
+                }
+            }
+
             feature.Name = model.Name ?? feature.Name;
+            feature.Description = model.Description ?? feature.Description;
             feature.Avatar = model.Avatar ?? feature.Avatar;
             feature.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy);
 

@@ -26,6 +26,8 @@ namespace Owlvey.Falcon.Models
         [Required]
         public string Name { get; set; }
         [Required]
+        public string Description { get; set; }
+        [Required]
         public int ProductId { get; set; }        
     }
 
@@ -33,6 +35,8 @@ namespace Owlvey.Falcon.Models
     {
         [Required]
         public string Name { get; set; }
+        [Required]
+        public string Description { get; set; }
         public string Avatar { get; set; }
     }
 }

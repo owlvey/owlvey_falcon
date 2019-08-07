@@ -31,6 +31,14 @@ namespace Owlvey.Falcon.IntegrationTests.Service.Stories
         }
 
         [Fact]
+        public void admin_cannot_create_a_service_with_an_existing_name()
+        {
+            this._scenario = this._container.GetInstance<AdminCannotCreateServiceWithExistingNameScenario>();
+            this._scenario.BDDfy();
+        }
+
+
+        [Fact]
         public void admin_can_delete_service()
         {
             this._scenario = this._container.GetInstance<AdminCanDeleteServiceScenario>();

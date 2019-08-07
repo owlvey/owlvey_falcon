@@ -19,6 +19,7 @@ namespace Owlvey.Falcon.ComponentsTests
 
             await featureComponent.CreateFeature(new Models.FeaturePostRp() {
                  Name="test",
+                 Description = "test",
                  ProductId=productId                 
             });
 

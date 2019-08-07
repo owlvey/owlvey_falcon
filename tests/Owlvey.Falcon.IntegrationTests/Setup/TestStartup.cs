@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Owlvey.Falcon.API;
 using Owlvey.Falcon.API.Controllers;
+using Owlvey.Falcon.Core.Entities;
 using Owlvey.Falcon.IoC;
 using Owlvey.Falcon.Options;
 using Owlvey.Falcon.Repositories;
@@ -76,6 +77,7 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
             dbContext.Database.EnsureCreated();
 
             // Setup Default Data
+            
             dbContext.Customers.Add(new Core.Entities.CustomerEntity
             {
                 Id = 9999,
@@ -85,6 +87,9 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
                 CreatedOn = DateTime.UtcNow,
                 ModifiedBy = "test",
                 ModifiedOn = DateTime.UtcNow,
+                Squads = new List<Core.Entities.SquadEntity> {
+                    SquadEntity.Factory.Create("Default Squad", DateTime.UtcNow, "user")
+                },
                 Products = new List<Core.Entities.ProductEntity> {
                     new Core.Entities.ProductEntity{
                         Id = 9999,
@@ -94,6 +99,31 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
                         CreatedOn = DateTime.UtcNow,
                         ModifiedBy = "test",
                         ModifiedOn = DateTime.UtcNow,
+                        Features = new List<Core.Entities.FeatureEntity> {
+                            new FeatureEntity{
+                                Id = 9999,
+                                Description= "Default Feature",
+                                Name = "Default Feature",
+                                Avatar = "default",
+                                CreatedBy = "test",
+                                CreatedOn = DateTime.UtcNow,
+                                ModifiedBy = "test",
+                                ModifiedOn = DateTime.UtcNow,
+                            }
+                        },
+                        Services = new List<Core.Entities.ServiceEntity>{
+                            new Core.Entities.ServiceEntity{
+                                 Id = 9999,
+                                Description= "Default Service",
+                                Name = "Default Service",
+                                SLO = 99,
+                                Avatar = "default",
+                                CreatedBy = "test",
+                                CreatedOn = DateTime.UtcNow,
+                                ModifiedBy = "test",
+                                ModifiedOn = DateTime.UtcNow,
+                            }
+                        }
                     }
                 }
             });

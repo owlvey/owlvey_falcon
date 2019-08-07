@@ -18,10 +18,11 @@ namespace Owlvey.Falcon.UnitTests.Entities
         {
             var createdBy = Guid.NewGuid().ToString("n");
             var name = $"Feature A";
+            var description = $"Feature A";
 
             var (_, product) = TestDataFactory.BuildCustomerProduct();
 
-            var featureEntity = FeatureEntity.Factory.Create(name, DateTime.UtcNow, createdBy, product);
+            var featureEntity = FeatureEntity.Factory.Create(name, description, DateTime.UtcNow, createdBy, product);
 
             Assert.Equal(name, featureEntity.Name);
             Assert.Equal(createdBy, featureEntity.CreatedBy);
@@ -32,10 +33,12 @@ namespace Owlvey.Falcon.UnitTests.Entities
         {
             var createdBy = Guid.NewGuid().ToString("n");
             var name = $"";
+            var description = $"";
+
             var (_, product) = TestDataFactory.BuildCustomerProduct();
             Assert.Throws<InvalidStateException>(() =>
             {
-                FeatureEntity.Factory.Create(name, DateTime.UtcNow, createdBy, product);
+                FeatureEntity.Factory.Create(name, description, DateTime.UtcNow, createdBy, product);
             });
 
         }
@@ -44,7 +47,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
         public void AddFeatureEntitySuccess()
         {
             var (_, product) = TestDataFactory.BuildCustomerProduct();
-            var feature = TestDataFactory.BuildFeature("test", "user", DateTime.Now);
+            var feature = TestDataFactory.BuildFeature("test", "test", "user", DateTime.Now);
             product.AddFeature(feature);
             Assert.NotEmpty(product.Features);
         }

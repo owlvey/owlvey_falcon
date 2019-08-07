@@ -32,7 +32,7 @@ namespace Owlvey.Falcon.Components
         {
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
-            var customer = await this._dbContext.Customers.SingleAsync(c => c.Id == model.CustomerId);
+            var customer = await this._dbContext.Customers.Include(c=> c.Squads).SingleAsync(c => c.Id == model.CustomerId);
 
             // Validate if the resource exists.
             if (customer.Squads.Any(c => c.Name.Equals(model.Name)))

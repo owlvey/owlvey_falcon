@@ -25,10 +25,10 @@ namespace Owlvey.Falcon.UnitTests
             var entity = ServiceEntity.Factory.Create(name, slo, on, createdBy, product);
             return entity;
         }
-        public static FeatureEntity BuildFeature(string name, string createdBy, DateTime on)
+        public static FeatureEntity BuildFeature(string name, string description, string createdBy, DateTime on)
         {
             var (_, product) = TestDataFactory.BuildCustomerProduct();
-            var entity = FeatureEntity.Factory.Create(name, on, createdBy, product);
+            var entity = FeatureEntity.Factory.Create(name, description, on, createdBy, product);
             return entity;
         }
         public static SourceEntity BuildSource(ProductEntity product, string name = "/owlvey", DateTime? on = null, string createdBy = "test") {
@@ -59,7 +59,7 @@ namespace Owlvey.Falcon.UnitTests
             var customer = TestDataFactory.BuildCustomer();
             var product = TestDataFactory.BuildProduct(customer);
             var service = TestDataFactory.BuildService("test", 99, "test", DateTime.Now);
-            var feature = TestDataFactory.BuildFeature("test", "test", DateTime.Now);
+            var feature = TestDataFactory.BuildFeature("test", "test", "test", DateTime.Now);
             product.AddService(service);
             product.AddFeature(feature);
             return (customer, product, service, feature);

@@ -48,7 +48,8 @@ namespace Owlvey.Falcon.IntegrationTests.Feature.Scenarios
         {
             var representationPut = new FeaturePutRp();
             representationPut.Name = NewValue;
-            
+            representationPut.Description = NewValue;
+
             var jsonContent = HttpClientExtension.ParseModelToHttpContent(representationPut);
             var responsePut = _client.PutAsync(NewResourceLocation, jsonContent).Result;
             Assert.Equal(StatusCodes.Status200OK, (int)responsePut.StatusCode);
