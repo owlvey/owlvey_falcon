@@ -14,6 +14,7 @@ COPY ["src/Owlvey.Falcon.IoC/Owlvey.Falcon.IoC.csproj", "src/Owlvey.Falcon.IoC/"
 COPY ["tests/Owlvey.Falcon.ComponentsTests/Owlvey.Falcon.ComponentsTests.csproj", "tests/Owlvey.Falcon.ComponentsTests/"]
 COPY ["tests/Owlvey.Falcon.IntegrationTests/Owlvey.Falcon.IntegrationTests.csproj", "tests/Owlvey.Falcon.IntegrationTests/"]
 COPY ["tests/Owlvey.Falcon.UnitTests/Owlvey.Falcon.UnitTests.csproj", "tests/Owlvey.Falcon.UnitTests/"]
+COPY ["tests/Owlvey.Falcon.ManualTests/Owlvey.Falcon.ManualTests.csproj", "tests/Owlvey.Falcon.ManualTests/"]
 
 RUN dotnet restore "src/Owlvey.Falcon.API/Owlvey.Falcon.API.csproj"
 COPY . .
@@ -24,6 +25,7 @@ WORKDIR "/src/tests/"
 RUN dotnet test "Owlvey.Falcon.UnitTests/Owlvey.Falcon.UnitTests.csproj" --logger "trx;LogFileName=unittests.trx"
 RUN dotnet test "Owlvey.Falcon.ComponentsTests/Owlvey.Falcon.ComponentsTests.csproj" --logger "trx;LogFileName=componentstests.trx"
 RUN dotnet test "Owlvey.Falcon.IntegrationTests/Owlvey.Falcon.IntegrationTests.csproj" --logger "trx;LogFileName=integrationtests.trx"
+RUN dotnet test "Owlvey.Falcon.ManualTests/Owlvey.Falcon.ManualTests.csproj" --logger "trx;LogFileName=manualtests.trx"
 
 WORKDIR "/src/src/Owlvey.Falcon.API"
 FROM build AS publish
