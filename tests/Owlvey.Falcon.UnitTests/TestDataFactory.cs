@@ -31,10 +31,10 @@ namespace Owlvey.Falcon.UnitTests
             var entity = FeatureEntity.Factory.Create(name, on, createdBy, product);
             return entity;
         }
-        public static SourceEntity BuildSource(string name="/owlvey", DateTime? on=null, string createdBy="test") {
+        public static SourceEntity BuildSource(ProductEntity product, string name="/owlvey", DateTime? on=null, string createdBy="test") {
 
-            on = on ?? DateTime.Now;
-            var entity = SourceEntity.Factory.Create(name, on.Value, createdBy);
+            on = on ?? DateTime.Now;            
+            var entity = SourceEntity.Factory.Create(product, name, on.Value, createdBy);
             return entity;
         }
 
@@ -65,33 +65,33 @@ namespace Owlvey.Falcon.UnitTests
             return (customer, product, service, feature);
         }
 
-        public static ICollection<SourceEntity> BuildSources() {
+        public static ICollection<SourceEntity> BuildSources(ProductEntity product) {
             var results = new List<SourceEntity>();
             var userName = "john doe";
             var tags = "load balancer";
-            var source = TestDataFactory.BuildSource("GET:/owlvey/api/customers", DateTime.Now, userName);
+            var source = TestDataFactory.BuildSource(product, "GET:/owlvey/api/customers", DateTime.Now, userName);
             source.Tags = tags;
             results.Add(source);
-            source = TestDataFactory.BuildSource("POST:/owlvey/api/customers", DateTime.Now, userName);
+            source = TestDataFactory.BuildSource(product, "POST:/owlvey/api/customers", DateTime.Now, userName);
             source.Tags = tags;
             results.Add(source);
-            source = TestDataFactory.BuildSource("PUT:/owlvey/api/customers", DateTime.Now, userName);
+            source = TestDataFactory.BuildSource(product, "PUT:/owlvey/api/customers", DateTime.Now, userName);
             source.Tags = tags;
             results.Add(source);
             return results;
         }
-        public static ICollection<SourceEntity> BuildSourcesWithItems()
+        public static ICollection<SourceEntity> BuildSourcesWithItems(ProductEntity product)
         {
             var results = new List<SourceEntity>();
             var userName = "john doe";
             var tags = "load balancer";
-            var source = TestDataFactory.BuildSource("GET:/owlvey/api/customers", DateTime.Now, userName);
+            var source = TestDataFactory.BuildSource(product, "GET:/owlvey/api/customers", DateTime.Now, userName);
             source.Tags = tags;
             results.Add(source);
-            source = TestDataFactory.BuildSource("POST:/owlvey/api/customers", DateTime.Now, userName);
+            source = TestDataFactory.BuildSource(product, "POST:/owlvey/api/customers", DateTime.Now, userName);
             source.Tags = tags;
             results.Add(source);
-            source = TestDataFactory.BuildSource("PUT:/owlvey/api/customers", DateTime.Now, userName);
+            source = TestDataFactory.BuildSource(product, "PUT:/owlvey/api/customers", DateTime.Now, userName);
             source.Tags = tags;
             results.Add(source);
             var start = new DateTime(2019, 01, 01);

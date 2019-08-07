@@ -31,6 +31,9 @@ namespace Owlvey.Falcon.ComponentsTests
                 UserComponentConfiguration.ConfigureMappers(cfg);
                 SquadComponentConfiguration.ConfigureMappers(cfg);
                 MemberComponentConfiguration.ConfigureMappers(cfg);
+                SourceComponentConfiguration.ConfigureMappers(cfg);
+                SourceItemComponentConfiguration.ConfigureMappers(cfg);
+                IndicatorComponentConfiguration.ConfigureMappers(cfg);                
             });
             configuration.AssertConfigurationIsValid();
             var mapper = configuration.CreateMapper();
@@ -90,7 +93,55 @@ namespace Owlvey.Falcon.ComponentsTests
             return user.Id;
         }
 
-        public static async Task<(int customer, int product)> BuildProduct(Container container,
+        public static async Task<int> BuildService(Container container, int? product= null, string name = "service")
+        {
+            if (!product.HasValue) {
+                var (_, product_id) = await BuildCustomerProduct(container);
+                product = product_id;
+            }
+
+            var serviceComponent = container.GetInstance<ServiceComponent>();
+            var serviceQueryComponent = container.GetInstance<ServiceQueryComponent>();
+            await serviceComponent.CreateService(new Models.ServicePostRp() { Name = name, Description = name, ProductId = product.Value, SLO = 99 });
+            var service = await serviceQueryComponent.GetServiceByName(product.Value, name);
+            return service.Id;
+        }
+
+        public static async Task<int> BuildSource(Container container, int? product = null, string name = "service")
+        {
+            if (!product.HasValue)
+            {
+                var (_, product_id) = await BuildCustomerProduct(container);
+                product = product_id;
+            }
+            var component = container.GetInstance<SourceComponent>();
+            await component.Create(new Models.SourcePostRp()
+            {
+                Name = "test",
+                ProductId = product.Value
+            });
+
+            var target = await component.GetByName(product.Value, "test");
+
+            return target.Id;
+        }
+
+        public static async Task<int> BuildFeature(Container container, int? product = null, string name = "feature")
+        {
+            if (!product.HasValue)
+            {
+                var (_, product_id) = await BuildCustomerProduct(container);
+                product = product_id;
+            }
+
+            var component = container.GetInstance<FeatureComponent>();
+            var queryComponent = container.GetInstance<FeatureQueryComponent>();
+            await component.CreateFeature(new Models.FeaturePostRp() { Name = name, ProductId = product.Value });
+            var feature = await queryComponent.GetFeatureByName(product.Value, name);
+            return feature.Id;
+        }
+
+        public static async Task<(int customer, int product)> BuildCustomerProduct(Container container,
             string customerName="customer", string productName="product") {
 
             var customerComponet = container.GetInstance<CustomerComponent>();
@@ -115,5 +166,6 @@ namespace Owlvey.Falcon.ComponentsTests
             return (customer.Id, product.Id);
         }
 
+        
     }
 }

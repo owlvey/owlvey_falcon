@@ -27,8 +27,8 @@ namespace Owlvey.Falcon.IoC
             services.AddTransient<ProductQueryComponent>();
             services.AddTransient<ProductComponent>();
 
-            services.AddTransient<JournalQueryComponent>();
-            services.AddTransient<JournalComponent>();
+            services.AddTransient<SourceComponent>();
+            services.AddTransient<IndicatorComponent>();
 
             services.AddTransient<FeatureQueryComponent>();
             services.AddTransient<FeatureComponent>();            

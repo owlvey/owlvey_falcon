@@ -18,11 +18,13 @@ namespace Owlvey.Falcon.Repositories
         public DbSet<CustomerEntity> Customers { get; set; }
         public DbSet<ProductEntity> Products { get; set; }
         public DbSet<ServiceEntity> Services { get; set; }
+        public DbSet<ServiceMapEntity> ServiceMaps { get; set; }
 
         public DbSet<UserEntity> Users { get; set; }
-        public DbSet<FeatureEntity> Features { get; set; }
-        public DbSet<SourceEntity> Journals { get; set; }
-
+        public DbSet<FeatureEntity> Features { get; set; }        
+        public DbSet<SourceEntity> Sources { get; set; }
+        public DbSet<SourceItemEntity> SourcesItems { get; set; }
+        public DbSet<IndicatorEntity> Indicators { get; set; }
         public DbSet<MemberEntity> Members { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

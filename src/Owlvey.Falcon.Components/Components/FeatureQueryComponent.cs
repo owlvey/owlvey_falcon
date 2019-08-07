@@ -36,6 +36,17 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<FeatureGetRp>(entity);
         }
 
+
+        public async Task<FeatureGetRp> GetFeatureByName(int productId, string name)
+        {
+            var entity = await this._dbContext.Features.FirstOrDefaultAsync(c => c.Product.Id == productId && c.Name == name);
+
+            if (entity == null)
+                return null;
+
+            return this._mapper.Map<FeatureGetRp>(entity);
+        }
+
         /// <summary>
         /// Get All Feature
         /// </summary>

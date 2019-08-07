@@ -8,7 +8,7 @@ namespace Owlvey.Falcon.Core.Entities
     public partial class SourceEntity: BaseEntity
     {
         [Required]
-        public string Key { get; set; }
+        public string Name { get; set; }
 
         public string Tags { get; set; }
 
@@ -16,10 +16,13 @@ namespace Owlvey.Falcon.Core.Entities
         public string GoodDefinition { get; set; }
         [Required]
         public string TotalDefinition { get; set; }
-        public string Avatar { get; set; }               
+
+        public string Avatar { get; set; }
+
+        public virtual ProductEntity Product { get; set; }
 
 
-        public virtual ICollection<IndicatorEntity> Indicators { get; set; }
-        public virtual ICollection<SourceItemEntity> SourceItems { get; set; }
+        public virtual ICollection<IndicatorEntity> Indicators { get; set; } = new List<IndicatorEntity>();
+        public virtual ICollection<SourceItemEntity> SourceItems { get; set; } = new List<SourceItemEntity>();
     }
 }

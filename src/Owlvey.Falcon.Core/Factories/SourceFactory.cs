@@ -8,19 +8,20 @@ namespace Owlvey.Falcon.Core.Entities
     {
         public static class Factory {
 
-            public static SourceEntity Create(string name, DateTime on, string user)
+            public static SourceEntity Create(ProductEntity product,  string name, DateTime on, string user)
             {
                 string goodDefinition = "good definition of events";
                 string totalDefinition = "total definition of events";
                 var entity = new SourceEntity()
                 {
-                    Key = name,
+                    Name = name,
                     GoodDefinition = goodDefinition,
                     TotalDefinition = totalDefinition,
                     CreatedBy = user,
                     ModifiedBy = user,
                     CreatedOn = on,
                     ModifiedOn = on,
+                    Product = product
                 };
 
                 entity.Validate();

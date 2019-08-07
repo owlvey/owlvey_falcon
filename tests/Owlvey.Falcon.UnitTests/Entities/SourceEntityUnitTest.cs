@@ -11,8 +11,9 @@ namespace Owlvey.Falcon.UnitTests.Entities
         [Fact]
         public void CreateSourceEntitySuccess()
         {
+            var (_, product) = TestDataFactory.BuildCustomerProduct();
             var createdBy = Guid.NewGuid().ToString("n");
-            var entity = SourceEntity.Factory.Create("test", 
+            var entity = SourceEntity.Factory.Create(product, "test", 
                 DateTime.UtcNow, createdBy);
             
             Assert.Equal(createdBy, entity.CreatedBy);
@@ -24,12 +25,11 @@ namespace Owlvey.Falcon.UnitTests.Entities
             var createdBy = Guid.NewGuid().ToString("n");
             var goodDefinition = string.Empty;
             var totalDefinition = string.Empty;
-
+            var (_, product) = TestDataFactory.BuildCustomerProduct();
             Assert.Throws<InvalidStateException>(() =>
             {
-                SourceEntity.Factory.Create(null, DateTime.UtcNow, createdBy);
+                SourceEntity.Factory.Create(product, null, DateTime.UtcNow, createdBy);
             });
-
         }
     }
 }

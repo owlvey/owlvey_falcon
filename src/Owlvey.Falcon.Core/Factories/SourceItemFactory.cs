@@ -9,12 +9,8 @@ namespace Owlvey.Falcon.Core.Entities
         public static class Factory {
 
             public static SourceItemEntity Create(SourceEntity source, 
-                DateTime start, 
-                DateTime end,
-                int good, 
-                int total,
-                DateTime on, 
-                string createdBy) {
+                DateTime start, DateTime end, int good, int total,
+                DateTime on, string createdBy) {
                 var entity = new SourceItemEntity()
                 {         
                     Start = start,
@@ -27,6 +23,7 @@ namespace Owlvey.Falcon.Core.Entities
                     CreatedOn = on,
                     ModifiedOn = on,
                 };
+                
                 return entity;
             }
         }
