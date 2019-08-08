@@ -50,6 +50,9 @@ namespace Owlvey.Falcon.Components
             var entities = await this._dbContext.Customers.ToListAsync();
 
             return entities.Select(entity => new CustomerGetListRp {
+                Id = entity.Id.Value,
+                Name = entity.Name,
+                Avatar = entity.Avatar,
                 CreatedBy = entity.CreatedBy,
                 CreatedOn = entity.CreatedOn
             });
