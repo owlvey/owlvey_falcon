@@ -25,9 +25,7 @@ namespace Owlvey.Falcon.Components
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
             var entity = CustomerEntity.Factory.Create(createdBy, DateTime.Now, model.Name);
-
-            entity.Avatar = model.Avatar;
-
+            
             await this._dbContext.AddAsync(entity);
             await this._dbContext.SaveChangesAsync();
 

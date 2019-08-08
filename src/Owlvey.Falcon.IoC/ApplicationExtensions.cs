@@ -39,6 +39,8 @@ namespace Owlvey.Falcon.IoC
             services.AddTransient<ServiceQueryComponent>();
             services.AddTransient<ServiceComponent>();
 
+            services.AddTransient<ServiceMapComponent>();
+
             services.AddTransient<UserComponent>();
             services.AddTransient<UserQueryComponent>();
 

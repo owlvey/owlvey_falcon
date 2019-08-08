@@ -21,7 +21,7 @@ namespace Owlvey.Falcon.Core.Entities
                     ModifiedOn = on
                 };
 
-                if (service.Product.Id != feature.Product.Id) {
+                if (service.ProductId != feature.ProductId) {
                     throw new InvalidStateException("service and feature must be come from same product");
                 }
 

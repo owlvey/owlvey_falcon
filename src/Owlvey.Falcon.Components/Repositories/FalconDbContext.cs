@@ -15,6 +15,7 @@ namespace Owlvey.Falcon.Repositories
         
         public DbSet<AppSettingEntity> AppSettings { get; set; }
         public DbSet<SquadEntity> Squads { get; set; }
+        public DbSet<SquadFeatureEntity> SquadFeatures { get; set; }
         public DbSet<CustomerEntity> Customers { get; set; }
         public DbSet<ProductEntity> Products { get; set; }
         public DbSet<ServiceEntity> Services { get; set; }

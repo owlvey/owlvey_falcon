@@ -24,24 +24,7 @@ namespace Owlvey.Falcon.Core.Entities
                 };
                 entity.Validate();
                 return entity;
-            }
-
-            public static SquadEntity Create(string name, DateTime on,
-                string user)
-            {
-                string avatar = "https://cdn.iconscout.com/icon/free/png-256/avatar-375-456327.png";
-                var entity = new SquadEntity()
-                {
-                    Name = name,
-                    CreatedBy = user,
-                    ModifiedBy = user,
-                    CreatedOn = on,
-                    ModifiedOn = on,
-                    Avatar = avatar
-                };
-                entity.Validate();
-                return entity;
-            }
+            }            
         }
     }
 }

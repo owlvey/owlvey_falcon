@@ -5,6 +5,8 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{8D367435-27EC-4270-A65F-135989E11D7F}"
 	ProjectSection(SolutionItems) = preProject
 		scripts\build.definition.yml = scripts\build.definition.yml
+		scripts\unittest.bash = scripts\unittest.bash
+		scripts\run_server.bash = scripts\run_server.bash
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{09B34A06-A407-451C-8C5F-59E16DBC89BB}"

@@ -10,8 +10,7 @@ namespace Owlvey.Falcon.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public int Id { get; set; }
-        public int ProductId { get; set; }
-        public string ProductName { get; set; }
+        public int ProductId { get; set; }        
         public float SLO { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }

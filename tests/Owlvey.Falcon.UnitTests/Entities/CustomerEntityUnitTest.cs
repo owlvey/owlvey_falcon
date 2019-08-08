@@ -7,10 +7,7 @@ using Xunit;
 namespace Owlvey.Falcon.UnitTests.Entities
 {
     public class CustomerEntityUnitTest
-    {
-        
-
-        
+    {        
         [Fact]
         public void CreateCustomerEntitySuccess()
         {

@@ -9,9 +9,10 @@ using System.Text;
 
 namespace Owlvey.Falcon.Repositories
 {
+
     public class FalconDbContextFactory : IDesignTimeDbContextFactory<FalconDbContext>
     {
-        public FalconDbContext Create(string connectionString = null)
+        public FalconDbContext Create(string connectionString = "FalconDb.db")
         {
             return CreateDbContext(new string[] { connectionString });
         }

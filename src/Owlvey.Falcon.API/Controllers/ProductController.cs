@@ -26,10 +26,13 @@ namespace Owlvey.Falcon.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(typeof(ProductPostRp), 200)]
-        public async Task<IActionResult> Get(int customerId)
+        [ProducesResponseType(typeof(ProductGetRp), 200)]
+        public async Task<IActionResult> Get(int? customerId)
         {
-            var model = await this._productQueryService.GetProducts(customerId);
+            if (!customerId.HasValue) {
+                return this.BadRequest("customer id is required");
+            }
+            var model = await this._productQueryService.GetProducts(customerId.Value);
             return this.Ok(model);
         }
 

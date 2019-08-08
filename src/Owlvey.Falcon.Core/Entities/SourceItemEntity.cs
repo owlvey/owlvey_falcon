@@ -13,9 +13,9 @@ namespace Owlvey.Falcon.Core.Entities
         public int Total { get; set; }
 
         [Required]
-        public DateTime? Start { get; set; }
+        public DateTime Start { get; set; }
         [Required]
-        public DateTime? End { get; set; }
+        public DateTime End { get; set; }
 
         [NotMapped]
         public decimal Availability { get {
@@ -25,5 +25,20 @@ namespace Owlvey.Falcon.Core.Entities
                     return 1;
                 }
             } }
+
+        public SourceItemEntity Clone() {
+            SourceItemEntity result = new SourceItemEntity();
+            result.CreatedBy = this.CreatedBy;
+            result.CreatedOn = this.CreatedOn;
+            result.ModifiedBy = this.ModifiedBy;
+            result.ModifiedOn = this.ModifiedOn;
+            result.Start = this.Start;
+            result.End = this.Start;
+            result.Good = this.Good;
+            result.Total = this.Total; 
+            return result; 
+        }
+
+
     }
 }

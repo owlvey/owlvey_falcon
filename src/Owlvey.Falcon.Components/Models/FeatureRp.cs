@@ -8,18 +8,20 @@ namespace Owlvey.Falcon.Models
     public class FeatureBaseRp
     {
         public string Name { get; set; }
-        public int Id { get; set; }
+        public int Id { get; set; }        
     }
 
     public class FeatureGetRp : FeatureBaseRp {
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
+        public int ProductId { get; set; }
     }
 
     public class FeatureGetListRp : FeatureBaseRp
     {
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
+        public int ProductId { get; set; }
     }
 
     public class FeaturePostRp {

@@ -36,9 +36,9 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<ServiceGetRp>(entity);
         }
 
-        public async Task<IEnumerable<ServiceGetListRp>> GetServices()
+        public async Task<IEnumerable<ServiceGetListRp>> GetServices(int productId)
         {
-            var entities = await this._dbContext.Services.ToListAsync();
+            var entities = await this._dbContext.Services.Where(c=>c.Product.Id == productId).ToListAsync();
             return this._mapper.Map<IEnumerable<ServiceGetListRp>>(entities);
         }
     }

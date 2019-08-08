@@ -26,15 +26,13 @@ namespace Owlvey.Falcon.Models
     public class CustomerPostRp {
         [Required]
         public string Name { get; set; }
-        [Required]
-        public string Avatar { get; set; }
+        
     }
 
     public class CustomerPutRp
-    {
-        [Required]
+    {        
         public string Name { get; set; }
-        [Required]
+
         public string Avatar { get; set; }
     }
 }

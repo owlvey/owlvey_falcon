@@ -27,8 +27,7 @@ namespace Owlvey.Falcon.IntegrationTests.Customer.Scenarios
         public void given_information()
         {
             representation = Builder<CustomerPostRp>.CreateNew()
-                                 .With(x => x.Name = Faker.Company.Name())
-                                 .With(x => x.Avatar = $"{Guid.NewGuid()}")
+                                 .With(x => x.Name = Faker.Company.Name())                                 
                                  .Build();
         }
 

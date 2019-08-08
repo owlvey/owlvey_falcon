@@ -23,8 +23,8 @@ namespace Owlvey.Falcon.Models
     public class ServiceMapPostRp
     {
         [Required]
-        public int ServiceId { get; set; }
+        public int? ServiceId { get; set; }
         [Required]
-        public int FeatureId { get; set; }
+        public int? FeatureId { get; set; }
     }
 }

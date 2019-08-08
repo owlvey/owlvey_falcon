@@ -6,15 +6,13 @@ using Xunit;
 using System.Linq;
 using TDF = Owlvey.Falcon.UnitTests.TestDataFactory;
 
-
 namespace Owlvey.Falcon.UnitTests.Aggregates
 {
-    public class FeatureAvailabilityAggregateTest
+    public class CustomerAvailabilityAggregateTest
     {
-
         [Fact]
-        public void MeasureFeatureAvailability() {
-
+        public void MeasureFeatureAvailability()
+        {
             var (_, product, _, feature) = TestDataFactory.BuildCustomerProductServiceFeature();
             var source = TestDataFactory.BuildSource(product);
 
@@ -33,7 +31,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                 TDF.Calendar.StartJanuary2019,
                 TDF.Calendar.EndJanuary2019);
 
-            var indicator_availabilities = indicator_availability.MeasureAvailability(); 
+            var indicator_availabilities = indicator_availability.MeasureAvailability();
 
             var indicator_availabilityA = new IndicatorAvailabilityAggregator(indicatorA,
                 new List<SourceItemEntity>() { sourceItemA },
@@ -43,7 +41,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var indicatorA_availabilities = indicator_availabilityA.MeasureAvailability();
 
             var aggregate = new FeatureAvailabilityAggregate(feature,
-                new[] { indicator_availabilities, indicatorA_availabilities},
+                new[] { indicator_availabilities, indicatorA_availabilities },
                 TDF.Calendar.StartJanuary2019, TDF.Calendar.EndJanuary2019);
 
             var (_, features_availabilities) = aggregate.MeasureAvailability();

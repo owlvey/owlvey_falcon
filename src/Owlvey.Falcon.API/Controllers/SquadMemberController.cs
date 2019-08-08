@@ -8,6 +8,7 @@ using Owlvey.Falcon.Models;
 
 namespace Owlvey.Falcon.API.Controllers
 {
+    
     public partial class SquadController : BaseController
     {
         /// <summary>

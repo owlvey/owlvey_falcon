@@ -19,7 +19,14 @@ namespace Owlvey.Falcon.UnitTests
             var productEntity = ProductEntity.Factory.Create(name, DateTime.UtcNow, createdBy, customer);
             return productEntity;
         }
-
+        public static SquadEntity BuildSquad(CustomerEntity entity = null)
+        {
+            var customer = entity ?? BuildCustomer();
+            var createdBy = Guid.NewGuid().ToString("n");
+            var name = "test squad";
+            var squad = SquadEntity.Factory.Create(name, DateTime.UtcNow, createdBy, customer);
+            return squad;
+        }
         public static ServiceEntity BuildService(string name, float slo, string createdBy, DateTime on) {
             var (_, product) = TestDataFactory.BuildCustomerProduct();
             var entity = ServiceEntity.Factory.Create(name, slo, on, createdBy, product);
@@ -107,9 +114,36 @@ namespace Owlvey.Falcon.UnitTests
 
             public static DateTime StartJanuary2019 = new DateTime(2019, 01, 01);
             public static DateTime January201903 = new DateTime(2019, 01, 03);
+            public static DateTime January201904 = new DateTime(2019, 01, 04);
             public static DateTime January201905 = new DateTime(2019, 01, 05);
+            public static DateTime January201906 = new DateTime(2019, 01, 06);
+            public static DateTime January201907 = new DateTime(2019, 01, 07);
+            public static DateTime January201908 = new DateTime(2019, 01, 08);
+            public static DateTime January201910 = new DateTime(2019, 01, 10);
+            public static DateTime January201912 = new DateTime(2019, 01, 12);
+            public static DateTime January201914 = new DateTime(2019, 01, 14);
+            public static DateTime January201920 = new DateTime(2019, 01, 20);
             public static DateTime EndJanuary2019 = new DateTime(2019, 01, 31);
 
         }
+
+
+        public static class Indicators {
+            public static (IndicatorEntity indicator, IEnumerable<SourceItemEntity> items) GenerateSourceItems(
+                FeatureEntity feature,
+                SourceEntity source) {
+
+                var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, Guid.NewGuid().ToString());
+
+                var sourceItem = SourceItemEntity.Factory.Create(source, Calendar.StartJanuary2019,
+                    Calendar.EndJanuary2019, 900, 1200, DateTime.Now, "test");                
+
+                var sourceItemA = SourceItemEntity.Factory.Create(source, Calendar.StartJanuary2019,
+                    Calendar.EndJanuary2019, 900, 1200, DateTime.Now, "test");
+
+                return (indicator, new[] { sourceItem, sourceItemA });
+            }
+        }
+
     }
 }

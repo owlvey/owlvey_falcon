@@ -2,24 +2,25 @@
 using System.Collections.Generic;
 using Owlvey.Falcon.Core.Entities;
 using System.Linq;
+
 namespace Owlvey.Falcon.Core.Aggregates
 {
-    public class ProductAvailabilityAggregate
+    public class CustomerAvailabilityAggregate
     {
-        public ProductEntity Product { get; protected set; }
-        private IEnumerable<(ServiceEntity service, IEnumerable<DayAvailabilityEntity> availabilities)> Indicators;
+        public CustomerEntity Customer { get; protected set; }
+        private IEnumerable<(ProductEntity service, IEnumerable<DayAvailabilityEntity> availabilities)> Indicators;
         private readonly DateTime Start;
         private readonly DateTime End;
-        public ProductAvailabilityAggregate(ProductEntity entity,
-            IEnumerable<(ServiceEntity service, IEnumerable<DayAvailabilityEntity> availabilities)> indicators,
+        public CustomerAvailabilityAggregate(CustomerEntity entity,
+            IEnumerable<(ProductEntity product, IEnumerable<DayAvailabilityEntity> availabilities)> indicators,
             DateTime start, DateTime end)
         {
-            this.Product = entity;
+            this.Customer = entity;
             this.Indicators = indicators;
             this.Start = start;
             this.End = end;
         }
-        public (ProductEntity product, IEnumerable<DayAvailabilityEntity> availabilities) MeasureAvailability()
+        public (CustomerEntity customer, IEnumerable<DayAvailabilityEntity> availabilities) MeasureAvailability()
         {
             List<DayAvailabilityEntity> result = new List<DayAvailabilityEntity>();
 
@@ -43,7 +44,7 @@ namespace Owlvey.Falcon.Core.Aggregates
                 pivot = pivot.AddDays(1);
             }
 
-            return (this.Product, result);
-        }
+            return (this.Customer, result);
+        }        
     }
 }

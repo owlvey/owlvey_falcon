@@ -7,13 +7,20 @@ namespace Owlvey.Falcon.Core.Entities
 {
     public partial class ServiceEntity: BaseEntity
     {
+
+
+
         [Required]
         public string Name { get; set; }
         
         public string Description { get; set; }
+
         [Required]
         public float SLO { get; set; }
+
         public string Avatar { get; set; }
+
+        public int ProductId { get; set; }
 
         public virtual ProductEntity Product { get; set; }
 

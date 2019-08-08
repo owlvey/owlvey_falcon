@@ -31,7 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Owlvey.Falcon.Identity", "s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Owlvey.Falcon.Options", "src\Owlvey.Falcon.Options\Owlvey.Falcon.Options.csproj", "{C5CF7CF4-BAD2-4F3D-939B-A834AD88DAA0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Owlvey.Falcon.Components", "src\Owlvey.Falcon.Components\Owlvey.Falcon.Components.csproj", "{ED92038B-805F-4186-93FB-7A4821352428}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Owlvey.Falcon.Components", "src\Owlvey.Falcon.Components\Owlvey.Falcon.Components.csproj", "{ED92038B-805F-4186-93FB-7A4821352428}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Owlvey.Falcon.ComponentsTests", "tests\Owlvey.Falcon.ComponentsTests\Owlvey.Falcon.ComponentsTests.csproj", "{C551127A-AF16-4B16-8A1D-5188B9FD12AF}"
 EndProject

@@ -28,8 +28,7 @@ namespace Owlvey.Falcon.IntegrationTests.Customer.Scenarios
         public void given_information()
         {
             representation = Builder<CustomerPostRp>.CreateNew()
-                                 .With(x => x.Name = Faker.Company.Name())
-                                 .With(x => x.Avatar = $"{Guid.NewGuid()}")
+                                 .With(x => x.Name = Faker.Company.Name())                                 
                                  .Build();
         }
 
@@ -48,8 +47,7 @@ namespace Owlvey.Falcon.IntegrationTests.Customer.Scenarios
             NewValue = Faker.Company.Name();
 
             var representationPut = new CustomerPutRp();
-            representationPut.Name = NewValue;
-            representationPut.Avatar = representation.Avatar;
+            representationPut.Name = NewValue;            
 
             var jsonContent = HttpClientExtension.ParseModelToHttpContent(representationPut);
             var responsePut = _client.PutAsync(NewResourceLocation, jsonContent).Result;

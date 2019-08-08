@@ -23,8 +23,7 @@ namespace Owlvey.Falcon.ComponentsTests
 
             await customerComponet.CreateCustomer(new Models.CustomerPostRp()
             {
-                Name = "test",
-                Avatar = "default"
+                Name = "test"
             });
             /*
             await Assert.ThrowsAsync<Exception>(async () =>
@@ -47,8 +46,7 @@ namespace Owlvey.Falcon.ComponentsTests
 
             await customerComponet.CreateCustomer(new Models.CustomerPostRp()
             {
-                Name = "test",
-                Avatar = "default"
+                Name = "test"                
             });
 
             var customers = await customerQueryComponent.GetCustomers();

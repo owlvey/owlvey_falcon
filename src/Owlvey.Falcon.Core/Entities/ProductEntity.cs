@@ -11,6 +11,7 @@ namespace Owlvey.Falcon.Core.Entities
             this.Services = new List<ServiceEntity>();
             this.Features = new List<FeatureEntity>(); 
         }
+                
         [Required]
         public string Name { get; set; }
         

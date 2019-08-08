@@ -77,8 +77,8 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
             dbContext.Database.EnsureCreated();
 
             // Setup Default Data
-            
-            dbContext.Customers.Add(new Core.Entities.CustomerEntity
+
+            var customer = new Core.Entities.CustomerEntity
             {
                 Id = 9999,
                 Name = "Default Customer",
@@ -86,10 +86,7 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
                 CreatedBy = "test",
                 CreatedOn = DateTime.UtcNow,
                 ModifiedBy = "test",
-                ModifiedOn = DateTime.UtcNow,
-                Squads = new List<Core.Entities.SquadEntity> {
-                    SquadEntity.Factory.Create("Default Squad", DateTime.UtcNow, "user")
-                },
+                ModifiedOn = DateTime.UtcNow,                
                 Products = new List<Core.Entities.ProductEntity> {
                     new Core.Entities.ProductEntity{
                         Id = 9999,
@@ -126,7 +123,11 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
                         }
                     }
                 }
-            });
+            };
+            customer.Squads = new List<Core.Entities.SquadEntity> {
+                SquadEntity.Factory.Create("Default Squad", DateTime.UtcNow, "user", customer)};
+            
+            dbContext.Customers.Add(customer);
 
             dbContext.Users.Add(new Core.Entities.UserEntity
             {
@@ -137,8 +138,7 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
                 ModifiedBy = "test",
                 ModifiedOn = DateTime.UtcNow
             });
-
-
+            
             dbContext.SaveChanges();
 
         }
