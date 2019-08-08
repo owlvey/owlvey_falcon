@@ -9,18 +9,37 @@ using Owlvey.Falcon.Models;
 namespace Owlvey.Falcon.API.Controllers
 {
     [Route("customers")]
-    public class CustomerController : BaseController
+    public partial class CustomerController : BaseController
     {
         private readonly CustomerQueryComponent _customerQueryService;
         private readonly CustomerComponent _customerService;
+        private readonly ProductQueryComponent _productQueryService;
+        private readonly ProductComponent _productService;
+        private readonly FeatureQueryComponent _featureQueryService;
+        private readonly FeatureComponent _featureService;
+        private readonly ServiceQueryComponent _serviceQueryService;
+        private readonly ServiceComponent _serviceService;
         
+
         public CustomerController(CustomerQueryComponent CustomerQueryService,
-                                    CustomerComponent CustomerService) : base()
+                                    CustomerComponent CustomerService, ProductQueryComponent productQueryService,
+                                 ProductComponent productService,
+                                 FeatureQueryComponent featureQueryService,
+                                 FeatureComponent featureService,
+                                 ServiceQueryComponent serviceQueryService,
+                                 ServiceComponent serviceService) : base()
         {
             this._customerQueryService = CustomerQueryService;
             this._customerService = CustomerService;
+            this._productQueryService = productQueryService;
+            this._productService = productService;
+            this._featureService = featureService;
+            this._featureQueryService = featureQueryService;
+            this._featureService = featureService;
+            this._serviceService = serviceService;
+            this._serviceQueryService = serviceQueryService;
         }
-
+        
         /// <summary>
         /// Get Customers
         /// </summary>

@@ -51,9 +51,9 @@ namespace Owlvey.Falcon.Components
         /// Get All Feature
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<FeatureGetListRp>> GetFeatures()
+        public async Task<IEnumerable<FeatureGetListRp>> GetFeatures(int productId)
         {
-            var entities = await this._dbContext.Features.ToListAsync();
+            var entities = await this._dbContext.Features.Where(c=> c.Product.Id.Value.Equals(productId)).ToListAsync();
             return this._mapper.Map<IEnumerable< FeatureGetListRp>>(entities);
         }
     }
