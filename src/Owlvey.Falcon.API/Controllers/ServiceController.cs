@@ -17,9 +17,9 @@ namespace Owlvey.Falcon.API.Controllers
         /// <returns></returns>
         [HttpGet("{id}/products/{productId}/services")]
         [ProducesResponseType(typeof(ServicePostRp), 200)]
-        public async Task<IActionResult> GetServices()
+        public async Task<IActionResult> GetServices(int id, int productId)
         {
-            var model = await this._serviceQueryService.GetServices();
+            var model = await this._serviceQueryService.GetServices(productId);
             return this.Ok(model);
         }
 

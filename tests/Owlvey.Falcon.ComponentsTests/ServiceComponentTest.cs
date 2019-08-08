@@ -23,7 +23,7 @@ namespace Owlvey.Falcon.ComponentsTests
                 Name = "test",
                 ProductId = productId
             });
-            var services = await serviceQueryComponent.GetServices();
+            var services = await serviceQueryComponent.GetServices(productId);
             Assert.NotEmpty(services);
 
         }
