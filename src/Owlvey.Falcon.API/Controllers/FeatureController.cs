@@ -8,41 +8,33 @@ using Owlvey.Falcon.Models;
 
 namespace Owlvey.Falcon.API.Controllers
 {
-    [Route("features")]
-    public class FeatureController : BaseController
+    public partial class CustomerController : BaseController
     {
-        private readonly FeatureQueryComponent _featureQueryService;
-        private readonly FeatureComponent _featureService;
-        
-        public FeatureController(FeatureQueryComponent featureQueryService,
-                                    FeatureComponent featureService) : base()
-        {
-            this._featureQueryService = featureQueryService;
-            this._featureService = featureService;
-        }
 
         /// <summary>
         /// Get Features
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpGet("{id}/products/{productId}/features")]
         [ProducesResponseType(typeof(FeaturePostRp), 200)]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(int id, int productId)
         {
-            var model = await this._featureQueryService.GetFeatures();
+            var model = await this._featureQueryService.GetFeatures(productId);
             return this.Ok(model);
         }
 
         /// <summary>
         /// Get Feature by id 
         /// </summary>
-        /// <param name="id">id</param>
+        /// <param name="id">Customer Id</param>
+        /// <param name="productId">Product Id</param>
+        /// <param name="featureId">Feature Id</param>
         /// <returns></returns>
-        [HttpGet("{id}", Name = "GetFeatureId")]
+        [HttpGet("{id}/products/{productId}/features/{featureId}", Name = "GetFeatureId")]
         [ProducesResponseType(typeof(FeatureGetRp), 200)]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetFeatureById(int id, int productId, int featureId)
         {
-            var model = await this._featureQueryService.GetFeatureById(id);
+            var model = await this._featureQueryService.GetFeatureById(featureId);
 
             if (model == null)
                 return this.NotFound($"The Resource {id} doesn't exists.");
@@ -63,13 +55,15 @@ namespace Owlvey.Falcon.API.Controllers
         ///     }
         ///
         /// </remarks>
+        /// <param name="id">Customer Id</param>
+        /// <param name="productId">Product Id</param>
         /// <param name="resource"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("{id}/products/{productId}/features")]
         [ProducesResponseType(typeof(FeatureGetRp), 200)]
         [ProducesResponseType(409)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Post([FromBody]FeaturePostRp resource)
+        public async Task<IActionResult> Post(int id, int productId, [FromBody]FeaturePostRp resource)
         {
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
@@ -80,28 +74,30 @@ namespace Owlvey.Falcon.API.Controllers
                 return this.Conflict(response.GetConflicts());
             }
 
-            var id = response.GetResult<int>("Id");
+            var featureId = response.GetResult<int>("Id");
             var newResource = await this._featureQueryService.GetFeatureById(id);
 
-            return this.Created(Url.RouteUrl("GetFeatureId", new { id = id }), newResource);
+            return this.Created(Url.RouteUrl("GetFeatureId", new { id = id, productId = productId, featureId = featureId }), newResource);
         }
 
         /// <summary>
         /// Update an Feature
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">Customer Id</param>
+        /// <param name="featureId">Feature Id</param>
+        /// <param name="productId">Product Id</param>
         /// <param name="resource"></param>
         /// <returns></returns>
-        [HttpPut("{id}")]
+        [HttpPut("{id}/products/{productId}/features/{featureId}")]
         [ProducesResponseType(409)]
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Put(int id, [FromBody]FeaturePutRp resource)
+        public async Task<IActionResult> Put(int id, int productId, int featureId, [FromBody]FeaturePutRp resource)
         {
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._featureService.UpdateFeature(id, resource);
+            var response = await this._featureService.UpdateFeature(featureId, resource);
 
             if (response.HasNotFounds())
             {
@@ -119,16 +115,18 @@ namespace Owlvey.Falcon.API.Controllers
         /// <summary>
         /// Delete an Feature
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">Customer Id</param>
+        /// <param name="productId">Product Id</param>
+        /// <param name="featureId">Feature Id</param>
         /// <returns></returns>
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}/products/{productId}/features/{featureId}")]
         [ProducesResponseType(204)]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id, int productId, int featureId)
         {
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._featureService.DeleteFeature(id);
+            var response = await this._featureService.DeleteFeature(featureId);
 
             if (response.HasNotFounds())
             {

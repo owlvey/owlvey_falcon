@@ -8,44 +8,32 @@ using Owlvey.Falcon.Models;
 
 namespace Owlvey.Falcon.API.Controllers
 {
-    [Route("products")]
-    public class ProductController : BaseController
+    public partial class CustomerController
     {
-        private readonly ProductQueryComponent _productQueryService;
-        private readonly ProductComponent _productService;
         
-        public ProductController(ProductQueryComponent productQueryService,
-                                 ProductComponent productService) : base()
-        {
-            this._productQueryService = productQueryService;
-            this._productService = productService;
-        }
-
         /// <summary>
         /// Get Products
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
-        [ProducesResponseType(typeof(ProductGetRp), 200)]
-        public async Task<IActionResult> Get(int? customerId)
+        [HttpGet("{id}/products")]
+        [ProducesResponseType(typeof(ProductPostRp), 200)]
+        public async Task<IActionResult> Get(int id)
         {
-            if (!customerId.HasValue) {
-                return this.BadRequest("customer id is required");
-            }
-            var model = await this._productQueryService.GetProducts(customerId.Value);
+            var model = await this._productQueryService.GetProducts(id);
             return this.Ok(model);
         }
 
         /// <summary>
         /// Get Product by id 
         /// </summary>
-        /// <param name="id">id</param>
+        /// <param name="id">Customer Id</param>
+        /// <param name="productId">Product Id</param>
         /// <returns></returns>
-        [HttpGet("{id}", Name = "GetProductId")]
+        [HttpGet("{id}/products/{productId}", Name = "GetProductId")]
         [ProducesResponseType(typeof(ProductGetRp), 200)]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetProductById(int id, int productId)
         {
-            var model = await this._productQueryService.GetProductById(id);
+            var model = await this._productQueryService.GetProductById(productId);
 
             if (model == null)
                 return this.NotFound($"The Resource {id} doesn't exists.");
@@ -66,13 +54,14 @@ namespace Owlvey.Falcon.API.Controllers
         ///     }
         ///
         /// </remarks>
+        /// <param name="id"></param>
         /// <param name="resource"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("{id}/products")]
         [ProducesResponseType(typeof(ProductGetRp), 200)]
         [ProducesResponseType(409)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Post([FromBody]ProductPostRp resource)
+        public async Task<IActionResult> Post(int id, [FromBody]ProductPostRp resource)
         {
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
@@ -83,28 +72,29 @@ namespace Owlvey.Falcon.API.Controllers
                 return this.Conflict(response.GetConflicts());
             }
 
-            var id = response.GetResult<int>("Id");
+            var productId = response.GetResult<int>("Id");
             var newResource = await this._productQueryService.GetProductById(id);
 
-            return this.Created(Url.RouteUrl("GetProductId", new { id = id }), newResource);
+            return this.Created(Url.RouteUrl("GetProductId", new { id = id, productId = productId }), newResource);
         }
 
         /// <summary>
         /// Update an Product
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="productId"></param>
         /// <param name="resource"></param>
         /// <returns></returns>
-        [HttpPut("{id}")]
+        [HttpPut("{id}/products/{productId}")]
         [ProducesResponseType(409)]
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Put(int id, [FromBody]ProductPutRp resource)
+        public async Task<IActionResult> Put(int id, int productId, [FromBody]ProductPutRp resource)
         {
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._productService.UpdateProduct(id, resource);
+            var response = await this._productService.UpdateProduct(productId, resource);
 
             if (response.HasNotFounds())
             {
@@ -123,15 +113,16 @@ namespace Owlvey.Falcon.API.Controllers
         /// Delete an Product
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="productId">Product Id</param>
         /// <returns></returns>
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}/products/{productId}")]
         [ProducesResponseType(204)]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id, int productId)
         {
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._productService.DeleteProduct(id);
+            var response = await this._productService.DeleteProduct(productId);
 
             if (response.HasNotFounds())
             {

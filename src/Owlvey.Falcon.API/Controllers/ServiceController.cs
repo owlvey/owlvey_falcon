@@ -8,45 +8,28 @@ using Owlvey.Falcon.Models;
 
 namespace Owlvey.Falcon.API.Controllers
 {
-    [Route("services")]
-    public class ServiceController : BaseController
+    public partial class CustomerController : BaseController
     {
-        private readonly ServiceQueryComponent _serviceQueryService;
-        private readonly ServiceComponent _serviceService;
-        
-        public ServiceController(ServiceQueryComponent serviceQueryService,
-                                 ServiceComponent serviceService) : base()
-        {
-            this._serviceQueryService = serviceQueryService;
-            this._serviceService = serviceService;
-        }
-
         /// <summary>
         /// Get Services
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpGet("{id}/products/{productId}/services")]
         [ProducesResponseType(typeof(ServicePostRp), 200)]
         public async Task<IActionResult> Get(int? productId)
         {
             if (!productId.HasValue) {
                 return this.BadRequest("product id is requerid");
             }
-
             var model = await this._serviceQueryService.GetServices(productId.Value);
             return this.Ok(model);
         }
-
-        /// <summary>
-        /// Get Service by id 
-        /// </summary>
-        /// <param name="id">id</param>
-        /// <returns></returns>
-        [HttpGet("{id}", Name = "GetServiceId")]
+        
+        [HttpGet("{id}/products/{productId}/services/{serviceId}", Name = "GetServiceId")]
         [ProducesResponseType(typeof(ServiceGetRp), 200)]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetserviceById(int id, int productId, int serviceId)
         {
-            var model = await this._serviceQueryService.GetServiceById(id);
+            var model = await this._serviceQueryService.GetServiceById(serviceId);
 
             if (model == null)
                 return this.NotFound($"The Resource {id} doesn't exists.");
@@ -68,12 +51,14 @@ namespace Owlvey.Falcon.API.Controllers
         ///
         /// </remarks>
         /// <param name="resource"></param>
+        /// <param name="productId">Product Id</param>
+        /// <param name="id">Customer Id</param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("{id}/products/{productId}/services")]
         [ProducesResponseType(typeof(ServiceGetRp), 200)]
         [ProducesResponseType(409)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Post([FromBody]ServicePostRp resource)
+        public async Task<IActionResult> PostService(int id, int productId, [FromBody]ServicePostRp resource)
         {
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
@@ -84,28 +69,30 @@ namespace Owlvey.Falcon.API.Controllers
                 return this.Conflict(response.GetConflicts());
             }
 
-            var id = response.GetResult<int>("Id");
+            var serviceId = response.GetResult<int>("Id");
             var newResource = await this._serviceQueryService.GetServiceById(id);
 
-            return this.Created(Url.RouteUrl("GetServiceId", new { id = id }), newResource);
+            return this.Created(Url.RouteUrl("GetServiceId", new { id = id, productId = productId, serviceId = serviceId }), newResource);
         }
 
         /// <summary>
         /// Update an Service
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">Customer Id</param>
+        /// <param name="serviceId">ServiceId Id</param>
+        /// <param name="productId">Product Id</param>
         /// <param name="resource"></param>
         /// <returns></returns>
-        [HttpPut("{id}")]
+        [HttpPut("{id}/products/{productId}/services/{serviceId}")]
         [ProducesResponseType(409)]
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Put(int id, [FromBody]ServicePutRp resource)
+        public async Task<IActionResult> PutService(int id, int productId,  int serviceId, [FromBody]ServicePutRp resource)
         {
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._serviceService.UpdateService(id, resource);
+            var response = await this._serviceService.UpdateService(serviceId, resource);
 
             if (response.HasNotFounds())
             {
@@ -123,16 +110,18 @@ namespace Owlvey.Falcon.API.Controllers
         /// <summary>
         /// Delete an Service
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">Customer Id</param>
+        /// <param name="serviceId">ServiceId Id</param>
+        /// <param name="productId">Product Id</param>
         /// <returns></returns>
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}/products/{productId}/services/{serviceId}")]
         [ProducesResponseType(204)]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteService(int id, int productId, int serviceId)
         {
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._serviceService.DeleteService(id);
+            var response = await this._serviceService.DeleteService(serviceId);
 
             if (response.HasNotFounds())
             {

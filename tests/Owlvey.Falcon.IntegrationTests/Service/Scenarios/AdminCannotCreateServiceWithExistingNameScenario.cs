@@ -38,7 +38,7 @@ namespace Owlvey.Falcon.IntegrationTests.Service.Scenarios
         public void when_send_request()
         {
             var jsonContent = HttpClientExtension.ParseModelToHttpContent(representation);
-            responsePost = _client.PostAsync($"/Services", jsonContent).Result;
+            responsePost = _client.PostAsync($"/customers/{KeyConstants.CustomerId}/products/{KeyConstants.ProductId}/Services", jsonContent).Result;
         }
 
         [Then("The Service was rejected")]

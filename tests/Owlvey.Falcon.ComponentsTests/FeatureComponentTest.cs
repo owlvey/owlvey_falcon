@@ -23,7 +23,7 @@ namespace Owlvey.Falcon.ComponentsTests
                  ProductId=productId                 
             });
 
-            var features = await featureQueryComponent.GetFeatures();
+            var features = await featureQueryComponent.GetFeatures(productId);
             Assert.NotEmpty(features);
             
         }

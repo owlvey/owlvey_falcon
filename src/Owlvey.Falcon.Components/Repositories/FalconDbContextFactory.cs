@@ -29,10 +29,10 @@ namespace Owlvey.Falcon.Repositories
                 throw new InvalidOperationException("Could not find a connection string named 'DefaultConnection'.");
             }
 
-            if (args.Length > 0)
-            {
-                connectionString = args[0];
-            }
+            //if (args.Length > 0)
+            //{
+            //    connectionString = args[0];
+            //}
             
             builder.UseSqlite(connectionString);
 
