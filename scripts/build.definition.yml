@@ -44,7 +44,7 @@ steps:
   inputs:
     containerRegistry: 'Owlvey Docker Connection'
     repository: owlvey/api
-    Dockerfile: src/Owlvey.Falcon.API/Dockerfile
+    Dockerfile: artifactory/Dockerfile
     buildContext: artifactory
     tags: |
      $(Build.BuildId)
