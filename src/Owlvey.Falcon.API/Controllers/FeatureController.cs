@@ -40,7 +40,7 @@ namespace Owlvey.Falcon.API.Controllers
         /// <returns></returns>
         [HttpGet("{id}", Name = "GetFeatureId")]
         [ProducesResponseType(typeof(FeatureGetRp), 200)]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetFeatureId(int id)
         {
             var model = await this._featureQueryService.GetFeatureById(id);
 
@@ -84,7 +84,7 @@ namespace Owlvey.Falcon.API.Controllers
             var id = response.GetResult<int>("Id");
             var newResource = await this._featureQueryService.GetFeatureById(id);
 
-            return this.Created(Url.RouteUrl("GetFeatureId", new { id = id }), newResource);
+            return this.Created(Url.RouteUrl("GetFeatureId", new { id }), newResource);
         }
 
         /// <summary>

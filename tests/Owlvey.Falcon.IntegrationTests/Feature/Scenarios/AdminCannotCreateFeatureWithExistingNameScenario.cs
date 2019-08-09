@@ -37,7 +37,7 @@ namespace Owlvey.Falcon.IntegrationTests.Feature.Scenarios
         public void when_send_request()
         {
             var jsonContent = HttpClientExtension.ParseModelToHttpContent(representation);
-            responsePost = _client.PostAsync($"/customers/{KeyConstants.CustomerId}/products/{KeyConstants.ProductId}/Features", jsonContent).Result;
+            responsePost = _client.PostAsync($"/features", jsonContent).Result;
         }
 
         [Then("The Feature was rejected")]
