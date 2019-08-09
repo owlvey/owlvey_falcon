@@ -5,3 +5,47 @@ steps:
 
 - script: dotnet build -c Release
   displayName: Build Projects
+
+- script: dotnet test tests/TPSA.Falcon.UnitTests/TPSA.Falcon.UnitTests.csproj -c Release --no-build --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --logger trx;logfilename=result.xml
+  displayName: Run Unit Tests
+
+- script: dotnet test tests/TPSA.Falcon.ComponentTests/TPSA.Falcon.ComponentTests.csproj -c Release --no-build --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --logger trx;logfilename=result.xml
+  displayName: Run Component Tests
+
+- script: dotnet test tests/TPSA.Falcon.IntegrationTests/TPSA.Falcon.IntegrationTests.csproj -c Release --no-build --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --logger trx;logfilename=result.xml
+  displayName: Run Integration Tests
+
+- script: dotnet publish src/Owlvey.Falcon.API -c Release --no-restore -o ../../artifactory
+  displayName: Package Application
+
+- task: Docker@2
+  displayName: buildAndPush
+  inputs:
+    containerRegistry: 'Owlvey Docker Connection'
+    repository: owlvey/api
+    Dockerfile: artifactory/Dockerfile
+    buildContext: artifactory
+    tags: |
+     $(Build.BuildId)
+     latest
+
+- task: PublishTestResults@2
+  displayName: Unit Tests - Publish Test Results
+  inputs:
+    testRunner: VSTest
+    testResultsFiles: 'tests/TPSA.Falcon.UnitTests/TestResults/*.trx'
+    testRunTitle: 'TPSA Falcon - UnitTests'
+
+- task: PublishTestResults@2
+  displayName: Unit Tests - Publish Test Results
+  inputs:
+    testRunner: VSTest
+    testResultsFiles: 'tests/TPSA.Falcon.ComponentTests/TestResults/*.trx'
+    testRunTitle: 'TPSA Falcon - ComponentTests'
+
+- task: PublishTestResults@2
+  displayName: Integration Tests - Publish Test Results
+  inputs:
+    testRunner: VSTest
+    testResultsFiles: 'tests/TPSA.Falcon.IntegrationTests/TestResults/*.trx'
+    testRunTitle: 'TPSA Falcon - IntegrationTests'
