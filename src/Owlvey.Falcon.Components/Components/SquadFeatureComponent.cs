@@ -20,7 +20,17 @@ namespace Owlvey.Falcon.Components
             this._dbContext = dbContext;
         }
 
-        public async Task<BaseComponentResultRp> CreateSquad(SquadFeaturePostRp model)
+        public async Task<SquadFeatureGetRp> GetId(int id)
+        {
+            var entity = await this._dbContext.SquadFeatures.SingleOrDefaultAsync(c => c.Id.Equals(id));
+
+            if (entity == null)
+                return null;
+
+            return this._mapper.Map<SquadFeatureGetRp>(entity);
+        }
+
+        public async Task<BaseComponentResultRp> CreateSquadFeature(SquadFeaturePostRp model)
         {
             var result = new BaseComponentResultRp();
 
