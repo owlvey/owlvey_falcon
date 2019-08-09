@@ -18,16 +18,6 @@ steps:
 - script: dotnet publish src/Owlvey.Falcon.API -c Release --no-restore -o ../../artifactory
   displayName: Package Application
 
-- task: Docker@2
-  displayName: buildAndPush
-  inputs:
-    containerRegistry: 'Owlvey Docker Connection'
-    repository: owlvey/api
-    Dockerfile: artifactory/Dockerfile
-    buildContext: artifactory
-    tags: |
-     $(Build.BuildId)
-     latest
 
 - task: PublishTestResults@2
   displayName: Unit Tests - Publish Test Results
@@ -49,3 +39,14 @@ steps:
     testRunner: VSTest
     testResultsFiles: 'tests/TPSA.Falcon.IntegrationTests/TestResults/*.trx'
     testRunTitle: 'TPSA Falcon - IntegrationTests'
+
+- task: Docker@2
+  displayName: buildAndPush
+  inputs:
+    containerRegistry: 'Owlvey Docker Connection'
+    repository: owlvey/api
+    Dockerfile: artifactory/Owlvey.Falcon.API/Dockerfile
+    buildContext: artifactory
+    tags: |
+     $(Build.BuildId)
+     latest
