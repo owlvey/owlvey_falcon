@@ -40,7 +40,7 @@ namespace Owlvey.Falcon.API.Controllers
         /// <returns></returns>
         [HttpGet("{id}", Name = "GetProductId")]
         [ProducesResponseType(typeof(ProductGetRp), 200)]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetProductId(int id)
         {
             var model = await this._productQueryService.GetProductById(id);
 
@@ -84,7 +84,7 @@ namespace Owlvey.Falcon.API.Controllers
             var id = response.GetResult<int>("Id");
             var newResource = await this._productQueryService.GetProductById(id);
 
-            return this.Created(Url.RouteUrl("GetProductId", new { id = id }), newResource);
+            return this.Created(Url.RouteUrl("GetProductId", new { id }), newResource);
         }
 
         /// <summary>

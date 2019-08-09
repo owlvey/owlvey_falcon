@@ -39,7 +39,7 @@ namespace Owlvey.Falcon.IntegrationTests.Product.Scenarios
         public void when_send_request()
         {
             var jsonContent = HttpClientExtension.ParseModelToHttpContent(representation);
-            var responsePost = _client.PostAsync($"/customers/{KeyConstants.CustomerId}/Products", jsonContent).Result;
+            var responsePost = _client.PostAsync($"/products", jsonContent).Result;
             Assert.Equal(StatusCodes.Status201Created, (int)responsePost.StatusCode);
             NewResourceLocation = responsePost.Headers.Location.ToString();
         }

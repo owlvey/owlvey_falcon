@@ -37,7 +37,7 @@ namespace Owlvey.Falcon.IntegrationTests.Product.Scenarios
         public void when_send_request()
         {
             var jsonContent = HttpClientExtension.ParseModelToHttpContent(representation);
-            responsePost = _client.PostAsync($"/customers/{KeyConstants.CustomerId}/Products", jsonContent).Result;
+            responsePost = _client.PostAsync($"/products", jsonContent).Result;
         }
 
         [Then("The Product was rejected")]
