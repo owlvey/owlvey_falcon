@@ -11,6 +11,12 @@ namespace Owlvey.Falcon.API.Controllers
     public partial class CustomerController : BaseController
     {
 
+        //roots /id
+        //orderItem/id
+
+        //order/id/ item/{id}  // 
+
+
         /// <summary>
         /// Get Features
         /// </summary>
@@ -23,7 +29,18 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok(model);
         }
 
+        [HttpGet("features/{featureId}", Name = "GetFeatureId")]
+
+        // /features?productId
+        // Autorizacion feature => product > customer => squad , identity - squad
+        // operacion
+
+        [HttpGet("{id}/products/{productId}/features/{featureId}", Name = "GetFeatureId")]
+        // Autorizacion product => product /id?/
+
+
         /// <summary>
+        /// 
         /// Get Feature by id 
         /// </summary>
         /// <param name="id">Customer Id</param>

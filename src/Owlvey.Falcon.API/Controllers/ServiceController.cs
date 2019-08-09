@@ -16,12 +16,18 @@ namespace Owlvey.Falcon.API.Controllers
         /// <returns></returns>
         [HttpGet("{id}/products/{productId}/services")]
         [ProducesResponseType(typeof(ServicePostRp), 200)]
+<<<<<<< HEAD
         public async Task<IActionResult> Get(int? productId)
         {
             if (!productId.HasValue) {
                 return this.BadRequest("product id is requerid");
             }
             var model = await this._serviceQueryService.GetServices(productId.Value);
+=======
+        public async Task<IActionResult> GetServices(int id, int productId)
+        {
+            var model = await this._serviceQueryService.GetServices(productId);
+>>>>>>> b3a8cbce03b330f3109f3f97ab5fd034d9b324e2
             return this.Ok(model);
         }
         
