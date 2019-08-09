@@ -9,37 +9,18 @@ using Owlvey.Falcon.Models;
 namespace Owlvey.Falcon.API.Controllers
 {
     [Route("customers")]
-    public partial class CustomerController : BaseController
+    public class CustomerController : BaseController
     {
         private readonly CustomerQueryComponent _customerQueryService;
         private readonly CustomerComponent _customerService;
-        private readonly ProductQueryComponent _productQueryService;
-        private readonly ProductComponent _productService;
-        private readonly FeatureQueryComponent _featureQueryService;
-        private readonly FeatureComponent _featureService;
-        private readonly ServiceQueryComponent _serviceQueryService;
-        private readonly ServiceComponent _serviceService;
-        
 
         public CustomerController(CustomerQueryComponent CustomerQueryService,
-                                    CustomerComponent CustomerService, ProductQueryComponent productQueryService,
-                                 ProductComponent productService,
-                                 FeatureQueryComponent featureQueryService,
-                                 FeatureComponent featureService,
-                                 ServiceQueryComponent serviceQueryService,
-                                 ServiceComponent serviceService) : base()
+                                    CustomerComponent CustomerService) : base()
         {
             this._customerQueryService = CustomerQueryService;
             this._customerService = CustomerService;
-            this._productQueryService = productQueryService;
-            this._productService = productService;
-            this._featureService = featureService;
-            this._featureQueryService = featureQueryService;
-            this._featureService = featureService;
-            this._serviceService = serviceService;
-            this._serviceQueryService = serviceQueryService;
         }
-        
+
         /// <summary>
         /// Get Customers
         /// </summary>
@@ -95,7 +76,8 @@ namespace Owlvey.Falcon.API.Controllers
 
             var response = await this._customerService.CreateCustomer(resource);
 
-            if (response.HasConflicts()) {
+            if (response.HasConflicts())
+            {
                 return this.Conflict(response.GetConflicts());
             }
 

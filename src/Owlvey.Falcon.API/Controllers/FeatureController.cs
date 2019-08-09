@@ -8,50 +8,41 @@ using Owlvey.Falcon.Models;
 
 namespace Owlvey.Falcon.API.Controllers
 {
-    public partial class CustomerController : BaseController
+    [Route("features")]
+    public class FeatureController : BaseController
     {
+        private readonly FeatureQueryComponent _featureQueryService;
+        private readonly FeatureComponent _featureService;
 
-        //roots /id
-        //orderItem/id
-
-        //order/id/ item/{id}  // 
-
+        public FeatureController(FeatureQueryComponent featureQueryService,
+                                    FeatureComponent featureService) : base()
+        {
+            this._featureQueryService = featureQueryService;
+            this._featureService = featureService;
+        }
 
         /// <summary>
         /// Get Features
         /// </summary>
         /// <returns></returns>
-        [HttpGet("{id}/products/{productId}/features")]
+        [HttpGet]
         [ProducesResponseType(typeof(FeaturePostRp), 200)]
-        public async Task<IActionResult> Get(int id, int productId)
+        public async Task<IActionResult> Get()
         {
-            var model = await this._featureQueryService.GetFeatures(productId);
-            return this.Ok(model);
+            //var model = await this._featureQueryService.GetFeatures();
+            return this.Ok();
         }
 
-        [HttpGet("features/{featureId}", Name = "GetFeatureId")]
-
-        // /features?productId
-        // Autorizacion feature => product > customer => squad , identity - squad
-        // operacion
-
-        [HttpGet("{id}/products/{productId}/features/{featureId}", Name = "GetFeatureId")]
-        // Autorizacion product => product /id?/
-
-
         /// <summary>
-        /// 
         /// Get Feature by id 
         /// </summary>
-        /// <param name="id">Customer Id</param>
-        /// <param name="productId">Product Id</param>
-        /// <param name="featureId">Feature Id</param>
+        /// <param name="id">id</param>
         /// <returns></returns>
-        [HttpGet("{id}/products/{productId}/features/{featureId}", Name = "GetFeatureId")]
+        [HttpGet("{id}", Name = "GetFeatureId")]
         [ProducesResponseType(typeof(FeatureGetRp), 200)]
-        public async Task<IActionResult> GetFeatureById(int id, int productId, int featureId)
+        public async Task<IActionResult> GetById(int id)
         {
-            var model = await this._featureQueryService.GetFeatureById(featureId);
+            var model = await this._featureQueryService.GetFeatureById(id);
 
             if (model == null)
                 return this.NotFound($"The Resource {id} doesn't exists.");
@@ -72,49 +63,46 @@ namespace Owlvey.Falcon.API.Controllers
         ///     }
         ///
         /// </remarks>
-        /// <param name="id">Customer Id</param>
-        /// <param name="productId">Product Id</param>
         /// <param name="resource"></param>
         /// <returns></returns>
-        [HttpPost("{id}/products/{productId}/features")]
+        [HttpPost]
         [ProducesResponseType(typeof(FeatureGetRp), 200)]
         [ProducesResponseType(409)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Post(int id, int productId, [FromBody]FeaturePostRp resource)
+        public async Task<IActionResult> Post([FromBody]FeaturePostRp resource)
         {
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
             var response = await this._featureService.CreateFeature(resource);
 
-            if (response.HasConflicts()) {
+            if (response.HasConflicts())
+            {
                 return this.Conflict(response.GetConflicts());
             }
 
-            var featureId = response.GetResult<int>("Id");
+            var id = response.GetResult<int>("Id");
             var newResource = await this._featureQueryService.GetFeatureById(id);
 
-            return this.Created(Url.RouteUrl("GetFeatureId", new { id = id, productId = productId, featureId = featureId }), newResource);
+            return this.Created(Url.RouteUrl("GetFeatureId", new { id = id }), newResource);
         }
 
         /// <summary>
         /// Update an Feature
         /// </summary>
-        /// <param name="id">Customer Id</param>
-        /// <param name="featureId">Feature Id</param>
-        /// <param name="productId">Product Id</param>
+        /// <param name="id"></param>
         /// <param name="resource"></param>
         /// <returns></returns>
-        [HttpPut("{id}/products/{productId}/features/{featureId}")]
+        [HttpPut("{id}")]
         [ProducesResponseType(409)]
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Put(int id, int productId, int featureId, [FromBody]FeaturePutRp resource)
+        public async Task<IActionResult> Put(int id, [FromBody]FeaturePutRp resource)
         {
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._featureService.UpdateFeature(featureId, resource);
+            var response = await this._featureService.UpdateFeature(id, resource);
 
             if (response.HasNotFounds())
             {
@@ -132,18 +120,16 @@ namespace Owlvey.Falcon.API.Controllers
         /// <summary>
         /// Delete an Feature
         /// </summary>
-        /// <param name="id">Customer Id</param>
-        /// <param name="productId">Product Id</param>
-        /// <param name="featureId">Feature Id</param>
+        /// <param name="id"></param>
         /// <returns></returns>
-        [HttpDelete("{id}/products/{productId}/features/{featureId}")]
+        [HttpDelete("{id}")]
         [ProducesResponseType(204)]
-        public async Task<IActionResult> Delete(int id, int productId, int featureId)
+        public async Task<IActionResult> Delete(int id)
         {
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._featureService.DeleteFeature(featureId);
+            var response = await this._featureService.DeleteFeature(id);
 
             if (response.HasNotFounds())
             {
