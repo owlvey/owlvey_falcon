@@ -18,26 +18,25 @@ steps:
 - script: dotnet publish src/Owlvey.Falcon.API -c Release --no-restore -o ../../artifactory
   displayName: Package Application
 
-
 - task: PublishTestResults@2
   displayName: Unit Tests - Publish Test Results
   inputs:
     testRunner: VSTest
-    testResultsFiles: 'tests/Owlvey.Falcon.UnitTests/TestResults/*.trx'
+    testResultsFiles: 'tests/Owlvey.Falcon.UnitTests/TestResults/*.xml'
     testRunTitle: 'Owlvey Falcon - UnitTests'
 
 - task: PublishTestResults@2
   displayName: Unit Tests - Publish Test Results
   inputs:
     testRunner: VSTest
-    testResultsFiles: 'tests/Owlvey.Falcon.ComponentTests/TestResults/*.trx'
+    testResultsFiles: 'tests/Owlvey.Falcon.ComponentTests/TestResults/*.xml'
     testRunTitle: 'Owlvey Falcon - ComponentTests'
 
 - task: PublishTestResults@2
   displayName: Integration Tests - Publish Test Results
   inputs:
     testRunner: VSTest
-    testResultsFiles: 'tests/Owlvey.Falcon.IntegrationTests/TestResults/*.trx'
+    testResultsFiles: 'tests/Owlvey.Falcon.IntegrationTests/TestResults/*.xml'
     testRunTitle: 'Owlvey Falcon - IntegrationTests'
 
 - task: Docker@2
@@ -45,7 +44,7 @@ steps:
   inputs:
     containerRegistry: 'Owlvey Docker Connection'
     repository: owlvey/api
-    Dockerfile: artifactory/Owlvey.Falcon.API/Dockerfile
+    Dockerfile: src/Owlvey.Falcon.API/Dockerfile
     buildContext: artifactory
     tags: |
      $(Build.BuildId)
