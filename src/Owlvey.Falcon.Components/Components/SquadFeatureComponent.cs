@@ -7,6 +7,7 @@ using Owlvey.Falcon.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using Owlvey.Falcon.Core.Entities;
+using System.Collections.Generic;
 
 namespace Owlvey.Falcon.Components
 {
@@ -30,6 +31,11 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<SquadFeatureGetRp>(entity);
         }
 
+        public async Task<IEnumerable<SquadFeatureGetListRp>> GetAll(){
+            var entities = await this._dbContext.SquadFeatures.ToListAsync();
+            return this._mapper.Map<IEnumerable<SquadFeatureGetListRp>>(entities);
+        }
+
         public async Task<BaseComponentResultRp> CreateSquadFeature(SquadFeaturePostRp model)
         {
             var result = new BaseComponentResultRp();
@@ -37,7 +43,7 @@ namespace Owlvey.Falcon.Components
             var createdBy = this._identityService.GetIdentity();
 
             var squad = await this._dbContext.Squads.SingleAsync(c => c.Id == model.SquadId);
-            var feature = await this._dbContext.Features.SingleAsync(c => c.Id == model.SquadId);            
+            var feature = await this._dbContext.Features.SingleAsync(c => c.Id == model.FeatureId);            
             
             var entity = SquadFeatureEntity.Factory.Create(squad, feature, this._datetimeGateway.GetCurrentDateTime(), createdBy);
 

@@ -22,7 +22,7 @@ namespace Owlvey.Falcon.Repositories
             
             var builder = new DbContextOptionsBuilder<FalconDbContext>();
 
-            var connectionString = "FalconDb.db";
+            var connectionString = "Data Source=FalconDb.db;";
 
             if (String.IsNullOrWhiteSpace(connectionString))
             {

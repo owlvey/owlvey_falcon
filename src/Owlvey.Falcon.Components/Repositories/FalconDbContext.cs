@@ -27,6 +27,7 @@ namespace Owlvey.Falcon.Repositories
         public DbSet<SourceItemEntity> SourcesItems { get; set; }
         public DbSet<IndicatorEntity> Indicators { get; set; }
         public DbSet<MemberEntity> Members { get; set; }
+ 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -6,7 +6,6 @@ namespace Owlvey.Falcon.Models
     public class SquadFeatureBaseRp
     {
         public int Id { get; set; }
-        public string Name { get; set; }
     }
 
     public class SquadFeatureGetRp : SquadFeatureBaseRp
@@ -31,6 +30,5 @@ namespace Owlvey.Falcon.Models
 
     public class SquadFeaturePutRp
     {
-        public string Value { get; set; }
     }
 }

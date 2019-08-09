@@ -12,12 +12,12 @@ namespace Owlvey.Falcon.ComponentsTests
         {
             var container = ComponentTestFactory.BuildContainer();
 
-            var customer = await ComponentTestFactory.BuildCustomer(container);
+            var (customer, product) = await ComponentTestFactory.BuildCustomerProduct(container);
 
+            var feature = await ComponentTestFactory.BuildFeature(container, product);
             var squadComponent = container.GetInstance<SquadComponent>();
             var squadQueryComponent = container.GetInstance<SquadQueryComponent>();
-
-
+            var squadFeatureComponent = container.GetInstance<SquadFeatureComponent>();
 
             await squadComponent.CreateSquad(new Models.SquadPostRp()
             {
@@ -25,9 +25,16 @@ namespace Owlvey.Falcon.ComponentsTests
                 CustomerId = customer
             });
 
-            var squads = await squadQueryComponent.GetSquads();
+            var squad = await squadQueryComponent.GetSquadByName(customer, "test");
 
-            Assert.NotEmpty(squads);
+            await squadFeatureComponent.CreateSquadFeature(new Models.SquadFeaturePostRp() {
+                 SquadId = squad.Id,
+                 FeatureId = feature
+            });
+
+            var all  = await squadFeatureComponent.GetAll();
+
+            Assert.NotEmpty(all);
         }
     }
 }

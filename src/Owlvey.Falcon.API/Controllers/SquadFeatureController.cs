@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Owlvey.Falcon.Components;
@@ -20,6 +21,14 @@ namespace Owlvey.Falcon.API.Controllers
         public async Task<IActionResult> GetSquadFeatureById(int id)
         {
             var model = await this._squadFeatureComponent.GetId(id);
+            return this.Ok(model);
+        }
+
+        [HttpGet()]
+        [ProducesResponseType(typeof(IEnumerable<SquadFeatureGetListRp>), 200)]
+        public async Task<IActionResult> GetAll()
+        {
+            var model = await this._squadFeatureComponent.GetAll();
             return this.Ok(model);
         }
 
