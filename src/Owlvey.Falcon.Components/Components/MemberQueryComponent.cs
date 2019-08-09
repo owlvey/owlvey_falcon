@@ -22,10 +22,14 @@ namespace Owlvey.Falcon.Components
             this._dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<MemberGetListRp>> GetMembers(int squadId)
+        public async Task<IEnumerable<MemberGetListRp>> GetMembersBySquad(int squadId)
         {
             var entities = await this._dbContext.Members.Where(c=>c.Squad.Id == squadId).ToListAsync();
             return this._mapper.Map<IEnumerable<MemberGetListRp>>(entities);
+        }
+        public async Task<MemberGetRp> GetMember(int memberId) {
+            var entities = await this._dbContext.Members.Where(c=>c.Id == memberId).SingleOrDefaultAsync();
+            return this._mapper.Map<MemberGetRp>(entities);
         }
 
     }

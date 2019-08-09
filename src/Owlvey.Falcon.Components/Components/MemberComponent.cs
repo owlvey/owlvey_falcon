@@ -39,17 +39,17 @@ namespace Owlvey.Falcon.Components
             return result;
         }
 
-        public async Task<BaseComponentResultRp> DeleteMember(int squaId, int userId)
+        public async Task<BaseComponentResultRp> DeleteMember(int memberId)
         {
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
 
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
 
-            var member = await this._dbContext.Members.SingleAsync(c => c.Id == userId);
+            var member = await this._dbContext.Members.SingleAsync(c => c.Id == memberId);
 
             if (member == null) {
-                result.AddNotFound($"The Resource {userId} doesn't exists.");
+                result.AddNotFound($"The Resource {memberId} doesn't exists.");
                 return result;
             }
 

@@ -55,18 +55,16 @@ namespace Owlvey.Falcon.IntegrationTests.Squad.Scenarios
             memberPost.SquadId = squadId;
 
             var jsonContent = HttpClientExtension.ParseModelToHttpContent(memberPost);
-            var responsePost = _client.PostAsync($"{NewResourceLocation}/members", jsonContent).Result;
+            var responsePost = this._client.PostAsync($"/members", jsonContent).Result;
             Assert.Equal(StatusCodes.Status201Created, (int)responsePost.StatusCode);
         }
 
         [AndThen("Admin send the request for get update Squad")]
         public void when_send_request_with_existing_key()
         {
-            var responseGet = _client.GetAsync($"{NewResourceLocation}/members").Result;
+            var responseGet = _client.GetAsync($"/members?squadId={squadId}").Result;
             Assert.Equal((int)responseGet.StatusCode, StatusCodes.Status200OK);
-
             var SquadRepresentation = HttpClientExtension.ParseHttpContentToList<MemberGetListRp>(responseGet.Content);
-
             Assert.NotEmpty(SquadRepresentation);
         }
 

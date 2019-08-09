@@ -14,6 +14,7 @@ namespace Owlvey.Falcon.Core.Entities
 
         [Required]
         public string GoodDefinition { get; set; }
+
         [Required]
         public string TotalDefinition { get; set; }
 

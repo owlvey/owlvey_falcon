@@ -12,19 +12,13 @@ namespace Owlvey.Falcon.API.Controllers
     public partial class SquadController : BaseController
     {
         private readonly SquadQueryComponent _squadQueryService;
-        private readonly SquadComponent _squadService;
-        private readonly MemberQueryComponent _memberQueryComponent;
-        private readonly MemberComponent _memberComponent;
+        private readonly SquadComponent _squadService;        
 
         public SquadController(SquadQueryComponent squadQueryService, 
-            SquadComponent squadService,
-            MemberQueryComponent memberQueryComponent,
-            MemberComponent memberComponent) : base()
+            SquadComponent squadService) 
         {
             this._squadQueryService = squadQueryService;
-            this._squadService = squadService;
-            this._memberComponent = memberComponent;
-            this._memberQueryComponent = memberQueryComponent;
+            this._squadService = squadService;            
         }
 
         /// <summary>
