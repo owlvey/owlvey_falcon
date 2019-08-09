@@ -10,12 +10,22 @@ namespace Owlvey.Falcon.Models
 
     public class SourceItemGetRp : SourceItemBaseRp
     {
+        public int SourceId { get; set; }
+        public int Good { get; set; }
+        public int Total { get; set; }
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
     }
 
     public class SourceItemGetListRp : SourceItemBaseRp
     {
+        public int SourceId { get; set; }
+        public int Good { get; set; }
+        public int Total { get; set; }
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
     }

@@ -27,6 +27,8 @@ namespace Owlvey.Falcon.IoC
             services.AddTransient<ProductQueryComponent>();
             services.AddTransient<ProductComponent>();
 
+
+            services.AddTransient<SourceItemComponent>();
             services.AddTransient<SourceComponent>();
             services.AddTransient<IndicatorComponent>();
 
@@ -63,6 +65,9 @@ namespace Owlvey.Falcon.IoC
                 UserComponentConfiguration.ConfigureMappers(cfg);
                 SquadComponentConfiguration.ConfigureMappers(cfg);
                 MemberComponentConfiguration.ConfigureMappers(cfg);
+                SourceComponentConfiguration.ConfigureMappers(cfg);
+                SourceItemComponentConfiguration.ConfigureMappers(cfg);
+                IndicatorComponentConfiguration.ConfigureMappers(cfg);
             });
 
             IMapper mapper = mapperCfg.CreateMapper();

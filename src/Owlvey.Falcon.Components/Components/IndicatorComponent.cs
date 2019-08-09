@@ -25,10 +25,17 @@ namespace Owlvey.Falcon.Components
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
             var source = await this._dbContext.Sources.SingleAsync(c => c.Id == model.SourceId);
-            var feature = await this._dbContext.Features.SingleAsync(c => c.Id == model.FeatureId);
-            var entity = IndicatorEntity.Factory.Create(feature, source, this._datetimeGateway.GetCurrentDateTime(), createdBy);
+            var feature = await this._dbContext.Features.Include(c=>c.Indicators).SingleAsync(c => c.Id == model.FeatureId);
             
-            await this._dbContext.AddAsync(entity);
+            // Validate if the resource exists.
+            if (feature.Indicators.Any(c => c.SourceId == source.Id))
+            {
+                result.AddConflict($"The Resource {model.FeatureId} has already been registered.");
+                return result;
+            }
+
+            var entity = IndicatorEntity.Factory.Create(feature, source, this._datetimeGateway.GetCurrentDateTime(), createdBy);
+            await this._dbContext.Indicators.AddAsync(entity);
             await this._dbContext.SaveChangesAsync();
 
             result.AddResult("Id", entity.Id);
@@ -40,6 +47,12 @@ namespace Owlvey.Falcon.Components
         {
             var entity = await this._dbContext.Indicators.Where(c => c.Feature.Id == featureId).ToListAsync();
             return this._mapper.Map<IEnumerable<IndicatorGetRp>>(entity);
+        }
+
+        public async Task<IndicatorGetRp> GetById(int id)
+        {
+            var entity = await this._dbContext.Indicators.SingleOrDefaultAsync(c => c.Id == id);
+            return this._mapper.Map<IndicatorGetRp>(entity);
         }
     }
 }

@@ -6,7 +6,7 @@ using Owlvey.Falcon.Models;
 
 namespace Owlvey.Falcon.API.Controllers
 {
-    [Route("servicesMaps")]
+    [Route("serviceMaps")]
     public class ServiceMapController: BaseController
     {        
         private readonly ServiceMapComponent _serviceMapComponent;
@@ -26,10 +26,7 @@ namespace Owlvey.Falcon.API.Controllers
             if (!this.ModelState.IsValid) {
                 return this.BadRequest(this.ModelState);
             }
-            var result = await this._serviceMapComponent.CreateServiceMap(new ServiceMapPostRp() {
-                 FeatureId = model.FeatureId,
-                 ServiceId = model.ServiceId
-            });
+            var result = await this._serviceMapComponent.CreateServiceMap(model);
             return this.Ok(result);
         }
     }

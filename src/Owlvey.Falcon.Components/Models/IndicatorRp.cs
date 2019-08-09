@@ -10,12 +10,16 @@ namespace Owlvey.Falcon.Models
     {
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
+        public int SourceId { get; set; }
+        public int FeatureId { get; set; }
     }
 
     public class IndicatorGetListRp : IndicatorBaseRp
     {
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
+        public int SourceId { get; set; }
+        public int FeatureId { get; set; }
     }
 
     public class IndicatorPostRp

@@ -7,6 +7,7 @@ using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Repositories;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace Owlvey.Falcon.Components
 {
@@ -39,6 +40,18 @@ namespace Owlvey.Falcon.Components
         {
             var entity = await this._dbContext.Sources.SingleOrDefaultAsync(c => c.Product.Id == productId && c.Name == name);
             return this._mapper.Map<SourceGetRp>(entity);
+        }
+
+        public async Task<SourceGetRp> GetById(int id)
+        {
+            var entity = await this._dbContext.Sources.SingleOrDefaultAsync(c => c.Id == id);
+            return this._mapper.Map<SourceGetRp>(entity);
+        }
+
+        public async Task<IEnumerable<SourceGetListRp>> GetByProductId(int productId)
+        {
+            var entities = await this._dbContext.Sources.Where(c => c.Product.Id == productId).ToListAsync();
+            return this._mapper.Map<IEnumerable<SourceGetListRp>>(entities);
         }
     }
 }

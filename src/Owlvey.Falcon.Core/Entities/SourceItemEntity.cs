@@ -6,6 +6,8 @@ namespace Owlvey.Falcon.Core.Entities
 {
     public partial class SourceItemEntity: BaseEntity
     {
+        public int SourceId { get; set; }
+
         public virtual SourceEntity Source { get; set; }
         [Required]
         public int Good { get; set; }
@@ -32,6 +34,8 @@ namespace Owlvey.Falcon.Core.Entities
             result.CreatedOn = this.CreatedOn;
             result.ModifiedBy = this.ModifiedBy;
             result.ModifiedOn = this.ModifiedOn;
+            result.Source = this.Source;
+            result.SourceId = this.SourceId;
             result.Start = this.Start;
             result.End = this.Start;
             result.Good = this.Good;
