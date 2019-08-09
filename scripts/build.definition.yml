@@ -1,9 +1,9 @@
 steps:
 
-- script: dotnet restore  src/Owlvey.Falcon.API --configfile nuget/NuGet.Config
+- script: dotnet restore src/Owlvey.Falcon.API --configfile nuget/NuGet.Config
   displayName: Restore Dependencies
 
-- script: dotnet build -c Release
+- script: dotnet build src/Owlvey.Falcon.API -c Release
   displayName: Build Projects
 
 - script: dotnet test tests/TPSA.Falcon.UnitTests/TPSA.Falcon.UnitTests.csproj -c Release --no-build --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --logger trx;logfilename=result.xml
