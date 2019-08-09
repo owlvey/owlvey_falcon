@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Owlvey.Falcon.Components;
@@ -17,10 +18,19 @@ namespace Owlvey.Falcon.API.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(SourcePostRp), 200)]
-        public async Task<IActionResult> Get(int productId)
+        [ProducesResponseType(typeof(IEnumerable<SourceGetListRp>), 200)]
+        public async Task<IActionResult> Get(int? productId, int? indicatorId)
         {
-            var model = await this._sourceComponent.GetByProductId(productId);
+            IEnumerable<SourceGetListRp> model = new List<SourceGetListRp>();
+
+            if (productId.HasValue)
+            {
+                model = await this._sourceComponent.GetByProductId(productId.Value);
+            }
+            else if (indicatorId.HasValue) {
+                model = await this._sourceComponent.GetByIndicatorId(indicatorId.Value);
+            }
+            
             return this.Ok(model);
         }
 
