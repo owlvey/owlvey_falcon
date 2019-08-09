@@ -1,5 +1,7 @@
 steps:
 
+- script: dotnet restore --configfile nuget/NuGet.Config
+  displayName: Restore Dependencies
 
 - script: dotnet build -c Release
   displayName: Build Projects
