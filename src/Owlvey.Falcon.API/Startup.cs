@@ -55,7 +55,7 @@ namespace Owlvey.Falcon.API
                 app.UseHsts();
             }
 
-            dbContext.Migrate(Environment);
+            dbContext.Migrate(Environment.EnvironmentName);
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>

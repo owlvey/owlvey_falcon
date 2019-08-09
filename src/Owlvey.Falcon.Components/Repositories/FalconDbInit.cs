@@ -10,16 +10,15 @@ namespace Owlvey.Falcon.Repositories
     public static class FalconDbInit
     {
 
-        public static void Migrate(this FalconDbContext dbContext, IHostingEnvironment env)
+        public static void Migrate(this FalconDbContext dbContext, string env)
         {
             dbContext.Database.Migrate();
             SeedData(dbContext, env);
         }
 
-        private static void SeedData(FalconDbContext dbContext, IHostingEnvironment env) {
+        private static void SeedData(FalconDbContext dbContext, string env) {
 
-
-            if (env.IsDevelopment()) {
+            if (env == "Development" ) {
                 var userCreated = "test-user";
                 var date = DateTime.UtcNow;
                 // Create customer

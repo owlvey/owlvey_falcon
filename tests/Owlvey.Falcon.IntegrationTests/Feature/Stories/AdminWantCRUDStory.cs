@@ -23,12 +23,7 @@ namespace Owlvey.Falcon.IntegrationTests.Feature.Stories
             this._container = Shell.Instance.Container.CreateChildContainer();
         }
 
-        [Fact]
-        public void admin_can_create_feature()
-        {
-            this._scenario = this._container.GetInstance<AdminCanCreateFeatureScenario>();
-            this._scenario.BDDfy();
-        }
+        
 
         [Fact]
         public void admin_cannot_create_a_feature_with_an_existing_name()

@@ -40,4 +40,7 @@
     <ProjectReference Include="..\..\src\Owlvey.Falcon.IoC\Owlvey.Falcon.IoC.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Feature\Scenarios\AdminCanCreateFeatureScenario.cs" />
+  </ItemGroup>
 </Project>
