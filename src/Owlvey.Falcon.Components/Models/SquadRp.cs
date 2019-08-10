@@ -29,9 +29,7 @@ namespace Owlvey.Falcon.Models
         [Required]
         public string Name { get; set; }
         [Required]
-        public int CustomerId { get; set; }
-        [Required]
-        public string Description { get; set; }
+        public int CustomerId { get; set; }        
     }
 
     public class SquadPutRp

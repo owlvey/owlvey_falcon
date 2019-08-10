@@ -29,8 +29,7 @@ namespace Owlvey.Falcon.IntegrationTests.Squad.Scenarios
         public void given_information()
         {
             representation = Builder<SquadPostRp>.CreateNew()
-                                 .With(x => x.Name = $"{Guid.NewGuid()}")
-                                 .With(x => x.Description = $"{Guid.NewGuid()}")
+                                 .With(x => x.Name = $"{Guid.NewGuid()}")                                 
                                  .With(x => x.CustomerId = KeyConstants.CustomerId)
                                  .Build();
         }
