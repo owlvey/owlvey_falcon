@@ -22,21 +22,21 @@ steps:
   displayName: Unit Tests - Publish Test Results
   inputs:
     testRunner: VSTest
-    testResultsFiles: 'tests/Owlvey.Falcon.UnitTests/TestResults/*.xml'
+    testResultsFiles: 'tests/Owlvey.Falcon.UnitTests/TestResults/result.xml'
     testRunTitle: 'Owlvey Falcon - UnitTests'
 
 - task: PublishTestResults@2
   displayName: Unit Tests - Publish Test Results
   inputs:
     testRunner: VSTest
-    testResultsFiles: 'tests/Owlvey.Falcon.ComponentTests/TestResults/*.xml'
+    testResultsFiles: 'tests/Owlvey.Falcon.ComponentTests/TestResults/result.xml'
     testRunTitle: 'Owlvey Falcon - ComponentTests'
 
 - task: PublishTestResults@2
   displayName: Integration Tests - Publish Test Results
   inputs:
     testRunner: VSTest
-    testResultsFiles: 'tests/Owlvey.Falcon.IntegrationTests/TestResults/*.xml'
+    testResultsFiles: 'tests/Owlvey.Falcon.IntegrationTests/TestResults/result.xml'
     testRunTitle: 'Owlvey Falcon - IntegrationTests'
 
 - task: Docker@2
