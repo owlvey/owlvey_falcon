@@ -9,7 +9,7 @@ using Owlvey.Falcon.Repositories;
 namespace Owlvey.Falcon.Migrations
 {
     [DbContext(typeof(FalconDbContext))]
-    [Migration("20190809075128_InitialCreate")]
+    [Migration("20190810172538_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -106,13 +106,9 @@ namespace Owlvey.Falcon.Migrations
 
                     b.Property<int>("ProductId");
 
-                    b.Property<int?>("ServiceEntityId");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("ServiceEntityId");
 
                     b.ToTable("FeatureEntity");
                 });
@@ -185,6 +181,9 @@ namespace Owlvey.Falcon.Migrations
                 {
                     b.Property<int?>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Avatar")
+                        .IsRequired();
 
                     b.Property<string>("CreatedBy")
                         .IsRequired();
@@ -448,10 +447,6 @@ namespace Owlvey.Falcon.Migrations
                         .WithMany("Features")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Owlvey.Falcon.Core.Entities.ServiceEntity")
-                        .WithMany("Features")
-                        .HasForeignKey("ServiceEntityId");
                 });
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.IndicatorEntity", b =>
@@ -500,7 +495,7 @@ namespace Owlvey.Falcon.Migrations
                         .HasForeignKey("FeatureId");
 
                     b.HasOne("Owlvey.Falcon.Core.Entities.ServiceEntity", "Service")
-                        .WithMany()
+                        .WithMany("FeatureMap")
                         .HasForeignKey("ServiceId");
                 });
 

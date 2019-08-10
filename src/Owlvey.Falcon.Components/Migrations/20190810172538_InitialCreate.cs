@@ -55,6 +55,7 @@ namespace Owlvey.Falcon.Migrations
                     ModifiedOn = table.Column<DateTime>(nullable: false),
                     ModifiedBy = table.Column<string>(nullable: false),
                     Name = table.Column<string>(nullable: false),
+                    Avatar = table.Column<string>(nullable: false),
                     Description = table.Column<string>(nullable: true),
                     CustomerId = table.Column<int>(nullable: true)
                 },
@@ -93,6 +94,32 @@ namespace Owlvey.Falcon.Migrations
                         principalTable: "CustomerEntity",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FeatureEntity",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CreatedOn = table.Column<DateTime>(nullable: false),
+                    CreatedBy = table.Column<string>(nullable: false),
+                    ModifiedOn = table.Column<DateTime>(nullable: false),
+                    ModifiedBy = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
+                    Description = table.Column<string>(nullable: false),
+                    Avatar = table.Column<string>(nullable: true),
+                    ProductId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FeatureEntity", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FeatureEntity_ProductEntity_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "ProductEntity",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -175,7 +202,7 @@ namespace Owlvey.Falcon.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "FeatureEntity",
+                name: "SquadFeatureEntity",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -184,27 +211,86 @@ namespace Owlvey.Falcon.Migrations
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
                     ModifiedBy = table.Column<string>(nullable: false),
-                    Name = table.Column<string>(nullable: false),
-                    Description = table.Column<string>(nullable: false),
-                    Avatar = table.Column<string>(nullable: true),
-                    ProductId = table.Column<int>(nullable: false),
-                    ServiceEntityId = table.Column<int>(nullable: true)
+                    FeatureId = table.Column<int>(nullable: false),
+                    SquadId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FeatureEntity", x => x.Id);
+                    table.PrimaryKey("PK_SquadFeatureEntity", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_FeatureEntity_ProductEntity_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "ProductEntity",
+                        name: "FK_SquadFeatureEntity_FeatureEntity_FeatureId",
+                        column: x => x.FeatureId,
+                        principalTable: "FeatureEntity",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_FeatureEntity_ServiceEntity_ServiceEntityId",
-                        column: x => x.ServiceEntityId,
+                        name: "FK_SquadFeatureEntity_SquadEntity_SquadId",
+                        column: x => x.SquadId,
+                        principalTable: "SquadEntity",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ServiceMapEntity",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CreatedOn = table.Column<DateTime>(nullable: false),
+                    CreatedBy = table.Column<string>(nullable: false),
+                    ModifiedOn = table.Column<DateTime>(nullable: false),
+                    ModifiedBy = table.Column<string>(nullable: false),
+                    ServiceId = table.Column<int>(nullable: true),
+                    FeatureId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ServiceMapEntity", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ServiceMapEntity_FeatureEntity_FeatureId",
+                        column: x => x.FeatureId,
+                        principalTable: "FeatureEntity",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ServiceMapEntity_ServiceEntity_ServiceId",
+                        column: x => x.ServiceId,
                         principalTable: "ServiceEntity",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "IndicatorEntity",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CreatedOn = table.Column<DateTime>(nullable: false),
+                    CreatedBy = table.Column<string>(nullable: false),
+                    ModifiedOn = table.Column<DateTime>(nullable: false),
+                    ModifiedBy = table.Column<string>(nullable: false),
+                    SourceId = table.Column<int>(nullable: false),
+                    FeatureId = table.Column<int>(nullable: false),
+                    Avatar = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IndicatorEntity", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_IndicatorEntity_FeatureEntity_FeatureId",
+                        column: x => x.FeatureId,
+                        principalTable: "FeatureEntity",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_IndicatorEntity_SourceEntity_SourceId",
+                        column: x => x.SourceId,
+                        principalTable: "SourceEntity",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -264,98 +350,6 @@ namespace Owlvey.Falcon.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "IndicatorEntity",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    CreatedOn = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<string>(nullable: false),
-                    ModifiedOn = table.Column<DateTime>(nullable: false),
-                    ModifiedBy = table.Column<string>(nullable: false),
-                    SourceId = table.Column<int>(nullable: false),
-                    FeatureId = table.Column<int>(nullable: false),
-                    Avatar = table.Column<string>(nullable: true),
-                    Description = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_IndicatorEntity", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_IndicatorEntity_FeatureEntity_FeatureId",
-                        column: x => x.FeatureId,
-                        principalTable: "FeatureEntity",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_IndicatorEntity_SourceEntity_SourceId",
-                        column: x => x.SourceId,
-                        principalTable: "SourceEntity",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ServiceMapEntity",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    CreatedOn = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<string>(nullable: false),
-                    ModifiedOn = table.Column<DateTime>(nullable: false),
-                    ModifiedBy = table.Column<string>(nullable: false),
-                    ServiceId = table.Column<int>(nullable: true),
-                    FeatureId = table.Column<int>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ServiceMapEntity", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ServiceMapEntity_FeatureEntity_FeatureId",
-                        column: x => x.FeatureId,
-                        principalTable: "FeatureEntity",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ServiceMapEntity_ServiceEntity_ServiceId",
-                        column: x => x.ServiceId,
-                        principalTable: "ServiceEntity",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SquadFeatureEntity",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    CreatedOn = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<string>(nullable: false),
-                    ModifiedOn = table.Column<DateTime>(nullable: false),
-                    ModifiedBy = table.Column<string>(nullable: false),
-                    FeatureId = table.Column<int>(nullable: false),
-                    SquadId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SquadFeatureEntity", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SquadFeatureEntity_FeatureEntity_FeatureId",
-                        column: x => x.FeatureId,
-                        principalTable: "FeatureEntity",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_SquadFeatureEntity_SquadEntity_SquadId",
-                        column: x => x.SquadId,
-                        principalTable: "SquadEntity",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_CustomerEntity_Name",
                 table: "CustomerEntity",
@@ -366,11 +360,6 @@ namespace Owlvey.Falcon.Migrations
                 name: "IX_FeatureEntity_ProductId",
                 table: "FeatureEntity",
                 column: "ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_FeatureEntity_ServiceEntityId",
-                table: "FeatureEntity",
-                column: "ServiceEntityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_IndicatorEntity_FeatureId",
@@ -467,6 +456,9 @@ namespace Owlvey.Falcon.Migrations
                 name: "UserEntity");
 
             migrationBuilder.DropTable(
+                name: "ServiceEntity");
+
+            migrationBuilder.DropTable(
                 name: "SourceEntity");
 
             migrationBuilder.DropTable(
@@ -474,9 +466,6 @@ namespace Owlvey.Falcon.Migrations
 
             migrationBuilder.DropTable(
                 name: "SquadEntity");
-
-            migrationBuilder.DropTable(
-                name: "ServiceEntity");
 
             migrationBuilder.DropTable(
                 name: "ProductEntity");
