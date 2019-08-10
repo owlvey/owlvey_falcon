@@ -1,34 +1,51 @@
 steps:
 
-- script: dotnet restore --configfile nuget/NuGet.Config
+- script: dotnet restore src/Owlvey.Falcon.API --configfile nuget/NuGet.Config
   displayName: Restore Dependencies
 
-- script: dotnet build -c Release
+- script: dotnet build src/Owlvey.Falcon.API -c Release
   displayName: Build Projects
 
-- script: dotnet publish src/Owlvey.Falcon.API -c Release --no-restore -o ../../buildartifacts
+- script: dotnet test tests/Falcon.Falcon.UnitTests/Falcon.Falcon.UnitTests.csproj -c Release --no-build --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --logger trx;logfilename=result.xml
+  displayName: Run Unit Tests
+
+- script: dotnet test tests/Falcon.Falcon.ComponentTests/Owlvey.Falcon.ComponentTests.csproj -c Release --no-build --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --logger trx;logfilename=result.xml
+  displayName: Run Component Tests
+
+- script: dotnet test tests/Owlvey.Falcon.IntegrationTests/Owlvey.Falcon.IntegrationTests.csproj -c Release --no-build --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --logger trx;logfilename=result.xml
+  displayName: Run Integration Tests
+
+- script: dotnet publish src/Owlvey.Falcon.API -c Release --no-restore -o ../../artifactory
   displayName: Package Application
 
-- task: ArchiveFiles@2
-  displayName: Archive BuildArtifacts
+- task: PublishTestResults@2
+  displayName: Unit Tests - Publish Test Results
   inputs:
-    rootFolderOrFile: buildartifacts
-    includeRootFolder: false
-    archiveFile: $(Build.ArtifactStagingDirectory)/application.zip
+    testRunner: VSTest
+    testResultsFiles: 'tests/Owlvey.Falcon.UnitTests/TestResults/*.xml'
+    testRunTitle: 'Owlvey Falcon - UnitTests'
 
-- script: dotnet ef migrations script --project src/Owlvey.Falcon.Data.SQLite/Owlvey.Falcon.Data.SQLite.csproj --startup-project src/Owlvey.Falcon.Data.SQLite/Owlvey.Falcon.Data.SQLite.csproj -i -o scripts/migrations.sql
-  displayName: Script Migrations
-
-- task: PublishBuildArtifacts@1
-  displayName: Publish Artifact - Application  
+- task: PublishTestResults@2
+  displayName: Unit Tests - Publish Test Results
   inputs:
-    PathtoPublish: $(Build.ArtifactStagingDirectory)
-    ArtifactName: Executable
-    publishLocation: Container
+    testRunner: VSTest
+    testResultsFiles: 'tests/Owlvey.Falcon.ComponentTests/TestResults/*.xml'
+    testRunTitle: 'Owlvey Falcon - ComponentTests'
 
-- task: PublishBuildArtifacts@1
-  displayName: Publish Artifact - Scripts  
+- task: PublishTestResults@2
+  displayName: Integration Tests - Publish Test Results
   inputs:
-    PathtoPublish: scripts
-    ArtifactName: Scripts
-    publishLocation: Container
+    testRunner: VSTest
+    testResultsFiles: 'tests/Owlvey.Falcon.IntegrationTests/TestResults/*.xml'
+    testRunTitle: 'Owlvey Falcon - IntegrationTests'
+
+- task: Docker@2
+  displayName: buildAndPush
+  inputs:
+    containerRegistry: 'Owlvey Docker Connection'
+    repository: owlvey/api
+    Dockerfile: artifactory/Dockerfile
+    buildContext: artifactory
+    tags: |
+     $(Build.BuildId)
+     latest
