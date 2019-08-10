@@ -7,9 +7,6 @@ namespace Owlvey.Falcon.Core.Entities
 {
     public partial class ServiceEntity: BaseEntity
     {
-
-
-
         [Required]
         public string Name { get; set; }
         
@@ -24,7 +21,7 @@ namespace Owlvey.Falcon.Core.Entities
 
         public virtual ProductEntity Product { get; set; }
 
-        public virtual ICollection<FeatureEntity> Features { get; set; }
+        public virtual ICollection<ServiceMapEntity> FeatureMap { get; set; } = new List<ServiceMapEntity>();
 
         public void Update(DateTime on, string modifiedBy, string name, float slo, string description = null, string avatar = null)
         {

@@ -9,23 +9,35 @@ namespace Owlvey.Falcon.Core.Aggregates
     {
         private DateTime Start;
         private DateTime End; 
-        public FeatureEntity Feature { get; protected set; }
-        private IEnumerable<(IndicatorEntity indicator, IEnumerable<DayAvailabilityEntity> availabities)> Indicators;
-        public FeatureAvailabilityAggregate(FeatureEntity entity,
-            IEnumerable<(IndicatorEntity indicator, IEnumerable<DayAvailabilityEntity> Availabilities)> indicators,
+        public FeatureEntity Feature { get; protected set; }        
+        public FeatureAvailabilityAggregate(FeatureEntity entity,            
             DateTime start,
             DateTime end)
         {
             this.Start = start;
             this.End = end; 
-            this.Feature = entity;
-            this.Indicators = indicators;
+            this.Feature = entity;            
         }
+
+        private IEnumerable<(IndicatorEntity indicator, IEnumerable<DayAvailabilityEntity> availabities)> GenerateDaily() {
+            var result = new List<(IndicatorEntity, IEnumerable<DayAvailabilityEntity>)>();
+            foreach (var item in this.Feature.Indicators)
+            {
+                var agg = new IndicatorAvailabilityAggregator(item, this.Start, this.End);
+                var temp = agg.MeasureAvailability();
+                result.Add(temp);
+            }
+            return result;
+        }
+
         public (FeatureEntity, IEnumerable<DayAvailabilityEntity>) MeasureAvailability()
         {
+
             List<DayAvailabilityEntity> result = new List<DayAvailabilityEntity>();
 
-            var data = this.Indicators.SelectMany(c => c.availabities).ToList();
+            var indicators = this.GenerateDaily();
+
+            var data = indicators.SelectMany(c => c.availabities).ToList();
 
             var days = DateTimeUtils.DaysDiff(this.End, this.Start);
 

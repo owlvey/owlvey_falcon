@@ -57,5 +57,25 @@ namespace Owlvey.Falcon.API.Controllers
 
             return this.Created(Url.RouteUrl("GetIndicatorById", new { id }), newResource);
         }
+
+        #region reports
+
+        [HttpGet("{id}/reports/daily/series")]
+        [ProducesResponseType(typeof(SeriesGetRp), 200)]
+        public async Task<IActionResult> ReportSeries(int id, DateTime? start, DateTime? end, int period = 1)
+        {
+            if (!start.HasValue)
+            {
+                return this.BadRequest("start is required");
+            }
+            if (!end.HasValue)
+            {
+                return this.BadRequest("end is required");
+            }
+            var result = await this._indicatorComponent.GetDailySeriesById(id, start.Value, end.Value);
+            return this.Ok(result);
+        }
+        #endregion
+
     }
 }

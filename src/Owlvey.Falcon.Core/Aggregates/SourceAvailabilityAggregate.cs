@@ -9,16 +9,13 @@ namespace Owlvey.Falcon.Core.Aggregates
     {
         private SourceEntity Source;
         private DateTime Start;
-        private DateTime End;
-        private IEnumerable<SourceItemEntity> Items;
+        private DateTime End;        
 
-        public SourceAvailabilityAggregate(SourceEntity source,
-            IEnumerable<SourceItemEntity> items, DateTime start, DateTime end)
+        public SourceAvailabilityAggregate(SourceEntity source, DateTime start, DateTime end)
         {
             this.Source = source;
             this.Start = start;
-            this.End = end;
-            this.Items = items;
+            this.End = end;            
         }
 
         private IEnumerable<SourceItemEntity> GenerateSourceItemDays(SourceItemEntity itemEntity)
@@ -74,8 +71,7 @@ namespace Owlvey.Falcon.Core.Aggregates
 
         public (SourceEntity, IEnumerable<DayAvailabilityEntity>) MeasureAvailability()
         {
-
-            var data = this.Items.SelectMany(c => GenerateSourceItemDays(c)).ToList();
+            var data = this.Source.SourceItems.SelectMany(c => GenerateSourceItemDays(c)).ToList();
 
             List<DayAvailabilityEntity> result = new List<DayAvailabilityEntity>();
 

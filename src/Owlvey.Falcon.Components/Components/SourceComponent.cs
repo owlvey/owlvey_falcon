@@ -61,29 +61,25 @@ namespace Owlvey.Falcon.Components
             var targets = entities.Select(c => c.Source).ToList();
             return this._mapper.Map<IEnumerable<SourceGetListRp>>(targets);
         }
-        public async Task<TabularGetRp> GetTabularBySourceId(int sourceId, DateTime start, DateTime end) {           
+        public async Task<SeriesGetRp> GetDailySeriesById(int sourceId, DateTime start, DateTime end) {           
 
-            var source = await this._dbContext.Sources.Include(c=>c.SourceItems).SingleAsync(c => c.Id == sourceId);
-
-            var result = new TabularGetRp
+            var source = await this._dbContext.Sources.SingleAsync(c => c.Id == sourceId);
+            var sourceItems = await this._dbContext.SourcesItems.Where(c => c.SourceId == sourceId && c.Start >= start && c.End <= end).ToListAsync();
+            source.SourceItems = sourceItems;
+            var result = new SeriesGetRp
             {
                 Start = start,
                 End = end,
                 Name = source.Name
             };
 
-            var aggregator = new SourceAvailabilityAggregate(source, source.SourceItems, start, end);
-
-            var (_, items) = aggregator.MeasureAvailability();
-
-            var response = new TabularItemGetRp() { Name = source.Name };
+            var aggregator = new SourceAvailabilityAggregate(source, start, end);
+            var (_, items) = aggregator.MeasureAvailability();                        
 
             foreach (var item in items)
             {
-                response.Items.Add(this._mapper.Map<TabularItemDayGetRp>(item));                
+                result.Items.Add(this._mapper.Map<SeriesItemGetRp>(item));                
             }
-
-            result.Items.Add(response);
             
             return result;
         }

@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Core.Aggregates;
 using Owlvey.Falcon.Gateways;
 using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Repositories;
@@ -55,6 +56,35 @@ namespace Owlvey.Falcon.Components
         {
             var entities = await this._dbContext.Features.Where(c=> c.Product.Id.Value.Equals(productId)).ToListAsync();
             return this._mapper.Map<IEnumerable< FeatureGetListRp>>(entities);
+        }
+
+        public async Task<SeriesGetRp> GetDailySeriesById(int featureId, DateTime start, DateTime end)
+        {
+            var entity = await this._dbContext.Features.Include(c=>c.Indicators.Select(d=>d.Source)).SingleAsync(c => c.Id == featureId);
+
+            foreach (var indicator in entity.Indicators)
+            {
+                var sourceItems = await this._dbContext.SourcesItems.Where(c => c.SourceId == indicator.Source.Id && c.Start >= start && c.End <= end).ToListAsync();
+                indicator.Source.SourceItems = sourceItems;
+            }
+
+            var result = new SeriesGetRp
+            {
+                Start = start,
+                End = end,
+                Name = entity.Name
+            };
+
+            var aggregator = new FeatureAvailabilityAggregate(entity, start, end);
+
+            var (_, items) = aggregator.MeasureAvailability();
+            
+            foreach (var item in items)
+            {
+                result.Items.Add(this._mapper.Map<SeriesItemGetRp>(item));
+            }
+
+            return result;
         }
     }
 }

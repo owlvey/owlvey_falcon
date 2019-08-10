@@ -14,12 +14,16 @@ namespace Owlvey.Falcon.API
     {
         public static void Main(string[] args)
         {
-            BuildWebHost(args).Run();
+            var configuration = new ConfigurationBuilder()
+           .AddCommandLine(args)
+           .Build();
+            BuildWebHost(args, configuration).Run();
         }
 
-        public static IWebHost BuildWebHost(string[] args) =>
-             WebHost.CreateDefaultBuilder(args)
-                 .UseStartup<Startup>()
-                 .Build();
+        public static IWebHost BuildWebHost(string[] args, IConfiguration configuration) =>
+            WebHost.CreateDefaultBuilder(args)
+            .UseConfiguration(configuration)
+            .UseStartup<Startup>()
+            .Build();
     }
 }

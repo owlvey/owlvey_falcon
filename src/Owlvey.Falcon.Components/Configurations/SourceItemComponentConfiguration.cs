@@ -10,7 +10,7 @@ namespace Owlvey.Falcon.Components
         {
             cfg.CreateMap<SourceItemEntity, Models.SourceItemGetListRp>();
             cfg.CreateMap<SourceItemEntity, Models.SourceItemGetRp>();
-            cfg.CreateMap<DayAvailabilityEntity, Models.TabularItemDayGetRp>();
+            cfg.CreateMap<DayAvailabilityEntity, Models.SeriesItemGetRp>();
         }
     }
 }

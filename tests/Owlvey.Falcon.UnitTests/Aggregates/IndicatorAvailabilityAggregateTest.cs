@@ -26,9 +26,11 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var sourceItemB = SourceItemEntity.Factory.Create(source,
                 TDF.Calendar.StartJanuary2019, TDF.Calendar.EndJanuary2019,
                 900, 1200, DateTime.Now, "test");
-            
-            var aggregate = new IndicatorAvailabilityAggregator(indicator,
-                new [] { sourceItemA, sourceItemB },
+
+            source.SourceItems.Add(sourceItemA);
+            source.SourceItems.Add(sourceItemB);
+
+            var aggregate = new IndicatorAvailabilityAggregator(indicator,                
                 TDF.Calendar.StartJanuary2019,
                 TDF.Calendar.EndJanuary2019);
 
@@ -54,8 +56,10 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                 TDF.Calendar.January201905, TDF.Calendar.EndJanuary2019,
                 900, 1200, DateTime.Now, "test");
 
-            var aggregate = new IndicatorAvailabilityAggregator(indicator,
-                new[] { sourceItemA, sourceItemB },
+            source.SourceItems.Add(sourceItemA);
+            source.SourceItems.Add(sourceItemB);
+
+            var aggregate = new IndicatorAvailabilityAggregator(indicator,                
                 TDF.Calendar.StartJanuary2019,
                 TDF.Calendar.EndJanuary2019);
 
@@ -73,8 +77,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, "test");
             
             var aggregate = new IndicatorAvailabilityAggregator(
-                indicator,
-                new List<SourceItemEntity>(),
+                indicator,                
                 TDF.Calendar.StartJanuary2019,
                 TDF.Calendar.EndJanuary2019);
 
@@ -101,8 +104,11 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                 TDF.Calendar.January201920, TDF.Calendar.EndJanuary2019,
                 900, 1200, DateTime.Now, "test");
 
-            var aggregate = new IndicatorAvailabilityAggregator(indicator,
-                new[] { sourceItemA, sourceItemB, sourceItemC },
+            source.SourceItems.Add(sourceItemA);
+            source.SourceItems.Add(sourceItemB);
+            source.SourceItems.Add(sourceItemC);
+
+            var aggregate = new IndicatorAvailabilityAggregator(indicator,                
                 TDF.Calendar.StartJanuary2019,
                 TDF.Calendar.EndJanuary2019);
 

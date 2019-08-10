@@ -14,34 +14,20 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         public void MeasureProductAvailability()
         {
             var (_, product, service, feature) = TestDataFactory.BuildCustomerProductServiceFeature();
-            var source = TestDataFactory.BuildSource(product);
-
-            var (indicator_a, items_a) = TestDataFactory.Indicators.GenerateSourceItems(feature, source);
-            var (indicator_b, items_b) = TestDataFactory.Indicators.GenerateSourceItems(feature, source);
-                        
-            var indicator_availability = new IndicatorAvailabilityAggregator(indicator_a, items_a,
-                Calendar.StartJanuary2019, Calendar.EndJanuary2019);
-
-            var indicator_availabilities = indicator_availability.MeasureAvailability();
-
-            var indicator_availabilityA = new IndicatorAvailabilityAggregator(indicator_b, items_b,
-                Calendar.StartJanuary2019, Calendar.EndJanuary2019);
-
-            var indicatorA_availabilities = indicator_availabilityA.MeasureAvailability();
-
-            var aggregate = new FeatureAvailabilityAggregate(feature,
-                new[] { indicator_availabilities, indicatorA_availabilities },
-                Calendar.StartJanuary2019, Calendar.EndJanuary2019);
-
-            var features_availabilities = aggregate.MeasureAvailability();
             
-            var service_aggregate = new ServiceAvailabilityAggregate(service, new[] { features_availabilities },
-                Calendar.StartJanuary2019, Calendar.EndJanuary2019);
+
+            var indicator_a = TestDataFactory.Indicators.GenerateSourceItems(product, feature);
+            var indicator_b = TestDataFactory.Indicators.GenerateSourceItems(product, feature);
+
+            feature.Indicators.Add(indicator_a);
+            feature.Indicators.Add(indicator_b);
+                        
+            
+            var service_aggregate = new ServiceAvailabilityAggregate(service, Calendar.StartJanuary2019, Calendar.EndJanuary2019);
 
             var service_availabilities = service_aggregate.MeasureAvailability();
-
-
-            var product_aggregate = new ProductAvailabilityAggregate(product, new[] { service_availabilities },
+            
+            var product_aggregate = new ProductAvailabilityAggregate(product, 
                 Calendar.StartJanuary2019, Calendar.EndJanuary2019);
 
             var product_availabilities = product_aggregate.MeasureAvailability();

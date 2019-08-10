@@ -9,20 +9,18 @@ namespace Owlvey.Falcon.Core.Aggregates
     {
         private IndicatorEntity Indicator;
         private DateTime Start;
-        private DateTime End;
-        private IEnumerable<SourceItemEntity> Items;
+        private DateTime End;        
 
-        public IndicatorAvailabilityAggregator(IndicatorEntity indicator,
-            IEnumerable<SourceItemEntity> items, DateTime start, DateTime end)
+        public IndicatorAvailabilityAggregator(IndicatorEntity indicator, 
+            DateTime start, DateTime end)
         {
             this.Indicator = indicator;
             this.Start = start;
-            this.End = end;
-            this.Items = items;
+            this.End = end;            
         }
 
         public (IndicatorEntity, IEnumerable<DayAvailabilityEntity>) MeasureAvailability() {
-            var sourceAggregator = new SourceAvailabilityAggregate(this.Indicator.Source, this.Items, this.Start, this.End);
+            var sourceAggregator = new SourceAvailabilityAggregate(this.Indicator.Source, this.Start, this.End);
             var (source, items) = sourceAggregator.MeasureAvailability();
             return (this.Indicator, items);
        }

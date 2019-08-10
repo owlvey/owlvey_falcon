@@ -55,11 +55,15 @@ namespace Owlvey.Falcon.Components
             var entity = await this._dbContext.Indicators.SingleOrDefaultAsync(c => c.Id == id);
             return this._mapper.Map<IndicatorGetRp>(entity);
         }
-        public async Task<TabularGetRp> GetTabularBySourceId(int indicatorId, DateTime start, DateTime end)
-        {            
-            var indicator = await this._dbContext.Indicators.Include(c=>c.Feature).Include(c=>c.Source.SourceItems).SingleAsync(c => c.Id == indicatorId);
+        #region reports
+        public async Task<SeriesGetRp> GetDailySeriesById(int indicatorId, DateTime start, DateTime end)
+        {
+            var indicator = await this._dbContext.Indicators.Include(c=>c.Source).SingleAsync(c => c.Id == indicatorId);
+            var sourceItems = await this._dbContext.SourcesItems.Where(c => c.SourceId == indicator.Source.Id && c.Start >= start && c.End <= end).ToListAsync();
 
-            var result = new TabularGetRp
+            indicator.Source.SourceItems = sourceItems;
+            
+            var result = new SeriesGetRp
             {
                 Start = start,
                 End = end,
@@ -68,20 +72,17 @@ namespace Owlvey.Falcon.Components
 
             //TODO: refactoring
 
-            var aggregator = new IndicatorAvailabilityAggregator(indicator, indicator.Source.SourceItems, start, end);
+            var aggregator = new IndicatorAvailabilityAggregator(indicator, start, end);
 
             var (_, items) = aggregator.MeasureAvailability();
-
-            var response = new TabularItemGetRp() { Name = String.Format($"{indicator.Feature.Name}-{indicator.Source.Name}") };
-
+            
             foreach (var item in items)
             {
-                response.Items.Add(this._mapper.Map<TabularItemDayGetRp>(item));
-            }
-
-            result.Items.Add(response);
+                result.Items.Add(this._mapper.Map<SeriesItemGetRp>(item));
+            }            
 
             return result;
         }
+        #endregion
     }
 }

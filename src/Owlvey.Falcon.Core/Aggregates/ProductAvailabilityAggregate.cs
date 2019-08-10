@@ -6,24 +6,33 @@ namespace Owlvey.Falcon.Core.Aggregates
 {
     public class ProductAvailabilityAggregate
     {
-        public ProductEntity Product { get; protected set; }
-        private IEnumerable<(ServiceEntity service, IEnumerable<DayAvailabilityEntity> availabilities)> Indicators;
+        public ProductEntity Product { get; protected set; }        
         private readonly DateTime Start;
         private readonly DateTime End;
-        public ProductAvailabilityAggregate(ProductEntity entity,
-            IEnumerable<(ServiceEntity service, IEnumerable<DayAvailabilityEntity> availabilities)> indicators,
+        public ProductAvailabilityAggregate(ProductEntity entity,            
             DateTime start, DateTime end)
         {
-            this.Product = entity;
-            this.Indicators = indicators;
+            this.Product = entity;            
             this.Start = start;
             this.End = end;
+        }
+        private IEnumerable<(ServiceEntity service, IEnumerable<DayAvailabilityEntity> availabilities)> GetServiceAvailabilities() {
+            var result = new List<(ServiceEntity, IEnumerable<DayAvailabilityEntity>)>();
+            foreach (var item in this.Product.Services)
+            {
+                var agg = new ServiceAvailabilityAggregate(item, this.Start, this.End);
+                var temp = agg.MeasureAvailability();
+                result.Add(temp);                
+            }
+            return result;
         }
         public (ProductEntity product, IEnumerable<DayAvailabilityEntity> availabilities) MeasureAvailability()
         {
             List<DayAvailabilityEntity> result = new List<DayAvailabilityEntity>();
 
-            var data = this.Indicators.SelectMany(c => c.availabilities).ToList();
+            var indicators = this.GetServiceAvailabilities();
+
+            var data = indicators.SelectMany(c => c.availabilities).ToList();
 
             var days = DateTimeUtils.DaysDiff(this.End, this.Start);
 

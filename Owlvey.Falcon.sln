@@ -1,13 +1,14 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27428.2002
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29201.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{8D367435-27EC-4270-A65F-135989E11D7F}"
 	ProjectSection(SolutionItems) = preProject
 		scripts\build.definition.yml = scripts\build.definition.yml
-		scripts\unittest.bash = scripts\unittest.bash
-		scripts\run_server.bash = scripts\run_server.bash
 		scripts\coverage.bash = scripts\coverage.bash
+		scripts\run_server.bash = scripts\run_server.bash
+		scripts\run_server.bat = scripts\run_server.bat
+		scripts\unittest.bash = scripts\unittest.bash
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{09B34A06-A407-451C-8C5F-59E16DBC89BB}"
@@ -30,7 +31,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5. Util", "5. Util", "{D63B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Owlvey.Falcon.IntegrationTests", "tests\Owlvey.Falcon.IntegrationTests\Owlvey.Falcon.IntegrationTests.csproj", "{4D2F9142-5378-4E5F-BEA0-971D396CBCE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Owlvey.Falcon.UnitTests", "tests\Owlvey.Falcon.UnitTests\Owlvey.Falcon.UnitTests.csproj", "{DA6EC552-212C-448C-B086-52E1BEF4021B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Owlvey.Falcon.UnitTests", "tests\Owlvey.Falcon.UnitTests\Owlvey.Falcon.UnitTests.csproj", "{DA6EC552-212C-448C-B086-52E1BEF4021B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Owlvey.Falcon.Core", "src\Owlvey.Falcon.Core\Owlvey.Falcon.Core.csproj", "{0659119E-2E0A-4BDA-B8A0-E01AF2AA20DB}"
 EndProject
@@ -40,7 +41,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Owlvey.Falcon.Identity", "s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Owlvey.Falcon.Options", "src\Owlvey.Falcon.Options\Owlvey.Falcon.Options.csproj", "{C5CF7CF4-BAD2-4F3D-939B-A834AD88DAA0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Owlvey.Falcon.Components", "src\Owlvey.Falcon.Components\Owlvey.Falcon.Components.csproj", "{ED92038B-805F-4186-93FB-7A4821352428}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Owlvey.Falcon.Components", "src\Owlvey.Falcon.Components\Owlvey.Falcon.Components.csproj", "{ED92038B-805F-4186-93FB-7A4821352428}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Owlvey.Falcon.ComponentsTests", "tests\Owlvey.Falcon.ComponentsTests\Owlvey.Falcon.ComponentsTests.csproj", "{C551127A-AF16-4B16-8A1D-5188B9FD12AF}"
 EndProject

@@ -25,8 +25,10 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                 Calendar.StartJanuary2019, Calendar.EndJanuary2019,
                 900, 1200, DateTime.Now, "test");
 
-            var aggregate = new SourceAvailabilityAggregate(source,
-                new[] { sourceItemA, sourceItemB },
+            source.SourceItems.Add(sourceItemA);
+            source.SourceItems.Add(sourceItemB );
+
+            var aggregate = new SourceAvailabilityAggregate(source,                
                 Calendar.StartJanuary2019,
                 Calendar.EndJanuary2019);
 
@@ -48,9 +50,10 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                 Calendar.StartJuly2019,
                 Calendar.EndJuly2019,
                 3900223, 3911869, DateTime.Now, "test");
-            
+
+            source.SourceItems.Add(sourceItemA);
+
             var aggregate = new SourceAvailabilityAggregate(source,
-                new[] { sourceItemA},
                 Calendar.StartJuly2019,
                 Calendar.EndJuly2019);
 
@@ -62,8 +65,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                 Assert.NotEqual(-1, item.Minimun);
                 Assert.NotEqual(-1, item.Maximun);
                 Assert.NotEqual(-1, item.Average);
-                Assert.NotEqual(-1, item.Availability);
-                Assert.NotNull(item.Date);
+                Assert.NotEqual(-1, item.Availability);                
             }            
         }
     }

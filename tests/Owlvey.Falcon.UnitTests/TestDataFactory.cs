@@ -67,8 +67,11 @@ namespace Owlvey.Falcon.UnitTests
             var product = TestDataFactory.BuildProduct(customer);
             var service = TestDataFactory.BuildService("test", 99, "test", DateTime.Now);
             var feature = TestDataFactory.BuildFeature("test", "test", "test", DateTime.Now);
+            var map = ServiceMapEntity.Factory.Create(service, feature, DateTime.Now, "test");
             product.AddService(service);
             product.AddFeature(feature);
+            service.FeatureMap.Add(map); 
+            
             return (customer, product, service, feature);
         }
 
@@ -132,10 +135,9 @@ namespace Owlvey.Falcon.UnitTests
 
 
         public static class Indicators {
-            public static (IndicatorEntity indicator, IEnumerable<SourceItemEntity> items) GenerateSourceItems(
-                FeatureEntity feature,
-                SourceEntity source) {
-
+            public static IndicatorEntity GenerateSourceItems(ProductEntity product, FeatureEntity feature) {
+                var source = TestDataFactory.BuildSource(product);
+                
                 var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, Guid.NewGuid().ToString());
 
                 var sourceItem = SourceItemEntity.Factory.Create(source, Calendar.StartJanuary2019,
@@ -144,7 +146,12 @@ namespace Owlvey.Falcon.UnitTests
                 var sourceItemA = SourceItemEntity.Factory.Create(source, Calendar.StartJanuary2019,
                     Calendar.EndJanuary2019, 900, 1200, DateTime.Now, "test");
 
-                return (indicator, new[] { sourceItem, sourceItemA });
+                source.SourceItems.Add(sourceItem);
+                source.SourceItems.Add(sourceItemA);
+
+                indicator.Source = source;
+
+                return indicator;
             }
         }
 
