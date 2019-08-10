@@ -8,6 +8,7 @@ using Owlvey.Falcon.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using Owlvey.Falcon.Core.Aggregates;
 
 namespace Owlvey.Falcon.Components
 {
@@ -53,6 +54,34 @@ namespace Owlvey.Falcon.Components
         {
             var entity = await this._dbContext.Indicators.SingleOrDefaultAsync(c => c.Id == id);
             return this._mapper.Map<IndicatorGetRp>(entity);
+        }
+        public async Task<TabularGetRp> GetTabularBySourceId(int indicatorId, DateTime start, DateTime end)
+        {            
+            var indicator = await this._dbContext.Indicators.Include(c=>c.Feature).Include(c=>c.Source.SourceItems).SingleAsync(c => c.Id == indicatorId);
+
+            var result = new TabularGetRp
+            {
+                Start = start,
+                End = end,
+                Name = String.Format($"{indicator.Feature.Name}-{indicator.Source.Name}")
+            };
+
+            //TODO: refactoring
+
+            var aggregator = new IndicatorAvailabilityAggregator(indicator, indicator.Source.SourceItems, start, end);
+
+            var (_, items) = aggregator.MeasureAvailability();
+
+            var response = new TabularItemGetRp() { Name = String.Format($"{indicator.Feature.Name}-{indicator.Source.Name}") };
+
+            foreach (var item in items)
+            {
+                response.Items.Add(this._mapper.Map<TabularItemDayGetRp>(item));
+            }
+
+            result.Items.Add(response);
+
+            return result;
         }
     }
 }

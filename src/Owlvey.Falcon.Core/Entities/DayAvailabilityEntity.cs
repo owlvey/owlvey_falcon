@@ -20,6 +20,9 @@ namespace Owlvey.Falcon.Core.Entities
         }
 
         internal void ChangeAvailability(decimal availability) {
+            this.Minimun = availability;
+            this.Maximun = availability;
+            this.Average = availability;
             this.Availability = availability;
         }
     }

@@ -125,6 +125,9 @@ namespace Owlvey.Falcon.UnitTests
             public static DateTime January201920 = new DateTime(2019, 01, 20);
             public static DateTime EndJanuary2019 = new DateTime(2019, 01, 31);
 
+            public static DateTime StartJuly2019 = new DateTime(2019, 07, 1);
+            public static DateTime EndJuly2019 = new DateTime(2019, 07, 31);
+
         }
 
 
