@@ -329,5 +329,10 @@ ASALocalRun/
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
 *.db
+<<<<<<< HEAD
 BuildReports
 BuildReports/
+=======
+/artifactory
+*.xml
+>>>>>>> 09f71cff1636ddb5a710f1978833563f63bc261e

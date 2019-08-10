@@ -6,13 +6,13 @@ steps:
 - script: dotnet build src/Owlvey.Falcon.API -c Release
   displayName: Build Projects
 
-- script: dotnet test tests/Falcon.Falcon.UnitTests/Falcon.Falcon.UnitTests.csproj -c Release --no-build --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --logger trx;logfilename=result.xml
+- script: dotnet test tests/Owlvey.Falcon.UnitTests/Owlvey.Falcon.UnitTests.csproj -c Release --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --logger trx;logfilename=result.xml
   displayName: Run Unit Tests
 
-- script: dotnet test tests/Falcon.Falcon.ComponentTests/Owlvey.Falcon.ComponentTests.csproj -c Release --no-build --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --logger trx;logfilename=result.xml
+- script: dotnet test tests/Owlvey.Falcon.ComponentsTests/Owlvey.Falcon.ComponentsTests.csproj -c Release --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --logger trx;logfilename=result.xml
   displayName: Run Component Tests
 
-- script: dotnet test tests/Owlvey.Falcon.IntegrationTests/Owlvey.Falcon.IntegrationTests.csproj -c Release --no-build --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --logger trx;logfilename=result.xml
+- script: dotnet test tests/Owlvey.Falcon.IntegrationTests/Owlvey.Falcon.IntegrationTests.csproj -c Release --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --logger trx;logfilename=result.xml
   displayName: Run Integration Tests
 
 - script: dotnet publish src/Owlvey.Falcon.API -c Release --no-restore -o ../../artifactory
@@ -22,21 +22,21 @@ steps:
   displayName: Unit Tests - Publish Test Results
   inputs:
     testRunner: VSTest
-    testResultsFiles: 'tests/Owlvey.Falcon.UnitTests/TestResults/*.xml'
+    testResultsFiles: 'tests/Owlvey.Falcon.UnitTests/TestResults/result.xml'
     testRunTitle: 'Owlvey Falcon - UnitTests'
 
 - task: PublishTestResults@2
   displayName: Unit Tests - Publish Test Results
   inputs:
     testRunner: VSTest
-    testResultsFiles: 'tests/Owlvey.Falcon.ComponentTests/TestResults/*.xml'
+    testResultsFiles: 'tests/Owlvey.Falcon.ComponentsTests/TestResults/result.xml'
     testRunTitle: 'Owlvey Falcon - ComponentTests'
 
 - task: PublishTestResults@2
   displayName: Integration Tests - Publish Test Results
   inputs:
     testRunner: VSTest
-    testResultsFiles: 'tests/Owlvey.Falcon.IntegrationTests/TestResults/*.xml'
+    testResultsFiles: 'tests/Owlvey.Falcon.IntegrationTests/TestResults/result.xml'
     testRunTitle: 'Owlvey Falcon - IntegrationTests'
 
 - task: Docker@2
