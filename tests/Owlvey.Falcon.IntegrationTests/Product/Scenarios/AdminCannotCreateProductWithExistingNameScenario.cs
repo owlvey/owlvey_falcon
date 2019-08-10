@@ -28,7 +28,6 @@ namespace Owlvey.Falcon.IntegrationTests.Product.Scenarios
         {
             representation = Builder<ProductPostRp>.CreateNew()
                                  .With(x => x.Name = KeyConstants.ProductName)
-                                 .With(x => x.Description = $"{Guid.NewGuid()}")
                                  .With(x => x.CustomerId = KeyConstants.CustomerId)
                                  .Build();
         }

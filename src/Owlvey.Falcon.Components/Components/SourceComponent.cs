@@ -70,7 +70,8 @@ namespace Owlvey.Falcon.Components
             {
                 Start = start,
                 End = end,
-                Name = source.Name
+                Name = source.Name,
+                Avatar = source.Avatar
             };
 
             var aggregator = new SourceAvailabilityAggregate(source, start, end);

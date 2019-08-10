@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Owlvey.Falcon.Gateways;
+using Owlvey.Falcon.Core.Aggregates;
 
 namespace Owlvey.Falcon.Components
 {
@@ -56,6 +57,44 @@ namespace Owlvey.Falcon.Components
                 CreatedBy = entity.CreatedBy,
                 CreatedOn = entity.CreatedOn
             });
+        }
+
+        public async Task<SeriesGetRp> GetDailySeriesById(int productId, DateTime start, DateTime end)
+        {
+            var entity = await this._dbContext.Customers.Include(c => c.Products.Select(g=>g.Services.Select(d => d.FeatureMap.Select(f => f.Feature.Indicators.Select(e => e.Source))))).SingleAsync(c => c.Id == productId);
+
+            foreach (var product in entity.Products)
+            {
+                foreach (var service in product.Services)
+                {
+                    foreach (var feature in service.FeatureMap)
+                    {
+                        foreach (var indicator in feature.Feature.Indicators)
+                        {
+                            var sourceItems = await this._dbContext.SourcesItems.Where(c => c.SourceId == indicator.Source.Id && c.Start >= start && c.End <= end).ToListAsync();
+                            indicator.Source.SourceItems = sourceItems;
+                        }
+                    }
+                }
+            }            
+                                   
+            var result = new SeriesGetRp
+            {
+                Start = start,
+                End = end,
+                Name = entity.Name,
+                Avatar = entity.Avatar
+            };
+
+            var aggregator = new CustomerAvailabilityAggregate(entity, start, end);
+            var (_, items) = aggregator.MeasureAvailability();
+
+            foreach (var item in items)
+            {
+                result.Items.Add(this._mapper.Map<SeriesItemGetRp>(item));
+            }
+
+            return result;
         }
     }
 }

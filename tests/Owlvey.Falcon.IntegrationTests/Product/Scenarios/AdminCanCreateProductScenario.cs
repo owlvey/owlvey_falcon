@@ -28,8 +28,7 @@ namespace Owlvey.Falcon.IntegrationTests.Product.Scenarios
         public void given_information()
         {
             representation = Builder<ProductPostRp>.CreateNew()
-                                 .With(x => x.Name = $"{Guid.NewGuid()}")
-                                 .With(x => x.Description = $"{Guid.NewGuid()}")
+                                 .With(x => x.Name = $"{Guid.NewGuid()}")                                 
                                  .With(x => x.CustomerId = KeyConstants.CustomerId)
                                  .Build();
         }
@@ -51,8 +50,7 @@ namespace Owlvey.Falcon.IntegrationTests.Product.Scenarios
 
             var ProductRepresentation = HttpClientExtension.ParseHttpContentToModel<ProductGetRp>(responseGet.Content);
 
-            Assert.Equal(ProductRepresentation.Name, representation.Name);
-            Assert.Equal(ProductRepresentation.Description, representation.Description);
+            Assert.Equal(ProductRepresentation.Name, representation.Name);            
         }
 
         public void Dispose()

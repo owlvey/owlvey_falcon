@@ -67,6 +67,7 @@ namespace Owlvey.Falcon.Components
             {
                 Start = start,
                 End = end,
+                Avatar = indicator.Avatar,
                 Name = String.Format($"{indicator.Feature.Name}-{indicator.Source.Name}")
             };
 

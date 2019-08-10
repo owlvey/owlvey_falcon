@@ -72,7 +72,8 @@ namespace Owlvey.Falcon.Components
             {
                 Start = start,
                 End = end,
-                Name = entity.Name
+                Name = entity.Name,
+                Avatar = entity.Avatar
             };
 
             var aggregator = new FeatureAvailabilityAggregate(entity, start, end);

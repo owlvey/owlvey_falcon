@@ -8,6 +8,8 @@ namespace Owlvey.Falcon.Models
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
         public string Name { get; set; }
+
+        public string Avatar { get; set; }
         public IList<SeriesItemGetRp> Items { get; set; } = new List<SeriesItemGetRp>();
     }
     public class SeriesItemGetRp {

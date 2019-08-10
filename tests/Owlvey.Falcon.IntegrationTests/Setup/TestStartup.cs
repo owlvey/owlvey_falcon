@@ -93,6 +93,7 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
                         Description= "Default Product",
                         Name = "Default Product",
                         CreatedBy = "test",
+                        Avatar="default",
                         CreatedOn = DateTime.UtcNow,
                         ModifiedBy = "test",
                         ModifiedOn = DateTime.UtcNow,

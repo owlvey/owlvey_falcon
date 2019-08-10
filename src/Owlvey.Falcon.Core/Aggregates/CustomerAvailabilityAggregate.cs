@@ -7,24 +7,34 @@ namespace Owlvey.Falcon.Core.Aggregates
 {
     public class CustomerAvailabilityAggregate
     {
-        public CustomerEntity Customer { get; protected set; }
-        private IEnumerable<(ProductEntity service, IEnumerable<DayAvailabilityEntity> availabilities)> Indicators;
+        public CustomerEntity Customer { get; protected set; }        
         private readonly DateTime Start;
-        private readonly DateTime End;
-        public CustomerAvailabilityAggregate(CustomerEntity entity,
-            IEnumerable<(ProductEntity product, IEnumerable<DayAvailabilityEntity> availabilities)> indicators,
+        private readonly DateTime End;        
+
+        public CustomerAvailabilityAggregate(CustomerEntity entity,            
             DateTime start, DateTime end)
         {
-            this.Customer = entity;
-            this.Indicators = indicators;
+            this.Customer = entity;            
             this.Start = start;
             this.End = end;
+        }
+        private IEnumerable<(ProductEntity service, IEnumerable<DayAvailabilityEntity> availabilities)> GetAvailabilities()
+        {
+            var result = new List<(ProductEntity, IEnumerable<DayAvailabilityEntity>)>();
+            foreach (var item in this.Customer.Products)
+            {
+                var agg = new ProductAvailabilityAggregate(item, this.Start, this.End);
+                var tmp = agg.MeasureAvailability();
+                result.Add(tmp);
+            }
+            return result;
         }
         public (CustomerEntity customer, IEnumerable<DayAvailabilityEntity> availabilities) MeasureAvailability()
         {
             List<DayAvailabilityEntity> result = new List<DayAvailabilityEntity>();
 
-            var data = this.Indicators.SelectMany(c => c.availabilities).ToList();
+            var indicators = this.GetAvailabilities();
+            var data = indicators.SelectMany(c => c.availabilities).ToList();
 
             var days = DateTimeUtils.DaysDiff(this.End, this.Start);
 

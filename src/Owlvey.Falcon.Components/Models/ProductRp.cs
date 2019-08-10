@@ -27,9 +27,7 @@ namespace Owlvey.Falcon.Models
 
     public class ProductPostRp {
         [Required]
-        public string Name { get; set; }
-        [Required]
-        public string Description { get; set; }
+        public string Name { get; set; }        
         [Required]
         public int CustomerId { get; set; }
     }

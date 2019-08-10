@@ -41,9 +41,7 @@ namespace Owlvey.Falcon.Components
             var entity = ProductEntity.Factory.Create(model.Name, 
                 this._datetimeGateway.GetCurrentDateTime(),
                 createdBy, customer);
-
-            entity.Description = model.Description;
-
+            
             this._dbContext.Products.Add(entity);
 
             await this._dbContext.SaveChangesAsync();

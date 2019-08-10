@@ -51,7 +51,8 @@ namespace Owlvey.Falcon.Components
             {
                 Start = start,
                 End = end,
-                Name = entity.Name
+                Name = entity.Name,
+                Avatar = entity.Avatar
             };
 
             var aggregator = new ServiceAvailabilityAggregate(entity, start, end);

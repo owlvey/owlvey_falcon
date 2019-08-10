@@ -26,7 +26,7 @@ namespace Owlvey.Falcon.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(typeof(ProductPostRp), 200)]
+        [ProducesResponseType(typeof(ProductGetListRp), 200)]
         public async Task<IActionResult> Get(int customerId)
         {
             var model = await this._productQueryService.GetProducts(customerId);
