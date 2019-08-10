@@ -6,10 +6,10 @@ steps:
 - script: dotnet build src/Owlvey.Falcon.API -c Release
   displayName: Build Projects
 
-- script: dotnet test tests/Falcon.Falcon.UnitTests/Falcon.Falcon.UnitTests.csproj -c Release --no-build --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --logger trx;logfilename=result.xml
+- script: dotnet test tests/Owlvey.Falcon.UnitTests/Owlvey.Falcon.UnitTests.csproj -c Release --no-build --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --logger trx;logfilename=result.xml
   displayName: Run Unit Tests
 
-- script: dotnet test tests/Falcon.Falcon.ComponentTests/Owlvey.Falcon.ComponentTests.csproj -c Release --no-build --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --logger trx;logfilename=result.xml
+- script: dotnet test tests/Owlvey.Falcon.ComponentTests/Owlvey.Falcon.ComponentTests.csproj -c Release --no-build --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --logger trx;logfilename=result.xml
   displayName: Run Component Tests
 
 - script: dotnet test tests/Owlvey.Falcon.IntegrationTests/Owlvey.Falcon.IntegrationTests.csproj -c Release --no-build --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --logger trx;logfilename=result.xml
