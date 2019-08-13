@@ -9,11 +9,7 @@ using Owlvey.Falcon.Repositories;
 namespace Owlvey.Falcon.Migrations
 {
     [DbContext(typeof(FalconDbContext))]
-<<<<<<< HEAD:src/Owlvey.Falcon.Components/Migrations/20190812005826_InitialCreate.Designer.cs
     [Migration("20190812005826_InitialCreate")]
-=======
-    [Migration("20190811171931_InitialCreate")]
->>>>>>> e59059a6ca1f346568398b825402f468da59879c:src/Owlvey.Falcon.Components/Migrations/20190811171931_InitialCreate.Designer.cs
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
