@@ -19,7 +19,7 @@ namespace Owlvey.Falcon.API.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<SourceGetListRp>), 200)]
-        public async Task<IActionResult> Get(int? productId, int? indicatorId)
+        public async Task<IActionResult> Get(int? productId, int? indicatorId, int? customerId)
         {
             IEnumerable<SourceGetListRp> model = new List<SourceGetListRp>();
 
@@ -27,8 +27,12 @@ namespace Owlvey.Falcon.API.Controllers
             {
                 model = await this._sourceComponent.GetByProductId(productId.Value);
             }
-            else if (indicatorId.HasValue) {
+            else if (indicatorId.HasValue)
+            {
                 model = await this._sourceComponent.GetByIndicatorId(indicatorId.Value);
+            }            
+            else {
+                return this.NotFound($"The Resource doesn't exists.");
             }
             
             return this.Ok(model);
@@ -82,7 +86,7 @@ namespace Owlvey.Falcon.API.Controllers
             {
                 return this.BadRequest("end is required");
             }
-            var result = await this._sourceComponent.GetDailySeriesById(id, start.Value, end.Value);
+            var result = await this._sourceComponent.GetDailySeriesById(id, start.Value, end.Value, period);
             return this.Ok(result);
         }
         #endregion

@@ -60,8 +60,9 @@ namespace Owlvey.Falcon.Components
             var entities = await this._dbContext.Indicators.Include(c=>c.Source).Where(c=>c.Id == indicatorId).ToListAsync();
             var targets = entities.Select(c => c.Source).ToList();
             return this._mapper.Map<IEnumerable<SourceGetListRp>>(targets);
-        }
-        public async Task<SeriesGetRp> GetDailySeriesById(int sourceId, DateTime start, DateTime end) {           
+        }        
+
+        public async Task<SeriesGetRp> GetDailySeriesById(int sourceId, DateTime start, DateTime end, int period) {           
 
             var source = await this._dbContext.Sources.SingleAsync(c => c.Id == sourceId);
             var sourceItems = await this._dbContext.SourcesItems.Where(c => c.SourceId == sourceId && c.Start >= start && c.End <= end).ToListAsync();
@@ -81,9 +82,17 @@ namespace Owlvey.Falcon.Components
             {
                 result.Items.Add(this._mapper.Map<SeriesItemGetRp>(item));                
             }
-            
+            if (period > 1) {
+                var periods = new List<SeriesItemGetRp>();
+                for (int i = 0; i < result.Items.Count() ; i++)
+                {
+                    if (i % period == 0) {
+                        periods.Add(result.Items.ElementAt(i));
+                    }
+                }
+                result.Items = periods;
+            }
             return result;
         }
-
     }
 }
