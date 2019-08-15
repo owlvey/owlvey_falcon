@@ -36,6 +36,11 @@ namespace Owlvey.Falcon.Components
 
             return this._mapper.Map<IEnumerable<SourceItemGetListRp>>(entity);
         }
+        public async Task<IEnumerable<SourceItemGetListRp>> GetAll()
+        {
+            var entity = await this._dbContext.SourcesItems.ToListAsync();
+            return this._mapper.Map<IEnumerable<SourceItemGetListRp>>(entity);
+        }
         public async Task<IEnumerable<SourceItemGetListRp>> GetById(int id)
         {
             var entity = await this._dbContext.SourcesItems.Where(c => c.Id == id).ToListAsync();

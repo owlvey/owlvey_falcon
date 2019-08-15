@@ -52,10 +52,17 @@ namespace Owlvey.Falcon.API.Controllers
 
         [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<SourceItemGetRp>), 200)]
-        public async Task<IActionResult> GetBySourceId(int sourceId)
+        public async Task<IActionResult> GetBySourceId(int? sourceId)
         {
-            var model = await this._sourceItemComponent.GetBySource(sourceId);
-            return this.Ok(model);
+            if (sourceId.HasValue)
+            {
+                var model = await this._sourceItemComponent.GetBySource(sourceId.Value);
+                return this.Ok(model);
+            }
+            else {
+                var model = await this._sourceItemComponent.GetAll();
+                return this.Ok(model);
+            }            
         }
     }
 }

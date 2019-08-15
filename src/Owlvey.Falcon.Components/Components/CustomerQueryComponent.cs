@@ -24,7 +24,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<CustomerGetRp> GetCustomerById(int id)
         {
-            var entities = await this._dbContext.Customers.Where(c => c.Id.Equals(id)).ToListAsync();
+            var entities = await this._dbContext.Customers.Where(c => c.Deleted == false && c.Id.Equals(id)).ToListAsync();
 
             var entity = entities.FirstOrDefault();            
 
@@ -36,7 +36,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<CustomerGetRp> GetCustomerByName(string name)
         {
-            var entity = await this._dbContext.Customers.SingleAsync(c => c.Name.Equals(name));
+            var entity = await this._dbContext.Customers.SingleAsync(c => c.Deleted == false && c.Name.Equals(name));
             return this._mapper.Map<CustomerGetRp>(entity);
         }
 
@@ -48,7 +48,7 @@ namespace Owlvey.Falcon.Components
         /// <returns></returns>
         public async Task<IEnumerable<CustomerGetListRp>> GetCustomers()
         {            
-            var entities = await this._dbContext.Customers.ToListAsync();
+            var entities = await this._dbContext.Customers.Where(c=>c.Deleted==false).ToListAsync();
 
             return entities.Select(entity => new CustomerGetListRp {
                 Id = entity.Id.Value,
@@ -61,7 +61,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<SeriesGetRp> GetDailySeriesById(int productId, DateTime start, DateTime end)
         {
-            var entity = await this._dbContext.Customers.Include(c => c.Products.Select(g=>g.Services.Select(d => d.FeatureMap.Select(f => f.Feature.Indicators.Select(e => e.Source))))).SingleAsync(c => c.Id == productId);
+            var entity = await this._dbContext.Customers.Include(c => c.Products.Select(g=>g.Services.Select(d => d.FeatureMap.Select(f => f.Feature.Indicators.Select(e => e.Source))))).SingleAsync(c => c.Deleted==false && c.Id == productId);
 
             foreach (var product in entity.Products)
             {

@@ -48,9 +48,7 @@ namespace Owlvey.Falcon.Components
             }
 
             customer.Delete(this._datetimeGateway.GetCurrentDateTime(), modifiedBy);
-
-            this._dbContext.Customers.Remove(customer);
-
+            
             await this._dbContext.SaveChangesAsync();
 
             return result;

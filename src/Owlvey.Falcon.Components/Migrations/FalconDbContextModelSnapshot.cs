@@ -27,6 +27,8 @@ namespace Owlvey.Falcon.Migrations
                     b.Property<DateTime?>("CreatedOn")
                         .IsRequired();
 
+                    b.Property<bool>("Deleted");
+
                     b.Property<bool>("IsReadOnly");
 
                     b.Property<string>("Key")
@@ -60,6 +62,8 @@ namespace Owlvey.Falcon.Migrations
                     b.Property<DateTime?>("CreatedOn")
                         .IsRequired();
 
+                    b.Property<bool>("Deleted");
+
                     b.Property<string>("ModifiedBy")
                         .IsRequired();
 
@@ -89,6 +93,8 @@ namespace Owlvey.Falcon.Migrations
 
                     b.Property<DateTime?>("CreatedOn")
                         .IsRequired();
+
+                    b.Property<bool>("Deleted");
 
                     b.Property<string>("Description")
                         .IsRequired();
@@ -124,6 +130,8 @@ namespace Owlvey.Falcon.Migrations
                     b.Property<DateTime?>("CreatedOn")
                         .IsRequired();
 
+                    b.Property<bool>("Deleted");
+
                     b.Property<string>("Description");
 
                     b.Property<int>("FeatureId");
@@ -155,6 +163,8 @@ namespace Owlvey.Falcon.Migrations
 
                     b.Property<DateTime?>("CreatedOn")
                         .IsRequired();
+
+                    b.Property<bool>("Deleted");
 
                     b.Property<string>("ModifiedBy")
                         .IsRequired();
@@ -191,6 +201,8 @@ namespace Owlvey.Falcon.Migrations
 
                     b.Property<int?>("CustomerId");
 
+                    b.Property<bool>("Deleted");
+
                     b.Property<string>("Description");
 
                     b.Property<string>("ModifiedBy")
@@ -221,6 +233,8 @@ namespace Owlvey.Falcon.Migrations
 
                     b.Property<DateTime?>("CreatedOn")
                         .IsRequired();
+
+                    b.Property<bool>("Deleted");
 
                     b.Property<string>("Description");
 
@@ -255,6 +269,8 @@ namespace Owlvey.Falcon.Migrations
                     b.Property<DateTime?>("CreatedOn")
                         .IsRequired();
 
+                    b.Property<bool>("Deleted");
+
                     b.Property<int?>("FeatureId");
 
                     b.Property<string>("ModifiedBy")
@@ -286,6 +302,8 @@ namespace Owlvey.Falcon.Migrations
 
                     b.Property<DateTime?>("CreatedOn")
                         .IsRequired();
+
+                    b.Property<bool>("Deleted");
 
                     b.Property<string>("GoodDefinition")
                         .IsRequired();
@@ -323,6 +341,8 @@ namespace Owlvey.Falcon.Migrations
 
                     b.Property<DateTime?>("CreatedOn")
                         .IsRequired();
+
+                    b.Property<bool>("Deleted");
 
                     b.Property<DateTime>("End");
 
@@ -362,6 +382,8 @@ namespace Owlvey.Falcon.Migrations
 
                     b.Property<int?>("CustomerId");
 
+                    b.Property<bool>("Deleted");
+
                     b.Property<string>("Description");
 
                     b.Property<string>("ModifiedBy")
@@ -390,6 +412,8 @@ namespace Owlvey.Falcon.Migrations
 
                     b.Property<DateTime?>("CreatedOn")
                         .IsRequired();
+
+                    b.Property<bool>("Deleted");
 
                     b.Property<int>("FeatureId");
 
@@ -420,6 +444,8 @@ namespace Owlvey.Falcon.Migrations
 
                     b.Property<DateTime?>("CreatedOn")
                         .IsRequired();
+
+                    b.Property<bool>("Deleted");
 
                     b.Property<string>("Email")
                         .IsRequired();
@@ -500,7 +526,7 @@ namespace Owlvey.Falcon.Migrations
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.SourceEntity", b =>
                 {
                     b.HasOne("Owlvey.Falcon.Core.Entities.ProductEntity", "Product")
-                        .WithMany()
+                        .WithMany("Sources")
                         .HasForeignKey("ProductId");
                 });
 

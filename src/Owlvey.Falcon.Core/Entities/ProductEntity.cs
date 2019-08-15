@@ -18,9 +18,12 @@ namespace Owlvey.Falcon.Core.Entities
         public virtual ICollection<ServiceEntity> Services { get; set; }
 
         public virtual ICollection<FeatureEntity> Features { get; set; }
+
+        public virtual ICollection<SourceEntity> Sources { get; set; }
         public ProductEntity() {
             this.Services = new List<ServiceEntity>();
-            this.Features = new List<FeatureEntity>(); 
+            this.Features = new List<FeatureEntity>();
+            this.Sources = new List<SourceEntity>(); 
         }
 
         public void AddService(ServiceEntity entity) {
