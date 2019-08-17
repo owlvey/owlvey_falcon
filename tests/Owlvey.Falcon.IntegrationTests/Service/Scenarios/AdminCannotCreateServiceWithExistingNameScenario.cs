@@ -30,7 +30,7 @@ namespace Owlvey.Falcon.IntegrationTests.Service.Scenarios
                                 .With(x => x.Name = KeyConstants.ServiceName)
                                 .With(x => x.Description = $"{Guid.NewGuid()}")
                                 .With(x => x.ProductId = KeyConstants.ProductId)
-                                .With(x => x.SLO = 99)
+                                .With(x => x.Slo = 99)
                                 .Build();
         }
 

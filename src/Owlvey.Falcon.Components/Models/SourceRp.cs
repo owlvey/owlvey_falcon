@@ -9,8 +9,12 @@ namespace Owlvey.Falcon.Models
 
     public class SourceGetRp : SourceBaseRp
     {
+        public string Avatar { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
+    }
+    public class SourceLitRp: SourceBaseRp {
+        public string Avatar { get; set; }
     }
 
     public class SourceGetListRp : SourceBaseRp

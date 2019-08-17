@@ -12,11 +12,14 @@ namespace Owlvey.Falcon.API.Controllers
     public class FeatureController : BaseController
     {
         private readonly FeatureQueryComponent _featureQueryService;
+        private readonly IndicatorComponent _indicatorComponent;
         private readonly FeatureComponent _featureService;
 
         public FeatureController(FeatureQueryComponent featureQueryService,
-                                    FeatureComponent featureService) : base()
+            IndicatorComponent indicatorComponent,
+            FeatureComponent featureService) : base()
         {
+            this._indicatorComponent = indicatorComponent;
             this._featureQueryService = featureQueryService;
             this._featureService = featureService;
         }
@@ -46,6 +49,8 @@ namespace Owlvey.Falcon.API.Controllers
 
             if (model == null)
                 return this.NotFound($"The Resource {id} doesn't exists.");
+
+            model.Indicators = await this._indicatorComponent.GetByFeature(id);
 
             return this.Ok(model);
         }

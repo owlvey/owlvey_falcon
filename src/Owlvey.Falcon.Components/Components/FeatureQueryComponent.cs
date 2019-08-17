@@ -58,9 +58,22 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable< FeatureGetListRp>>(entities);
         }
 
-        public async Task<SeriesGetRp> GetDailySeriesById(int featureId, DateTime start, DateTime end)
+
+        public async Task<IEnumerable<FeatureGetListRp>> GetFeaturesBy(int productId)
         {
-            var entity = await this._dbContext.Features.Include(c=>c.Indicators.Select(d=>d.Source)).SingleAsync(c => c.Id == featureId);
+            var entities = await this._dbContext.Features.Where(c => c.Product.Id.Value.Equals(productId)).ToListAsync();
+            return this._mapper.Map<IEnumerable<FeatureGetListRp>>(entities);
+        }
+
+        public async Task<IEnumerable<FeatureGetListRp>> GetFeaturesByServiceId(int serviceId) {
+            var entities = await this._dbContext.ServiceMaps.Include(c=>c.Feature).Where(c => c.Service.Id == serviceId).ToListAsync();
+            var features = entities.Select(c => c.Feature).ToList();
+            return this._mapper.Map<IEnumerable<FeatureGetListRp>>(features);
+        }
+
+        public async Task<MultiSeriesGetRp> GetDailySeriesById(int featureId, DateTime start, DateTime end)
+        {
+            var entity = await this._dbContext.Features.Include(c=>c.Indicators).ThenInclude(c=>c.Source).SingleAsync(c => c.Id == featureId);
 
             foreach (var indicator in entity.Indicators)
             {
@@ -68,7 +81,7 @@ namespace Owlvey.Falcon.Components
                 indicator.Source.SourceItems = sourceItems;
             }
 
-            var result = new SeriesGetRp
+            var result = new MultiSeriesGetRp
             {
                 Start = start,
                 End = end,
@@ -78,11 +91,23 @@ namespace Owlvey.Falcon.Components
 
             var aggregator = new FeatureAvailabilityAggregate(entity, start, end);
 
-            var (_, items) = aggregator.MeasureAvailability();
-            
-            foreach (var item in items)
+            var (feature, availability, indicators) = aggregator.MeasureAvailability();
+
+            result.Series.Add(new MultiSerieItemGetRp()
             {
-                result.Items.Add(this._mapper.Map<SeriesItemGetRp>(item));
+                 Name = "Availability",
+                 Avatar = entity.Avatar,
+                 Items = availability.Select(c=> this._mapper.Map<SeriesItemGetRp>(c)).ToList()
+            });
+
+            foreach (var indicator in indicators)
+            {
+                result.Series.Add(new MultiSerieItemGetRp()
+                {
+                    Name = string.Format("SLI:{0}", indicator.Item1.Id),
+                    Avatar = indicator.Item1.Avatar,
+                    Items = indicator.Item2.Select(c => this._mapper.Map<SeriesItemGetRp>(c)).ToList()
+                });
             }
 
             return result;

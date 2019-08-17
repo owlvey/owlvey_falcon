@@ -10,8 +10,10 @@ namespace Owlvey.Falcon.Components
     {
         public static void ConfigureMappers(IMapperConfigurationExpression cfg)
         {
-            cfg.CreateMap<ServiceEntity, Models.ServiceGetListRp>();
-            cfg.CreateMap<ServiceEntity, Models.ServiceGetRp>();
+            cfg.CreateMap<ServiceEntity, Models.ServiceGetListRp>().ForMember(c=>c.FeaturesCount,
+                opt=> opt.MapFrom(d=>d.FeatureMap.Count));
+
+            cfg.CreateMap<ServiceEntity, Models.ServiceGetRp>().ForMember(m=>m.Features, ope=> ope.Ignore());
         }
     }
 }

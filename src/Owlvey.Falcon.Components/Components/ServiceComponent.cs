@@ -15,12 +15,12 @@ namespace Owlvey.Falcon.Components
 {
     public class ServiceComponent : BaseComponent
     {
-        private readonly FalconDbContext _dbContext;        
+        private readonly FalconDbContext _dbContext;
 
         public ServiceComponent(FalconDbContext dbContext,
             IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway, IMapper mapper) : base(dateTimeGateway, mapper, identityService)
         {
-            this._dbContext = dbContext;            
+            this._dbContext = dbContext;
         }
 
         /// <summary>
@@ -32,8 +32,8 @@ namespace Owlvey.Falcon.Components
         {
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
-            
-            var product = await this._dbContext.Products.Include(c=> c.Services).SingleAsync(c => c.Id == model.ProductId);
+
+            var product = await this._dbContext.Products.Include(c => c.Services).SingleAsync(c => c.Id == model.ProductId);
 
             // Validate if the resource exists.
             if (product.Services.Any(c => c.Name.Equals(model.Name)))
@@ -42,7 +42,7 @@ namespace Owlvey.Falcon.Components
                 return result;
             }
 
-            var service = ServiceEntity.Factory.Create(model.Name, model.SLO, this._datetimeGateway.GetCurrentDateTime(), createdBy, product);
+            var service = ServiceEntity.Factory.Create(model.Name, model.Slo.Value, this._datetimeGateway.GetCurrentDateTime(), createdBy, product);
 
             this._dbContext.Services.Add(service);
 
@@ -79,7 +79,7 @@ namespace Owlvey.Falcon.Components
 
             return result;
         }
-        
+
         /// <summary>
         /// Update Service
         /// </summary>
@@ -92,7 +92,7 @@ namespace Owlvey.Falcon.Components
 
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
 
-            var service = await this._dbContext.Services.Include(c=> c.Product).SingleAsync(c => c.Id == id);
+            var service = await this._dbContext.Services.Include(c => c.Product).SingleAsync(c => c.Id == id);
 
             if (service == null)
             {
@@ -103,7 +103,7 @@ namespace Owlvey.Falcon.Components
             // Validate if the resource exists.
             if (!service.Name.Equals(model.Name, StringComparison.InvariantCultureIgnoreCase))
             {
-                var product = await this._dbContext.Products.Include(c=> c.Services).SingleAsync(c => c.Id.Equals(service.Product.Id));
+                var product = await this._dbContext.Products.Include(c => c.Services).SingleAsync(c => c.Id.Equals(service.Product.Id));
 
                 if (product.Services.Any(c => c.Name.Equals(model.Name)))
                 {
@@ -111,10 +111,8 @@ namespace Owlvey.Falcon.Components
                     return result;
                 }
             }
-
-            service.Name = model.Name;
-            service.SLO = model.SLO;
-            service.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, model.Name, model.SLO, model.Avatar);
+                        
+            service.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, model.Name, model.Slo, model.Avatar);
 
             this._dbContext.Services.Update(service);
 

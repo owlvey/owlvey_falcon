@@ -13,7 +13,7 @@ namespace Owlvey.Falcon.Core.Entities
         public string Description { get; set; }
 
         [Required]
-        public float SLO { get; set; }
+        public float Slo { get; set; }
 
         public string Avatar { get; set; }
 
@@ -23,10 +23,10 @@ namespace Owlvey.Falcon.Core.Entities
 
         public virtual ICollection<ServiceMapEntity> FeatureMap { get; set; } = new List<ServiceMapEntity>();
 
-        public void Update(DateTime on, string modifiedBy, string name, float slo, string description = null, string avatar = null)
+        public void Update(DateTime on, string modifiedBy, string name, float? slo, string description = null, string avatar = null)
         {
             this.Name = name ?? this.Name;
-            this.SLO = slo;
+            this.Slo = slo ?? this.Slo;
             this.Description = description ?? this.Description;
             this.Avatar = avatar ?? this.Avatar;
             this.ModifiedBy = modifiedBy;

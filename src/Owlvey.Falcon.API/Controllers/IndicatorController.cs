@@ -29,7 +29,7 @@ namespace Owlvey.Falcon.API.Controllers
         public async Task<IActionResult> GetIndicatorById(int id)
         {
             var model = await this._indicatorComponent.GetById(id);
-
+            
             if (model == null)
                 return this.NotFound($"The Resource {id} doesn't exists.");
 

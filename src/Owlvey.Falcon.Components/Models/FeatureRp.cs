@@ -11,10 +11,15 @@ namespace Owlvey.Falcon.Models
         public int Id { get; set; }        
     }
 
+    public class FeatureLiteRp : FeatureBaseRp {
+        public string Avatar { get; set; }
+    }
+
     public class FeatureGetRp : FeatureBaseRp {
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public int ProductId { get; set; }
+        public IEnumerable<IndicatorGetRp> Indicators { get; set; } = new List<IndicatorGetRp>();
     }
 
     public class FeatureGetListRp : FeatureBaseRp

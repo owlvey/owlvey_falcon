@@ -37,7 +37,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var aggregate = new FeatureAvailabilityAggregate(feature,                
                 TDF.Calendar.StartJanuary2019, TDF.Calendar.EndJanuary2019);
 
-            var (_, features_availabilities) = aggregate.MeasureAvailability();
+            var (_, features_availabilities, _) = aggregate.MeasureAvailability();
 
             Assert.Equal(31, features_availabilities.Count());
         }

@@ -46,13 +46,15 @@ namespace Owlvey.Falcon.Components
 
         public async Task<IEnumerable<IndicatorGetRp>> GetByFeature(int featureId)
         {
-            var entity = await this._dbContext.Indicators.Where(c => c.Feature.Id == featureId).ToListAsync();
+            var entity = await this._dbContext.Indicators.Include(c=>c.Feature).Include(c=>c.Source).Where(c => c.Feature.Id == featureId).ToListAsync();
+
             return this._mapper.Map<IEnumerable<IndicatorGetRp>>(entity);
         }
 
         public async Task<IndicatorGetRp> GetById(int id)
         {
-            var entity = await this._dbContext.Indicators.SingleOrDefaultAsync(c => c.Id == id);
+            var entity = await this._dbContext.Indicators.Include(c=>c.Feature).Include(c=> c.Source).SingleOrDefaultAsync(c => c.Id == id);
+
             return this._mapper.Map<IndicatorGetRp>(entity);
         }
         #region reports

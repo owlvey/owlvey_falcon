@@ -19,7 +19,7 @@ namespace Owlvey.Falcon.Core.Entities
         public virtual CustomerEntity Customer { get; set; }
 
         public void Update(DateTime on, string modifiedBy, string name = null, string description = null, string avatar = null)
-        {
+        { 
             this.Name = name ?? this.Name;
             this.Description = description ?? this.Description;
             this.Avatar = avatar ?? this.Avatar;

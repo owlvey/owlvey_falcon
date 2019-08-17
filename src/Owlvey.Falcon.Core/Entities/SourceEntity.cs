@@ -17,7 +17,7 @@ namespace Owlvey.Falcon.Core.Entities
 
         [Required]
         public string TotalDefinition { get; set; }
-
+        
         public string Avatar { get; set; }
 
         public virtual ProductEntity Product { get; set; }

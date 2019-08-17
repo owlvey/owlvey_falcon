@@ -8,7 +8,13 @@ namespace Owlvey.Falcon.Components
     {
         public static void ConfigureMappers(IMapperConfigurationExpression cfg)
         {
-            cfg.CreateMap<IndicatorEntity, Models.IndicatorGetRp>();
+            cfg.CreateMap<IndicatorEntity, Models.IndicatorGetRp>()
+                .ForMember(m => m.Source, opt => opt.MapFrom(src => src.Source.Name))
+                .ForMember(m => m.SourceAvatar, opt => opt.MapFrom(src => src.Source.Avatar))
+                .ForMember(m=> m.Feature, opt => opt.MapFrom(src=> src.Feature.Name))
+                .ForMember(m => m.FeatureAvatar, opt => opt.MapFrom(src => src.Feature.Avatar));
+
+
             cfg.CreateMap<IndicatorEntity, Models.IndicatorGetListRp>();                
         }
     }

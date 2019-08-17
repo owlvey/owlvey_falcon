@@ -17,7 +17,7 @@ namespace Owlvey.Falcon.ManualTests
             var comQuerySquad = container.GetInstance<SquadQueryComponent>();
             var comQueryUsers = container.GetInstance<UserQueryComponent>();
             var comMembers = container.GetInstance<MemberComponent>();
-            var comQueryMembers = container.GetInstance<MemberQueryComponent>(); 
+            var comQueryMembers = container.GetInstance<MemberQueryComponent>();
             var comCustomer = container.GetInstance<CustomerComponent>();
             var comQueryCustomer = container.GetInstance<CustomerQueryComponent>();
             var comProduct = container.GetInstance<ProductComponent>();
@@ -28,8 +28,8 @@ namespace Owlvey.Falcon.ManualTests
             var comQueryFeature = container.GetInstance<FeatureQueryComponent>();
             var comServiceMap = container.GetInstance<ServiceMapComponent>();
             var comSource = container.GetInstance<SourceComponent>();
-            var comItemSource = container.GetInstance<SourceItemComponent>(); 
-            var comIndicators = container.GetInstance<IndicatorComponent>();  
+            var comItemSource = container.GetInstance<SourceItemComponent>();
+            var comIndicators = container.GetInstance<IndicatorComponent>();
 
 
             await comCustomer.CreateCustomer(new Models.CustomerPostRp()
@@ -38,13 +38,14 @@ namespace Owlvey.Falcon.ManualTests
             });
             var customer = await comQueryCustomer.GetCustomerByName("Bank");
 
-            await comSquad.CreateSquad(new Models.SquadPostRp() {
+            await comSquad.CreateSquad(new Models.SquadPostRp()
+            {
                 CustomerId = customer.Id,
                 Name = "team owlvey"
             });
 
             var squad = await comQuerySquad.GetSquadByName(customer.Id, "team owlvey");
-            
+
             var users = new[] { "gregory", "ricardo", "felipe", "gustavo" };
             foreach (var item in users)
             {
@@ -59,16 +60,17 @@ namespace Owlvey.Falcon.ManualTests
 
                 await comMembers.CreateMember(new Models.MemberPostRp()
                 {
-                    UserId =  user.Id,
+                    UserId = user.Id,
                     SquadId = squad.Id
                 });
 
                 #endregion
             }
 
-            await comProduct.CreateProduct(new Models.ProductPostRp() {
-                 CustomerId = customer.Id,
-                 Name = "Application"
+            await comProduct.CreateProduct(new Models.ProductPostRp()
+            {
+                CustomerId = customer.Id,
+                Name = "Application"
             });
 
             var product = await comQueryProduct.GetProductByName("Application");
@@ -83,17 +85,17 @@ namespace Owlvey.Falcon.ManualTests
             {
                 await comService.CreateService(new Models.ServicePostRp()
                 {
-                     Name = item,
-                     ProductId = product.Id,
-                     Description = item,
-                     SLO = 99
+                    Name = item,
+                    ProductId = product.Id,
+                    Description = item,
+                    Slo = 99
                 });
 
                 await comFeature.CreateFeature(new Models.FeaturePostRp()
                 {
-                     Name = item,
-                     Description = item,
-                     ProductId = product.Id
+                    Name = item,
+                    Description = item,
+                    ProductId = product.Id
                 });
 
                 var service = await comQueryService.GetServiceByName(product.Id, item);

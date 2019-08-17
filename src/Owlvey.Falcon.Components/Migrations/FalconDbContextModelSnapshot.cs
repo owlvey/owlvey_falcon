@@ -86,7 +86,8 @@ namespace Owlvey.Falcon.Migrations
                     b.Property<int?>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Avatar");
+                    b.Property<string>("Avatar")
+                        .IsRequired();
 
                     b.Property<string>("CreatedBy")
                         .IsRequired();
@@ -109,6 +110,8 @@ namespace Owlvey.Falcon.Migrations
                         .IsRequired();
 
                     b.Property<int>("ProductId");
+
+                    b.Property<int>("ServiceMapId");
 
                     b.HasKey("Id");
 
@@ -249,7 +252,7 @@ namespace Owlvey.Falcon.Migrations
 
                     b.Property<int>("ProductId");
 
-                    b.Property<float>("SLO");
+                    b.Property<float>("Slo");
 
                     b.HasKey("Id");
 
@@ -515,7 +518,7 @@ namespace Owlvey.Falcon.Migrations
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.ServiceMapEntity", b =>
                 {
                     b.HasOne("Owlvey.Falcon.Core.Entities.FeatureEntity", "Feature")
-                        .WithMany()
+                        .WithMany("ServiceMaps")
                         .HasForeignKey("FeatureId");
 
                     b.HasOne("Owlvey.Falcon.Core.Entities.ServiceEntity", "Service")

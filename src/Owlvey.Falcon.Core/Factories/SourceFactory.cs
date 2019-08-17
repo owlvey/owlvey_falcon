@@ -23,7 +23,7 @@ namespace Owlvey.Falcon.Core.Entities
                     ModifiedOn = on,
                     Product = product
                 };
-
+                entity.Avatar = "https://cdn.iconscout.com/icon/free/png-256/avatar-375-456327.png";
                 entity.Validate();
                 return entity;
             }

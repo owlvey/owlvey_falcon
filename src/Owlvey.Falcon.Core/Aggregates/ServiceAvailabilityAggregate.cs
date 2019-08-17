@@ -24,12 +24,14 @@ namespace Owlvey.Falcon.Core.Aggregates
             foreach (var item in this.Service.FeatureMap.Select(c=>c.Feature))
             {
                 var agg = new FeatureAvailabilityAggregate(item, this.Start, this.End);
-                var temp = agg.MeasureAvailability();
-                result.Add(temp);
+                var (feature, availability, indicators) = agg.MeasureAvailability();
+                result.Add((feature, availability));
             }
             return result;
         }
-        public (ServiceEntity service, IEnumerable<DayAvailabilityEntity> availabilities) MeasureAvailability()
+        public (ServiceEntity service,
+            IEnumerable<DayAvailabilityEntity> availabilities,
+            IEnumerable<(FeatureEntity, IEnumerable<DayAvailabilityEntity>)>) MeasureAvailability()
         {
             List<DayAvailabilityEntity> result = new List<DayAvailabilityEntity>();
 
@@ -55,7 +57,7 @@ namespace Owlvey.Falcon.Core.Aggregates
                 pivot = pivot.AddDays(1);
             }
 
-            return (this.Service, result);
+            return (this.Service, result, indicators);
             
         }
     }

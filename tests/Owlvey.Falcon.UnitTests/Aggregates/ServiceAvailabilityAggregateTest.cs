@@ -39,7 +39,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var service_aggregate = new ServiceAvailabilityAggregate(service, 
                 Calendar.StartJanuary2019, Calendar.EndJanuary2019);
 
-            var (_, service_availabilities) = service_aggregate.MeasureAvailability();
+            var (_, service_availabilities, _) = service_aggregate.MeasureAvailability();
 
             Assert.Equal(31, service_availabilities.Count());
             

@@ -12,6 +12,10 @@ namespace Owlvey.Falcon.Models
         public DateTime? CreatedOn { get; set; }
         public int SourceId { get; set; }
         public int FeatureId { get; set; }
+        public string Source { get; set; }
+        public string SourceAvatar { get; set; }
+        public string Feature { get; set; }
+        public string FeatureAvatar { get; set; }
     }
 
     public class IndicatorGetListRp : IndicatorBaseRp

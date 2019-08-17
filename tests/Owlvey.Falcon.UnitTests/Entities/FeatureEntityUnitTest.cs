@@ -8,10 +8,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
 {
     public class FeatureEntityUnitTest
     {
-        public FeatureEntityUnitTest()
-        {
-
-        }
+        
 
         [Fact]
         public void CreateFeatureEntitySuccess()
@@ -51,6 +48,8 @@ namespace Owlvey.Falcon.UnitTests.Entities
             product.AddFeature(feature);
             Assert.NotEmpty(product.Features);
         }
+
+
 
     }
 }

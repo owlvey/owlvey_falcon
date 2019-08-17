@@ -11,7 +11,8 @@ namespace Owlvey.Falcon.ManualTests
 {
     public static class ComponentTestFactory
     {
-        public static Container BuildContainer(){
+        public static Container BuildContainer()
+        {
             Container container = new Container();
             var mapper = BuildMapper();
             container.RegisterInstance<IMapper>(mapper);
@@ -21,7 +22,8 @@ namespace Owlvey.Falcon.ManualTests
             return container;
         }
 
-        public static IMapper BuildMapper() {
+        public static IMapper BuildMapper()
+        {
             var configuration = new MapperConfiguration(cfg =>
             {
                 CustomerComponentConfiguration.ConfigureMappers(cfg);
@@ -33,24 +35,27 @@ namespace Owlvey.Falcon.ManualTests
                 MemberComponentConfiguration.ConfigureMappers(cfg);
                 SourceComponentConfiguration.ConfigureMappers(cfg);
                 SourceItemComponentConfiguration.ConfigureMappers(cfg);
-                IndicatorComponentConfiguration.ConfigureMappers(cfg);                
+                IndicatorComponentConfiguration.ConfigureMappers(cfg);
             });
             configuration.AssertConfigurationIsValid();
             var mapper = configuration.CreateMapper();
             return mapper;
         }
-        public static IUserIdentityGateway BuildIdentityGateway() {
+        public static IUserIdentityGateway BuildIdentityGateway()
+        {
             var mockIdentity = new Mock<IUserIdentityGateway>();
             mockIdentity.Setup(c => c.GetIdentity()).Returns("component_test_user");
             return mockIdentity.Object;
         }
 
-        public static IDateTimeGateway BuildDateTimeGateway() {
+        public static IDateTimeGateway BuildDateTimeGateway()
+        {
             return new DateTimeGateway();
         }
 
 
-        public static async Task<int> BuildCustomer(Container container, string name = "test") {            
+        public static async Task<int> BuildCustomer(Container container, string name = "test")
+        {
             var customerComponet = container.GetInstance<CustomerComponent>();
             var customerQueryComponent = container.GetInstance<CustomerQueryComponent>();
             await customerComponet.CreateCustomer(new Models.CustomerPostRp()
@@ -63,7 +68,7 @@ namespace Owlvey.Falcon.ManualTests
 
         public static async Task<(int customer, int squad)> BuildCustomerSquad(Container container, string name = "test")
         {
-            
+
             var customer = await ComponentTestFactory.BuildCustomer(container);
 
             var squadComponent = container.GetInstance<SquadComponent>();
@@ -93,16 +98,17 @@ namespace Owlvey.Falcon.ManualTests
             return user.Id;
         }
 
-        public static async Task<int> BuildService(Container container, int? product= null, string name = "service")
+        public static async Task<int> BuildService(Container container, int? product = null, string name = "service")
         {
-            if (!product.HasValue) {
+            if (!product.HasValue)
+            {
                 var (_, product_id) = await BuildCustomerProduct(container);
                 product = product_id;
             }
 
             var serviceComponent = container.GetInstance<ServiceComponent>();
             var serviceQueryComponent = container.GetInstance<ServiceQueryComponent>();
-            await serviceComponent.CreateService(new Models.ServicePostRp() { Name = name, Description = name, ProductId = product.Value, SLO = 99 });
+            await serviceComponent.CreateService(new Models.ServicePostRp() { Name = name, Description = name, ProductId = product.Value, Slo = 99 });
             var service = await serviceQueryComponent.GetServiceByName(product.Value, name);
             return service.Id;
         }
@@ -142,7 +148,8 @@ namespace Owlvey.Falcon.ManualTests
         }
 
         public static async Task<(int customer, int product)> BuildCustomerProduct(Container container,
-            string customerName="customer", string productName="product") {
+            string customerName = "customer", string productName = "product")
+        {
 
             var customerComponet = container.GetInstance<CustomerComponent>();
             var customerQueryComponent = container.GetInstance<CustomerQueryComponent>();
@@ -166,6 +173,6 @@ namespace Owlvey.Falcon.ManualTests
             return (customer.Id, product.Id);
         }
 
-        
+
     }
 }

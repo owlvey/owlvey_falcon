@@ -13,12 +13,15 @@ namespace Owlvey.Falcon.API.Controllers
     {
         private readonly ServiceQueryComponent _serviceQueryService;
         private readonly ServiceComponent _serviceService;
+        private readonly FeatureQueryComponent _featureQueryComponent; 
 
         public ServiceController(ServiceQueryComponent serviceQueryService,
-                                 ServiceComponent serviceService) : base()
+                                 ServiceComponent serviceService,
+                                 FeatureQueryComponent featureQueryComponent) 
         {
             this._serviceQueryService = serviceQueryService;
             this._serviceService = serviceService;
+            this._featureQueryComponent = featureQueryComponent;
         }
 
         /// <summary>
@@ -47,6 +50,7 @@ namespace Owlvey.Falcon.API.Controllers
             if (model == null)
                 return this.NotFound($"The Resource {id} doesn't exists.");
 
+            model.Features = await this._featureQueryComponent.GetFeaturesByServiceId(id);
             return this.Ok(model);
         }
 

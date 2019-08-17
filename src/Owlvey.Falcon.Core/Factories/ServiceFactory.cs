@@ -14,7 +14,7 @@ namespace Owlvey.Falcon.Core.Entities
                 var entity = new ServiceEntity()
                 {
                     Name = name,                    
-                    SLO = slo,
+                    Slo = slo,
                     CreatedBy = user,
                     ModifiedBy = user,
                     CreatedOn = on,

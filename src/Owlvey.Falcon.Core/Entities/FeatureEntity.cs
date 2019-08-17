@@ -12,11 +12,18 @@ namespace Owlvey.Falcon.Core.Entities
         public string Name { get; set; }
         [Required]
         public string Description { get; set; }
+        [Required]
         public string Avatar { get; set; }
 
         public int ProductId { get; set; }
+
+        public int ServiceMapId { get; set; }
+
         public virtual ProductEntity Product { get; set; }
 
-        public virtual ICollection<IndicatorEntity> Indicators { get; set; } = new List<IndicatorEntity>();        
+        public virtual IEnumerable<ServiceMapEntity> ServiceMaps { get; set; } = new List<ServiceMapEntity>();
+
+        public virtual ICollection<IndicatorEntity> Indicators { get; set; } = new List<IndicatorEntity>();
+        
     }
 }

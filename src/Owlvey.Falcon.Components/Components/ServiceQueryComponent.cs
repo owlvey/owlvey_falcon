@@ -39,29 +39,59 @@ namespace Owlvey.Falcon.Components
 
         public async Task<IEnumerable<ServiceGetListRp>> GetServices(int productId)
         {
-            var entities = await this._dbContext.Services.Where(c=> c.Product.Id.Equals(productId)).ToListAsync();
+            var entities = await this._dbContext.Services.Include(c=>c.FeatureMap).Where(c=> c.Product.Id.Equals(productId)).ToListAsync();
             return this._mapper.Map<IEnumerable<ServiceGetListRp>>(entities);
         }
 
-        public async Task<SeriesGetRp> GetDailySeriesById(int featureId, DateTime start, DateTime end)
-        {            
-            var entity = await this._dbContext.Services.Include(c => c.FeatureMap.Select(d=>d.Feature.Indicators.Select(e=>e.Source.SourceItems))).SingleAsync(c => c.Id == featureId);
+        public async Task<MultiSeriesGetRp> GetDailySeriesById(int serviceId, DateTime start, DateTime end)
+        {
 
-            var result = new SeriesGetRp
+
+            var service = await this._dbContext.Services.Where(c => c.Id == serviceId).SingleAsync();
+            var serviceMaps = await this._dbContext.ServiceMaps.Include(c => c.Feature).ThenInclude(c=>c.Indicators).Where(c => c.Service.Id == serviceId).ToListAsync();
+
+
+            foreach (var map in serviceMaps)
+            {                
+                var entity = await this._dbContext.Features.Include(c => c.Indicators).ThenInclude(c => c.Source).SingleAsync(c => c.Id == map.Feature.Id);
+
+                foreach (var indicator in entity.Indicators)
+                {
+                    var sourceItems = await this._dbContext.SourcesItems.Where(c => c.SourceId == indicator.Source.Id && c.Start >= start && c.End <= end).ToListAsync();
+                    indicator.Source.SourceItems = sourceItems;
+                }
+                map.Feature = entity;
+            }
+
+            service.FeatureMap = serviceMaps;
+            
+            var result = new MultiSeriesGetRp
             {
                 Start = start,
                 End = end,
-                Name = entity.Name,
-                Avatar = entity.Avatar
+                Name = service.Name,
+                Avatar = service.Avatar
             };
 
-            var aggregator = new ServiceAvailabilityAggregate(entity, start, end);
+            var aggregator = new ServiceAvailabilityAggregate(service, start, end);
+            
+            var (_, availability, features) = aggregator.MeasureAvailability();
 
-            var (_, items) = aggregator.MeasureAvailability();
-
-            foreach (var item in items)
+            result.Series.Add(new MultiSerieItemGetRp()
             {
-                result.Items.Add(this._mapper.Map<SeriesItemGetRp>(item));
+                Name = "Availability",
+                Avatar = service.Avatar,
+                Items = availability.Select(c => this._mapper.Map<SeriesItemGetRp>(c)).ToList()
+            });
+
+            foreach (var indicator in features)
+            {
+                result.Series.Add(new MultiSerieItemGetRp()
+                {
+                    Name = string.Format("SLI:{0}", indicator.Item1.Id),
+                    Avatar = indicator.Item1.Avatar,
+                    Items = indicator.Item2.Select(c => this._mapper.Map<SeriesItemGetRp>(c)).ToList()
+                });
             }
 
             return result;

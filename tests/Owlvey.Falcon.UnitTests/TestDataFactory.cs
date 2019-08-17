@@ -115,6 +115,8 @@ namespace Owlvey.Falcon.UnitTests
 
         public static class Calendar{
 
+            public static DateTime StartJanuary2017 = new DateTime(2017, 01, 01);
+            public static DateTime EndJanuary2017 = new DateTime(2017, 12, 31);
             public static DateTime StartJanuary2019 = new DateTime(2019, 01, 01);
             public static DateTime January201903 = new DateTime(2019, 01, 03);
             public static DateTime January201904 = new DateTime(2019, 01, 04);

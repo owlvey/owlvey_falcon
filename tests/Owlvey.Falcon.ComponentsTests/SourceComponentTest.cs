@@ -22,6 +22,10 @@ namespace Owlvey.Falcon.ComponentsTests
 
             var target = await component.GetByName(product, "test");
             Assert.NotNull(target);
+            Assert.NotNull(target.Avatar);
+            target = await component.GetById(target.Id);
+            Assert.NotNull(target);
+            Assert.NotNull(target.Avatar);
         }
     }
 }

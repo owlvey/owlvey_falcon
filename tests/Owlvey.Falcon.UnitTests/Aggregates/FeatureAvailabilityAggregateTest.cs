@@ -39,9 +39,22 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var aggregate = new FeatureAvailabilityAggregate(feature,                
                 Calendar.StartJanuary2019, Calendar.EndJanuary2019);
 
-            var (_, features_availabilities) = aggregate.MeasureAvailability();
+            var (_, features_availabilities, _) = aggregate.MeasureAvailability();
 
             Assert.Equal(31, features_availabilities.Count());
+        }
+
+
+        [Fact]
+        public void MeasureFeatureAvailabilityEmpyIndicators()
+        {
+            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductServiceFeature();
+            
+            var aggregate = new FeatureAvailabilityAggregate(feature,  Calendar.StartJanuary2017, Calendar.EndJanuary2017);
+
+            var (_, features_availabilities, _) = aggregate.MeasureAvailability();
+
+            Assert.Equal(365, features_availabilities.Count());
         }
     }
 }

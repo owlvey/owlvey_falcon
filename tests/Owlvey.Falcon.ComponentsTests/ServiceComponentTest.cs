@@ -21,8 +21,9 @@ namespace Owlvey.Falcon.ComponentsTests
             await serviceComponent.CreateService(new Models.ServicePostRp()
             {
                 Name = "test",
-                ProductId = productId
-            });
+                ProductId = productId,
+                Slo = 0.95f
+            }); 
             var services = await serviceQueryComponent.GetServices(productId);
             Assert.NotEmpty(services);
 

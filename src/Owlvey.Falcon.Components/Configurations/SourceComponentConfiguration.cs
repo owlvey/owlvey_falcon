@@ -13,6 +13,7 @@ namespace Owlvey.Falcon.Components
         {
             cfg.CreateMap<SourceEntity, Models.SourceGetListRp>();
             cfg.CreateMap<SourceEntity, Models.SourceGetRp>();
+            cfg.CreateMap<SourceEntity, Models.SourceLitRp>();
         }
     }
 }

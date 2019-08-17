@@ -114,7 +114,7 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
                                  Id = 9999,
                                 Description= "Default Service",
                                 Name = "Default Service",
-                                SLO = 99,
+                                Slo = 99,
                                 Avatar = "default",
                                 CreatedBy = "test",
                                 CreatedOn = DateTime.UtcNow,

@@ -12,6 +12,7 @@ namespace Owlvey.Falcon.Components
         {
             cfg.CreateMap<FeatureEntity, Models.FeatureGetListRp>();
             cfg.CreateMap<FeatureEntity, Models.FeatureGetRp>();
+            cfg.CreateMap<FeatureEntity, Models.FeatureLiteRp>();            
         }
     }
 }

@@ -103,7 +103,7 @@ namespace Owlvey.Falcon.ComponentsTests
 
             var serviceComponent = container.GetInstance<ServiceComponent>();
             var serviceQueryComponent = container.GetInstance<ServiceQueryComponent>();
-            await serviceComponent.CreateService(new Models.ServicePostRp() { Name = name, Description = name, ProductId = product.Value, SLO = 99 });
+            await serviceComponent.CreateService(new Models.ServicePostRp() { Name = name, Description = name, ProductId = product.Value, Slo = 99 });
             var service = await serviceQueryComponent.GetServiceByName(product.Value, name);
             return service.Id;
         }

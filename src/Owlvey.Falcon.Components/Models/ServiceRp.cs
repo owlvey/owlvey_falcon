@@ -17,19 +17,24 @@ namespace Owlvey.Falcon.Models
     }
 
     public class ServiceGetRp : ServiceBaseRp {
+        public IEnumerable<FeatureGetListRp> Features { get; set; } = new List<FeatureGetListRp>();
     }
 
     public class ServiceGetListRp : ServiceBaseRp
     {
+        public int FeaturesCount { get; set; }
     }
 
     public class ServicePostRp {
         [Required]
         public string Name { get; set; }
+
         [Required]
         public int ProductId { get; set; }
+
         [Required]
-        public float SLO { get; set; }
+        public float? Slo { get; set; }
+
         public string Description { get; set; }
     }
 
@@ -38,9 +43,8 @@ namespace Owlvey.Falcon.Models
         [Required]
         public string Name { get; set; }
         [Required]
-        public int ProductId { get; set; }
-        [Required]
-        public float SLO { get; set; }
+        public int ProductId { get; set; }        
+        public float? Slo { get; set; }        
         public string Avatar { get; set; }
         public string Description { get; set; }
     }

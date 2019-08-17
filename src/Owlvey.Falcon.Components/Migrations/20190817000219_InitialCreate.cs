@@ -113,8 +113,9 @@ namespace Owlvey.Falcon.Migrations
                     Deleted = table.Column<bool>(nullable: false),
                     Name = table.Column<string>(nullable: false),
                     Description = table.Column<string>(nullable: false),
-                    Avatar = table.Column<string>(nullable: true),
-                    ProductId = table.Column<int>(nullable: false)
+                    Avatar = table.Column<string>(nullable: false),
+                    ProductId = table.Column<int>(nullable: false),
+                    ServiceMapId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -140,7 +141,7 @@ namespace Owlvey.Falcon.Migrations
                     Deleted = table.Column<bool>(nullable: false),
                     Name = table.Column<string>(nullable: false),
                     Description = table.Column<string>(nullable: true),
-                    SLO = table.Column<float>(nullable: false),
+                    Slo = table.Column<float>(nullable: false),
                     Avatar = table.Column<string>(nullable: true),
                     ProductId = table.Column<int>(nullable: false)
                 },

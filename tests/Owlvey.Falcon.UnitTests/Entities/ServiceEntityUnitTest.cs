@@ -20,7 +20,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
             var serviceEntity = ServiceEntity.Factory.Create(name, slo, DateTime.UtcNow, createdBy, product);
 
             Assert.Equal(name, serviceEntity.Name);
-            Assert.Equal(slo, serviceEntity.SLO);
+            Assert.Equal(slo, serviceEntity.Slo);
             Assert.Equal(createdBy, serviceEntity.CreatedBy);
         }
         [Fact]

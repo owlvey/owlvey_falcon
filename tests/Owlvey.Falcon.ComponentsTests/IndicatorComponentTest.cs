@@ -26,8 +26,18 @@ namespace Owlvey.Falcon.ComponentsTests
             });
 
             var indicators = await component.GetByFeature(feature);
-
+            
             Assert.NotEmpty(indicators);
+
+            foreach (var item in indicators)
+            {
+                var  indicator = await component.GetById(item.Id);
+                Assert.NotNull(indicator);
+                Assert.NotNull(indicator.FeatureAvatar);
+                Assert.NotNull(indicator.Feature);
+                Assert.NotNull(indicator.Source);
+                Assert.NotNull(indicator.SourceAvatar);
+            }
         }
 
         [Fact]
