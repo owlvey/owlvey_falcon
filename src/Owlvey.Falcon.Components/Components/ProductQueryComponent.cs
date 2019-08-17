@@ -29,11 +29,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<ProductGetRp> GetProductById(int id)
         {
-            var entity = await this._dbContext.Products.FirstOrDefaultAsync(c=> c.Id.Equals(id));
-
-            if (entity == null)
-                return null;
-
+            var entity = await this._dbContext.Products.SingleAsync(c=> c.Id.Equals(id));
             return this._mapper.Map<ProductGetRp>(entity);
         }
 
@@ -44,9 +40,11 @@ namespace Owlvey.Falcon.Components
         public async Task<IEnumerable<ProductGetListRp>> GetProducts(int customerId)
         {
             var entities = await this._dbContext.Products.Where(c => c.Customer.Id == customerId).ToListAsync();
-
+            return this._mapper.Map<IEnumerable<ProductGetListRp>>(entities);            
+        }
+        public async Task<IEnumerable<ProductGetListRp>> GetProductsWithServices(int customerId) {
+            var entities = await this._dbContext.Products.Include(c => c.Services).Where(c => c.Customer.Id == customerId).ToListAsync();
             return this._mapper.Map<IEnumerable<ProductGetListRp>>(entities);
-            
         }
 
 

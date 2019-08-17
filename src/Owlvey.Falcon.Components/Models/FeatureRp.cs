@@ -27,6 +27,8 @@ namespace Owlvey.Falcon.Models
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public int ProductId { get; set; }
+
+        public int IndicatorsCount { get; set; }
     }
 
     public class FeaturePostRp {

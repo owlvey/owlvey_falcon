@@ -13,12 +13,15 @@ namespace Owlvey.Falcon.API.Controllers
     {
         private readonly ProductQueryComponent _productQueryService;
         private readonly ProductComponent _productService;
+        private readonly ServiceQueryComponent _serviceQueryComponent;
 
         public ProductController(ProductQueryComponent productQueryService,
-                                 ProductComponent productService) : base()
+                                 ProductComponent productService,
+                                 ServiceQueryComponent serviceQueryComponent) : base()
         {
             this._productQueryService = productQueryService;
             this._productService = productService;
+            this._serviceQueryComponent = serviceQueryComponent;
         }
 
         /// <summary>
@@ -26,10 +29,11 @@ namespace Owlvey.Falcon.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(typeof(ProductGetListRp), 200)]
-        public async Task<IActionResult> Get(int customerId)
+        [ProducesResponseType(typeof(IEnumerable<ProductGetListRp>), 200)]
+        public async Task<IActionResult> Get(int customerId, string expand)
         {
-            var model = await this._productQueryService.GetProducts(customerId);
+            IEnumerable<ProductGetListRp> model = new List<ProductGetListRp>();            
+            model = await this._productQueryService.GetProductsWithServices(customerId);            
             return this.Ok(model);
         }
 
@@ -46,6 +50,8 @@ namespace Owlvey.Falcon.API.Controllers
 
             if (model == null)
                 return this.NotFound($"The Resource {id} doesn't exists.");
+
+            model.Services = await this._serviceQueryComponent.GetServices(id);
 
             return this.Ok(model);
         }

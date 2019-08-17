@@ -17,11 +17,12 @@ namespace Owlvey.Falcon.Models
     }
 
     public class ProductGetRp : ProductBaseRp {
-
+        public IEnumerable<ServiceGetListRp> Services { get; set; } = new List<ServiceGetListRp>();
     }
 
     public class ProductGetListRp : ProductBaseRp
     {
+        public int ServicesCount { get; set; }
 
     }
 

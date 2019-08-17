@@ -45,11 +45,8 @@ namespace Owlvey.Falcon.Components
 
         public async Task<MultiSeriesGetRp> GetDailySeriesById(int serviceId, DateTime start, DateTime end)
         {
-
-
             var service = await this._dbContext.Services.Where(c => c.Id == serviceId).SingleAsync();
             var serviceMaps = await this._dbContext.ServiceMaps.Include(c => c.Feature).ThenInclude(c=>c.Indicators).Where(c => c.Service.Id == serviceId).ToListAsync();
-
 
             foreach (var map in serviceMaps)
             {                
