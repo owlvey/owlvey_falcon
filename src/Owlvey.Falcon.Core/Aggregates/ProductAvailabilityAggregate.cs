@@ -26,7 +26,8 @@ namespace Owlvey.Falcon.Core.Aggregates
             }
             return result;
         }
-        public (ProductEntity product, IEnumerable<DayAvailabilityEntity> availabilities) MeasureAvailability()
+        public (ProductEntity product, IEnumerable<DayAvailabilityEntity> availabilities,
+            IEnumerable<(ServiceEntity service, IEnumerable<DayAvailabilityEntity> availabilities)> services) MeasureAvailability()
         {
             List<DayAvailabilityEntity> result = new List<DayAvailabilityEntity>();
 
@@ -52,7 +53,7 @@ namespace Owlvey.Falcon.Core.Aggregates
                 pivot = pivot.AddDays(1);
             }
 
-            return (this.Product, result);
+            return (this.Product, result, indicators);
         }
     }
 }

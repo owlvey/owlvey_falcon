@@ -29,7 +29,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<ProductGetRp> GetProductById(int id)
         {
-            var entity = await this._dbContext.Products.SingleAsync(c=> c.Id.Equals(id));
+            var entity = await this._dbContext.Products.SingleOrDefaultAsync(c=> c.Id.Equals(id));
             return this._mapper.Map<ProductGetRp>(entity);
         }
 
@@ -48,40 +48,59 @@ namespace Owlvey.Falcon.Components
         }
 
 
-        public async Task<SeriesGetRp> GetDailySeriesById(int featureId, DateTime start, DateTime end)
+        public async Task<MultiSeriesGetRp> GetDailySeriesById(int productId, DateTime start, DateTime end)
         {
-            var entity = await this._dbContext.Products.Include(c => c.Services.Select(d => d.FeatureMap.Select(f=>f.Feature.Indicators.Select(e => e.Source)))).SingleAsync(c => c.Id == featureId);
+            var product = await this._dbContext.Products.Include(c=>c.Services).Where(c => c.Id == productId).SingleAsync();
 
-            foreach (var service in entity.Services)
+            foreach (var service in product.Services)
             {
-                foreach (var feature in service.FeatureMap)
+                var serviceMaps = await this._dbContext.ServiceMaps.Include(c => c.Feature).ThenInclude(c => c.Indicators).Where(c => c.Service.Id == service.Id).ToListAsync();
+                foreach (var map in serviceMaps)
                 {
-                    foreach (var indicator in feature.Feature.Indicators)
+                    var entity = await this._dbContext.Features.Include(c => c.Indicators).ThenInclude(c => c.Source).SingleAsync(c => c.Id == map.Feature.Id);
+
+                    foreach (var indicator in entity.Indicators)
                     {
                         var sourceItems = await this._dbContext.SourcesItems.Where(c => c.SourceId == indicator.Source.Id && c.Start >= start && c.End <= end).ToListAsync();
                         indicator.Source.SourceItems = sourceItems;
                     }
-                }                
+                    map.Feature = entity;
+                }
+                service.FeatureMap = serviceMaps;
+
             }
 
-            var result = new SeriesGetRp
+            var result = new MultiSeriesGetRp
             {
                 Start = start,
                 End = end,
-                Name = entity.Name,
-                Avatar = entity.Avatar
+                Name = product.Name,
+                Avatar = product.Avatar
             };
 
-            var aggregator = new ProductAvailabilityAggregate(entity, start, end);
+            var aggregator = new ProductAvailabilityAggregate(product, start, end);
 
-            var (_, items) = aggregator.MeasureAvailability();
+            var (_, availability, features) = aggregator.MeasureAvailability();
 
-            foreach (var item in items)
+            result.Series.Add(new MultiSerieItemGetRp()
             {
-                result.Items.Add(this._mapper.Map<SeriesItemGetRp>(item));
+                Name = "Availability",
+                Avatar = product.Avatar,
+                Items = availability.Select(c => this._mapper.Map<SeriesItemGetRp>(c)).ToList()
+            });
+
+            foreach (var indicator in features)
+            {
+                result.Series.Add(new MultiSerieItemGetRp()
+                {
+                    Name = string.Format("Service:{0}", indicator.Item1.Id),
+                    Avatar = indicator.Item1.Avatar,
+                    Items = indicator.Item2.Select(c => this._mapper.Map<SeriesItemGetRp>(c)).ToList()
+                });
             }
 
             return result;
+
         }
     }
 }

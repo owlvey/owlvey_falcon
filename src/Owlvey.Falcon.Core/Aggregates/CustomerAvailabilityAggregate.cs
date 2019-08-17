@@ -24,8 +24,8 @@ namespace Owlvey.Falcon.Core.Aggregates
             foreach (var item in this.Customer.Products)
             {
                 var agg = new ProductAvailabilityAggregate(item, this.Start, this.End);
-                var tmp = agg.MeasureAvailability();
-                result.Add(tmp);
+                var (product, availabilities, services)= agg.MeasureAvailability();
+                result.Add((product, availabilities));
             }
             return result;
         }

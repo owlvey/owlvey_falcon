@@ -47,10 +47,20 @@ namespace Owlvey.Falcon.Core.Aggregates
             {
                 var sample = data.Where(c => DateTimeUtils.CompareDates(c.Date, pivot)).Select(c => c.Availability).ToList();
 
-                var availability = sample.Aggregate((a, x) => a * x);
-                var minimun = sample.Min();
-                var maximun = sample.Max();
-                var average = sample.Average();
+                decimal availability = 1;
+                decimal minimun = 1;
+                decimal maximun = 1;
+                decimal average = 1;
+
+                if (sample.Count > 0)
+                {
+                    availability = sample.Aggregate((a, x) => a * x);
+                    minimun = sample.Min();
+                    maximun = sample.Max();
+                    average = sample.Average();
+                }
+
+                
 
                 result.Add(new DayAvailabilityEntity(pivot, availability, minimun, maximun, average));
 
