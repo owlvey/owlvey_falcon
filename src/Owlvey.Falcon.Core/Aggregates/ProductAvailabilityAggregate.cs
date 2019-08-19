@@ -31,9 +31,9 @@ namespace Owlvey.Falcon.Core.Aggregates
         {
             List<DayAvailabilityEntity> result = new List<DayAvailabilityEntity>();
 
-            var indicators = this.GetServiceAvailabilities();
+            var serviceIndicators = this.GetServiceAvailabilities();
 
-            var data = indicators.SelectMany(c => c.availabilities).ToList();
+            var data = serviceIndicators.SelectMany(c => c.availabilities).ToList();
 
             var days = DateTimeUtils.DaysDiff(this.End, this.Start);
 
@@ -41,19 +41,19 @@ namespace Owlvey.Falcon.Core.Aggregates
 
             for (int i = 0; i < days; i++)
             {
-                var sample = data.Where(c => DateTimeUtils.CompareDates(c.Date, pivot)).Select(c => c.Availability).ToList();
+                var sample = data.Where(c => DateTimeUtils.CompareDates(c.Date, pivot)).ToList();
 
-                var availability = sample.Aggregate((a, x) => a * x);
-                var minimun = sample.Min();
-                var maximun = sample.Max();
-                var average = sample.Average();
+                var availability = sample.Average(c=>c.Availability);
+                var minimun = sample.Min(c=>c.Availability);
+                var maximun = sample.Max(c=>c.Availability);
+                var average = sample.Average(c => c.Availability);
 
                 result.Add(new DayAvailabilityEntity(pivot, availability, minimun, maximun, average));
 
                 pivot = pivot.AddDays(1);
             }
 
-            return (this.Product, result, indicators);
+            return (this.Product, result, serviceIndicators);
         }
     }
 }

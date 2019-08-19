@@ -39,10 +39,17 @@ namespace Owlvey.Falcon.API.Controllers
         }
 
         [HttpGet("{id}", Name = "GetSourceById")]
-        [ProducesResponseType(typeof(SquadGetRp), 200)]
-        public async Task<IActionResult> GetSourceById(int id)
+        [ProducesResponseType(typeof(SourceGetRp), 200)]
+        public async Task<IActionResult> GetSourceById(int id, DateTime? end)
         {
-            var model = await this._sourceComponent.GetById(id);
+            SourceGetRp model = null;
+            if (end.HasValue) {
+                model = await this._sourceComponent.GetByIdWithAvailability(id, end.Value);
+            }
+            else {
+                model = await this._sourceComponent.GetById(id);
+            }
+            //GetByIdWithAvailability
 
             if (model == null)
                 return this.NotFound($"The Resource {id} doesn't exists.");
@@ -76,7 +83,7 @@ namespace Owlvey.Falcon.API.Controllers
 
         [HttpGet("{id}/reports/daily/series")]
         [ProducesResponseType(typeof(SeriesGetRp), 200)]
-        public async Task<IActionResult> ReportSeries(int id, DateTime? start, DateTime? end, int period = 1)
+        public async Task<IActionResult> ReportSeries(int id, DateTime? start, DateTime? end)
         {
             if (!start.HasValue)
             {
@@ -86,7 +93,7 @@ namespace Owlvey.Falcon.API.Controllers
             {
                 return this.BadRequest("end is required");
             }
-            var result = await this._sourceComponent.GetDailySeriesById(id, start.Value, end.Value, period);
+            var result = await this._sourceComponent.GetDailySeriesById(id, start.Value, end.Value);
             return this.Ok(result);
         }
         #endregion

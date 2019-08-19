@@ -15,12 +15,14 @@ namespace Owlvey.Falcon.Models
     }
 
     public class CustomerGetRp : CustomerBaseRp {
-        
+        public decimal Availability { get; set; }
+        public IEnumerable<ProductGetListRp> Products { get; set; } = new List<ProductGetListRp>();
     }
 
     public class CustomerGetListRp : CustomerBaseRp
     {
-        
+        public int ProductsCount { get; set; }
+        public decimal Availability { get; set; }
     }
 
     public class CustomerPostRp {

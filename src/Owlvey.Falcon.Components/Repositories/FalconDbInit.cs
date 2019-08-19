@@ -22,7 +22,7 @@ namespace Owlvey.Falcon.Repositories
                 var userCreated = "test-user";
                 var date = DateTime.UtcNow;
                 // Create customer
-                var customer = CustomerEntity.Factory.Create(userCreated, date, $"Customer {DateTime.UtcNow.ToShortTimeString()}");
+                var customer = CustomerEntity.Factory.Create(userCreated, date, $"Customer {DateTime.UtcNow.ToLongTimeString()}");
                 // Create Squad
                 var squad = SquadEntity.Factory.Create("team owlvey", date, userCreated, customer);
                 // Create Members

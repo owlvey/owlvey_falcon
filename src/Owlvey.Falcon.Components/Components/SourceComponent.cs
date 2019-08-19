@@ -49,6 +49,22 @@ namespace Owlvey.Falcon.Components
             var entity = await this._dbContext.Sources.SingleOrDefaultAsync(c => c.Id == id);
             return this._mapper.Map<SourceGetRp>(entity);
         }
+        public async Task<SourceGetRp> GetByIdWithAvailability(int id, DateTime end)
+        {
+            var entity = await this._dbContext.Sources.SingleOrDefaultAsync(c => c.Id == id);
+
+            var source = await this._dbContext.Sources.SingleAsync(c => c.Id == id);
+            var sourceItems = await this._dbContext.GetSourceItems(id, end, end);
+            source.SourceItems = sourceItems;
+
+            var agg = new SourceAvailabilityAggregate(source, end, end);
+            var (_, availabilities) = agg.MeasureAvailability();
+
+            var result = this._mapper.Map<SourceGetRp>(entity);
+            result.Availability = availabilities.Single().Availability;
+
+            return result;
+        }
 
         public async Task<IEnumerable<SourceGetListRp>> GetByProductId(int productId)
         {
@@ -63,10 +79,9 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<SourceGetListRp>>(targets);
         }        
 
-        public async Task<SeriesGetRp> GetDailySeriesById(int sourceId, DateTime start, DateTime end, int period) {           
-
+        public async Task<SeriesGetRp> GetDailySeriesById(int sourceId, DateTime start, DateTime end) {                                   
             var source = await this._dbContext.Sources.SingleAsync(c => c.Id == sourceId);
-            var sourceItems = await this._dbContext.SourcesItems.Where(c => c.SourceId == sourceId && c.Start >= start && c.End <= end).ToListAsync();
+            var sourceItems = await this._dbContext.GetSourceItems(sourceId, start, end);
             source.SourceItems = sourceItems;
             var result = new SeriesGetRp
             {
@@ -82,17 +97,8 @@ namespace Owlvey.Falcon.Components
             foreach (var item in items)
             {
                 result.Items.Add(this._mapper.Map<SeriesItemGetRp>(item));                
-            }
-            if (period > 1) {
-                var periods = new List<SeriesItemGetRp>();
-                for (int i = 0; i < result.Items.Count() ; i++)
-                {
-                    if (i % period == 0) {
-                        periods.Add(result.Items.ElementAt(i));
-                    }
-                }
-                result.Items = periods;
-            }
+            }            
+            
             return result;
         }
     }

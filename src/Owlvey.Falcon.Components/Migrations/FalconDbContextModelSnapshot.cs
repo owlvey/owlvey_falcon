@@ -365,7 +365,11 @@ namespace Owlvey.Falcon.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("End");
+
                     b.HasIndex("SourceId");
+
+                    b.HasIndex("Start");
 
                     b.ToTable("SourceItemEntity");
                 });

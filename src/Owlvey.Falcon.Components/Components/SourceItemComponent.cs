@@ -32,7 +32,7 @@ namespace Owlvey.Falcon.Components
         }
         public async Task<IEnumerable<SourceItemGetListRp>> GetBySource(int sourceId)
         {
-            var entity = await this._dbContext.SourcesItems.Where(c => c.SourceId == sourceId).ToListAsync();
+            var entity = await this._dbContext.SourcesItems.Where(c => c.SourceId == sourceId).OrderBy(c=>c.Start).ToListAsync();
 
             return this._mapper.Map<IEnumerable<SourceItemGetListRp>>(entity);
         }
@@ -45,6 +45,12 @@ namespace Owlvey.Falcon.Components
         {
             var entity = await this._dbContext.SourcesItems.Where(c => c.Id == id).ToListAsync();
 
+            return this._mapper.Map<IEnumerable<SourceItemGetListRp>>(entity);
+        }
+
+        public async Task<IEnumerable<SourceItemGetListRp>> GetBySourceIdAndDateRange(int sourceId, DateTime start, DateTime end)
+        {
+            var entity = await this._dbContext.GetSourceItems(sourceId, start, end);
             return this._mapper.Map<IEnumerable<SourceItemGetListRp>>(entity);
         }
     }

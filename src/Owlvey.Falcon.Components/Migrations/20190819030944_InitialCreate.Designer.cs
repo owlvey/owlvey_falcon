@@ -9,7 +9,7 @@ using Owlvey.Falcon.Repositories;
 namespace Owlvey.Falcon.Migrations
 {
     [DbContext(typeof(FalconDbContext))]
-    [Migration("20190817000219_InitialCreate")]
+    [Migration("20190819030944_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -367,7 +367,11 @@ namespace Owlvey.Falcon.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("End");
+
                     b.HasIndex("SourceId");
+
+                    b.HasIndex("Start");
 
                     b.ToTable("SourceItemEntity");
                 });

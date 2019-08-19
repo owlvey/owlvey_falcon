@@ -60,8 +60,8 @@ namespace Owlvey.Falcon.Components
                     var entity = await this._dbContext.Features.Include(c => c.Indicators).ThenInclude(c => c.Source).SingleAsync(c => c.Id == map.Feature.Id);
 
                     foreach (var indicator in entity.Indicators)
-                    {
-                        var sourceItems = await this._dbContext.SourcesItems.Where(c => c.SourceId == indicator.Source.Id && c.Start >= start && c.End <= end).ToListAsync();
+                    {                        
+                        var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, start, end);
                         indicator.Source.SourceItems = sourceItems;
                     }
                     map.Feature = entity;

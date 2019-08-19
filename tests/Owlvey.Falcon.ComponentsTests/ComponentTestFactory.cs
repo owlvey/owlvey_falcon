@@ -9,6 +9,28 @@ using SimpleInjector;
 
 namespace Owlvey.Falcon.ComponentsTests
 {
+    public static class OwlveyCalendar
+    {
+
+        public static DateTime StartJanuary2017 = new DateTime(2017, 01, 01);
+        public static DateTime EndJanuary2017 = new DateTime(2017, 12, 31);
+        public static DateTime StartJanuary2019 = new DateTime(2019, 01, 01);
+        public static DateTime January201903 = new DateTime(2019, 01, 03);
+        public static DateTime January201904 = new DateTime(2019, 01, 04);
+        public static DateTime January201905 = new DateTime(2019, 01, 05);
+        public static DateTime January201906 = new DateTime(2019, 01, 06);
+        public static DateTime January201907 = new DateTime(2019, 01, 07);
+        public static DateTime January201908 = new DateTime(2019, 01, 08);
+        public static DateTime January201910 = new DateTime(2019, 01, 10);
+        public static DateTime January201912 = new DateTime(2019, 01, 12);
+        public static DateTime January201914 = new DateTime(2019, 01, 14);
+        public static DateTime January201920 = new DateTime(2019, 01, 20);
+        public static DateTime EndJanuary2019 = new DateTime(2019, 01, 31);
+
+        public static DateTime StartJuly2019 = new DateTime(2019, 07, 1);
+        public static DateTime EndJuly2019 = new DateTime(2019, 07, 31);
+
+    }
     public static class ComponentTestFactory
     {
         public static Container BuildContainer(){

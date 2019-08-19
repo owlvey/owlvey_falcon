@@ -12,7 +12,7 @@ namespace Owlvey.Falcon.Components
         public static void ConfigureMappers(IMapperConfigurationExpression cfg)
         {
             cfg.CreateMap<SourceEntity, Models.SourceGetListRp>();
-            cfg.CreateMap<SourceEntity, Models.SourceGetRp>();
+            cfg.CreateMap<SourceEntity, Models.SourceGetRp>().ForMember(c => c.Availability, opt => opt.Ignore());  
             cfg.CreateMap<SourceEntity, Models.SourceLitRp>();
         }
     }

@@ -18,7 +18,7 @@ namespace Owlvey.Falcon.Core.Aggregates
             this.End = end;            
         }
 
-        private IEnumerable<SourceItemEntity> GenerateSourceItemDays(SourceItemEntity itemEntity)
+        internal static IEnumerable<SourceItemEntity> GenerateSourceItemDays(SourceItemEntity itemEntity)
         {
             var days = (decimal)DateTimeUtils.DaysDiff(itemEntity.End, itemEntity.Start);
             var total = (int)Math.Ceiling(itemEntity.Total / days);

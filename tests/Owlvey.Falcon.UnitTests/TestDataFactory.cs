@@ -113,7 +113,7 @@ namespace Owlvey.Falcon.UnitTests
             return results;
         }
 
-        public static class Calendar{
+        public static class OwlveyCalendar{
 
             public static DateTime StartJanuary2017 = new DateTime(2017, 01, 01);
             public static DateTime EndJanuary2017 = new DateTime(2017, 12, 31);
@@ -142,11 +142,11 @@ namespace Owlvey.Falcon.UnitTests
                 
                 var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, Guid.NewGuid().ToString());
 
-                var sourceItem = SourceItemEntity.Factory.Create(source, Calendar.StartJanuary2019,
-                    Calendar.EndJanuary2019, 900, 1200, DateTime.Now, "test");                
+                var sourceItem = SourceItemEntity.Factory.Create(source, OwlveyCalendar.StartJanuary2019,
+                    OwlveyCalendar.EndJanuary2019, 900, 1200, DateTime.Now, "test");                
 
-                var sourceItemA = SourceItemEntity.Factory.Create(source, Calendar.StartJanuary2019,
-                    Calendar.EndJanuary2019, 900, 1200, DateTime.Now, "test");
+                var sourceItemA = SourceItemEntity.Factory.Create(source, OwlveyCalendar.StartJanuary2019,
+                    OwlveyCalendar.EndJanuary2019, 900, 1200, DateTime.Now, "test");
 
                 source.SourceItems.Add(sourceItem);
                 source.SourceItems.Add(sourceItemA);

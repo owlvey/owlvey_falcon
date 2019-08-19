@@ -421,9 +421,19 @@ namespace Owlvey.Falcon.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_SourceItemEntity_End",
+                table: "SourceItemEntity",
+                column: "End");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SourceItemEntity_SourceId",
                 table: "SourceItemEntity",
                 column: "SourceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SourceItemEntity_Start",
+                table: "SourceItemEntity",
+                column: "Start");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SquadEntity_CustomerId",

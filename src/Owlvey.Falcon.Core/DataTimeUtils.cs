@@ -12,7 +12,9 @@ namespace Owlvey.Falcon.Core
         {
             return AbsoluteStart(dateTime).AddDays(1).AddTicks(-1);
         }
-
+        public static DateTime DatetimeToMidDate(DateTime target) {
+            return target.Date.AddHours(12);
+        }
         public static bool CompareDates(DateTime one, DateTime two) {
             return one.Date == two.Date;
         }

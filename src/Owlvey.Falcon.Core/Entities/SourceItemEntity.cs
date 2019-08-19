@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -27,6 +28,19 @@ namespace Owlvey.Falcon.Core.Entities
                     return 1;
                 }
             } }
+
+        public class EqualityComparer : IEqualityComparer<SourceItemEntity>
+        {
+            public bool Equals(SourceItemEntity x, SourceItemEntity y)
+            {
+                return x.Id == y.Id;
+            }
+
+            public int GetHashCode(SourceItemEntity obj)
+            {
+                return obj.GetHashCode();
+            }
+        }
 
         public SourceItemEntity Clone() {
             SourceItemEntity result = new SourceItemEntity();

@@ -54,7 +54,7 @@ namespace Owlvey.Falcon.Components
 
                 foreach (var indicator in entity.Indicators)
                 {
-                    var sourceItems = await this._dbContext.SourcesItems.Where(c => c.SourceId == indicator.Source.Id && c.Start >= start && c.End <= end).ToListAsync();
+                    var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, start, end);
                     indicator.Source.SourceItems = sourceItems;
                 }
                 map.Feature = entity;
