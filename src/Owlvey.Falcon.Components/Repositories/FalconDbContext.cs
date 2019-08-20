@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Collections.Generic;
 using System;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Owlvey.Falcon.Core;
 
@@ -48,36 +47,39 @@ namespace Owlvey.Falcon.Repositories
             modelBuilder.Entity<CustomerEntity>().HasIndex(c => c.Name).IsUnique();
             base.OnModelCreating(modelBuilder);
         }
-                
-        internal async Task<ICollection<SourceItemEntity>> GetSourceItems(int sourceId, DateTime start, DateTime end) {
 
-            start = start.Date;
-            end = end.Date;
-
+        internal async Task<ICollection<SourceItemEntity>> GetSourceItemsByDate(int sourceId, DateTime end) {
+            end = end.Date;                       
             List<SourceItemEntity> result = new List<SourceItemEntity>();
-            var lastTask = await this.SourcesItems.Where(c => c.SourceId == sourceId && c.End < start).OrderByDescending(c => c.End).FirstOrDefaultAsync();
-
-            if (lastTask != null)
-            {   
-                var previous = await this.SourcesItems.Where(c => c.SourceId == sourceId && c.End == lastTask.End).ToListAsync();
-                result.AddRange(previous);
-            }
-
-            if (DateTimeUtils.CompareDates(start, end))
+            var ends= await this.SourcesItems.Where(c => c.SourceId == sourceId && end >= c.Start &&  end <= c.End).ToListAsync();
+            if (ends.Count == 0)
             {
-                end = DateTimeUtils.DatetimeToMidDate(end);
-                var startTask = this.SourcesItems.Where(c => c.SourceId == sourceId &&  end >= c.Start  && end <= c.End).ToListAsync();
-                Task.WaitAll(startTask);
-                result = result.Union(startTask.Result).ToList();
+                var lastTask = await this.SourcesItems.Where(c => c.SourceId == sourceId && c.End < end).OrderByDescending(c => c.End).FirstOrDefaultAsync();
+
+                if (lastTask != null)
+                {
+                    var previous = await this.SourcesItems.Where(c => c.SourceId == sourceId && c.End == lastTask.End).ToListAsync();
+                    result.AddRange(previous);
+                }
             }
             else {
-                var startTask = this.SourcesItems.Where(c => c.SourceId == sourceId && c.Start >= start && c.Start <= end).ToListAsync();
-                var endTask = this.SourcesItems.Where(c => c.SourceId == sourceId && c.End >= start && c.End <= end).ToListAsync();
-                var midTask = this.SourcesItems.Where(c => c.SourceId == sourceId && c.Start >= start && c.End <= end).ToListAsync();
-                Task.WaitAll(startTask, endTask, midTask);
-                result =  result.Union(startTask.Result.Union(endTask.Result).Union(midTask.Result).Distinct(new SourceItemEntity.EqualityComparer())).ToList();
-            }            
-            
+                result.AddRange(ends);
+            }                        
+
+            return result;
+        }
+        internal async Task<ICollection<SourceItemEntity>> GetSourceItems(int sourceId,
+            DateTime start, DateTime end) {
+            start = start.Date;
+            end = end.Date;
+            List<SourceItemEntity> result = new List<SourceItemEntity>();            
+            var startTask = this.SourcesItems.Where(c => c.SourceId == sourceId && c.Start >= start && c.Start <= end).ToListAsync();
+            var endTask = this.SourcesItems.Where(c => c.SourceId == sourceId && c.End >= start && c.End <= end).ToListAsync();
+            var midTask = this.SourcesItems.Where(c => c.SourceId == sourceId && c.Start >= start && c.End <= end).ToListAsync();
+            var involveTask =  this.SourcesItems.Where(c => c.SourceId == sourceId && start >= c.Start && end <= c.End).ToListAsync();
+
+            Task.WaitAll(startTask, endTask, midTask, involveTask);
+            result =  result.Union(startTask.Result.Union(endTask.Result).Union(midTask.Result).Union(involveTask.Result).Distinct(new SourceItemEntity.EqualityComparer())).ToList();                        
             return result;
         }
 

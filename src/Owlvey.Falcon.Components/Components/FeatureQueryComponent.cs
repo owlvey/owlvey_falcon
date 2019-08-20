@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Core.Aggregates;
+using Owlvey.Falcon.Core.Entities;
 using Owlvey.Falcon.Gateways;
 using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Repositories;
@@ -33,8 +34,37 @@ namespace Owlvey.Falcon.Components
 
             if (entity == null)
                 return null;
-
+            
             return this._mapper.Map<FeatureGetRp>(entity);
+        }
+
+        public async Task<FeatureGetRp> GetFeatureByIdWithAvailability(int id, DateTime end)
+        {
+            var entity = await this._dbContext.Features.Include(c=>c.Indicators).ThenInclude(c=>c.Source).FirstOrDefaultAsync(c => c.Id.Equals(id));
+            
+            if (entity == null)
+                return null;
+
+            foreach (var indicator in entity.Indicators)
+            {
+                var sourceItems = await this._dbContext.GetSourceItemsByDate(indicator.SourceId, end);
+                indicator.Source.SourceItems = sourceItems;
+            }
+
+            var model = this._mapper.Map<FeatureGetRp>(entity);            
+            model.Availability = await this.GetAvailabilityByFeature(entity, end);
+            return model;
+        }
+
+        private async Task<decimal> GetAvailabilityByFeature(FeatureEntity entity, DateTime end)
+        {
+            foreach (var indicator in entity.Indicators)
+            {
+                var sourceItems = await this._dbContext.GetSourceItemsByDate(indicator.SourceId, end);
+                indicator.Source.SourceItems = sourceItems;
+            }                        
+            var agg = new FeatureDateAvailabilityAggregate(entity);
+            return agg.MeasureAvailability();
         }
 
 
@@ -57,6 +87,18 @@ namespace Owlvey.Falcon.Components
             var entities = await this._dbContext.Features.Include(c=>c.Indicators).Where(c=> c.Product.Id.Value.Equals(productId)).ToListAsync();
             return this._mapper.Map<IEnumerable< FeatureGetListRp>>(entities);
         }
+        public async Task<IEnumerable<FeatureGetListRp>> GetFeaturesWithAvailability(int productId, DateTime end)
+        {
+            var entities = await this._dbContext.Features.Include(c => c.Indicators).ThenInclude(c=>c.Source).Where(c => c.Product.Id.Value.Equals(productId)).ToListAsync();
+            var result = new List<FeatureGetListRp>();
+            foreach (var feature in entities)
+            {
+                var tmp = this._mapper.Map<FeatureGetListRp>(feature);
+                tmp.Availability = await this.GetAvailabilityByFeature(feature, end);
+                result.Add(tmp);
+            }
+            return result.OrderBy(c=>c.Availability).ToList();
+        }
 
 
         public async Task<IEnumerable<FeatureGetListRp>> GetFeaturesBy(int productId)
@@ -69,6 +111,19 @@ namespace Owlvey.Falcon.Components
             var entities = await this._dbContext.ServiceMaps.Include(c=>c.Feature).Where(c => c.Service.Id == serviceId).ToListAsync();
             var features = entities.Select(c => c.Feature).ToList();
             return this._mapper.Map<IEnumerable<FeatureGetListRp>>(features);
+        }
+
+        public async Task<IEnumerable<FeatureGetListRp>> GetFeaturesByServiceIdWithAvailability(int serviceId, DateTime end)
+        {
+            var entities = await this._dbContext.ServiceMaps.Include(c => c.Feature).ThenInclude(c=>c.Indicators).ThenInclude(c=>c.Source).Where(c => c.Service.Id == serviceId).ToListAsync();
+            var result = new List<FeatureGetListRp>();
+            foreach (var feature in entities.Select(c=>c.Feature))
+            {
+                var tmp = this._mapper.Map<FeatureGetListRp>(feature);
+                tmp.Availability = await this.GetAvailabilityByFeature(feature, end);
+                result.Add(tmp);
+            }
+            return result.OrderBy(c => c.Availability).ToList();            
         }
 
         public async Task<MultiSeriesGetRp> GetDailySeriesById(int featureId, DateTime start, DateTime end)

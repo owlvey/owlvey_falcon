@@ -19,7 +19,8 @@ namespace Owlvey.Falcon.Models
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public int ProductId { get; set; }
-        public IEnumerable<IndicatorGetRp> Indicators { get; set; } = new List<IndicatorGetRp>();
+        public decimal Availability { get; set; }
+        public IEnumerable<IndicatorGetListRp> Indicators { get; set; } = new List<IndicatorGetListRp>();
     }
 
     public class FeatureGetListRp : FeatureBaseRp
@@ -29,6 +30,8 @@ namespace Owlvey.Falcon.Models
         public int ProductId { get; set; }
 
         public int IndicatorsCount { get; set; }
+
+        public decimal Availability { get; set; }
     }
 
     public class FeaturePostRp {

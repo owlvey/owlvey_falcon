@@ -18,6 +18,7 @@ namespace Owlvey.Falcon.Models
 
     public class ServiceGetRp : ServiceBaseRp {
         public IEnumerable<FeatureGetListRp> Features { get; set; } = new List<FeatureGetListRp>();
+        public decimal Availability { get; set; }
     }
 
     public class ServiceGetListRp : ServiceBaseRp

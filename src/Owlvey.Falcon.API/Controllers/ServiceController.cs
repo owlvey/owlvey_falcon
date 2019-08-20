@@ -43,14 +43,28 @@ namespace Owlvey.Falcon.API.Controllers
         /// <returns></returns>
         [HttpGet("{id}", Name = "GetServiceId")]
         [ProducesResponseType(typeof(ServiceGetRp), 200)]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(int id, DateTime? end)
         {
-            var model = await this._serviceQueryService.GetServiceById(id);
+            ServiceGetRp model = null;
+            if (end.HasValue)
+            {
+                model = await this._serviceQueryService.GetServiceByIdWithAvailabilities(id, end.Value);
+            }
+            else {
+                model = await this._serviceQueryService.GetServiceById(id);
+            }
 
             if (model == null)
                 return this.NotFound($"The Resource {id} doesn't exists.");
 
-            model.Features = await this._featureQueryComponent.GetFeaturesByServiceId(id);
+            if (end.HasValue)
+            {
+                model.Features = await this._featureQueryComponent.GetFeaturesByServiceIdWithAvailability(id, end.Value);
+            }
+            else {
+                model.Features = await this._featureQueryComponent.GetFeaturesByServiceId(id);
+            }
+            
             return this.Ok(model);
         }
 

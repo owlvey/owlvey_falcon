@@ -36,14 +36,10 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
 
             var result = aggregate.MeasureAvailability();
 
-            Assert.Equal(15, result.Item2.Count());
-            Assert.Equal(0.9M, result.Item2.ElementAt(0).Availability);
-            Assert.Equal(0.9M, result.Item2.ElementAt(1).Availability);
-            Assert.Equal(0.8M, result.Item2.ElementAt(2).Availability);
-            Assert.Equal(0.8M, result.Item2.ElementAt(3).Availability);
-            Assert.Equal(0.8M, result.Item2.ElementAt(4).Availability);
-            Assert.Equal(0.8M, result.Item2.ElementAt(5).Availability);
-            Assert.Equal(0.8M, result.Item2.ElementAt(6).Availability);            
+            Assert.Equal(3, result.Item2.Count());
+            Assert.Equal(0.8M, result.Item2.ElementAt(0).Availability);
+            Assert.Equal(0.8M, result.Item2.ElementAt(1).Availability);
+            Assert.Equal(0.8M, result.Item2.ElementAt(2).Availability);            
         }
 
         [Fact]
@@ -64,13 +60,10 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
 
             var result = aggregate.MeasureAvailability();
 
-            Assert.Equal(6, result.Item2.Count());
-            Assert.Equal(1M, result.Item2.ElementAt(0).Availability);
-            Assert.Equal(1M, result.Item2.ElementAt(1).Availability);
-            Assert.Equal(1M, result.Item2.ElementAt(2).Availability);
-            Assert.Equal(0.9M, result.Item2.ElementAt(3).Availability);
-            Assert.Equal(0.9M, result.Item2.ElementAt(4).Availability);
-            Assert.Equal(0.9M, result.Item2.ElementAt(5).Availability);
+            Assert.Equal(3, result.Item2.Count());            
+            Assert.Equal(0.9M, result.Item2.ElementAt(0).Availability);
+            Assert.Equal(0.9M, result.Item2.ElementAt(1).Availability);
+            Assert.Equal(0.9M, result.Item2.ElementAt(2).Availability);
         }
 
         [Fact]
@@ -88,11 +81,11 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
 
             var aggregate = new SourceAvailabilityAggregate(source,
                 OwlveyCalendar.January201910,
-                OwlveyCalendar.January201920, true);
+                OwlveyCalendar.January201920);
 
             var result = aggregate.MeasureAvailability();
 
-            Assert.Equal(11, result.Item2.Count());
+            Assert.Equal(5, result.Item2.Count());
             Assert.Equal(0.9M, result.Item2.First().Availability);
         }
 

@@ -55,13 +55,12 @@ namespace Owlvey.Falcon.Components
             var result = this._mapper.Map<SourceGetRp>(entity);
             if (entity!= null) {
                 result.Availability = await GetAvailabilityBySource(entity, end);
-            }
-            
+            }            
             return result;
         }
 
         private async Task<decimal> GetAvailabilityBySource(SourceEntity entity, DateTime end) {
-            var sourceItems = await this._dbContext.GetSourceItems(entity.Id.Value, end, end);
+            var sourceItems = await this._dbContext.GetSourceItemsByDate(entity.Id.Value, end);
             entity.SourceItems = sourceItems;
             var agg = new SourceDateAvailabilityAggregate(entity);            
             return agg.MeasureAvailability();
@@ -82,7 +81,7 @@ namespace Owlvey.Falcon.Components
                 tmp.Availability = await this.GetAvailabilityBySource(item, end);
                 result.Add(tmp);
             }
-            return result;
+            return result.OrderBy(c=>c.Availability).ToList();
         }
 
         public async Task<IEnumerable<SourceGetListRp>> GetByIndicatorId(int indicatorId)

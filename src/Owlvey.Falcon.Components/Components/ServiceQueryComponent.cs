@@ -31,6 +31,32 @@ namespace Owlvey.Falcon.Components
 
             return this._mapper.Map<ServiceGetRp>(entity);
         }
+
+        public async Task<ServiceGetRp> GetServiceByIdWithAvailabilities(int id, DateTime end)
+        {
+            var entity = await this._dbContext.Services.Include(c=>c.FeatureMap)
+                .ThenInclude(c=>c.Feature)
+                .ThenInclude(c=>c.Indicators)
+                .ThenInclude(c=>c.Source)
+                .Where(c=>c.Id == id).FirstOrDefaultAsync();
+
+            if (entity == null)
+                return null;
+
+            foreach (var map in entity.FeatureMap)
+            {
+                foreach (var indicator in map.Feature.Indicators)
+                {
+                    var sourceItems = await this._dbContext.GetSourceItemsByDate(indicator.SourceId, end);
+                    indicator.Source.SourceItems = sourceItems;
+                }                
+            }
+
+            var agg = new ServiceDateAvailabilityAggregate(entity);            
+            var model = this._mapper.Map<ServiceGetRp>(entity);
+            model.Availability = agg.MeasureAvailability();
+            return model;
+        }
         public async Task<ServiceGetRp> GetServiceByName(int productId, string name)
         {
             var entity = await this._dbContext.Services.FirstOrDefaultAsync(c => c.Product.Id == productId && c.Name == name);

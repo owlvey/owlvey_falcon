@@ -44,11 +44,31 @@ namespace Owlvey.Falcon.Components
             return result;
         }
 
-        public async Task<IEnumerable<IndicatorGetRp>> GetByFeature(int featureId)
+        public async Task<IEnumerable<IndicatorGetListRp>> GetByFeature(int featureId)
         {
             var entity = await this._dbContext.Indicators.Include(c=>c.Feature).Include(c=>c.Source).Where(c => c.Feature.Id == featureId).ToListAsync();
+            return this._mapper.Map<IEnumerable<IndicatorGetListRp>>(entity);
+        }
 
-            return this._mapper.Map<IEnumerable<IndicatorGetRp>>(entity);
+        private async Task<decimal> GetAvailabilityByIndicator(IndicatorEntity entity, DateTime end)
+        {
+            var sourceItems = await this._dbContext.GetSourceItemsByDate(entity.Source.Id.Value, end);
+            entity.Source.SourceItems = sourceItems;
+            var agg = new IndicatorDateAvailabilityAggregate(entity);
+            return agg.MeasureAvailability();
+        }
+
+        public async Task<IEnumerable<IndicatorGetListRp>> GetByFeatureWithAvailability(int featureId, DateTime end)
+        {
+            var entities = await this._dbContext.Indicators.Include(c => c.Feature).Include(c => c.Source).Where(c => c.Feature.Id == featureId).ToListAsync();
+            var result = new List<IndicatorGetListRp>();
+            foreach (var item in entities)
+            {                
+                var tmp = this._mapper.Map<IndicatorGetListRp>(item);
+                tmp.Availability = await this.GetAvailabilityByIndicator(item, end);
+                result.Add(tmp);
+            }
+            return result;
         }
 
         public async Task<IndicatorGetRp> GetById(int id)

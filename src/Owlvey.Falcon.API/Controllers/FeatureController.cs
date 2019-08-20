@@ -30,9 +30,18 @@ namespace Owlvey.Falcon.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<FeatureGetListRp>), 200)]
-        public async Task<IActionResult> Get(int productId)
+        public async Task<IActionResult> Get(int productId, DateTime? end)
         {
-            var model = await this._featureQueryService.GetFeatures(productId);
+            IEnumerable<FeatureGetListRp> model = null;
+            if (end.HasValue)
+            {
+                model = await this._featureQueryService.GetFeaturesWithAvailability(productId, end.Value);
+            }
+            else {
+                model = await this._featureQueryService.GetFeatures(productId);
+            }
+
+            
             return this.Ok(model);
         }
 
@@ -43,14 +52,23 @@ namespace Owlvey.Falcon.API.Controllers
         /// <returns></returns>
         [HttpGet("{id}", Name = "GetFeatureId")]
         [ProducesResponseType(typeof(FeatureGetRp), 200)]
-        public async Task<IActionResult> GetFeatureId(int id)
+        public async Task<IActionResult> GetFeatureId(int id, DateTime? end)
         {
-            var model = await this._featureQueryService.GetFeatureById(id);
+            FeatureGetRp model = null;
+            if (end.HasValue)
+            {
+                model = await this._featureQueryService.GetFeatureByIdWithAvailability(id, end.Value);
+            }
+            else {
+                model = await this._featureQueryService.GetFeatureById(id);
+            }
 
             if (model == null)
                 return this.NotFound($"The Resource {id} doesn't exists.");
 
-            model.Indicators = await this._indicatorComponent.GetByFeature(id);
+            if (end.HasValue) {
+                model.Indicators = await this._indicatorComponent.GetByFeatureWithAvailability(id, end.Value);
+            }            
 
             return this.Ok(model);
         }

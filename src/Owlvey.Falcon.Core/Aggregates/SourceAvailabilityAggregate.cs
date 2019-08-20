@@ -10,12 +10,10 @@ namespace Owlvey.Falcon.Core.Aggregates
     {
         private readonly SourceEntity Source;
         private readonly DateTime Start;
-        private readonly DateTime End;
-        private readonly bool FillEmpty;
+        private readonly DateTime End;        
 
-        public SourceAvailabilityAggregate(SourceEntity source, DateTime start, DateTime end, bool fill=false)
-        {
-            this.FillEmpty = fill;
+        public SourceAvailabilityAggregate(SourceEntity source, DateTime start, DateTime end)
+        {            
             this.Source = source;
             this.Start = start;
             this.End = end;            
@@ -37,39 +35,23 @@ namespace Owlvey.Falcon.Core.Aggregates
             }
 
             return result;
-        }           
-
-        internal static decimal CalculatePreviousAvailability(IEnumerable<AvailabilityValue> data, DateTime start) {
-            if (data.Count() == 0) { return 1; }
-            var sample = data.Where(c => c.Date < start).GroupBy(c => c.Date).OrderByDescending(c => c.Key).FirstOrDefault();
-            if (sample == null) { return 1; }
-            return sample.Average(c => c.Availability);
-        }
+        }                 
 
         public (SourceEntity, IEnumerable<DayAvailabilityEntity>) MeasureAvailability()
         {
             var data = this.Source.SourceItems.SelectMany(c => GenerateSourceItemDays(c)).ToList();
-
             List<DayAvailabilityEntity> result = new List<DayAvailabilityEntity>();
-
-            var days = DateTimeUtils.DaysDiff(End, Start);
-            var previous = CalculatePreviousAvailability(data, this.Start);
+            var days = DateTimeUtils.DaysDiff(End, Start);            
             var pivot = this.Start;
             for (int i = 0; i < days; i++)
             {
-                var sample = data.Where(c => DateTimeUtils.CompareDates(c.Date, pivot)).ToList();
-                decimal availability = previous;
+                var sample = data.Where(c => DateTimeUtils.CompareDates(c.Date, pivot)).ToList();                
                 if (sample.Count > 0)
                 {
-                    availability = AvailabilityUtils.CalculateAvailability(sample.Select(c => c.Availability));
-                    previous = availability;
+                    decimal availability;
+                    availability = AvailabilityUtils.CalculateAvailability(sample.Select(c => c.Availability));                    
                     result.Add(new DayAvailabilityEntity(pivot, availability, availability, availability, availability));
                 }
-                else if (this.FillEmpty)
-                {
-                    result.Add(new DayAvailabilityEntity(pivot, availability, availability, availability, availability));
-                }
-
                 pivot = pivot.AddDays(1);
             }           
 

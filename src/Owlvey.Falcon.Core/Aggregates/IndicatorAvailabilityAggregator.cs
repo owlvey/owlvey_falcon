@@ -20,7 +20,7 @@ namespace Owlvey.Falcon.Core.Aggregates
         }
 
         public (IndicatorEntity, IEnumerable<DayAvailabilityEntity>) MeasureAvailability() {
-            var sourceAggregator = new SourceAvailabilityAggregate(this.Indicator.Source, this.Start, this.End, true);
+            var sourceAggregator = new SourceAvailabilityAggregate(this.Indicator.Source, this.Start, this.End);
             var (source, items) = sourceAggregator.MeasureAvailability();
             return (this.Indicator, items);
        }

@@ -24,6 +24,8 @@ namespace Owlvey.Falcon.Models
         public DateTime? CreatedOn { get; set; }
         public int SourceId { get; set; }
         public int FeatureId { get; set; }
+        public string Source { get; set; }
+        public decimal Availability { get; set; }
     }
 
     public class IndicatorPostRp

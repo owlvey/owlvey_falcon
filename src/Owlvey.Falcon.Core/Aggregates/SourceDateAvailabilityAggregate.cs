@@ -15,7 +15,7 @@ namespace Owlvey.Falcon.Core.Aggregates
             this.Source = source;                        
         }        
         public decimal MeasureAvailability() {
-            return AvailabilityUtils.CalculateAvailability(this.Source.SourceItems.Select(c => c.Availability));            
+            return AvailabilityUtils.CalculateAvailability(this.Source.SourceItems.Select(c => c.Availability).ToList());            
         }
     }
 }

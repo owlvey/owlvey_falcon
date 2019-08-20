@@ -6,7 +6,13 @@ namespace Owlvey.Falcon.Core
     public class AvailabilityUtils
     {        
         public static decimal CalculateAvailability(IEnumerable<decimal> availabilities) {
-            return Math.Round(availabilities.Average(c=>c),5);
+            if (availabilities.Count() > 0)
+            {
+                return Math.Round(availabilities.Average(c => c), 5);
+            }
+            else {
+                return 1;
+            }            
         }
 
 
