@@ -1,8 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 namespace Owlvey.Falcon.Core
 {
     public class AvailabilityUtils
-    {
+    {        
+        public static decimal CalculateAvailability(IEnumerable<decimal> availabilities) {
+            return Math.Round(availabilities.Average(c=>c),5);
+        }
+
+
+        public static decimal CalculateDotAvailability(IEnumerable<decimal> availabilities)
+        {
+            return Math.Round(availabilities.Aggregate((a, x) => a * x),5);            
+        }
+
         public static decimal CalculateAvailability(decimal total, decimal good, decimal defaultValue = 1) {
             if (total == 0)
             {   
@@ -13,9 +25,8 @@ namespace Owlvey.Falcon.Core
                     return 0.01M;
                 }
                 else {
-                    return Math.Round(good / total, 3);
-                }
-                
+                    return Math.Round(good / total, 5);
+                }                
             }            
         }
     }

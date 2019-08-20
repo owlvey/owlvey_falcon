@@ -52,24 +52,37 @@ namespace Owlvey.Falcon.Components
         public async Task<SourceGetRp> GetByIdWithAvailability(int id, DateTime end)
         {
             var entity = await this._dbContext.Sources.SingleOrDefaultAsync(c => c.Id == id);
-
-            var source = await this._dbContext.Sources.SingleAsync(c => c.Id == id);
-            var sourceItems = await this._dbContext.GetSourceItems(id, end, end);
-            source.SourceItems = sourceItems;
-
-            var agg = new SourceAvailabilityAggregate(source, end, end);
-            var (_, availabilities) = agg.MeasureAvailability();
-
             var result = this._mapper.Map<SourceGetRp>(entity);
-            result.Availability = availabilities.Single().Availability;
-
+            if (entity!= null) {
+                result.Availability = await GetAvailabilityBySource(entity, end);
+            }
+            
             return result;
+        }
+
+        private async Task<decimal> GetAvailabilityBySource(SourceEntity entity, DateTime end) {
+            var sourceItems = await this._dbContext.GetSourceItems(entity.Id.Value, end, end);
+            entity.SourceItems = sourceItems;
+            var agg = new SourceDateAvailabilityAggregate(entity);            
+            return agg.MeasureAvailability();
         }
 
         public async Task<IEnumerable<SourceGetListRp>> GetByProductId(int productId)
         {
             var entities = await this._dbContext.Sources.Where(c => c.Product.Id == productId).ToListAsync();
             return this._mapper.Map<IEnumerable<SourceGetListRp>>(entities);
+        }
+        public async Task<IEnumerable<SourceGetListRp>> GetByProductIdWithAvailability(int productId, DateTime end)
+        {
+            var entities = await this._dbContext.Sources.Where(c => c.Product.Id == productId).ToListAsync();
+            var result = new List<SourceGetListRp>();
+            foreach (var item in entities)
+            {
+                var tmp = this._mapper.Map<SourceGetListRp>(item);
+                tmp.Availability = await this.GetAvailabilityBySource(item, end);
+                result.Add(tmp);
+            }
+            return result;
         }
 
         public async Task<IEnumerable<SourceGetListRp>> GetByIndicatorId(int indicatorId)

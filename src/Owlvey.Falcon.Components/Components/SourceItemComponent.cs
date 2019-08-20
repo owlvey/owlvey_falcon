@@ -30,6 +30,20 @@ namespace Owlvey.Falcon.Components
             result.AddResult("Id", entity.Id);
             return result;
         }
+
+        public async Task<BaseComponentResultRp> Delete(int id)
+        {
+            var result = new BaseComponentResultRp();
+            
+            var source = await this._dbContext.SourcesItems.SingleAsync(c => c.Id == id);
+
+            this._dbContext.SourcesItems.Remove(source);
+
+            await this._dbContext.SaveChangesAsync();
+            
+            return result;
+        }
+
         public async Task<IEnumerable<SourceItemGetListRp>> GetBySource(int sourceId)
         {
             var entity = await this._dbContext.SourcesItems.Where(c => c.SourceId == sourceId).OrderBy(c=>c.Start).ToListAsync();

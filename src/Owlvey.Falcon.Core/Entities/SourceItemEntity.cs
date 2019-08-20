@@ -22,11 +22,7 @@ namespace Owlvey.Falcon.Core.Entities
 
         [NotMapped]
         public decimal Availability { get {
-                if (this.Total > 0)
-                    return Decimal.Divide(this.Good, this.Total);
-                else {
-                    return 1;
-                }
+                return AvailabilityUtils.CalculateAvailability(this.Total, this.Good, 1);                
             } }
 
         public class EqualityComparer : IEqualityComparer<SourceItemEntity>

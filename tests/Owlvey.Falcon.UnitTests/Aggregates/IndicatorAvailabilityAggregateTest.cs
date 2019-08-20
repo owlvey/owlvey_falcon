@@ -37,7 +37,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var (_, availabilities) = aggregate.MeasureAvailability();
 
             Assert.Equal(31, availabilities.Count());
-            Assert.Equal(0.769m, availabilities.First().Availability);
+            Assert.Equal(0.75m, availabilities.First().Availability);
         }
 
         [Fact]
@@ -53,7 +53,8 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                 TDF.OwlveyCalendar.EndJanuary2019,
                 900, 1200, DateTime.Now, "test");
             var sourceItemB = SourceItemEntity.Factory.Create(source,
-                TDF.OwlveyCalendar.January201905, TDF.OwlveyCalendar.EndJanuary2019,
+                TDF.OwlveyCalendar.January201905,
+                TDF.OwlveyCalendar.EndJanuary2019,
                 900, 1200, DateTime.Now, "test");
 
             source.SourceItems.Add(sourceItemA);
@@ -66,7 +67,8 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var (_, availabilities) = aggregate.MeasureAvailability();
 
             Assert.Equal(31, availabilities.Count());
-            Assert.Equal(0.756m, availabilities.First().Availability);
+            Assert.Equal(1m, availabilities.ElementAt(0).Availability);
+            Assert.Equal(0.75m, availabilities.ElementAt(4).Availability);            
         }
 
         [Fact]
@@ -95,14 +97,11 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, "test");
 
             var sourceItemA = SourceItemEntity.Factory.Create(source,
-                TDF.OwlveyCalendar.StartJanuary2019, TDF.OwlveyCalendar.January201903,
-                900, 1200, DateTime.Now, "test");
+                TDF.OwlveyCalendar.StartJanuary2019, TDF.OwlveyCalendar.January201903, 900, 1200, DateTime.Now, "test");
             var sourceItemB = SourceItemEntity.Factory.Create(source,
-                TDF.OwlveyCalendar.January201905, TDF.OwlveyCalendar.January201910,
-                800, 1000, DateTime.Now, "test");
+                TDF.OwlveyCalendar.January201905, TDF.OwlveyCalendar.January201910, 800, 1000, DateTime.Now, "test");
             var sourceItemC = SourceItemEntity.Factory.Create(source,
-                TDF.OwlveyCalendar.January201920, TDF.OwlveyCalendar.EndJanuary2019,
-                900, 1200, DateTime.Now, "test");
+                TDF.OwlveyCalendar.January201920, TDF.OwlveyCalendar.EndJanuary2019, 900, 1200, DateTime.Now, "test");
 
             source.SourceItems.Add(sourceItemA);
             source.SourceItems.Add(sourceItemB);
@@ -115,15 +114,15 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var (_, availabilities) = aggregate.MeasureAvailability();
 
             Assert.Equal(31, availabilities.Count());
-            Assert.Equal(0.75m, availabilities.Single(c => DateTimeUtils.CompareDates(c.Date, TDF.OwlveyCalendar.January201903)).Availability);
+            Assert.Equal(0.75m, availabilities.Single(c => DateTimeUtils.CompareDates(c.Date, TDF.OwlveyCalendar.January201903)).Availability);            
             Assert.Equal(0.75m, availabilities.Single(c => DateTimeUtils.CompareDates(c.Date, TDF.OwlveyCalendar.January201904)).Availability);
 
-            Assert.Equal(0.802m, availabilities.Single(c => DateTimeUtils.CompareDates(c.Date, TDF.OwlveyCalendar.January201905)).Availability);
-            Assert.Equal(0.802m, availabilities.Single(c => DateTimeUtils.CompareDates(c.Date, TDF.OwlveyCalendar.January201906)).Availability);
-            Assert.Equal(0.802m, availabilities.Single(c => DateTimeUtils.CompareDates(c.Date, TDF.OwlveyCalendar.January201907)).Availability);
+            Assert.Equal(0.800m, availabilities.Single(c => DateTimeUtils.CompareDates(c.Date, TDF.OwlveyCalendar.January201905)).Availability);
+            Assert.Equal(0.800m, availabilities.Single(c => DateTimeUtils.CompareDates(c.Date, TDF.OwlveyCalendar.January201906)).Availability);
+            Assert.Equal(0.800m, availabilities.Single(c => DateTimeUtils.CompareDates(c.Date, TDF.OwlveyCalendar.January201907)).Availability);
 
-            Assert.Equal(0.802m, availabilities.Single(c => DateTimeUtils.CompareDates(c.Date, TDF.OwlveyCalendar.January201912)).Availability);
-            Assert.Equal(0.802m, availabilities.Single(c => DateTimeUtils.CompareDates(c.Date, TDF.OwlveyCalendar.January201914)).Availability);
+            Assert.Equal(0.8m, availabilities.Single(c => DateTimeUtils.CompareDates(c.Date, TDF.OwlveyCalendar.January201912)).Availability);
+            Assert.Equal(0.8m, availabilities.Single(c => DateTimeUtils.CompareDates(c.Date, TDF.OwlveyCalendar.January201914)).Availability);            
         }
     }
 }

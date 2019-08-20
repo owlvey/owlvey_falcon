@@ -55,7 +55,7 @@ namespace Owlvey.Falcon.Core.Aggregates
                 decimal average = 1;
                 if (sample.Count != 0)
                 { 
-                    availability = sample.Aggregate((a, x) => a * x);
+                    availability = AvailabilityUtils.CalculateDotAvailability(sample);
                     minimun = sample.Min();
                     maximun = sample.Max();
                     average = sample.Average();

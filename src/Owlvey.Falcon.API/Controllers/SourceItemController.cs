@@ -50,6 +50,14 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok(model);
         }
 
+        [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(SourceItemGetRp), 200)]
+        public async Task<IActionResult> DeleteSourceItem(int id)
+        {
+            var model = await this._sourceItemComponent.Delete(id);
+            return this.Ok(model);
+        }
+
         [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<SourceItemGetRp>), 200)]
         public async Task<IActionResult> GetBySourceId(int? sourceId)

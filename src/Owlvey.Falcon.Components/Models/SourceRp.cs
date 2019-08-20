@@ -24,6 +24,7 @@ namespace Owlvey.Falcon.Models
     {
         public string CreatedBy { get; set; }        
         public DateTime? CreatedOn { get; set; }
+        public decimal Availability { get; set; }
     }
 
     public class SourcePostRp

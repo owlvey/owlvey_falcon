@@ -50,37 +50,34 @@ namespace Owlvey.Falcon.Repositories
         }
                 
         internal async Task<ICollection<SourceItemEntity>> GetSourceItems(int sourceId, DateTime start, DateTime end) {
-            //var result = await this.SourcesItems.Where(c => c.SourceId == sourceId && (c.Start >= start && c.Start <= end) || c.End >= start && c.End <= end).ToListAsync();
+
+            start = start.Date;
+            end = end.Date;
+
             List<SourceItemEntity> result = new List<SourceItemEntity>();
-            var lastTask = this.SourcesItems.Where(c => c.SourceId == sourceId && c.End <= end).OrderByDescending(c => c.End).FirstOrDefaultAsync();
-            //
+            var lastTask = await this.SourcesItems.Where(c => c.SourceId == sourceId && c.End < start).OrderByDescending(c => c.End).FirstOrDefaultAsync();
+
+            if (lastTask != null)
+            {   
+                var previous = await this.SourcesItems.Where(c => c.SourceId == sourceId && c.End == lastTask.End).ToListAsync();
+                result.AddRange(previous);
+            }
+
             if (DateTimeUtils.CompareDates(start, end))
             {
                 end = DateTimeUtils.DatetimeToMidDate(end);
                 var startTask = this.SourcesItems.Where(c => c.SourceId == sourceId &&  end >= c.Start  && end <= c.End).ToListAsync();
                 Task.WaitAll(startTask);
-                result = startTask.Result;
+                result = result.Union(startTask.Result).ToList();
             }
             else {
                 var startTask = this.SourcesItems.Where(c => c.SourceId == sourceId && c.Start >= start && c.Start <= end).ToListAsync();
                 var endTask = this.SourcesItems.Where(c => c.SourceId == sourceId && c.End >= start && c.End <= end).ToListAsync();
                 var midTask = this.SourcesItems.Where(c => c.SourceId == sourceId && c.Start >= start && c.End <= end).ToListAsync();
-                Task.WaitAll(startTask, endTask, midTask, lastTask);
-                result = startTask.Result.Union(endTask.Result).Union(midTask.Result).Distinct(new SourceItemEntity.EqualityComparer()).ToList();
-            }
-            //if no data , try to recreate information from the last information
-            if (result.Count == 0) {
-                var tmpEnd = lastTask.Result;
-                if (tmpEnd != null) {
-                    result = await this.SourcesItems.Where(c => c.SourceId == sourceId && c.End == tmpEnd.End).ToListAsync();                    
-                    foreach (var item in result)
-                    {
-                        item.Id = int.MaxValue;                        
-                        item.Start = end;
-                        item.End = end;                           
-                    }                                       
-                }                
-            }
+                Task.WaitAll(startTask, endTask, midTask);
+                result =  result.Union(startTask.Result.Union(endTask.Result).Union(midTask.Result).Distinct(new SourceItemEntity.EqualityComparer())).ToList();
+            }            
+            
             return result;
         }
 

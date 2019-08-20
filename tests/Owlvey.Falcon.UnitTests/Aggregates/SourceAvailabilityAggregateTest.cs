@@ -10,6 +10,42 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
     public class SourceAvailabilityAggregateTest
     {
 
+
+        [Fact]
+        public void MeasureAvailabilityWithNoDataStart()
+        {
+            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductServiceFeature();
+            var source = TestDataFactory.BuildSource(product);
+
+            var sourceItemA = SourceItemEntity.Factory.Create(source,
+                OwlveyCalendar.January201903,
+                OwlveyCalendar.January201905,
+                900, 1000, DateTime.Now, "test");
+
+            var sourceItemB = SourceItemEntity.Factory.Create(source,
+                OwlveyCalendar.January201908,
+                OwlveyCalendar.January201910,
+                800, 1000, DateTime.Now, "test");
+
+            source.SourceItems.Add(sourceItemA);
+            source.SourceItems.Add(sourceItemB);
+
+            var aggregate = new SourceAvailabilityAggregate(source,
+                OwlveyCalendar.January201906,
+                OwlveyCalendar.January201920);
+
+            var result = aggregate.MeasureAvailability();
+
+            Assert.Equal(15, result.Item2.Count());
+            Assert.Equal(0.9M, result.Item2.ElementAt(0).Availability);
+            Assert.Equal(0.9M, result.Item2.ElementAt(1).Availability);
+            Assert.Equal(0.8M, result.Item2.ElementAt(2).Availability);
+            Assert.Equal(0.8M, result.Item2.ElementAt(3).Availability);
+            Assert.Equal(0.8M, result.Item2.ElementAt(4).Availability);
+            Assert.Equal(0.8M, result.Item2.ElementAt(5).Availability);
+            Assert.Equal(0.8M, result.Item2.ElementAt(6).Availability);            
+        }
+
         [Fact]
         public void MeasureAvailabilityWithPartialStart() {
             var (_, product, _, feature) = TestDataFactory.BuildCustomerProductServiceFeature();
@@ -29,7 +65,12 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var result = aggregate.MeasureAvailability();
 
             Assert.Equal(6, result.Item2.Count());
-            Assert.Equal(0.902M, result.Item2.First().Availability);                       
+            Assert.Equal(1M, result.Item2.ElementAt(0).Availability);
+            Assert.Equal(1M, result.Item2.ElementAt(1).Availability);
+            Assert.Equal(1M, result.Item2.ElementAt(2).Availability);
+            Assert.Equal(0.9M, result.Item2.ElementAt(3).Availability);
+            Assert.Equal(0.9M, result.Item2.ElementAt(4).Availability);
+            Assert.Equal(0.9M, result.Item2.ElementAt(5).Availability);
         }
 
         [Fact]
@@ -47,12 +88,12 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
 
             var aggregate = new SourceAvailabilityAggregate(source,
                 OwlveyCalendar.January201910,
-                OwlveyCalendar.January201920);
+                OwlveyCalendar.January201920, true);
 
             var result = aggregate.MeasureAvailability();
 
             Assert.Equal(11, result.Item2.Count());
-            Assert.Equal(0.902M, result.Item2.First().Availability);
+            Assert.Equal(0.9M, result.Item2.First().Availability);
         }
 
         [Fact]
@@ -65,12 +106,10 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                 900, 1000, DateTime.Now, "test");
 
             var result = SourceAvailabilityAggregate.GenerateSourceItemDays(sourceItemA);
-
             Assert.Equal(6, result.Count());
             foreach (var item in result)
             {
-                Assert.Equal(167, item.Total);
-                Assert.Equal(150, item.Good);
+                Assert.Equal(900M/1000M, item.Availability);                
             }
         }
 
@@ -101,7 +140,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var (_, availabilities) = aggregate.MeasureAvailability();
 
             Assert.Equal(31, availabilities.Count());
-            Assert.Equal(0.769m, availabilities.First().Availability);
+            Assert.Equal(0.75m, availabilities.First().Availability);
         }
 
         [Fact]
