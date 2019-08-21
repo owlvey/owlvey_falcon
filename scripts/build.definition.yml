@@ -18,26 +18,11 @@ steps:
 - script: dotnet publish src/Owlvey.Falcon.API -c Release --no-restore -o ../../artifactory
   displayName: Package Application
 
-- task: PublishTestResults@2
-  displayName: Unit Tests - Publish Test Results
-  inputs:
-    testRunner: VSTest
-    testResultsFiles: 'tests/Owlvey.Falcon.UnitTests/TestResults/result.xml'
-    testRunTitle: 'Owlvey Falcon - UnitTests'
-
-- task: PublishTestResults@2
-  displayName: Unit Tests - Publish Test Results
-  inputs:
-    testRunner: VSTest
-    testResultsFiles: 'tests/Owlvey.Falcon.ComponentsTests/TestResults/result.xml'
-    testRunTitle: 'Owlvey Falcon - ComponentTests'
-
-- task: PublishTestResults@2
-  displayName: Integration Tests - Publish Test Results
-  inputs:
-    testRunner: VSTest
-    testResultsFiles: 'tests/Owlvey.Falcon.IntegrationTests/TestResults/result.xml'
-    testRunTitle: 'Owlvey Falcon - IntegrationTests'
+- script: |
+    cd src/Owlvey.Falcon.Components
+    dotnet ef migrations script -c FalconDbContext -o ../../artifactory/falcondb.sql --verbose
+    cd  ../../
+  displayName: Get Migration Scripts
 
 - task: Docker@2
   displayName: buildAndPush
