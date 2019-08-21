@@ -57,7 +57,8 @@ namespace Owlvey.Falcon.API
         {
             
             app.UseStaticFiles();
-            if (env.IsDevelopment())
+
+            if (env.IsDevelopment() || env.IsDocker())
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -66,8 +67,11 @@ namespace Owlvey.Falcon.API
                 app.UseHsts();
             }
 
-            dbContext.Migrate(Environment.EnvironmentName);
-
+            if (env.IsDevelopment())
+            {
+                dbContext.Migrate(Environment.EnvironmentName);
+            }
+            
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -76,7 +80,11 @@ namespace Owlvey.Falcon.API
                 c.SwaggerEndpoint($"{swaggerOptions.Value.Endpoint}", swaggerOptions.Value.Title);
             });
 
-            app.UseHttpsRedirection();
+            if (!env.IsDocker())
+            {
+                app.UseHttpsRedirection();
+            }
+
             app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
             app.UseMvc();
         }
