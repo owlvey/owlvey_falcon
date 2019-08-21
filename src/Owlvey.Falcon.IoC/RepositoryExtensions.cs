@@ -11,14 +11,33 @@ namespace Owlvey.Falcon.IoC
 {
     public static class RepositoryExtensions
     {
-        public static void SetupDataBase(this IServiceCollection services, IConfiguration configuration)
+        public static void SetupDataBase(this IServiceCollection services, IConfiguration configuration, string env)
         {
             
             var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+            if (env.Equals("development", StringComparison.InvariantCultureIgnoreCase))
+            {
+                services.AddDbContext<FalconDbContext>(options =>
+                    options.UseSqlite(connectionString)
+                );
+            }
+            else
+            {
+                services.AddDbContext<FalconDbContext>(options =>
+                    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+                           sqlServerOptionsAction: sqlOptions =>
+                           {
+                               sqlOptions.EnableRetryOnFailure(
+                               maxRetryCount: 3,
+                               maxRetryDelay: TimeSpan.FromSeconds(30),
+                               errorNumbersToAdd: null);
+                           })
+                );
+            }
+
             
-            services.AddDbContext<FalconDbContext>(options =>
-                options.UseSqlite(connectionString)
-            );
+
             /*
             services.AddDbContext<FalconDbContext>(options =>
                 options.UseLazyLoadingProxies()

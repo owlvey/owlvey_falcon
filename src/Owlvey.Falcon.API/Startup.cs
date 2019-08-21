@@ -46,7 +46,7 @@ namespace Owlvey.Falcon.API
             services.AddMvc();
             services.AddCors();
             services.AddApplicationServices(Configuration);
-            services.SetupDataBase(Configuration);
+            services.SetupDataBase(Configuration, Environment.EnvironmentName);
             services.AddCustomSwagger(Configuration, Environment);
         }
 

@@ -18,7 +18,8 @@ namespace Owlvey.Falcon.Repositories
 
         private static void SeedData(FalconDbContext dbContext, string env) {
 
-            if (env == "Development" ) {
+            if (env == "Development" || env.Equals("docker", StringComparison.InvariantCultureIgnoreCase))
+            {
                 var userCreated = "test-user";
                 var date = DateTime.UtcNow;
                 // Create customer
