@@ -50,6 +50,7 @@ namespace Owlvey.Falcon.IoC
             services.AddTransient<MemberQueryComponent>();
 
             services.AddTransient<SquadFeatureComponent>();
+            services.AddTransient<SquadProductComponent>();
 
             // Gateways
             services.AddTransient<IDateTimeGateway, DateTimeGateway>();
@@ -69,8 +70,9 @@ namespace Owlvey.Falcon.IoC
                 MemberComponentConfiguration.ConfigureMappers(cfg);
                 SourceComponentConfiguration.ConfigureMappers(cfg);
                 SourceItemComponentConfiguration.ConfigureMappers(cfg);
-                IndicatorComponentConfiguration.ConfigureMappers(cfg);
                 SquadFeatureComponentConfiguration.ConfigureMappers(cfg);
+                SquadProductComponentConfiguration.ConfigureMappers(cfg);
+                IndicatorComponentConfiguration.ConfigureMappers(cfg);
             });
 
             IMapper mapper = mapperCfg.CreateMapper();
