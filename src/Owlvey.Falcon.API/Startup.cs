@@ -20,14 +20,25 @@ namespace Owlvey.Falcon.API
 {
     public class Startup
     {
-        public Startup(IConfiguration cnfs, IHostingEnvironment env)
+        public Startup(IConfiguration configuration, IHostingEnvironment environment)
         {
-            Configuration = cnfs;
-            Environment = env;
+            var builder = new ConfigurationBuilder()
+              .SetBasePath(environment.ContentRootPath)
+              .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+              .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true)
+              .AddEnvironmentVariables();
+
+            if (environment.IsDevelopment())
+            {
+                builder.AddUserSecrets<Startup>();
+            }
+
+            Configuration = builder.AddInMemoryCollection(configuration.AsEnumerable()).Build();
+            Environment = environment;
         }
 
-        public static IHostingEnvironment Environment { get; private set; }
-        public static IConfiguration Configuration { get; private set; }
+        public IHostingEnvironment Environment { get; private set;  }
+        public IConfiguration Configuration { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public virtual void ConfigureServices(IServiceCollection services)
