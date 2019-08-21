@@ -50,6 +50,9 @@
 
 
   <ItemGroup>
+    <None Update="Dockerfile">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="falcondb.sh">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
