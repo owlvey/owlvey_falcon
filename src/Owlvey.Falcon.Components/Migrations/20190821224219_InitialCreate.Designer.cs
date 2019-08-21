@@ -9,7 +9,7 @@ using Owlvey.Falcon.Repositories;
 namespace Owlvey.Falcon.Migrations
 {
     [DbContext(typeof(FalconDbContext))]
-    [Migration("20190820005956_InitialCreate")]
+    [Migration("20190821224219_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -443,6 +443,38 @@ namespace Owlvey.Falcon.Migrations
                     b.ToTable("SquadFeatureEntity");
                 });
 
+            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.SquadProductEntity", b =>
+                {
+                    b.Property<int?>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired();
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .IsRequired();
+
+                    b.Property<bool>("Deleted");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired();
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .IsRequired();
+
+                    b.Property<int>("ProductId");
+
+                    b.Property<int>("SquadId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("SquadId");
+
+                    b.ToTable("SquadProductEntity");
+                });
+
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.UserEntity", b =>
                 {
                     b.Property<int?>("Id")
@@ -559,6 +591,19 @@ namespace Owlvey.Falcon.Migrations
                     b.HasOne("Owlvey.Falcon.Core.Entities.FeatureEntity", "Feature")
                         .WithMany()
                         .HasForeignKey("FeatureId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Owlvey.Falcon.Core.Entities.SquadEntity", "Squad")
+                        .WithMany()
+                        .HasForeignKey("SquadId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.SquadProductEntity", b =>
+                {
+                    b.HasOne("Owlvey.Falcon.Core.Entities.ProductEntity", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Owlvey.Falcon.Core.Entities.SquadEntity", "Squad")

@@ -15,7 +15,7 @@ namespace Owlvey.Falcon.Core.Entities
         public string Avatar { get; protected set; }
 
         public virtual ICollection<UserEntity> Users { get; set; }
-
+        
         public virtual CustomerEntity Customer { get; set; }
 
         public void Update(DateTime on, string modifiedBy, string name = null, string description = null, string avatar = null)

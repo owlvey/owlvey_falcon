@@ -186,6 +186,37 @@ namespace Owlvey.Falcon.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SquadProductEntity",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CreatedOn = table.Column<DateTime>(nullable: false),
+                    CreatedBy = table.Column<string>(nullable: false),
+                    ModifiedOn = table.Column<DateTime>(nullable: false),
+                    ModifiedBy = table.Column<string>(nullable: false),
+                    Deleted = table.Column<bool>(nullable: false),
+                    SquadId = table.Column<int>(nullable: false),
+                    ProductId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SquadProductEntity", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SquadProductEntity_ProductEntity_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "ProductEntity",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SquadProductEntity_SquadEntity_SquadId",
+                        column: x => x.SquadId,
+                        principalTable: "SquadEntity",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserEntity",
                 columns: table => new
                 {
@@ -451,6 +482,16 @@ namespace Owlvey.Falcon.Migrations
                 column: "SquadId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_SquadProductEntity_ProductId",
+                table: "SquadProductEntity",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SquadProductEntity_SquadId",
+                table: "SquadProductEntity",
+                column: "SquadId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserEntity_SquadEntityId",
                 table: "UserEntity",
                 column: "SquadEntityId");
@@ -475,6 +516,9 @@ namespace Owlvey.Falcon.Migrations
 
             migrationBuilder.DropTable(
                 name: "SquadFeatureEntity");
+
+            migrationBuilder.DropTable(
+                name: "SquadProductEntity");
 
             migrationBuilder.DropTable(
                 name: "UserEntity");

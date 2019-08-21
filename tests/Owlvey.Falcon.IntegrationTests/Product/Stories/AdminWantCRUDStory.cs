@@ -31,6 +31,13 @@ namespace Owlvey.Falcon.IntegrationTests.Product.Stories
         }
 
         [Fact]
+        public void admin_can_add_an_squad_to_product()
+        {
+            this._scenario = this._container.GetInstance<AdminCanAddAnSquadToProductScenario>();
+            this._scenario.BDDfy();
+        }
+
+        [Fact]
         public void admin_cannot_create_a_product_with_an_existing_name()
         {
             this._scenario = this._container.GetInstance<AdminCannotCreateProductWithExistingNameScenario>();
