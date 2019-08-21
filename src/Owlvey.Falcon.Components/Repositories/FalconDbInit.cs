@@ -13,7 +13,7 @@ namespace Owlvey.Falcon.Repositories
         public static void Migrate(this FalconDbContext dbContext, string env)
         {
             dbContext.Database.Migrate();
-            SeedData(dbContext, env);
+            //SeedData(dbContext, env);
         }
 
         private static void SeedData(FalconDbContext dbContext, string env) {
