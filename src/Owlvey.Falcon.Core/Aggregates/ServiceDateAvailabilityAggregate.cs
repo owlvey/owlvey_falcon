@@ -24,7 +24,7 @@ namespace Owlvey.Falcon.Core.Aggregates
             
             if (result.Count > 0)
             {
-                return AvailabilityUtils.CalculateDotAvailability(result);
+                return AvailabilityUtils.CalculateAvailability(result);
             }
             else {
                 return 1;

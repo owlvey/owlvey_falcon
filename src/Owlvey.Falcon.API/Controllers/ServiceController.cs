@@ -29,10 +29,16 @@ namespace Owlvey.Falcon.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(typeof(ServicePostRp), 200)]
-        public async Task<IActionResult> Get(int productId)
+        [ProducesResponseType(typeof(ServiceGetListRp), 200)]
+        public async Task<IActionResult> Get(int productId, DateTime? end)
         {
-            var model = await this._serviceQueryService.GetServices(productId);
+            IEnumerable<ServiceGetListRp> model = new List<ServiceGetListRp>();
+            if (end.HasValue) {
+                model = await this._serviceQueryService.GetServicesWithAvailability(productId, end.Value);
+            }
+            else {
+                model = await this._serviceQueryService.GetServices(productId);
+            }            
             return this.Ok(model);
         }
 

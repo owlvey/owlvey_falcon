@@ -24,6 +24,7 @@ namespace Owlvey.Falcon.Models
     public class ServiceGetListRp : ServiceBaseRp
     {
         public int FeaturesCount { get; set; }
+        public decimal Availability { get; set; }
     }
 
     public class ServicePostRp {

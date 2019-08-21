@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Core.Aggregates;
+using Owlvey.Falcon.Core.Entities;
 using Owlvey.Falcon.Gateways;
 using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Repositories;
@@ -41,21 +42,25 @@ namespace Owlvey.Falcon.Components
                 .Where(c=>c.Id == id).FirstOrDefaultAsync();
 
             if (entity == null)
-                return null;
+                return null;            
 
+            
+            var model = this._mapper.Map<ServiceGetRp>(entity);
+            model.Availability = await this.MeasureAvailability(entity, end);
+            return model;
+        }
+        private async Task<decimal> MeasureAvailability(ServiceEntity entity, DateTime end)
+        {
             foreach (var map in entity.FeatureMap)
             {
                 foreach (var indicator in map.Feature.Indicators)
                 {
                     var sourceItems = await this._dbContext.GetSourceItemsByDate(indicator.SourceId, end);
                     indicator.Source.SourceItems = sourceItems;
-                }                
+                }
             }
-
-            var agg = new ServiceDateAvailabilityAggregate(entity);            
-            var model = this._mapper.Map<ServiceGetRp>(entity);
-            model.Availability = agg.MeasureAvailability();
-            return model;
+            var agg = new ServiceDateAvailabilityAggregate(entity);
+            return agg.MeasureAvailability();
         }
         public async Task<ServiceGetRp> GetServiceByName(int productId, string name)
         {
@@ -67,6 +72,25 @@ namespace Owlvey.Falcon.Components
         {
             var entities = await this._dbContext.Services.Include(c=>c.FeatureMap).Where(c=> c.Product.Id.Equals(productId)).ToListAsync();
             return this._mapper.Map<IEnumerable<ServiceGetListRp>>(entities);
+        }
+        public async Task<IEnumerable<ServiceGetListRp>> GetServicesWithAvailability(int productId, DateTime end)
+        {
+            var entity = await this._dbContext.Products.Include(c=>c.Services)
+                .ThenInclude(c => c.FeatureMap)
+                .ThenInclude(c=>c.Feature)
+                .ThenInclude(c=>c.Indicators)
+                .ThenInclude(c=>c.Source)
+                .Where(c => c.Id.Equals(productId))
+                .FirstOrDefaultAsync();
+
+            var result = new List<ServiceGetListRp>();
+            foreach (var item in entity.Services)
+            {
+                var tmp =  this._mapper.Map<ServiceGetListRp>(item);
+                tmp.Availability = await this.MeasureAvailability(item, end);
+                result.Add(tmp);
+            }
+            return result;
         }
 
         public async Task<MultiSeriesGetRp> GetDailySeriesById(int serviceId, DateTime start, DateTime end)
