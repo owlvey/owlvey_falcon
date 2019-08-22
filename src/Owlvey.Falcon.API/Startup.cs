@@ -33,7 +33,7 @@ namespace Owlvey.Falcon.API
                 //builder.AddUserSecrets<Startup>();
             }
 
-            Configuration = builder.AddInMemoryCollection(configuration.AsEnumerable()).Build();
+            Configuration = builder.Build();
             Environment = environment;
         }
 
