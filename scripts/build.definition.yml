@@ -6,7 +6,9 @@ steps:
 - script: dotnet build src/Owlvey.Falcon.API -c Release
   displayName: Build Projects
 
-- script: dotnet test tests/Owlvey.Falcon.UnitTests/Owlvey.Falcon.UnitTests.csproj -c Release --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --logger trx;logfilename=result.xml
+- script: |
+    dotnet test tests/Owlvey.Falcon.UnitTests/Owlvey.Falcon.UnitTests.csproj -c Release --no-build --no-restore  /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura --logger trx;logfilename=result.xml
+    dotnet "tools/ReportGenerator/ReportGenerator.dll" "-reports:tests/Owlvey.Falcon.UnitTests/coverage.xml" "-targetdir:tests/Owlvey.Falcon.UnitTests/coverage" "-reporttypes:HTMLInline"
   displayName: Run Unit Tests
 
 - script: dotnet test tests/Owlvey.Falcon.ComponentsTests/Owlvey.Falcon.ComponentsTests.csproj -c Release --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --logger trx;logfilename=result.xml
