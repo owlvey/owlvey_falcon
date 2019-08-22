@@ -67,11 +67,9 @@ namespace Owlvey.Falcon.API
                 app.UseHsts();
             }
 
-            if (env.IsDevelopment())
-            {
-                dbContext.Migrate(Environment.EnvironmentName);
-            }
-            
+            //TODO
+            dbContext.Migrate(Environment.EnvironmentName);
+
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
