@@ -3,7 +3,7 @@ steps:
 - script: dotnet restore src/Owlvey.Falcon.API --configfile nuget/NuGet.Config
   displayName: Restore Dependencies
 
-- script: dotnet build src/Owlvey.Falcon.API -c Release
+- script: dotnet build -c Release
   displayName: Build Projects
 
 - script: |
