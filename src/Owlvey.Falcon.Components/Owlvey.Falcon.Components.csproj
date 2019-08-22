@@ -33,4 +33,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Migrations\20190822024408_InitialCreate.cs" />
+    <Compile Remove="Migrations\20190822024408_InitialCreate.Designer.cs" />
+  </ItemGroup>
 </Project>

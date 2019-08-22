@@ -41,14 +41,13 @@ namespace Owlvey.Falcon.Core.Aggregates
             for (int i = 0; i < days; i++)
             {
                 var sample = data.Where(c => DateTimeUtils.CompareDates(c.Date, pivot)).ToList();
-
-                var availability = AvailabilityUtils.CalculateAvailability(sample.Select(c => c.Availability));
-                var minimun = sample.Min(c => c.Availability);
-                var maximun = sample.Max(c => c.Availability);
-                var average = AvailabilityUtils.CalculateAvailability(sample.Select(c => c.Availability));
-
-                result.Add(new DayAvailabilityEntity(pivot, availability, minimun, maximun, average));
-
+                if (sample.Count > 0) {
+                    var availability = AvailabilityUtils.CalculateAvailability(sample.Select(c => c.Availability));
+                    var minimun = sample.Min(c => c.Availability);
+                    var maximun = sample.Max(c => c.Availability);
+                    var average = AvailabilityUtils.CalculateAvailability(sample.Select(c => c.Availability));
+                    result.Add(new DayAvailabilityEntity(pivot, availability, minimun, maximun, average));
+                }
                 pivot = pivot.AddDays(1);
             }
             return (this.Customer, result, indicators);

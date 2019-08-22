@@ -23,7 +23,7 @@ namespace Owlvey.Falcon.Repositories
                 var userCreated = "test-user";
                 var date = DateTime.UtcNow;
 
-                string customerName = $"Customer {DateTime.UtcNow.ToLongTimeString()}";
+                string customerName = $"Customer Test";
 
                 // Create Customer
                 if (!dbContext.Customers.AnyAsync(x=> x.Name.Equals(customerName)).GetAwaiter().GetResult())

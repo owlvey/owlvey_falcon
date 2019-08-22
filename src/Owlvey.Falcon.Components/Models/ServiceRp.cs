@@ -8,6 +8,7 @@ namespace Owlvey.Falcon.Models
     public class ServiceBaseRp
     {
         public string Name { get; set; }
+        public string Avatar { get; set; }
         public string Description { get; set; }
         public int Id { get; set; }
         public int ProductId { get; set; }        
@@ -23,6 +24,7 @@ namespace Owlvey.Falcon.Models
 
     public class ServiceGetListRp : ServiceBaseRp
     {
+
         public int FeaturesCount { get; set; }
         public decimal Availability { get; set; }
     }

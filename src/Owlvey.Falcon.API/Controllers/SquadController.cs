@@ -24,12 +24,13 @@ namespace Owlvey.Falcon.API.Controllers
         /// <summary>
         /// Get Squads
         /// </summary>
+        /// <param name="customerId">Customer Id</param>
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(SquadPostRp), 200)]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery(Name = "customerId")]int customerId)
         {
-            var model = await this._squadQueryService.GetSquads();
+            var model = await this._squadQueryService.GetSquads(customerId);
             return this.Ok(model);
         }
 

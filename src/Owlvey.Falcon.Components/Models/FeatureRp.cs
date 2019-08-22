@@ -8,11 +8,12 @@ namespace Owlvey.Falcon.Models
     public class FeatureBaseRp
     {
         public string Name { get; set; }
+        public string Avatar { get; set; }
         public int Id { get; set; }        
     }
 
     public class FeatureLiteRp : FeatureBaseRp {
-        public string Avatar { get; set; }
+        
     }
 
     public class FeatureGetRp : FeatureBaseRp {

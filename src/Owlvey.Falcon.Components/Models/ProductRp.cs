@@ -10,6 +10,7 @@ namespace Owlvey.Falcon.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public string Avatar { get; set; }
         public int CustomerId { get; set; }
         public string CustomerName { get; set; }
         public string CreatedBy { get; set; }

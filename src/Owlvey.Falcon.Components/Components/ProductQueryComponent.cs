@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Owlvey.Falcon.Core;
 using Owlvey.Falcon.Core.Aggregates;
 using Owlvey.Falcon.Gateways;
 using Owlvey.Falcon.Models;
@@ -13,11 +14,16 @@ namespace Owlvey.Falcon.Components
 {
     public class ProductQueryComponent : BaseComponent
     {
-        private readonly FalconDbContext _dbContext;        
+        private readonly FalconDbContext _dbContext;
+        private readonly FeatureQueryComponent _featureQueryComponent;
+        private readonly ServiceQueryComponent _serviceQueryComponent;
 
         public ProductQueryComponent(FalconDbContext dbContext, IDateTimeGateway dateTimeGateway,
+            FeatureQueryComponent featureQueryComponent, ServiceQueryComponent serviceQueryComponent,
             IMapper mapper, IUserIdentityGateway identityService) : base(dateTimeGateway, mapper, identityService)
         {
+            this._featureQueryComponent = featureQueryComponent;
+            this._serviceQueryComponent = serviceQueryComponent;
             this._dbContext = dbContext;
         }
 
@@ -31,6 +37,81 @@ namespace Owlvey.Falcon.Components
         {
             var entity = await this._dbContext.Products.SingleOrDefaultAsync(c=> c.Id.Equals(id));
             return this._mapper.Map<ProductGetRp>(entity);
+        }
+
+
+        public async Task<GraphGetRp> GetGraph(int id, DateTime end) {
+
+            GraphGetRp result = new GraphGetRp();
+
+            var product = await this.GetProductById(id);
+            result.Name = product.Name;
+            result.Id = product.Id;
+            result.Avatar = product.Avatar;
+
+            var services = await this._serviceQueryComponent.GetServicesWithAvailability(id, end);
+
+            /*
+            var node = new GraphNode
+            {
+                Id = string.Format("product_{0}", id),
+                Avatar = product.Avatar,
+                Name = product.Name,
+                Availability = 1,
+                Group = "products"
+            };
+            result.Nodes.Add(node);
+            */
+            foreach (var service in services)
+            {
+                var snode = new GraphNode
+                {
+                    Id = string.Format("service_{0}", service.Id),
+                    Avatar = service.Avatar,
+                    Name = service.Name,
+                    Availability = service.Availability,
+                    Group = "services",
+                    Slo = service.SLO,
+                    Importance = AvailabilityUtils.MeasureImpact(service.SLO),
+                    Budget = service.Availability - (decimal)service.SLO
+                };
+                result.Nodes.Add(snode);
+                /*
+                var sedge = new GraphEdge()
+                {
+                    From = node.Id,
+                    To = snode.Id,
+                };
+                result.Edges.Add(sedge);
+                */
+                
+                var features = await this._featureQueryComponent.GetFeaturesByServiceIdWithAvailability(service.Id, end);
+                foreach (var feature in features)
+                {
+                    var Id = string.Format("feature_{0}", feature.Id);
+                    var fnode = result.Nodes.SingleOrDefault(c => c.Id == Id);
+                    if ( fnode == null) {
+                        fnode = new GraphNode
+                        {
+                            Id = Id,
+                            Avatar = feature.Avatar,
+                            Name = feature.Name,
+                            Availability = feature.Availability,
+                            Group = "features"
+                        };
+                        result.Nodes.Add(fnode);
+                    }
+                    var fedge = new GraphEdge()
+                    {
+                        From = snode.Id,
+                        To = fnode.Id,
+                        Budget = fnode.Availability - (decimal)snode.Slo,
+                        Availability = fnode.Availability
+                    };
+                    result.Edges.Add(fedge);
+                }
+            }            
+            return result;
         }
 
         /// <summary>
@@ -50,14 +131,20 @@ namespace Owlvey.Falcon.Components
 
         public async Task<MultiSeriesGetRp> GetDailySeriesById(int productId, DateTime start, DateTime end)
         {
-            var product = await this._dbContext.Products.Include(c=>c.Services).Where(c => c.Id == productId).SingleAsync();
+            var product = await this._dbContext.Products
+                .Include(c=>c.Services).Where(c => c.Id == productId).SingleAsync();
 
             foreach (var service in product.Services)
             {
-                var serviceMaps = await this._dbContext.ServiceMaps.Include(c => c.Feature).ThenInclude(c => c.Indicators).Where(c => c.Service.Id == service.Id).ToListAsync();
+                var serviceMaps = await this._dbContext.ServiceMaps
+                    .Include(c => c.Feature)
+                    .ThenInclude(c => c.Indicators).Where(c => c.Service.Id == service.Id).ToListAsync();
                 foreach (var map in serviceMaps)
                 {
-                    var entity = await this._dbContext.Features.Include(c => c.Indicators).ThenInclude(c => c.Source).SingleAsync(c => c.Id == map.Feature.Id);
+                    var entity = await this._dbContext.Features
+                        .Include(c => c.Indicators)
+                        .ThenInclude(c => c.Source)
+                        .SingleAsync(c => c.Id == map.Feature.Id);
 
                     foreach (var indicator in entity.Indicators)
                     {                        
