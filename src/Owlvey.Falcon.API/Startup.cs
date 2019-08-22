@@ -30,7 +30,7 @@ namespace Owlvey.Falcon.API
 
             if (environment.IsDevelopment())
             {
-                builder.AddUserSecrets<Startup>();
+                //builder.AddUserSecrets<Startup>();
             }
 
             Configuration = builder.AddInMemoryCollection(configuration.AsEnumerable()).Build();
@@ -68,7 +68,10 @@ namespace Owlvey.Falcon.API
             }
 
             //TODO
-            dbContext.Migrate(Environment.EnvironmentName);
+            if (!env.IsDocker())
+            {
+                dbContext.Migrate(Environment.EnvironmentName);
+            }
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
