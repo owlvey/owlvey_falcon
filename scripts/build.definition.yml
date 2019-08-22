@@ -1,9 +1,9 @@
 steps:
 
-- script: dotnet restore --configfile nuget/NuGet.Config
+- script: dotnet restore Owlvey.Falcon.sln --configfile nuget/NuGet.Config
   displayName: Restore Dependencies
 
-- script: dotnet build -c Release
+- script: dotnet build Owlvey.Falcon.sln -c Release
   displayName: Build Projects
 
 - script: |
