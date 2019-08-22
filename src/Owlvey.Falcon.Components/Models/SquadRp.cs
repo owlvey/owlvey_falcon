@@ -12,6 +12,7 @@ namespace Owlvey.Falcon.Models
         public int Id { get; set; }
         public string CustomerName { get; set; }
         public int CustomerId { get; set; }
+        public string Avatar { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
     }
@@ -36,7 +37,6 @@ namespace Owlvey.Falcon.Models
     {
         [Required]
         public string Name { get; set; }
-        [Required]
         public string Description { get; set; }
         public string Avatar { get; set; }
     }

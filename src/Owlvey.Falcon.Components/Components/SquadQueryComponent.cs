@@ -47,9 +47,9 @@ namespace Owlvey.Falcon.Components
         /// Get All Squad
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<SquadGetListRp>> GetSquads()
+        public async Task<IEnumerable<SquadGetListRp>> GetSquads(int customerId)
         {
-            var entities = await this._dbContext.Squads.ToListAsync();
+            var entities = await this._dbContext.Squads.Where(c=> c.Customer.Id.Equals(customerId)).ToListAsync();
 
             return this._mapper.Map<IEnumerable<SquadGetListRp>>(entities);
         }

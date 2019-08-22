@@ -14,11 +14,12 @@ namespace Owlvey.Falcon.API.Controllers
         private readonly ProductQueryComponent _productQueryService;
         private readonly ProductComponent _productService;
         private readonly ServiceQueryComponent _serviceQueryComponent;
+        
 
         public ProductController(ProductQueryComponent productQueryService,
                                  ProductComponent productService,
-                                 ServiceQueryComponent serviceQueryComponent) : base()
-        {
+                                 ServiceQueryComponent serviceQueryComponent)
+        {            
             this._productQueryService = productQueryService;
             this._productService = productService;
             this._serviceQueryComponent = serviceQueryComponent;
@@ -148,6 +149,14 @@ namespace Owlvey.Falcon.API.Controllers
             }
 
             return this.NoContent();
+        }
+
+        [HttpGet("{id}/reports/graph")]
+        [ProducesResponseType(typeof(GraphGetRp), 200)]
+        public async Task<IActionResult> GetGraph(int id, DateTime end) {
+
+            GraphGetRp result = await this._productQueryService.GetGraph(id, end);
+            return this.Ok(result);
         }
 
         #region reports

@@ -20,14 +20,25 @@ namespace Owlvey.Falcon.API
 {
     public class Startup
     {
-        public Startup(IConfiguration cnfs, IHostingEnvironment env)
+        public Startup(IConfiguration configuration, IHostingEnvironment environment)
         {
-            Configuration = cnfs;
-            Environment = env;
+            var builder = new ConfigurationBuilder()
+              .SetBasePath(environment.ContentRootPath)
+              .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+              .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true)
+              .AddEnvironmentVariables();
+
+            if (environment.IsDevelopment())
+            {
+                //builder.AddUserSecrets<Startup>();
+            }
+
+            Configuration = builder.Build();
+            Environment = environment;
         }
 
-        public static IHostingEnvironment Environment { get; private set; }
-        public static IConfiguration Configuration { get; private set; }
+        public IHostingEnvironment Environment { get; private set;  }
+        public IConfiguration Configuration { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public virtual void ConfigureServices(IServiceCollection services)
@@ -35,7 +46,7 @@ namespace Owlvey.Falcon.API
             services.AddMvc();
             services.AddCors();
             services.AddApplicationServices(Configuration);
-            services.SetupDataBase(Configuration);
+            services.SetupDataBase(Configuration, Environment.EnvironmentName);
             services.AddCustomSwagger(Configuration, Environment);
         }
 
@@ -46,7 +57,8 @@ namespace Owlvey.Falcon.API
         {
             
             app.UseStaticFiles();
-            if (env.IsDevelopment())
+
+            if (env.IsDevelopment() || env.IsDocker())
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -55,7 +67,11 @@ namespace Owlvey.Falcon.API
                 app.UseHsts();
             }
 
-            dbContext.Migrate(Environment.EnvironmentName);
+            //TODO
+            if (!env.IsDocker())
+            {
+                dbContext.Migrate(Environment.EnvironmentName);
+            }
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
@@ -65,7 +81,11 @@ namespace Owlvey.Falcon.API
                 c.SwaggerEndpoint($"{swaggerOptions.Value.Endpoint}", swaggerOptions.Value.Title);
             });
 
-            app.UseHttpsRedirection();
+            if (!env.IsDocker())
+            {
+                app.UseHttpsRedirection();
+            }
+
             app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
             app.UseMvc();
         }

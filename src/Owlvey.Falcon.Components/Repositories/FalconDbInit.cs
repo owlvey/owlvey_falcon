@@ -18,49 +18,22 @@ namespace Owlvey.Falcon.Repositories
 
         private static void SeedData(FalconDbContext dbContext, string env) {
 
-            if (env == "Development" ) {
+            if (env == "Development" || env.Equals("docker", StringComparison.InvariantCultureIgnoreCase))
+            {
                 var userCreated = "test-user";
                 var date = DateTime.UtcNow;
-                // Create customer
-                var customer = CustomerEntity.Factory.Create(userCreated, date, $"Customer {DateTime.UtcNow.ToLongTimeString()}");
-                // Create Squad
-                var squad = SquadEntity.Factory.Create("team owlvey", date, userCreated, customer);
-                // Create Members
-                var users = new[] { "gregory", "ricardo", "felipe", "gustavo" };
 
-                squad.Users = new List<UserEntity>();
-                foreach (var item in users)
+                string customerName = $"Customer Test";
+
+                // Create Customer
+                if (!dbContext.Customers.AnyAsync(x=> x.Name.Equals(customerName)).GetAwaiter().GetResult())
                 {
-                    var user = UserEntity.Factory.Create(userCreated, date, item);
-                    var member = MemberEntity.Factory.Create(squad, user, date, userCreated);
+                    var customer = CustomerEntity.Factory.Create(userCreated, date, customerName);
 
-                    squad.Users.Add(user);
+                    dbContext.Customers.Add(customer);
+                    dbContext.SaveChanges();
                 }
-
-                // Create Product
-                var product = ProductEntity.Factory.Create("Application", date, userCreated, customer);
-
-                var biz_names = new[] { "Login", "Onboarding", "Password Recovery",
-                "Mesa de cambio", "Mi Lista", "Pago de Servicios", "Pago de Tarjeta de Credito",
-                "Pago Prestamo", "Gates", "Perfil", "Limites", "Clave Digital", "Puntos", "Configuracion de tarjetas",
-                "Transferencias", "Retiro sin tarjeta", "Dashboard", "Recargas", "Personal Financial Managment",
-                "Detalle Producto" };
-
-                foreach (var item in biz_names)
-                {
-                    var service = ServiceEntity.Factory.Create(item, 99, date, userCreated, product);
-                    product.AddService(service);
-                    var feature = FeatureEntity.Factory.Create(item, item, date, userCreated, product);
-                    product.AddFeature(feature);
-                }
-
-                customer.Products.Add(product);
-
-                dbContext.Customers.Add(customer);
-                dbContext.SaveChanges();
             }
-
-           
         }
     }
 }

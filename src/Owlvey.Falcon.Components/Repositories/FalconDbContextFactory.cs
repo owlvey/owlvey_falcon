@@ -12,30 +12,36 @@ namespace Owlvey.Falcon.Repositories
 
     public class FalconDbContextFactory : IDesignTimeDbContextFactory<FalconDbContext>
     {
-        public FalconDbContext Create(string connectionString = "FalconDb.db")
+        public FalconDbContext Create(string connectionString = null)
         {
             return CreateDbContext(new string[] { connectionString });
         }
-
+        
         public FalconDbContext CreateDbContext(string[] args)
         {
-            
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+            .SetBasePath(AppContext.BaseDirectory)
+            .AddJsonFile("dbsettings.json")
+            .AddJsonFile($"dbsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", true)
+            .AddEnvironmentVariables()
+            .Build();
+
             var builder = new DbContextOptionsBuilder<FalconDbContext>();
 
-            var connectionString = "Data Source=FalconDb.db;";
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-            if (String.IsNullOrWhiteSpace(connectionString))
+            if (String.IsNullOrWhiteSpace(connectionString) == true)
             {
                 throw new InvalidOperationException("Could not find a connection string named 'DefaultConnection'.");
             }
 
-            //if (args.Length > 0)
-            //{
-            //    connectionString = args[0];
-            //}
-            
-            builder.UseSqlite(connectionString);
+            if (args.Length > 0)
+            {
+                connectionString = args[0];
+            }
 
+            builder.UseSqlServer(connectionString);
+            
             return new FalconDbContext(builder.Options);
         }
     }
