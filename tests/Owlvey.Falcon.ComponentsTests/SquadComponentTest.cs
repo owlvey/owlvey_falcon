@@ -25,7 +25,7 @@ namespace Owlvey.Falcon.ComponentsTests
                 CustomerId = customer
             });
 
-            var squads = await squadQueryComponent.GetSquads();
+            var squads = await squadQueryComponent.GetSquads(customer);
             Assert.NotEmpty(squads);
         }
     }
