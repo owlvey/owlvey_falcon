@@ -19,10 +19,12 @@ namespace Owlvey.Falcon.Repositories
         
         public FalconDbContext CreateDbContext(string[] args)
         {
+            string env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "development";
+
             IConfigurationRoot configuration = new ConfigurationBuilder()
             .SetBasePath(AppContext.BaseDirectory)
             .AddJsonFile("dbsettings.json")
-            .AddJsonFile($"dbsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", true)
+            .AddJsonFile($"dbsettings.{env}.json", true)
             .AddEnvironmentVariables()
             .Build();
 
@@ -40,7 +42,14 @@ namespace Owlvey.Falcon.Repositories
                 connectionString = args[0];
             }
 
-            builder.UseSqlServer(connectionString);
+            if (env.Equals("development", StringComparison.InvariantCultureIgnoreCase))
+            {
+                builder.UseSqlite(connectionString);
+            }
+            else
+            {
+                builder.UseSqlServer(connectionString);
+            }
             
             return new FalconDbContext(builder.Options);
         }

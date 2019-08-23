@@ -1,13 +1,29 @@
 steps:
 
-- script: dotnet restore src/Owlvey.Falcon.API --configfile nuget/NuGet.Config
+- script: dotnet restore Owlvey.Falcon.sln --configfile nuget/NuGet.Config
   displayName: Restore Dependencies
 
-- script: dotnet build src/Owlvey.Falcon.API -c Release
+- script: dotnet build Owlvey.Falcon.sln -c Release
   displayName: Build Projects
 
-- script: dotnet test tests/Owlvey.Falcon.UnitTests/Owlvey.Falcon.UnitTests.csproj -c Release --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --logger trx;logfilename=result.xml
+- script: |
+    dotnet test tests/Owlvey.Falcon.UnitTests/Owlvey.Falcon.UnitTests.csproj -c Release --no-build --no-restore  /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura --logger trx;logfilename=result.xml
+    dotnet "tools/ReportGenerator/ReportGenerator.dll" "-reports:tests/Owlvey.Falcon.UnitTests/coverage.cobertura.xml" "-targetdir:tests/Owlvey.Falcon.UnitTests/coverage" "-reporttypes:HTMLInline"
   displayName: Run Unit Tests
+
+- task: PublishCodeCoverageResults@1
+  displayName: Unit Tests - Publish Code Coverage
+  inputs:
+    codeCoverageTool: Cobertura
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/tests/Owlvey.Falcon.UnitTests/coverage.cobertura.xml'
+    reportDirectory: '$(System.DefaultWorkingDirectory)/tests/Owlvey.Falcon.UnitTests/coverage'
+
+- task: PublishTestResults@2
+  displayName: Unit Tests - Publish Test Results
+  inputs:
+    testRunner: VSTest
+    testResultsFiles: 'tests/Owlvey.Falcon.UnitTests/TestResults/*.trx'
+    testRunTitle: 'Falcon - UnitTests'
 
 - script: dotnet test tests/Owlvey.Falcon.ComponentsTests/Owlvey.Falcon.ComponentsTests.csproj -c Release --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --logger trx;logfilename=result.xml
   displayName: Run Component Tests
