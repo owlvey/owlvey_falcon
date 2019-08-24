@@ -14,6 +14,25 @@ namespace Owlvey.Falcon.Core.Entities
         public string Description { get; set; }
         [Required]
         public string Avatar { get; set; }
+        
+        [Required]
+        public decimal MTTD { get; set; }
+
+        [Required]
+        public decimal MTTR { get; set; }
+
+        [Required]
+        public decimal MTTF { get; set; }
+
+        [NotMapped]
+        public decimal MTBF
+        {
+            get
+            {
+                return this.MTTD + this.MTTR + this.MTTF;
+            }
+        }
+
 
         public int ProductId { get; set; }
 
@@ -25,5 +44,18 @@ namespace Owlvey.Falcon.Core.Entities
 
         public virtual ICollection<IndicatorEntity> Indicators { get; set; } = new List<IndicatorEntity>();
         
+        public virtual void Update(DateTime on, string modifiedBy, string name, string avatar , string description,
+            decimal? mttd, decimal? mttr)
+        {
+            this.Name = string.IsNullOrWhiteSpace(name) ? this.Name : name;
+            this.Avatar = string.IsNullOrWhiteSpace(avatar) ? this.Avatar : avatar;
+            this.Description = string.IsNullOrWhiteSpace(description) ? this.Description : description;
+            this.ModifiedOn = on;
+            this.ModifiedBy = modifiedBy;
+            this.MTTD = mttd ?? this.MTTD;
+            this.MTTR = mttr ?? this.MTTR;
+
+        }
+
     }
 }

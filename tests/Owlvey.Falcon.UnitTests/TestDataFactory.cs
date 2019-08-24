@@ -27,7 +27,7 @@ namespace Owlvey.Falcon.UnitTests
             var squad = SquadEntity.Factory.Create(name, DateTime.UtcNow, createdBy, customer);
             return squad;
         }
-        public static ServiceEntity BuildService(string name, float slo, string createdBy, DateTime on) {
+        public static ServiceEntity BuildService(string name, decimal slo, string createdBy, DateTime on) {
             var (_, product) = TestDataFactory.BuildCustomerProduct();
             var entity = ServiceEntity.Factory.Create(name, slo, on, createdBy, product);
             return entity;

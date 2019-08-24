@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using System.Linq;
 
 namespace Owlvey.Falcon.Core.Entities
 {
@@ -13,9 +15,55 @@ namespace Owlvey.Falcon.Core.Entities
         public string Description { get; set; }
 
         [Required]
-        public float Slo { get; set; }
+        public decimal Slo { get; set; }
 
+        [NotMapped]
+        public decimal MTTD { get {
+                if (this.FeatureMap.Count > 0)
+                {
+                    return  Math.Ceiling(this.FeatureMap.Select(c => c.Feature).Average(c => c.MTTD));
+                }
+                return -1;
+            } }
+
+        [NotMapped]
+        public decimal MTTR { get {
+                if (this.FeatureMap.Count > 0)
+                {
+                    return Math.Ceiling(this.FeatureMap.Select(c => c.Feature).Average(c => c.MTTR));
+                }
+                return -1;
+            } }
+
+        [NotMapped]
+        public decimal MTTF { get {
+                if (this.FeatureMap.Count > 0)
+                {
+                    return Math.Ceiling(this.FeatureMap.Select(c => c.Feature).Average(c => c.MTTF));
+                }
+                return -1;
+            } }
+
+        [NotMapped]
+        public decimal MTBF { get {
+                if (this.FeatureMap.Count > 0) {
+                    return  Math.Ceiling(this.FeatureMap.Select(c => c.Feature).Average(c => c.MTBF));
+                }
+                return -1;                
+           }
+        }
+
+        [Required]
         public string Avatar { get; set; }
+
+        [NotMapped]
+        public decimal Impact
+        {
+            get
+            {
+                return AvailabilityUtils.MeasureImpact(this.Slo);
+            }
+        }
 
         public int ProductId { get; set; }
 
@@ -23,14 +71,14 @@ namespace Owlvey.Falcon.Core.Entities
 
         public virtual ICollection<ServiceMapEntity> FeatureMap { get; set; } = new List<ServiceMapEntity>();
 
-        public void Update(DateTime on, string modifiedBy, string name, float? slo, string description = null, string avatar = null)
+        public void Update(DateTime on, string modifiedBy, string name, decimal? slo, string description = null, string avatar = null)
         {
             this.Name = name ?? this.Name;
             this.Slo = slo ?? this.Slo;
             this.Description = description ?? this.Description;
             this.Avatar = avatar ?? this.Avatar;
             this.ModifiedBy = modifiedBy;
-            this.ModifiedOn = on;
+            this.ModifiedOn = on;            
             this.Validate();
         }
 

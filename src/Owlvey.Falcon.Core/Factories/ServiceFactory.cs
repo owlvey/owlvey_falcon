@@ -8,20 +8,21 @@ namespace Owlvey.Falcon.Core.Entities
     {
         public static class Factory {
 
-            public static ServiceEntity Create(string name, float slo, DateTime on, string user, ProductEntity product)
+            public static ServiceEntity Create(string name, decimal slo, DateTime on, string user, ProductEntity product)
             {
 
                 var entity = new ServiceEntity()
                 {
                     Name = name,                    
                     Slo = slo,
+                    Avatar = "https://cdn.iconscout.com/icon/free/png-256/avatar-375-456327.png",
                     CreatedBy = user,
                     ModifiedBy = user,
                     CreatedOn = on,
                     ModifiedOn = on,
-                    Product = product
+                    Product = product                    
                 };
-
+                
                 entity.Validate();
                 return entity;
             }

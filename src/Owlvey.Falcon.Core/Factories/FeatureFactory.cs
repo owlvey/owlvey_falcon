@@ -19,7 +19,10 @@ namespace Owlvey.Falcon.Core.Entities
                     ModifiedBy = user,
                     CreatedOn = on,
                     ModifiedOn = on,
-                    Product = product
+                    Product = product,
+                    MTTD = 10,
+                    MTTR = 10,
+                    MTTF = 43200
                 };
                 entity.Avatar = "https://cdn.iconscout.com/icon/free/png-256/avatar-375-456327.png";
                 entity.Validate();

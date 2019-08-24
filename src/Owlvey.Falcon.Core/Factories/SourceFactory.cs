@@ -10,8 +10,8 @@ namespace Owlvey.Falcon.Core.Entities
 
             public static SourceEntity Create(ProductEntity product,  string name, DateTime on, string user)
             {
-                string goodDefinition = "good definition of events";
-                string totalDefinition = "total definition of events";
+                string goodDefinition = "e.g. successful requests, as measured from the laod balancer metrics, Any HTTP status othen than 500-599 is considered successful.";
+                string totalDefinition = "e.g. All requests measured from the load balancer.";
                 var entity = new SourceEntity()
                 {
                     Name = name,

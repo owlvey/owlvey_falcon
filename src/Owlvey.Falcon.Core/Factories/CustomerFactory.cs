@@ -30,7 +30,7 @@ namespace Owlvey.Falcon.Core.Entities
                 var defaultFeature = FeatureEntity.Factory.Create("feature sample", "default feature", on, user, defaultProduct);
                 defaultProduct.Features.Add(defaultFeature);
 
-                var defaultService = ServiceEntity.Factory.Create("service sample", 0.99f, on, user, defaultProduct);
+                var defaultService = ServiceEntity.Factory.Create("service sample", 0.99m, on, user, defaultProduct);
                 defaultProduct.Services.Add(defaultService);
 
                 var defaultMap = ServiceMapEntity.Factory.Create(defaultService, defaultFeature, on, user);

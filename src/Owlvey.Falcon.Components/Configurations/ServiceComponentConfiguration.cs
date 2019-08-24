@@ -12,7 +12,9 @@ namespace Owlvey.Falcon.Components
         {
             cfg.CreateMap<ServiceEntity, Models.ServiceGetListRp>()
                 .ForMember(c=>c.FeaturesCount,opt=> opt.MapFrom(d=>d.FeatureMap.Count))
-                .ForMember(m => m.Availability, ope => ope.Ignore());
+                .ForMember(m => m.Availability, ope => ope.Ignore())
+                .ForMember(m => m.Deploy, ope => ope.Ignore())
+                .ForMember(m => m.Risk, ope => ope.Ignore());
 
 
             cfg.CreateMap<ServiceEntity, Models.ServiceGetRp>()

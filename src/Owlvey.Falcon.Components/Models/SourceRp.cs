@@ -13,6 +13,8 @@ namespace Owlvey.Falcon.Models
         public string Avatar { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
+        public string GoodDefinition { get; set; }
+        public string TotalDefinition { get; set; }
 
         public decimal Availability { get; set; }
     }
@@ -35,6 +37,9 @@ namespace Owlvey.Falcon.Models
 
     public class SourcePutRp
     {
-        public string Value { get; set; }
+        public string Name { get; set; }
+        public string Avatar { get; set; }
+        public string GoodDefinition { get; set; }
+        public string TotalDefinition { get; set; }
     }
 }

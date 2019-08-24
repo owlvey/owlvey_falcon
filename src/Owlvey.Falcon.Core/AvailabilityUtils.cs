@@ -14,15 +14,28 @@ namespace Owlvey.Falcon.Core
                 return 1;
             }            
         }
-        public static decimal MeasureImpact(float SLO) {
+
+        // https://www.thoughtco.com/exponential-decay-definition-2312215
+        public static decimal MeasureImpact(decimal SLO) {
             if (SLO < 1) {
                 SLO *= 100;
             }
             double a = 50;
-            double b = 0.01;
+            double b = 0.05;
             double x = (100 - (double)SLO)/0.1;
             double impact = a * Math.Pow((1 - b), x);
-            return Math.Round((decimal)impact, 5);
+            return Math.Round((decimal)impact, 2);
+        }
+
+        public static decimal MeasureBudgetInMinutes(decimal budget) {
+            if (budget <= 0) return 0;
+
+            decimal minutes = 60 * 24;
+
+            return Math.Floor(budget * minutes);
+        }
+        public static decimal MeasureBudget(decimal avaialbility, decimal slo) {
+            return avaialbility - slo;
         }
 
         public static decimal CalculateDotAvailability(IEnumerable<decimal> availabilities)

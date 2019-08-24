@@ -48,7 +48,7 @@ namespace Owlvey.Falcon.API.Controllers
         {
             SourceGetRp model = null;
             if (end.HasValue) {
-                model = await this._sourceComponent.GetByIdWithAvailability(id, end.Value);
+                model = await this._sourceComponent.GetByIdWithAvailability(id, end.Value);                
             }
             else {
                 model = await this._sourceComponent.GetById(id);
@@ -81,6 +81,25 @@ namespace Owlvey.Falcon.API.Controllers
             var newResource = await this._sourceComponent.GetById(id);
 
             return this.Created(Url.RouteUrl("GetSourceById", new { id }), newResource);
+        }
+
+        [HttpPut("{id}")]
+        [ProducesResponseType(typeof(SourceGetRp), 200)]
+        [ProducesResponseType(409)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> Put(int id, [FromBody]SourcePutRp resource)
+        {
+            if (!this.ModelState.IsValid)
+                return this.BadRequest(this.ModelState);
+
+            var response = await this._sourceComponent.Update(id, resource);
+
+            if (response.HasConflicts())
+            {
+                return this.Conflict(response.GetConflicts());
+            }
+            
+            return this.Ok();               
         }
 
         #region reports

@@ -34,5 +34,11 @@ namespace Owlvey.Falcon.Core.Entities
             entity.Product = this;
             this.Features.Add(entity); 
         }
+
+        public virtual void Update(DateTime on, string modifiedBy)
+        {
+            this.ModifiedOn = on;
+            this.ModifiedBy = modifiedBy;
+        }
     }
 }

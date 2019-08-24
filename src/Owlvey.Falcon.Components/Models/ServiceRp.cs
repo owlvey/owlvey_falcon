@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using Owlvey.Falcon.Core;
 
 namespace Owlvey.Falcon.Models
 {
@@ -12,21 +13,53 @@ namespace Owlvey.Falcon.Models
         public string Description { get; set; }
         public int Id { get; set; }
         public int ProductId { get; set; }        
-        public float SLO { get; set; }
+        public decimal SLO { get; set; }
+        public decimal Impact { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
+        
+        public decimal MTTD { get; set; }        
+        public decimal MTTR { get; set; }        
+        public decimal MTTF { get; set; }
+        public decimal MTBF { get; set; }
+
     }
 
     public class ServiceGetRp : ServiceBaseRp {
         public IEnumerable<FeatureGetListRp> Features { get; set; } = new List<FeatureGetListRp>();
-        public decimal Availability { get; set; }
+        public decimal Availability { get; set; }        
+        public decimal Budget { get {
+                return AvailabilityUtils.MeasureBudget(Availability, SLO);
+            } }
+        public decimal BudgetMinutes
+        {
+            get
+            {
+                return AvailabilityUtils.MeasureBudgetInMinutes(this.Budget);
+            }
+        }
     }
 
     public class ServiceGetListRp : ServiceBaseRp
     {
-
         public int FeaturesCount { get; set; }
         public decimal Availability { get; set; }
+        public string Deploy { get; set; }
+        public string Risk { get; set; }
+        public decimal Budget
+        {
+            get
+            {
+                return AvailabilityUtils.MeasureBudget(Availability, SLO);
+            }
+        }
+        public decimal BudgetMinutes
+        {
+            get
+            {
+                return AvailabilityUtils.MeasureBudgetInMinutes(this.Budget);
+            }
+        }        
     }
 
     public class ServicePostRp {
@@ -37,7 +70,7 @@ namespace Owlvey.Falcon.Models
         public int ProductId { get; set; }
 
         [Required]
-        public float? Slo { get; set; }
+        public decimal? Slo { get; set; }
 
         public string Description { get; set; }
     }
@@ -48,8 +81,8 @@ namespace Owlvey.Falcon.Models
         public string Name { get; set; }
         [Required]
         public int ProductId { get; set; }        
-        public float? Slo { get; set; }        
+        public decimal? Slo { get; set; }        
         public string Avatar { get; set; }
-        public string Description { get; set; }
+        public string Description { get; set; }        
     }
 }

@@ -167,10 +167,14 @@ namespace Owlvey.Falcon.API.Controllers
 
             return this.NoContent();
         }
+
+
+      
+
         #region reports
         [HttpGet("{id}/reports/daily/series")]
         [ProducesResponseType(typeof(SeriesGetRp), 200)]
-        public async Task<IActionResult> ReportSeries(int id, DateTime? start, DateTime? end, int period = 1)
+        public async Task<IActionResult> ReportSeries(int id, DateTime? start, DateTime? end)
         {
             if (!start.HasValue)
             {

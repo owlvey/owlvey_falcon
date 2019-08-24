@@ -21,6 +21,27 @@ namespace Owlvey.Falcon.Components
         {
             this._dbContext = dbContext;
         }
+
+        public async Task<BaseComponentResultRp> Update(int sourceId, SourcePutRp model) {
+            var result = new BaseComponentResultRp();
+            var createdBy = this._identityService.GetIdentity();
+            
+            this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
+
+            var entity = await this._dbContext.Sources.Where(c => c.Id == sourceId).SingleAsync();
+
+            entity.Update(model.Name, model.Avatar, model.GoodDefinition, model.TotalDefinition,
+                this._datetimeGateway.GetCurrentDateTime(), createdBy);
+                       
+            this._dbContext.Update(entity);
+
+            await this._dbContext.SaveChangesAsync();
+
+            result.AddResult("Id", entity.Id);
+
+            return result;
+        }
+
         public async Task<BaseComponentResultRp> Create(SourcePostRp model)
         {
             var result = new BaseComponentResultRp();

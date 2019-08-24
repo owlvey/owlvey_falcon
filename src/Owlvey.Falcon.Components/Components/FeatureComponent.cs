@@ -112,11 +112,13 @@ namespace Owlvey.Falcon.Components
                     return result;
                 }
             }
-
-            feature.Name = model.Name ?? feature.Name;
-            feature.Description = model.Description ?? feature.Description;
-            feature.Avatar = model.Avatar ?? feature.Avatar;
-            feature.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy);
+                                    
+            feature.Update(this._datetimeGateway.GetCurrentDateTime(),
+                createdBy, model.Name,
+                model.Avatar,
+                model.Description,
+                model.MTTD,
+                model.MTTR);
 
             this._dbContext.Features.Update(feature);
 

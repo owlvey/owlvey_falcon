@@ -19,7 +19,7 @@ namespace Owlvey.Falcon.Models
         public string Id { get; set; }
         public string Avatar { get; set; }
         public decimal Availability { get; set; }
-        public float Slo { get; set; }
+        public decimal Slo { get; set; }
         public decimal Budget { get; set; }
         public string Group { get; set; }
         public decimal Importance { get; set; }

@@ -13,7 +13,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
         {
             var createdBy = Guid.NewGuid().ToString("n");
             var name = Guid.NewGuid().ToString("n");
-            float slo = 99;
+            decimal slo = 99m;
 
             var (_, product) = TestDataFactory.BuildCustomerProduct();
             
@@ -37,7 +37,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
             var createdBy = Guid.NewGuid().ToString("n");
             var name = string.Empty;
             var description = string.Empty;
-            float slo = 0;
+            decimal slo = 0;
             var (_, product) = TestDataFactory.BuildCustomerProduct();
 
             Assert.Throws<InvalidStateException>(() =>

@@ -70,7 +70,8 @@ namespace Owlvey.Falcon.Components
 
         public async Task<IEnumerable<ServiceGetListRp>> GetServices(int productId)
         {
-            var entities = await this._dbContext.Services.Include(c=>c.FeatureMap).Where(c=> c.Product.Id.Equals(productId)).ToListAsync();
+            var entities = await this._dbContext.Services.Include(c=>c.FeatureMap).ThenInclude(c=>c.Feature).Where(c=> c.Product.Id.Equals(productId)).ToListAsync();
+                       
             return this._mapper.Map<IEnumerable<ServiceGetListRp>>(entities);
         }
         public async Task<IEnumerable<ServiceGetListRp>> GetServicesWithAvailability(int productId, DateTime end)
@@ -86,8 +87,24 @@ namespace Owlvey.Falcon.Components
             var result = new List<ServiceGetListRp>();
             foreach (var item in entity.Services)
             {
-                var tmp =  this._mapper.Map<ServiceGetListRp>(item);
+                var tmp =  this._mapper.Map<ServiceGetListRp>(item);                
                 tmp.Availability = await this.MeasureAvailability(item, end);
+
+                if (tmp.Budget > 0 )
+                {
+                    tmp.Deploy = "allow";
+                }
+                else {
+                    tmp.Deploy = "forbiden";
+                }
+                if (tmp.BudgetMinutes >= tmp.MTTD + tmp.MTTR)
+                {
+                    tmp.Risk = "low";
+                }
+                else
+                {
+                    tmp.Risk = "high";                    
+                }
                 result.Add(tmp);
             }
             return result;
