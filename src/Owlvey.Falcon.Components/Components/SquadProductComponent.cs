@@ -36,6 +36,17 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<SquadProductGetListRp>>(entities);
         }
 
+        public async Task<IEnumerable<SquadProductGetListRp>> GetBySquad(int squadId)
+        {
+            var entities = await this._dbContext.SquadProducts.Include(c=> c.Product).Where(c => c.SquadId.Equals(squadId)).ToListAsync();
+            return entities.Select(c => new SquadProductGetListRp {
+                Id = c.Id.Value,
+                Name = c.Product.Name,
+                CreatedBy = c.CreatedBy,
+                CreatedOn = c.CreatedOn
+            }).ToList();
+        }
+
         public async Task<BaseComponentResultRp> CreateSquadProduct(SquadProductPostRp model)
         {
             var result = new BaseComponentResultRp();

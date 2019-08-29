@@ -29,5 +29,17 @@ namespace Owlvey.Falcon.API.Controllers
             var result = await this._serviceMapComponent.CreateServiceMap(model);
             return this.Ok(result);
         }
+
+        [HttpDelete()]
+        public async Task<IActionResult> Delete(int? serviceId, int? featureId) {
+            if (serviceId.HasValue && featureId.HasValue)
+            {
+                var result = await this._serviceMapComponent.DeleteServiceMap(serviceId.Value, featureId.Value);
+                return this.Ok(result);
+            }
+            else {
+                return this.BadRequest();
+            }            
+        }
     }
 }

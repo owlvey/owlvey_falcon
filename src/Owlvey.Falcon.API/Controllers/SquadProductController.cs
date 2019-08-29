@@ -27,9 +27,9 @@ namespace Owlvey.Falcon.API.Controllers
 
         [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<SquadProductGetListRp>), 200)]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery(Name = "squadId")]int squadId)
         {
-            var model = await this._squadProductComponent.GetAll();
+            var model = await this._squadProductComponent.GetBySquad(squadId);
             return this.Ok(model);
         }
 

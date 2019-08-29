@@ -20,11 +20,18 @@ namespace Owlvey.Falcon.Components
             this._dbContext = dbContext;
         }
 
+        public async Task<BaseComponentResultRp> DeleteServiceMap(int serviceId, int featureId) {
+            var result = new BaseComponentResultRp();
+            var entity = await this._dbContext.ServiceMaps.Where(c => c.ServiceId == serviceId && c.FeatureId == featureId ).SingleOrDefaultAsync();
+            if (entity != null) {
+                this._dbContext.ServiceMaps.Remove(entity);
+                await this._dbContext.SaveChangesAsync();
+            }            
+            return result;
+        }
+
         public async Task<BaseComponentResultRp> CreateServiceMap(ServiceMapPostRp model)
         {
-
-            
-
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
 

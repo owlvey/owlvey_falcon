@@ -33,7 +33,7 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<ServiceGetRp>(entity);
         }
 
-        public async Task<ServiceGetRp> GetServiceByIdWithAvailabilities(int id, DateTime end)
+        public async Task<ServiceGetRp> GetServiceByIdWithAvailabilities(int id, DateTime start, DateTime end)
         {
             var entity = await this._dbContext.Services.Include(c=>c.FeatureMap)
                 .ThenInclude(c=>c.Feature)
@@ -46,16 +46,16 @@ namespace Owlvey.Falcon.Components
 
             
             var model = this._mapper.Map<ServiceGetRp>(entity);
-            model.Availability = await this.MeasureAvailability(entity, end);
+            model.Availability = await this.MeasureAvailability(entity, start, end);
             return model;
         }
-        private async Task<decimal> MeasureAvailability(ServiceEntity entity, DateTime end)
+        private async Task<decimal> MeasureAvailability(ServiceEntity entity, DateTime start, DateTime end)
         {
             foreach (var map in entity.FeatureMap)
             {
                 foreach (var indicator in map.Feature.Indicators)
                 {
-                    var sourceItems = await this._dbContext.GetSourceItemsByDate(indicator.SourceId, end);
+                    var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, start, end);
                     indicator.Source.SourceItems = sourceItems;
                 }
             }
@@ -74,7 +74,7 @@ namespace Owlvey.Falcon.Components
                        
             return this._mapper.Map<IEnumerable<ServiceGetListRp>>(entities);
         }
-        public async Task<IEnumerable<ServiceGetListRp>> GetServicesWithAvailability(int productId, DateTime end)
+        public async Task<IEnumerable<ServiceGetListRp>> GetServicesWithAvailability(int productId, DateTime start,  DateTime end)
         {
             var entity = await this._dbContext.Products.Include(c=>c.Services)
                 .ThenInclude(c => c.FeatureMap)
@@ -88,7 +88,7 @@ namespace Owlvey.Falcon.Components
             foreach (var item in entity.Services)
             {
                 var tmp =  this._mapper.Map<ServiceGetListRp>(item);                
-                tmp.Availability = await this.MeasureAvailability(item, end);
+                tmp.Availability = await this.MeasureAvailability(item, start, end);
 
                 if (tmp.Budget > 0 )
                 {

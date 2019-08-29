@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -47,7 +48,7 @@ namespace Owlvey.Falcon.API
             services.AddCors();
             services.AddApplicationServices(Configuration);
             services.SetupDataBase(Configuration, Environment.EnvironmentName);
-            services.AddCustomSwagger(Configuration, Environment);
+            services.AddCustomSwagger(Configuration, Environment);            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -81,7 +82,7 @@ namespace Owlvey.Falcon.API
                 c.SwaggerEndpoint($"{swaggerOptions.Value.Endpoint}", swaggerOptions.Value.Title);
             });
 
-            if (!env.IsDocker())
+            if (!env.IsDocker() && !env.IsDevelopment())
             {
                 app.UseHttpsRedirection();
             }

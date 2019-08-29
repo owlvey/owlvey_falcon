@@ -30,11 +30,11 @@ namespace Owlvey.Falcon.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(ServiceGetListRp), 200)]
-        public async Task<IActionResult> Get(int productId, DateTime? end)
+        public async Task<IActionResult> Get(int productId, DateTime? start,  DateTime? end)
         {
             IEnumerable<ServiceGetListRp> model = new List<ServiceGetListRp>();
             if (end.HasValue) {
-                model = await this._serviceQueryService.GetServicesWithAvailability(productId, end.Value);
+                model = await this._serviceQueryService.GetServicesWithAvailability(productId, start.Value, end.Value);
             }
             else {
                 model = await this._serviceQueryService.GetServices(productId);
@@ -49,12 +49,12 @@ namespace Owlvey.Falcon.API.Controllers
         /// <returns></returns>
         [HttpGet("{id}", Name = "GetServiceId")]
         [ProducesResponseType(typeof(ServiceGetRp), 200)]
-        public async Task<IActionResult> GetById(int id, DateTime? end)
+        public async Task<IActionResult> GetById(int id, DateTime? start, DateTime? end)
         {
             ServiceGetRp model = null;
             if (end.HasValue)
             {
-                model = await this._serviceQueryService.GetServiceByIdWithAvailabilities(id, end.Value);
+                model = await this._serviceQueryService.GetServiceByIdWithAvailabilities(id, start.Value, end.Value);
             }
             else {
                 model = await this._serviceQueryService.GetServiceById(id);
