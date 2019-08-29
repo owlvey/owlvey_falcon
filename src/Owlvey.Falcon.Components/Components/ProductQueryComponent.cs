@@ -40,7 +40,7 @@ namespace Owlvey.Falcon.Components
         }
 
 
-        public async Task<GraphGetRp> GetGraph(int id, DateTime end) {
+        public async Task<GraphGetRp> GetGraph(int id, DateTime start, DateTime end) {
 
             GraphGetRp result = new GraphGetRp();
 
@@ -49,7 +49,7 @@ namespace Owlvey.Falcon.Components
             result.Id = product.Id;
             result.Avatar = product.Avatar;
 
-            var services = await this._serviceQueryComponent.GetServicesWithAvailability(id, end);
+            var services = await this._serviceQueryComponent.GetServicesWithAvailability(id, start, end);
 
             /*
             var node = new GraphNode
