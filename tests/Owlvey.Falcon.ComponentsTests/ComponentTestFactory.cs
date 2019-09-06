@@ -141,11 +141,11 @@ namespace Owlvey.Falcon.ComponentsTests
             var component = container.GetInstance<SourceComponent>();
             await component.Create(new Models.SourcePostRp()
             {
-                Name = "test",
+                Name = name,
                 ProductId = product.Value
             });
 
-            var target = await component.GetByName(product.Value, "test");
+            var target = await component.GetByName(product.Value, name);
 
             return target.Id;
         }

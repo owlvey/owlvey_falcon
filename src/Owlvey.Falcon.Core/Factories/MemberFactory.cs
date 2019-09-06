@@ -8,15 +8,15 @@ namespace Owlvey.Falcon.Core.Entities
     {
         public static class Factory {
 
-            public static MemberEntity Create(SquadEntity squad, UserEntity user, DateTime on, string createdBy) {
+            public static MemberEntity Create(int squad, int user, DateTime on, string createdBy) {
                 var entity = new MemberEntity()
                 {
                      CreatedBy = createdBy,
                      ModifiedBy = createdBy,
                      CreatedOn = on,
                      ModifiedOn = on,
-                     Squad = squad,
-                     User = user
+                     SquadId = squad,
+                     UserId = user
                 };
                 entity.Validate();
                 return entity;

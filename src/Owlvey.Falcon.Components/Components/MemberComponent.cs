@@ -30,7 +30,7 @@ namespace Owlvey.Falcon.Components
             var squad = await this._dbContext.Squads.SingleAsync(c=>c.Id == model.SquadId);
             var user = await this._dbContext.Users.SingleAsync(c => c.Id == model.UserId);
 
-            var entity = MemberEntity.Factory.Create(squad, user, this._datetimeGateway.GetCurrentDateTime(), createdBy);                        
+            var entity = MemberEntity.Factory.Create(squad.Id.Value, user.Id.Value, this._datetimeGateway.GetCurrentDateTime(), createdBy);                        
             this._dbContext.Members.Add(entity);
             await this._dbContext.SaveChangesAsync();
 

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Owlvey.Falcon.Core.Entities;
+using System.Linq;
 
 namespace Owlvey.Falcon.Components
 {
@@ -23,19 +24,23 @@ namespace Owlvey.Falcon.Components
         public async Task<BaseComponentResultRp> CreateUser(UserPostRp model)
         {
             var result = new BaseComponentResultRp();
-            var createdBy = this._identityService.GetIdentity();            
+            var createdBy = this._identityService.GetIdentity();
 
-            var entity = UserEntity.Factory.Create(createdBy, this._datetimeGateway.GetCurrentDateTime(), model.Email);
+            var exists = await this._dbContext.Users.Where(c => c.Email == model.Email).SingleOrDefaultAsync();
+            if (exists == null)
+            {
+                var entity = UserEntity.Factory.Create(createdBy, this._datetimeGateway.GetCurrentDateTime(), model.Email);
 
-            this._dbContext.Users.Add(entity);
+                this._dbContext.Users.Add(entity);
 
-            await this._dbContext.SaveChangesAsync();
+                await this._dbContext.SaveChangesAsync();
 
-            result.AddResult("Id", entity.Id);
-
+                result.AddResult("Id", entity.Id);
+            }
+            else {
+                result.AddResult("Id", exists.Id);
+            }
             return result;
         }
-
-
     }
 }

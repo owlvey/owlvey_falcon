@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Core;
 using Owlvey.Falcon.Core.Aggregates;
 using Owlvey.Falcon.Core.Entities;
 using Owlvey.Falcon.Gateways;
@@ -38,7 +39,7 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<FeatureGetRp>(entity);
         }
 
-        public async Task<FeatureGetRp> GetFeatureByIdWithAvailability(int id, DateTime end)
+        public async Task<FeatureGetRp> GetFeatureByIdWithAvailability(int id, DateTime start, DateTime end)
         {
             var entity = await this._dbContext.Features.Include(c=>c.Indicators).ThenInclude(c=>c.Source).FirstOrDefaultAsync(c => c.Id.Equals(id));
             
@@ -47,7 +48,7 @@ namespace Owlvey.Falcon.Components
 
             foreach (var indicator in entity.Indicators)
             {
-                var sourceItems = await this._dbContext.GetSourceItemsByDate(indicator.SourceId, end);
+                var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, start, end);
                 indicator.Source.SourceItems = sourceItems;
             }
 
@@ -87,6 +88,36 @@ namespace Owlvey.Falcon.Components
             var entities = await this._dbContext.Features.Include(c=>c.Indicators).Where(c=> c.Product.Id.Value.Equals(productId)).ToListAsync();
             return this._mapper.Map<IEnumerable< FeatureGetListRp>>(entities);
         }
+
+        public async Task<IEnumerable<FeatureGetListRp>> GetFeaturesByFilter(int productId, string filter) {
+
+            IEnumerable<FeatureGetListRp> result = new List<FeatureGetListRp>();
+
+            var queries = this._dbContext.Features
+                .Include(c=>c.ServiceMaps)
+                .Include(c => c.Indicators)
+                .ThenInclude(c => c.Source)
+                .Where(c => c.Product.Id.Value.Equals(productId));
+
+            var (field, ope, value) = FilterUtils.ParseQuery(filter);
+
+            if (field == "serviceId" && ope == FilterOperator.ne) {
+
+                var features  = await this._dbContext.Features.Where(c => c.ProductId == productId).ToListAsync();
+                var service_feature = await this._dbContext.Services
+                    .Include(c => c.FeatureMap)
+                    .Where(c => c.Id == int.Parse(value))
+                    .ToListAsync();
+
+                var registered_features = service_feature.SelectMany(c => c.FeatureMap).Select(c => c.Feature).ToList();
+                var complement = features.Except( registered_features , new FeatureCompare());
+                result = this._mapper.Map<IEnumerable<FeatureGetListRp>>(complement);
+            }
+
+            return result;
+
+        }
+
         public async Task<IEnumerable<FeatureGetListRp>> GetFeaturesWithAvailability(int productId, DateTime end)
         {
             var entities = await this._dbContext.Features.Include(c => c.Indicators).ThenInclude(c=>c.Source).Where(c => c.Product.Id.Value.Equals(productId)).ToListAsync();

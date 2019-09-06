@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Owlvey.Falcon.Components;
 using Xunit;
+using System.Linq;
 
 namespace Owlvey.Falcon.ComponentsTests
 {
@@ -38,6 +39,10 @@ namespace Owlvey.Falcon.ComponentsTests
                 Assert.NotNull(indicator.Source);
                 Assert.NotNull(indicator.SourceAvatar);
             }
+
+            await component.Delete(indicators.Single().Id);
+            indicators = await component.GetByFeature(feature);
+            Assert.Empty(indicators);
         }
 
         [Fact]
@@ -67,5 +72,32 @@ namespace Owlvey.Falcon.ComponentsTests
             Assert.True(result.HasConflicts());            
         }
 
+
+        [Fact]
+        public async Task IndicatorComplementSuccess()
+        {
+            var container = ComponentTestFactory.BuildContainer();
+
+            var (_, product) = await ComponentTestFactory.BuildCustomerProduct(container);
+
+            var source = await ComponentTestFactory.BuildSource(container, product);
+            var source2 = await ComponentTestFactory.BuildSource(container, product, name: "second source");
+            var feature = await ComponentTestFactory.BuildFeature(container, product);
+
+            var component = container.GetInstance<IndicatorComponent>();
+
+            await component.Create(new Models.IndicatorPostRp()
+            {
+                FeatureId = feature,
+                SourceId = source
+            });
+
+            var indicators = await component.GetByFeature(feature);
+            Assert.NotEmpty(indicators);
+
+            var complement = await component.GetSourcesComplement(feature);
+            Assert.NotEmpty(complement);
+
+        }
     }
 }

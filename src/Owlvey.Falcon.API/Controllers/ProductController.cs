@@ -153,10 +153,17 @@ namespace Owlvey.Falcon.API.Controllers
 
         [HttpGet("{id}/reports/graph")]
         [ProducesResponseType(typeof(GraphGetRp), 200)]
-        public async Task<IActionResult> GetGraph(int id, DateTime end) {
+        public async Task<IActionResult> GetGraph(int id, DateTime? start, DateTime? end) {
 
-            GraphGetRp result = await this._productQueryService.GetGraph(id, end);
-            return this.Ok(result);
+            if (start.HasValue && end.HasValue)
+            {
+                GraphGetRp result = await this._productQueryService.GetGraph(id, start.Value, end.Value);
+                return this.Ok(result);
+            }
+            else {
+                return this.BadRequest();
+            }
+            
         }
 
         #region reports

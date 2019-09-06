@@ -28,7 +28,7 @@ namespace Owlvey.Falcon.Components
         /// <returns></returns>
         public async Task<SquadGetRp> GetSquadById(int id)
         {
-            var entity = await this._dbContext.Squads.FirstOrDefaultAsync(c=> c.Id.Equals(id));
+            var entity = await this._dbContext.Squads.Include(c=>c.Members).ThenInclude(c=>c.User).SingleOrDefaultAsync(c=>c.Id == id);
 
             if (entity == null)
                 return null;

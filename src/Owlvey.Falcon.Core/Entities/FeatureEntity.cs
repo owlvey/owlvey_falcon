@@ -6,6 +6,21 @@ using System.Text;
 
 namespace Owlvey.Falcon.Core.Entities
 {
+
+    public class FeatureCompare : IEqualityComparer<FeatureEntity>
+    {
+        public bool Equals(FeatureEntity x, FeatureEntity y)
+        {
+            return x.Id == y.Id;
+        }
+
+        public int GetHashCode(FeatureEntity obj)
+        {
+            return obj.GetHashCode();
+        }
+    }
+
+
     public partial class FeatureEntity: BaseEntity
     {
         [Required]

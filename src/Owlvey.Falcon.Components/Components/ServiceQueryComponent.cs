@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Core;
 using Owlvey.Falcon.Core.Aggregates;
 using Owlvey.Falcon.Core.Entities;
 using Owlvey.Falcon.Gateways;
@@ -74,6 +75,9 @@ namespace Owlvey.Falcon.Components
                        
             return this._mapper.Map<IEnumerable<ServiceGetListRp>>(entities);
         }
+
+       
+
         public async Task<IEnumerable<ServiceGetListRp>> GetServicesWithAvailability(int productId, DateTime start,  DateTime end)
         {
             var entity = await this._dbContext.Products.Include(c=>c.Services)

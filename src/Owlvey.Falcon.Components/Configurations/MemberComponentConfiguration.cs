@@ -14,6 +14,11 @@ namespace Owlvey.Falcon.Components
                 .ForMember(d=> d.Email , m=> m.MapFrom(src=> src.User.Email));
             cfg.CreateMap<MemberEntity, Models.MemberGetListRp>()
                 .ForMember(d => d.Email, m => m.MapFrom(src => src.User.Email));
+
+
+            
+
+
         }
     }
 }

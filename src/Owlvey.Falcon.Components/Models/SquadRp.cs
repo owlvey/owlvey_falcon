@@ -18,7 +18,6 @@ namespace Owlvey.Falcon.Models
     }
 
     public class SquadGetRp : SquadBaseRp {
-        
     }
 
     public class SquadGetListRp : SquadBaseRp

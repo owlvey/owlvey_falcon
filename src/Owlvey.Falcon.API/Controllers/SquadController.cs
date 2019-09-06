@@ -88,6 +88,23 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Created(Url.RouteUrl("GetSquadId", new { id = id }), newResource);
         }
 
+
+        [HttpPut("{id}/members/{userId}")]
+        [ProducesResponseType(typeof(object), 200)]                
+        public async Task<IActionResult> PutMember(int id, int userId)
+        {
+            await this._squadService.RegisterMember(id, userId);
+            return this.Ok();            
+        }
+
+        [HttpDelete("{id}/members/{userId}")]
+        [ProducesResponseType(typeof(object), 200)]
+        public async Task<IActionResult> DeleteMember(int id, int userId)
+        {
+            await this._squadService.UnRegisterMember(id, userId);
+            return this.Ok();
+        }
+
         /// <summary>
         /// Update an Squad
         /// </summary>

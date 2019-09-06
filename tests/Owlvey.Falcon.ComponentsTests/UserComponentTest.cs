@@ -25,5 +25,35 @@ namespace Owlvey.Falcon.ComponentsTests
             var users = await userQueryComponent.GetUsers();
             Assert.NotEmpty(users);
         }
+
+        [Fact]
+        public async Task UserMaintenanceIdempotenceSucces()
+        {
+            var container = ComponentTestFactory.BuildContainer();
+
+            var userComponent = container.GetInstance<UserComponent>();
+            var userQueryComponent = container.GetInstance<UserQueryComponent>();
+
+            await userComponent.CreateUser(new Models.UserPostRp()
+            {
+                Email = "test@test.com"
+            });
+
+            var users = await userQueryComponent.GetUsers();
+            Assert.NotEmpty(users);
+
+
+            var response = await userComponent.CreateUser(new Models.UserPostRp()
+            {
+                Email = "test@test.com"
+            });
+
+            var id = response.GetResult<int>("Id");
+
+            var result = await userQueryComponent.GetUserById(id);
+
+            Assert.NotNull(result);
+
+        }
     }
 }

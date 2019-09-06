@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using Owlvey.Falcon.Core.Aggregates;
+using Owlvey.Falcon.Core;
 
 namespace Owlvey.Falcon.Components
 {
@@ -19,6 +20,16 @@ namespace Owlvey.Falcon.Components
         public IndicatorComponent(FalconDbContext dbContext, IDateTimeGateway dataTimeGateway, IMapper mapper, IUserIdentityGateway identityService) : base(dataTimeGateway, mapper, identityService)
         {
             this._dbContext = dbContext;
+        }
+
+        public async Task<BaseComponentResultRp> Delete(int indicatorId) {
+            var result = new BaseComponentResultRp();
+            var entity = await this._dbContext.Indicators.Where(c => c.Id == indicatorId).SingleOrDefaultAsync();
+            if (entity != null) {
+                this._dbContext.Indicators.Remove(entity);
+                await this._dbContext.SaveChangesAsync();
+            }
+            return result;
         }
 
         public async Task<BaseComponentResultRp> Create(IndicatorPostRp model)
@@ -44,6 +55,17 @@ namespace Owlvey.Falcon.Components
             return result;
         }
 
+
+        public async Task<IEnumerable<SourceGetListRp>> GetSourcesComplement(int featureId)
+        {
+            IEnumerable<SourceGetListRp> result = new List<SourceGetListRp>();
+            var sources = this._dbContext.Sources.ToList();
+            var existing = await this._dbContext.Indicators.Include(c => c.Source)
+                .Where(c => c.FeatureId == featureId).Select(c => c.Source).ToListAsync();
+            result = this._mapper.Map<IEnumerable<SourceGetListRp>>(sources.Except(existing, new SourceEntityComparer()));            
+            return result;
+        }
+
         public async Task<IEnumerable<IndicatorGetListRp>> GetByFeature(int featureId)
         {
             var entity = await this._dbContext.Indicators.Include(c=>c.Feature).Include(c=>c.Source).Where(c => c.Feature.Id == featureId).ToListAsync();
@@ -57,7 +79,7 @@ namespace Owlvey.Falcon.Components
             var agg = new IndicatorDateAvailabilityAggregate(entity);
             return agg.MeasureAvailability();
         }
-
+        
         public async Task<IEnumerable<IndicatorGetListRp>> GetByFeatureWithAvailability(int featureId, DateTime end)
         {
             var entities = await this._dbContext.Indicators.Include(c => c.Feature).Include(c => c.Source).Where(c => c.Feature.Id == featureId).ToListAsync();

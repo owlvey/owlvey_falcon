@@ -14,7 +14,7 @@ namespace Owlvey.Falcon.Core.Entities
         public string Description { get; protected set; }
         public string Avatar { get; protected set; }
 
-        public virtual ICollection<UserEntity> Users { get; set; }
+        public virtual ICollection<MemberEntity> Members { get; set; } = new List<MemberEntity>();
         
         public virtual CustomerEntity Customer { get; set; }
 
@@ -28,15 +28,8 @@ namespace Owlvey.Falcon.Core.Entities
             this.Validate();
         }
 
-        public void RemoveMember(int userId) {
+        public void RemoveMember(int userId) {            
 
-            if (this.Users == null)
-                this.Users = new List<UserEntity>();
-
-            if (this.Users.Any(c => c.Id.Equals(userId))) {
-                this.Users.Remove(this.Users.First(c => c.Id.Equals(userId)));
-            }
         }
-
     }
 }

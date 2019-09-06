@@ -21,33 +21,33 @@ namespace Owlvey.Falcon.API.Controllers
             this._userService = userService;
         }
 
+
         /// <summary>
         /// Get Users
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(typeof(UserPostRp), 200)]
+        [ProducesResponseType(typeof(UserGetListRp), 200)]
         public async Task<IActionResult> Get([FromQuery(Name = "email")]string email)
         {
-            var model = new List<UserGetListRp>();
+            IEnumerable<UserGetListRp> model = new List<UserGetListRp>();
 
             if (string.IsNullOrEmpty(email))
             {
-                model = (await this._userQueryService.GetUsers()).ToList();
+                model = await this._userQueryService.GetUsers();
             }
             else {
                 var user = await this._userQueryService.GetUserByEmail(email);
-
                 if (user != null) {
-                    model.Add(new UserGetListRp {
+                    model = new List<UserGetListRp>() {
+                    new UserGetListRp {
                         Email = user.Email,
                         CreatedBy = user.CreatedBy,
                         CreatedOn = user.CreatedOn,
                         Id = user.Id
-                    });
-                }
+                    }};
+                 }
             }
-
             return this.Ok(model);
         }
 

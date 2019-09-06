@@ -34,6 +34,12 @@ namespace Owlvey.Falcon.Components
         {
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
+            
+            var previous = await this._dbContext.ServiceMaps.Where(c => c.ServiceId == model.ServiceId && c.FeatureId == model.FeatureId).SingleOrDefaultAsync();
+
+            if (previous != null) {
+                return result;
+            }
 
             var service = await this._dbContext.Services.SingleAsync(c=>c.Id == model.ServiceId);
             var feature = await this._dbContext.Features.SingleAsync(c => c.Id == model.FeatureId);

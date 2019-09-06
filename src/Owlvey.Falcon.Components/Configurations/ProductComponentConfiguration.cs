@@ -9,7 +9,7 @@ namespace Owlvey.Falcon.Components
         public static void ConfigureMappers(IMapperConfigurationExpression cfg)
         {
             cfg.CreateMap<ProductEntity, Models.ProductGetListRp>().ForMember(c => c.ServicesCount,
-                opt => opt.MapFrom(d => d.Services.Count)); ; ;
+                opt => opt.MapFrom(d => d.Services.Count)); 
             cfg.CreateMap<ProductEntity, Models.ProductGetRp>();
         }
     }

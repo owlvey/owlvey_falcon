@@ -20,6 +20,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(IEnumerable<IndicatorGetListRp>), 200)]
         public async Task<IActionResult> GetByFeatureId(int featureId, DateTime? end)
         {
+                       
             IEnumerable<IndicatorGetListRp> model = new List<IndicatorGetListRp>();
             if (end.HasValue) {
                 model = await this._indicatorComponent.GetByFeatureWithAvailability(featureId, end.Value);
@@ -39,6 +40,15 @@ namespace Owlvey.Falcon.API.Controllers
             if (model == null)
                 return this.NotFound($"The Resource {id} doesn't exists.");
 
+            return this.Ok(model);
+        }
+
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(IndicatorGetRp), 200)]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var model = await this._indicatorComponent.Delete(id);
             return this.Ok(model);
         }
 

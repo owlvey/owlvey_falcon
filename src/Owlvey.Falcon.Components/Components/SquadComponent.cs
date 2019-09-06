@@ -76,7 +76,27 @@ namespace Owlvey.Falcon.Components
 
             return result;
         }
-        
+
+        public async Task RegisterMember(int id, int userId) {
+            var exists = await this._dbContext.Members.Where(c => c.UserId == userId && c.SquadId == id).SingleOrDefaultAsync();
+            if (exists == null) {
+                var createdBy = this._identityService.GetIdentity();
+                var member = MemberEntity.Factory.Create(id, userId, this._datetimeGateway.GetCurrentDateTime(), createdBy);
+                this._dbContext.Members.Add(member);
+                await this._dbContext.SaveChangesAsync();
+            }
+        }
+
+        public async Task UnRegisterMember(int id, int userId)
+        {
+            var exists = await this._dbContext.Members.Where(c => c.UserId == userId && c.SquadId == id).SingleOrDefaultAsync();
+            if (exists != null)
+            {                
+                this._dbContext.Members.Remove(exists);
+                await this._dbContext.SaveChangesAsync();
+            }
+        }
+
         /// <summary>
         /// Update Squad
         /// </summary>

@@ -9,6 +9,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using Owlvey.Falcon.Core.Aggregates;
+using Owlvey.Falcon.Core;
 
 namespace Owlvey.Falcon.Components
 {
@@ -70,18 +71,18 @@ namespace Owlvey.Falcon.Components
             var entity = await this._dbContext.Sources.SingleOrDefaultAsync(c => c.Id == id);
             return this._mapper.Map<SourceGetRp>(entity);
         }
-        public async Task<SourceGetRp> GetByIdWithAvailability(int id, DateTime end)
+        public async Task<SourceGetRp> GetByIdWithAvailability(int id, DateTime start, DateTime end)
         {
             var entity = await this._dbContext.Sources.SingleOrDefaultAsync(c => c.Id == id);
             var result = this._mapper.Map<SourceGetRp>(entity);
             if (entity!= null) {
-                result.Availability = await GetAvailabilityBySource(entity, end);
+                result.Availability = await GetAvailabilityBySource(entity, start, end);
             }            
             return result;
         }
 
-        private async Task<decimal> GetAvailabilityBySource(SourceEntity entity, DateTime end) {
-            var sourceItems = await this._dbContext.GetSourceItemsByDate(entity.Id.Value, end);
+        private async Task<decimal> GetAvailabilityBySource(SourceEntity entity, DateTime start, DateTime end) {
+            var sourceItems = await this._dbContext.GetSourceItems(entity.Id.Value, start, end);
             entity.SourceItems = sourceItems;
             var agg = new SourceDateAvailabilityAggregate(entity);            
             return agg.MeasureAvailability();
@@ -92,14 +93,14 @@ namespace Owlvey.Falcon.Components
             var entities = await this._dbContext.Sources.Where(c => c.Product.Id == productId).ToListAsync();
             return this._mapper.Map<IEnumerable<SourceGetListRp>>(entities);
         }
-        public async Task<IEnumerable<SourceGetListRp>> GetByProductIdWithAvailability(int productId, DateTime end)
+        public async Task<IEnumerable<SourceGetListRp>> GetByProductIdWithAvailability(int productId, DateTime start, DateTime end)
         {
             var entities = await this._dbContext.Sources.Where(c => c.Product.Id == productId).ToListAsync();
             var result = new List<SourceGetListRp>();
             foreach (var item in entities)
             {
                 var tmp = this._mapper.Map<SourceGetListRp>(item);
-                tmp.Availability = await this.GetAvailabilityBySource(item, end);
+                tmp.Availability = await this.GetAvailabilityBySource(item, start, end);
                 result.Add(tmp);
             }
             return result.OrderBy(c=>c.Availability).ToList();
@@ -110,8 +111,9 @@ namespace Owlvey.Falcon.Components
             var entities = await this._dbContext.Indicators.Include(c=>c.Source).Where(c=>c.Id == indicatorId).ToListAsync();
             var targets = entities.Select(c => c.Source).ToList();
             return this._mapper.Map<IEnumerable<SourceGetListRp>>(targets);
-        }        
+        }
 
+        
         public async Task<SeriesGetRp> GetDailySeriesById(int sourceId, DateTime start, DateTime end) {                                   
             var source = await this._dbContext.Sources.SingleAsync(c => c.Id == sourceId);
             var sourceItems = await this._dbContext.GetSourceItems(sourceId, start, end);

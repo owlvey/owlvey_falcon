@@ -1,6 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
+
 namespace Owlvey.Falcon.Core.Entities
 {
+
+    public class IndicatorEntityComparer : IEqualityComparer<IndicatorEntity>
+    {
+        public bool Equals(IndicatorEntity x, IndicatorEntity y)
+        {
+            return x.Id == y.Id;
+        }
+
+        public int GetHashCode(IndicatorEntity obj)
+        {
+            return obj.GetHashCode();
+        }
+    }
+
     public partial class IndicatorEntity: BaseEntity
     {
         public int SourceId { get; set; }

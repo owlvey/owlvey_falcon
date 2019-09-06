@@ -14,12 +14,15 @@ namespace Owlvey.Falcon.API.Controllers
         private readonly FeatureQueryComponent _featureQueryService;
         private readonly IndicatorComponent _indicatorComponent;
         private readonly FeatureComponent _featureService;
+        private readonly SourceComponent _sourceComponent;
 
         public FeatureController(FeatureQueryComponent featureQueryService,
             IndicatorComponent indicatorComponent,
+            SourceComponent sourceComponent,
             FeatureComponent featureService) : base()
         {
             this._indicatorComponent = indicatorComponent;
+            this._sourceComponent = sourceComponent;
             this._featureQueryService = featureQueryService;
             this._featureService = featureService;
         }
@@ -30,18 +33,21 @@ namespace Owlvey.Falcon.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<FeatureGetListRp>), 200)]
-        public async Task<IActionResult> Get(int productId, DateTime? end)
+        public async Task<IActionResult> Get(int productId, DateTime? start, DateTime? end, string filter)
         {
             IEnumerable<FeatureGetListRp> model = null;
-            if (end.HasValue)
+            if (!string.IsNullOrWhiteSpace(filter))
+            {
+                model = await this._featureQueryService.GetFeaturesByFilter(productId, filter);
+            }
+            else if (start.HasValue && end.HasValue)
             {
                 model = await this._featureQueryService.GetFeaturesWithAvailability(productId, end.Value);
             }
-            else {
+            else
+            {
                 model = await this._featureQueryService.GetFeatures(productId);
-            }
-
-            
+            }            
             return this.Ok(model);
         }
 
@@ -52,12 +58,12 @@ namespace Owlvey.Falcon.API.Controllers
         /// <returns></returns>
         [HttpGet("{id}", Name = "GetFeatureId")]
         [ProducesResponseType(typeof(FeatureGetRp), 200)]
-        public async Task<IActionResult> GetFeatureId(int id, DateTime? end)
+        public async Task<IActionResult> GetFeatureId(int id, DateTime? start, DateTime? end)
         {
             FeatureGetRp model = null;
             if (end.HasValue)
             {
-                model = await this._featureQueryService.GetFeatureByIdWithAvailability(id, end.Value);
+                model = await this._featureQueryService.GetFeatureByIdWithAvailability(id, start.Value,  end.Value);
             }
             else {
                 model = await this._featureQueryService.GetFeatureById(id);
@@ -167,8 +173,29 @@ namespace Owlvey.Falcon.API.Controllers
             return this.NoContent();
         }
 
+
         #region
         
+        [HttpGet("{id}/indicators")]
+        [ProducesResponseType(typeof(IEnumerable<IndicatorGetListRp>), 200)]
+        public async Task<IActionResult> GetIndicators(int id)
+        {
+            var result = await this._indicatorComponent.GetByFeature(id);
+            return this.Ok(result);
+        }
+
+        [HttpGet("{id}/indicators/complement")]
+        [ProducesResponseType(typeof(IEnumerable<SourceGetListRp>), 200)]
+        public async Task<IActionResult> GetIndicatorsComplement(int id)
+        {            
+            var result = await this._indicatorComponent.GetSourcesComplement(id);
+            return this.Ok(result);
+        }
+
+        #endregion
+
+        #region
+
         [HttpGet("{id}/reports/daily/series")]
         [ProducesResponseType(typeof(MultiSeriesGetRp), 200)]
         public async Task<IActionResult> ReportSeries(int id, DateTime? start, DateTime? end, int period = 1)

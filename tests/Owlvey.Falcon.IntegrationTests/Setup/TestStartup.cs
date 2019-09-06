@@ -130,15 +130,9 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
             
             dbContext.Customers.Add(customer);
 
-            dbContext.Users.Add(new Core.Entities.UserEntity
-            {
-                Id = 9999,
-                Email = "user@falcon.com",
-                CreatedBy = "test",
-                CreatedOn = DateTime.UtcNow,
-                ModifiedBy = "test",
-                ModifiedOn = DateTime.UtcNow
-            });
+            var user = UserEntity.Factory.Create("test", DateTime.UtcNow, "user@falcon.com");
+            user.Id = 9999;
+            dbContext.Users.Add(user);
             
             dbContext.SaveChanges();
 

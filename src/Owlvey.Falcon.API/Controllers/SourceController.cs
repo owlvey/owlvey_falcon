@@ -19,13 +19,13 @@ namespace Owlvey.Falcon.API.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<SourceGetListRp>), 200)]
-        public async Task<IActionResult> Get(int? productId, int? indicatorId, int? customerId, DateTime? end)
+        public async Task<IActionResult> Get(int? productId, int? indicatorId, int? customerId, DateTime? start, DateTime? end, string filter)
         {
             IEnumerable<SourceGetListRp> model = new List<SourceGetListRp>();
 
             if (productId.HasValue && end.HasValue)
             {
-                model = await this._sourceComponent.GetByProductIdWithAvailability(productId.Value, end.Value);
+                model = await this._sourceComponent.GetByProductIdWithAvailability(productId.Value, start.Value, end.Value);
             }
             else if (productId.HasValue)
             {
@@ -44,11 +44,11 @@ namespace Owlvey.Falcon.API.Controllers
 
         [HttpGet("{id}", Name = "GetSourceById")]
         [ProducesResponseType(typeof(SourceGetRp), 200)]
-        public async Task<IActionResult> GetSourceById(int id, DateTime? end)
+        public async Task<IActionResult> GetSourceById(int id, DateTime? start,  DateTime? end)
         {
             SourceGetRp model = null;
             if (end.HasValue) {
-                model = await this._sourceComponent.GetByIdWithAvailability(id, end.Value);                
+                model = await this._sourceComponent.GetByIdWithAvailability(id, start.Value, end.Value);                
             }
             else {
                 model = await this._sourceComponent.GetById(id);
@@ -101,7 +101,7 @@ namespace Owlvey.Falcon.API.Controllers
             
             return this.Ok();               
         }
-
+               
         #region reports
 
         [HttpGet("{id}/reports/daily/series")]
