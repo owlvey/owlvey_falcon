@@ -17,7 +17,7 @@ namespace Owlvey.Falcon.ComponentsTests
             var feature = await ComponentTestFactory.BuildFeature(container, product);
             var squadComponent = container.GetInstance<SquadComponent>();
             var squadQueryComponent = container.GetInstance<SquadQueryComponent>();
-            var squadFeatureComponent = container.GetInstance<SquadFeatureComponent>();
+            
 
             await squadComponent.CreateSquad(new Models.SquadPostRp()
             {
@@ -25,12 +25,7 @@ namespace Owlvey.Falcon.ComponentsTests
                 CustomerId = customer
             });
 
-            var squad = await squadQueryComponent.GetSquadByName(customer, "test");
-
-            await squadFeatureComponent.CreateSquadFeature(new Models.SquadFeaturePostRp() {
-                 SquadId = squad.Id,
-                 FeatureId = feature
-            });
+            var squad = await squadQueryComponent.GetSquadByName(customer, "test");            
 
             var all  = await squadFeatureComponent.GetAll();
 

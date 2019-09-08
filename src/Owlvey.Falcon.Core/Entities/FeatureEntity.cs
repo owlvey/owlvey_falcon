@@ -58,6 +58,8 @@ namespace Owlvey.Falcon.Core.Entities
         public virtual IEnumerable<ServiceMapEntity> ServiceMaps { get; set; } = new List<ServiceMapEntity>();
 
         public virtual ICollection<IndicatorEntity> Indicators { get; set; } = new List<IndicatorEntity>();
+
+        public virtual ICollection<SquadFeatureEntity> Squads { get; set; } = new List<SquadFeatureEntity>(); 
         
         public virtual void Update(DateTime on, string modifiedBy, string name, string avatar , string description,
             decimal? mttd, decimal? mttr)

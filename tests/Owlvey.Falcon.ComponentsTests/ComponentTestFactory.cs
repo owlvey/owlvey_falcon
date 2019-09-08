@@ -55,8 +55,7 @@ namespace Owlvey.Falcon.ComponentsTests
                 MemberComponentConfiguration.ConfigureMappers(cfg);
                 SourceComponentConfiguration.ConfigureMappers(cfg);
                 SourceItemComponentConfiguration.ConfigureMappers(cfg);
-                SquadFeatureComponentConfiguration.ConfigureMappers(cfg);
-                SquadProductComponentConfiguration.ConfigureMappers(cfg);
+                SquadFeatureComponentConfiguration.ConfigureMappers(cfg);                
                 IndicatorComponentConfiguration.ConfigureMappers(cfg);                
             });
             configuration.AssertConfigurationIsValid();

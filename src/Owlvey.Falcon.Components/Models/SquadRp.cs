@@ -18,6 +18,8 @@ namespace Owlvey.Falcon.Models
     }
 
     public class SquadGetRp : SquadBaseRp {
+        public IEnumerable<UserGetListRp> Members { get; set; } = new List<UserGetListRp>();
+        public IEnumerable<FeatureGetListRp> Features { get; set; } = new List<FeatureGetListRp>();
     }
 
     public class SquadGetListRp : SquadBaseRp

@@ -41,7 +41,10 @@ namespace Owlvey.Falcon.Components
 
         public async Task<FeatureGetRp> GetFeatureByIdWithAvailability(int id, DateTime start, DateTime end)
         {
-            var entity = await this._dbContext.Features.Include(c=>c.Indicators).ThenInclude(c=>c.Source).FirstOrDefaultAsync(c => c.Id.Equals(id));
+            var entity = await this._dbContext.Features
+                .Include(c=>c.Squads).ThenInclude(c=>c.Squad)
+                .Include(c=>c.Indicators).ThenInclude(c=>c.Source)                
+                .FirstOrDefaultAsync(c => c.Id.Equals(id));
             
             if (entity == null)
                 return null;

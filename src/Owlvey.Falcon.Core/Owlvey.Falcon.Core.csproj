@@ -8,4 +8,8 @@
   <ItemGroup>
     <Folder Include="Values\" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Entities\SquadProductEntity.cs" />
+    <Compile Remove="Factories\SquadProductFactory.cs" />
+  </ItemGroup>
 </Project>

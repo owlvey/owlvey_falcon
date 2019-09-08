@@ -87,6 +87,23 @@ namespace Owlvey.Falcon.Components
             }
         }
 
+      
+
+        public async Task<IEnumerable<SquadGetListRp>> GetSquadComplementByFeature(int featureId)
+        {
+
+            var result = new List<SquadGetListRp>();
+            var feature = await this._dbContext.Features.Include(c=>c.Product).Include(c=>c.Squads).ThenInclude(c=>c.Squad).Where(c => c.Id == featureId).SingleAsync();
+
+            var squads = await this._dbContext.Squads.Where(c => c.CustomerId == feature.Product.CustomerId).ToListAsync();
+
+            var featureSquads = feature.Squads.Select(c => c.Squad).ToList();
+
+            var diff = squads.Except(featureSquads, new SquadCompare());
+
+            return this._mapper.Map<IEnumerable<SquadGetListRp>>(diff);
+        }
+
         public async Task UnRegisterMember(int id, int userId)
         {
             var exists = await this._dbContext.Members.Where(c => c.UserId == userId && c.SquadId == id).SingleOrDefaultAsync();

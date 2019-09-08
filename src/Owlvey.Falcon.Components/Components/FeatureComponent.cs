@@ -126,5 +126,42 @@ namespace Owlvey.Falcon.Components
 
             return result;
         }
+
+
+        #region Features - Squad Relations
+               
+
+        public async Task<BaseComponentResultRp> RegisterSquad(SquadFeaturePostRp model)
+        {
+            var result = new BaseComponentResultRp();
+
+            var createdBy = this._identityService.GetIdentity();
+
+            var squad = await this._dbContext.Squads.SingleAsync(c => c.Id == model.SquadId);
+            var feature = await this._dbContext.Features.SingleAsync(c => c.Id == model.FeatureId);
+
+            var entity = SquadFeatureEntity.Factory.Create(squad, feature, this._datetimeGateway.GetCurrentDateTime(), createdBy);
+
+            this._dbContext.SquadFeatures.Add(entity);
+
+            await this._dbContext.SaveChangesAsync();
+
+            result.AddResult("Id", entity.Id);
+
+            return result;
+        }
+
+        public async Task<BaseComponentResultRp> UnRegisterFeature(int squadId, int featureId)
+        {
+            var result = new BaseComponentResultRp();
+            var item = await this._dbContext.SquadFeatures.Where(c => c.SquadId == squadId && c.FeatureId == featureId).SingleOrDefaultAsync();
+            if (item != null)
+            {
+                this._dbContext.SquadFeatures.Remove(item);
+                await this._dbContext.SaveChangesAsync();
+            }
+            return result;
+        }
+        #endregion
     }
 }

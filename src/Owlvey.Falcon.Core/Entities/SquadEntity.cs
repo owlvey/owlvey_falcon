@@ -6,6 +6,19 @@ using System.Text;
 
 namespace Owlvey.Falcon.Core.Entities
 {
+    public class SquadCompare : IEqualityComparer<SquadEntity>
+    {
+        public bool Equals(SquadEntity x, SquadEntity y)
+        {
+            return x.Id == y.Id;
+        }
+
+        public int GetHashCode(SquadEntity obj)
+        {
+            return obj.GetHashCode();
+        }
+    }
+
     public partial class SquadEntity: BaseEntity
     {
         [Required]
@@ -15,8 +28,10 @@ namespace Owlvey.Falcon.Core.Entities
         public string Avatar { get; protected set; }
 
         public virtual ICollection<MemberEntity> Members { get; set; } = new List<MemberEntity>();
+        public virtual ICollection<SquadFeatureEntity> Features { get; set; } = new List<SquadFeatureEntity>(); 
         
         public virtual CustomerEntity Customer { get; set; }
+        public int CustomerId { get; set; }
 
         public void Update(DateTime on, string modifiedBy, string name = null, string description = null, string avatar = null)
         { 

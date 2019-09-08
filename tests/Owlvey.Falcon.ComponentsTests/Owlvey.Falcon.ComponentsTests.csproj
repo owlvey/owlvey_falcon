@@ -35,4 +35,8 @@
   </ItemGroup>
 
 
+  <ItemGroup>
+    <Compile Remove="SquadProductComponentTest.cs" />
+    <Compile Remove="SquadFeatureComponentTest.cs" />
+  </ItemGroup>
 </Project>

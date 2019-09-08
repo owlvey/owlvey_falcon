@@ -61,6 +61,8 @@
 
   <ItemGroup>
     <Compile Remove="Controllers\SquadMemberController.cs" />
+    <Compile Remove="Controllers\SquadProductController.cs" />
+    <Compile Remove="Controllers\SquadFeatureController.cs" />
   </ItemGroup>
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>
 

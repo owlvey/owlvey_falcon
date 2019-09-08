@@ -48,10 +48,7 @@ namespace Owlvey.Falcon.IoC
 
             services.AddTransient<MemberComponent>();
             services.AddTransient<MemberQueryComponent>();
-
-            services.AddTransient<SquadFeatureComponent>();
-            services.AddTransient<SquadProductComponent>();
-
+            
             // Gateways
             services.AddTransient<IDateTimeGateway, DateTimeGateway>();
 
@@ -71,7 +68,6 @@ namespace Owlvey.Falcon.IoC
                 SourceComponentConfiguration.ConfigureMappers(cfg);
                 SourceItemComponentConfiguration.ConfigureMappers(cfg);
                 SquadFeatureComponentConfiguration.ConfigureMappers(cfg);
-                SquadProductComponentConfiguration.ConfigureMappers(cfg);
                 IndicatorComponentConfiguration.ConfigureMappers(cfg);
             });
 

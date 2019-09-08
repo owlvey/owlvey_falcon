@@ -25,8 +25,47 @@ namespace Owlvey.Falcon.ComponentsTests
                 CustomerId = customer
             });
 
-            var squads = await squadQueryComponent.GetSquads(customer);
+            var squads = await squadQueryComponent.GetSquads(customer);            
+
             Assert.NotEmpty(squads);
+        }
+
+        [Fact]
+        public async Task SquadFeatureMaintenanceSucces() {
+            var container = ComponentTestFactory.BuildContainer();
+
+            var (customer, product) = await ComponentTestFactory.BuildCustomerProduct(container);
+
+            var featureComponent = container.GetInstance<FeatureComponent>(); 
+            var squadComponent = container.GetInstance<SquadComponent>();
+            var squadQueryComponent = container.GetInstance<SquadQueryComponent>();
+
+            var squadResponse = await squadComponent.CreateSquad(new Models.SquadPostRp()
+            {
+                Name = "test",
+                CustomerId = customer
+            });
+
+            var squad = await squadQueryComponent.GetSquadById(squadResponse.GetResult<int>("Id"));                        
+
+            var feature = await ComponentTestFactory.BuildFeature(container, product);
+
+            await featureComponent.RegisterSquad(new Models.SquadFeaturePostRp()
+            {
+                SquadId = squad.Id,
+                FeatureId = feature
+            });
+
+            squad = await squadQueryComponent.GetSquadById(squad.Id);
+
+            Assert.NotEmpty(squad.Features);
+
+            await featureComponent.UnRegisterFeature(squad.Id, feature);
+
+            squad = await squadQueryComponent.GetSquadById(squad.Id);
+
+            Assert.Empty(squad.Features);
+
         }
 
         [Fact]
@@ -34,7 +73,7 @@ namespace Owlvey.Falcon.ComponentsTests
         {
             var container = ComponentTestFactory.BuildContainer();
 
-            var customer = await ComponentTestFactory.BuildCustomer(container);
+            var (customer, product) = await ComponentTestFactory.BuildCustomerProduct(container);
 
             var squadComponent = container.GetInstance<SquadComponent>();
             var squadQueryComponent = container.GetInstance<SquadQueryComponent>();
@@ -60,17 +99,17 @@ namespace Owlvey.Falcon.ComponentsTests
             var user = await userQueryComponent.GetUserById(id);
 
             await squadComponent.RegisterMember(squad.Id, user.Id);
-
+            
             squad = await squadQueryComponent.GetSquadById(squad.Id);
 
-           // Assert.NotEmpty(squad.Members);
+            Assert.NotEmpty(squad.Members);
 
             await squadComponent.UnRegisterMember(squad.Id, user.Id);
 
             squad = await squadQueryComponent.GetSquadById(squad.Id);
 
-           // Assert.Empty(squad.Members);
-
+            Assert.Empty(squad.Members);           
+        
         }
     }
 }

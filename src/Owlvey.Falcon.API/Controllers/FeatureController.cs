@@ -15,16 +15,19 @@ namespace Owlvey.Falcon.API.Controllers
         private readonly IndicatorComponent _indicatorComponent;
         private readonly FeatureComponent _featureService;
         private readonly SourceComponent _sourceComponent;
+        private readonly SquadComponent _squadComponent; 
 
         public FeatureController(FeatureQueryComponent featureQueryService,
             IndicatorComponent indicatorComponent,
             SourceComponent sourceComponent,
+            SquadComponent squadComponent,
             FeatureComponent featureService) : base()
         {
             this._indicatorComponent = indicatorComponent;
             this._sourceComponent = sourceComponent;
             this._featureQueryService = featureQueryService;
             this._featureService = featureService;
+            this._squadComponent = squadComponent;
         }
 
         /// <summary>
@@ -189,6 +192,34 @@ namespace Owlvey.Falcon.API.Controllers
         public async Task<IActionResult> GetIndicatorsComplement(int id)
         {            
             var result = await this._indicatorComponent.GetSourcesComplement(id);
+            return this.Ok(result);
+        }
+
+
+        [HttpPut("{id}/squads/{squadId}")]
+        [ProducesResponseType(typeof(IEnumerable<SourceGetListRp>), 200)]
+        public async Task<IActionResult> PutSquad(int id, int squadId)
+        {
+            await this._featureService.RegisterSquad(new SquadFeaturePostRp()
+            {
+                 FeatureId = id, SquadId = squadId
+            });            
+            return this.Ok();
+        }
+
+        [HttpDelete("{id}/squads/{squadId}")]
+        [ProducesResponseType(typeof(IEnumerable<SourceGetListRp>), 200)]
+        public async Task<IActionResult> DeleteSquad(int id, int squadId)
+        {
+            await this._featureService.UnRegisterFeature(squadId, id);
+            return this.Ok();
+        }
+
+        [HttpGet("{id}/squads/complement")]
+        [ProducesResponseType(typeof(IEnumerable<SourceGetListRp>), 200)]
+        public async Task<IActionResult> GetSquadsComplement(int id)
+        {            
+            var result  =await this._squadComponent.GetSquadComplementByFeature(id);
             return this.Ok(result);
         }
 
