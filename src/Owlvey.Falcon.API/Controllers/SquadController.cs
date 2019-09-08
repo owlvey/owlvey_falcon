@@ -105,6 +105,13 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok();
         }
 
+        [HttpGet("{id}/members/complement")]
+        [ProducesResponseType(typeof(IEnumerable<UserGetListRp>), 200)]
+        public async Task<IActionResult> ComplementMembers(int id)
+        {
+            var result = await this._squadService.GetUsersComplement(id);
+            return this.Ok(result);
+        }
         /// <summary>
         /// Update an Squad
         /// </summary>

@@ -47,6 +47,26 @@ namespace Owlvey.Falcon.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserEntity",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CreatedOn = table.Column<DateTime>(nullable: false),
+                    CreatedBy = table.Column<string>(nullable: false),
+                    ModifiedOn = table.Column<DateTime>(nullable: false),
+                    ModifiedBy = table.Column<string>(nullable: false),
+                    Deleted = table.Column<bool>(nullable: false),
+                    Email = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
+                    Avatar = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserEntity", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ProductEntity",
                 columns: table => new
                 {
@@ -60,7 +80,7 @@ namespace Owlvey.Falcon.Migrations
                     Name = table.Column<string>(nullable: false),
                     Avatar = table.Column<string>(nullable: false),
                     Description = table.Column<string>(nullable: true),
-                    CustomerId = table.Column<int>(nullable: true)
+                    CustomerId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -70,7 +90,7 @@ namespace Owlvey.Falcon.Migrations
                         column: x => x.CustomerId,
                         principalTable: "CustomerEntity",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -87,7 +107,7 @@ namespace Owlvey.Falcon.Migrations
                     Name = table.Column<string>(nullable: false),
                     Description = table.Column<string>(nullable: true),
                     Avatar = table.Column<string>(nullable: true),
-                    CustomerId = table.Column<int>(nullable: true)
+                    CustomerId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -97,7 +117,7 @@ namespace Owlvey.Falcon.Migrations
                         column: x => x.CustomerId,
                         principalTable: "CustomerEntity",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -189,7 +209,7 @@ namespace Owlvey.Falcon.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SquadProductEntity",
+                name: "MemberEntity",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -200,50 +220,23 @@ namespace Owlvey.Falcon.Migrations
                     ModifiedBy = table.Column<string>(nullable: false),
                     Deleted = table.Column<bool>(nullable: false),
                     SquadId = table.Column<int>(nullable: false),
-                    ProductId = table.Column<int>(nullable: false)
+                    UserId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SquadProductEntity", x => x.Id);
+                    table.PrimaryKey("PK_MemberEntity", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SquadProductEntity_ProductEntity_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "ProductEntity",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_SquadProductEntity_SquadEntity_SquadId",
+                        name: "FK_MemberEntity_SquadEntity_SquadId",
                         column: x => x.SquadId,
                         principalTable: "SquadEntity",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserEntity",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    CreatedOn = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<string>(nullable: false),
-                    ModifiedOn = table.Column<DateTime>(nullable: false),
-                    ModifiedBy = table.Column<string>(nullable: false),
-                    Deleted = table.Column<bool>(nullable: false),
-                    Email = table.Column<string>(nullable: false),
-                    Name = table.Column<string>(nullable: false),
-                    Avatar = table.Column<string>(nullable: false),
-                    SquadEntityId = table.Column<int>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserEntity", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserEntity_SquadEntity_SquadEntityId",
-                        column: x => x.SquadEntityId,
-                        principalTable: "SquadEntity",
+                        name: "FK_MemberEntity_UserEntity_UserId",
+                        column: x => x.UserId,
+                        principalTable: "UserEntity",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -369,37 +362,6 @@ namespace Owlvey.Falcon.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "MemberEntity",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    CreatedOn = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<string>(nullable: false),
-                    ModifiedOn = table.Column<DateTime>(nullable: false),
-                    ModifiedBy = table.Column<string>(nullable: false),
-                    Deleted = table.Column<bool>(nullable: false),
-                    SquadId = table.Column<int>(nullable: true),
-                    UserId = table.Column<int>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MemberEntity", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_MemberEntity_SquadEntity_SquadId",
-                        column: x => x.SquadId,
-                        principalTable: "SquadEntity",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_MemberEntity_UserEntity_UserId",
-                        column: x => x.UserId,
-                        principalTable: "UserEntity",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_CustomerEntity_Name",
                 table: "CustomerEntity",
@@ -485,21 +447,6 @@ namespace Owlvey.Falcon.Migrations
                 name: "IX_SquadFeatureEntity_SquadId",
                 table: "SquadFeatureEntity",
                 column: "SquadId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SquadProductEntity_ProductId",
-                table: "SquadProductEntity",
-                column: "ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SquadProductEntity_SquadId",
-                table: "SquadProductEntity",
-                column: "SquadId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserEntity_SquadEntityId",
-                table: "UserEntity",
-                column: "SquadEntityId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -521,9 +468,6 @@ namespace Owlvey.Falcon.Migrations
 
             migrationBuilder.DropTable(
                 name: "SquadFeatureEntity");
-
-            migrationBuilder.DropTable(
-                name: "SquadProductEntity");
 
             migrationBuilder.DropTable(
                 name: "UserEntity");

@@ -9,7 +9,7 @@ using Owlvey.Falcon.Repositories;
 namespace Owlvey.Falcon.Migrations
 {
     [DbContext(typeof(FalconDbContext))]
-    [Migration("20190905214802_InitialCreate")]
+    [Migration("20190908184542_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -183,9 +183,9 @@ namespace Owlvey.Falcon.Migrations
                     b.Property<DateTime?>("ModifiedOn")
                         .IsRequired();
 
-                    b.Property<int?>("SquadId");
+                    b.Property<int>("SquadId");
 
-                    b.Property<int?>("UserId");
+                    b.Property<int>("UserId");
 
                     b.HasKey("Id");
 
@@ -210,7 +210,7 @@ namespace Owlvey.Falcon.Migrations
                     b.Property<DateTime?>("CreatedOn")
                         .IsRequired();
 
-                    b.Property<int?>("CustomerId");
+                    b.Property<int>("CustomerId");
 
                     b.Property<bool>("Deleted");
 
@@ -396,7 +396,7 @@ namespace Owlvey.Falcon.Migrations
                     b.Property<DateTime?>("CreatedOn")
                         .IsRequired();
 
-                    b.Property<int?>("CustomerId");
+                    b.Property<int>("CustomerId");
 
                     b.Property<bool>("Deleted");
 
@@ -450,38 +450,6 @@ namespace Owlvey.Falcon.Migrations
                     b.ToTable("SquadFeatureEntity");
                 });
 
-            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.SquadProductEntity", b =>
-                {
-                    b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired();
-
-                    b.Property<DateTime?>("CreatedOn")
-                        .IsRequired();
-
-                    b.Property<bool>("Deleted");
-
-                    b.Property<string>("ModifiedBy")
-                        .IsRequired();
-
-                    b.Property<DateTime?>("ModifiedOn")
-                        .IsRequired();
-
-                    b.Property<int>("ProductId");
-
-                    b.Property<int>("SquadId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("SquadId");
-
-                    b.ToTable("SquadProductEntity");
-                });
-
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.UserEntity", b =>
                 {
                     b.Property<int?>("Id")
@@ -510,11 +478,7 @@ namespace Owlvey.Falcon.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
-                    b.Property<int?>("SquadEntityId");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("SquadEntityId");
 
                     b.ToTable("UserEntity");
                 });
@@ -543,19 +507,22 @@ namespace Owlvey.Falcon.Migrations
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.MemberEntity", b =>
                 {
                     b.HasOne("Owlvey.Falcon.Core.Entities.SquadEntity", "Squad")
-                        .WithMany()
-                        .HasForeignKey("SquadId");
+                        .WithMany("Members")
+                        .HasForeignKey("SquadId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Owlvey.Falcon.Core.Entities.UserEntity", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.ProductEntity", b =>
                 {
                     b.HasOne("Owlvey.Falcon.Core.Entities.CustomerEntity", "Customer")
                         .WithMany("Products")
-                        .HasForeignKey("CustomerId");
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.ServiceEntity", b =>
@@ -598,40 +565,21 @@ namespace Owlvey.Falcon.Migrations
                 {
                     b.HasOne("Owlvey.Falcon.Core.Entities.CustomerEntity", "Customer")
                         .WithMany("Squads")
-                        .HasForeignKey("CustomerId");
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.SquadFeatureEntity", b =>
                 {
                     b.HasOne("Owlvey.Falcon.Core.Entities.FeatureEntity", "Feature")
-                        .WithMany()
+                        .WithMany("Squads")
                         .HasForeignKey("FeatureId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Owlvey.Falcon.Core.Entities.SquadEntity", "Squad")
-                        .WithMany()
+                        .WithMany("Features")
                         .HasForeignKey("SquadId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.SquadProductEntity", b =>
-                {
-                    b.HasOne("Owlvey.Falcon.Core.Entities.ProductEntity", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Owlvey.Falcon.Core.Entities.SquadEntity", "Squad")
-                        .WithMany()
-                        .HasForeignKey("SquadId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.UserEntity", b =>
-                {
-                    b.HasOne("Owlvey.Falcon.Core.Entities.SquadEntity")
-                        .WithMany("Users")
-                        .HasForeignKey("SquadEntityId");
                 });
 #pragma warning restore 612, 618
         }
