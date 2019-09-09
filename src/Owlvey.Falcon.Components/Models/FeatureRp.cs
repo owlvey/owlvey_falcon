@@ -40,11 +40,24 @@ namespace Owlvey.Falcon.Models
         public decimal Availability { get; set; }
     }
 
+    public class FeatureBySquadRp : FeatureBaseRp
+    {
+        public string CreatedBy { get; set; }
+        public DateTime? CreatedOn { get; set; }
+        public int ProductId { get; set; }
+        public int ServiceId { get; set; }
+        public string Service { get; set; }
+        public string Product { get; set; }
+        public int IndicatorsCount { get; set; }
+        public decimal SLO { get; set; }
+        public decimal Impact { get; set; }
+        public decimal Availability { get; set; }
+        public decimal Points { get; set; }
+    }
+
     public class FeaturePostRp {
         [Required]
-        public string Name { get; set; }
-        [Required]
-        public string Description { get; set; }
+        public string Name { get; set; }        
         [Required]
         public int ProductId { get; set; }        
     }

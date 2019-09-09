@@ -9,9 +9,15 @@ namespace Owlvey.Falcon.UnitTests
         [Fact]
         public void CreateProductEntitySuccess()
         {
-            var result = AvailabilityUtils.MeasureImpact(99);
+            var result = AvailabilityUtils.MeasureImpact(0.90m);
+
+            result = AvailabilityUtils.MeasureImpact(0.95m);
+
+            result = AvailabilityUtils.MeasureImpact(0.99m);
+
+            result = AvailabilityUtils.MeasureImpact(0.999m);
             //Assert.Equal<decimal>(90.43821m, result);
-            Assert.True(true);
+            Assert.Equal(950m, result);
         }
     }
 }

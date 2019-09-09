@@ -9,7 +9,7 @@ using Owlvey.Falcon.Repositories;
 namespace Owlvey.Falcon.Migrations
 {
     [DbContext(typeof(FalconDbContext))]
-    [Migration("20190908184542_InitialCreate")]
+    [Migration("20190909010057_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -293,11 +293,15 @@ namespace Owlvey.Falcon.Migrations
 
                     b.Property<int>("ServiceId");
 
+                    b.Property<int?>("SquadEntityId");
+
                     b.HasKey("Id");
 
                     b.HasIndex("FeatureId");
 
                     b.HasIndex("ServiceId");
+
+                    b.HasIndex("SquadEntityId");
 
                     b.ToTable("ServiceMapEntity");
                 });
@@ -544,6 +548,10 @@ namespace Owlvey.Falcon.Migrations
                         .WithMany("FeatureMap")
                         .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Owlvey.Falcon.Core.Entities.SquadEntity")
+                        .WithMany("Services")
+                        .HasForeignKey("SquadEntityId");
                 });
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.SourceEntity", b =>

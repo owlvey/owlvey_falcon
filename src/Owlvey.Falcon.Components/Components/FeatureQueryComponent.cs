@@ -18,7 +18,7 @@ namespace Owlvey.Falcon.Components
     public class FeatureQueryComponent : BaseComponent
     {
         private readonly FalconDbContext _dbContext;
-        
+
         public FeatureQueryComponent(FalconDbContext dbContext, IDateTimeGateway dateTimeGateway, IMapper mapper, IUserIdentityGateway userIdentityGateway) : base(dateTimeGateway, mapper, userIdentityGateway)
         {
             this._dbContext = dbContext;
@@ -41,35 +41,16 @@ namespace Owlvey.Falcon.Components
 
         public async Task<FeatureGetRp> GetFeatureByIdWithAvailability(int id, DateTime start, DateTime end)
         {
-            var entity = await this._dbContext.Features
-                .Include(c=>c.Squads).ThenInclude(c=>c.Squad)
-                .Include(c=>c.Indicators).ThenInclude(c=>c.Source)                
-                .FirstOrDefaultAsync(c => c.Id.Equals(id));
-            
-            if (entity == null)
-                return null;
+            FeatureCommonComponent common = new FeatureCommonComponent(this._dbContext, this._datetimeGateway);
 
-            foreach (var indicator in entity.Indicators)
-            {
-                var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, start, end);
-                indicator.Source.SourceItems = sourceItems;
-            }
+            var (entity, availability) = await common.GetFeatureByIdWithAvailability(id, start, end);
 
-            var model = this._mapper.Map<FeatureGetRp>(entity);            
-            model.Availability = await this.GetAvailabilityByFeature(entity, end);
+            var model = this._mapper.Map<FeatureGetRp>(entity);
+
+            model.Availability = availability;
+
             return model;
-        }
-
-        private async Task<decimal> GetAvailabilityByFeature(FeatureEntity entity, DateTime end)
-        {
-            foreach (var indicator in entity.Indicators)
-            {
-                var sourceItems = await this._dbContext.GetSourceItemsByDate(indicator.SourceId, end);
-                indicator.Source.SourceItems = sourceItems;
-            }                        
-            var agg = new FeatureDateAvailabilityAggregate(entity);
-            return agg.MeasureAvailability();
-        }
+        }        
 
 
         public async Task<FeatureGetRp> GetFeatureByName(int productId, string name)
@@ -121,14 +102,15 @@ namespace Owlvey.Falcon.Components
 
         }
 
-        public async Task<IEnumerable<FeatureGetListRp>> GetFeaturesWithAvailability(int productId, DateTime end)
+        public async Task<IEnumerable<FeatureGetListRp>> GetFeaturesWithAvailability(int productId, DateTime start, DateTime end)
         {
             var entities = await this._dbContext.Features.Include(c => c.Indicators).ThenInclude(c=>c.Source).Where(c => c.Product.Id.Value.Equals(productId)).ToListAsync();
             var result = new List<FeatureGetListRp>();
+            var common = new FeatureCommonComponent(this._dbContext, this._datetimeGateway); 
             foreach (var feature in entities)
             {
-                var tmp = this._mapper.Map<FeatureGetListRp>(feature);
-                tmp.Availability = await this.GetAvailabilityByFeature(feature, end);
+                var tmp = this._mapper.Map<FeatureGetListRp>(feature);                
+                tmp.Availability = await common.GetAvailabilityByFeature(feature, start, end);
                 result.Add(tmp);
             }
             return result.OrderBy(c=>c.Availability).ToList();
@@ -147,14 +129,17 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<FeatureGetListRp>>(features);
         }
 
-        public async Task<IEnumerable<FeatureGetListRp>> GetFeaturesByServiceIdWithAvailability(int serviceId, DateTime end)
+        public async Task<IEnumerable<FeatureGetListRp>> GetFeaturesByServiceIdWithAvailability(int serviceId, DateTime start, DateTime end)
         {
             var entities = await this._dbContext.ServiceMaps.Include(c => c.Feature).ThenInclude(c=>c.Indicators).ThenInclude(c=>c.Source).Where(c => c.Service.Id == serviceId).ToListAsync();
             var result = new List<FeatureGetListRp>();
+
+            var common = new FeatureCommonComponent(this._dbContext, this._datetimeGateway);
+
             foreach (var feature in entities.Select(c=>c.Feature))
             {
                 var tmp = this._mapper.Map<FeatureGetListRp>(feature);
-                tmp.Availability = await this.GetAvailabilityByFeature(feature, end);
+                tmp.Availability = await common.GetAvailabilityByFeature(feature, start, end);
                 result.Add(tmp);
             }
             return result.OrderBy(c => c.Availability).ToList();            

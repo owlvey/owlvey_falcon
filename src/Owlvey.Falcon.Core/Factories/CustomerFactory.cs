@@ -8,6 +8,85 @@ namespace Owlvey.Falcon.Core.Entities
     {
 
         public static class Factory{
+
+
+            private static void DefaultValues(CustomerEntity result, DateTime on , string user) {
+                var defaultProduct = ProductEntity.Factory.Create("Awesome Product", on, user, result);
+                result.Products.Add(defaultProduct);
+
+                var defaultFeature = FeatureEntity.Factory.Create("Awesome Login", on, user, defaultProduct);
+                defaultProduct.Features.Add(defaultFeature);
+
+                var defaultRegistration = FeatureEntity.Factory.Create("Awesome Registration", on, user, defaultProduct);
+                defaultProduct.Features.Add(defaultRegistration);
+
+                var paymentFeature = FeatureEntity.Factory.Create("Awesome Payment", on, user, defaultProduct);
+                defaultProduct.Features.Add(paymentFeature);
+
+                var defaultService = ServiceEntity.Factory.Create("Awesome Onboarding", 0.999m, on, user, defaultProduct);
+                defaultProduct.Services.Add(defaultService);
+
+                var defaultPaymentService = ServiceEntity.Factory.Create("Awesome Payment Service", 0.99m, on, user, defaultProduct);
+                defaultProduct.Services.Add(defaultPaymentService);
+
+                var defaultMap = ServiceMapEntity.Factory.Create(defaultService, defaultFeature, on, user);
+                defaultService.FeatureMap.Add(defaultMap);
+
+                defaultMap = ServiceMapEntity.Factory.Create(defaultService, defaultRegistration, on, user);
+                defaultService.FeatureMap.Add(defaultMap);
+
+                defaultMap = ServiceMapEntity.Factory.Create(defaultPaymentService, paymentFeature, on, user);
+                defaultPaymentService.FeatureMap.Add(defaultMap);
+
+                var defaultSquad = SquadEntity.Factory.Create("Spartans", on, user, result);
+                result.Squads.Add(defaultSquad);
+
+                var defaultSquadFeature = SquadFeatureEntity.Factory.Create(defaultSquad, defaultFeature, on, user);
+                defaultSquad.Features.Add(defaultSquadFeature);
+
+                defaultSquadFeature = SquadFeatureEntity.Factory.Create(defaultSquad, defaultRegistration, on, user);
+                defaultSquad.Features.Add(defaultSquadFeature);
+
+
+                var AllBlacksSquad = SquadEntity.Factory.Create("All Blacks", on, user, result);
+                result.Squads.Add(AllBlacksSquad);
+
+                defaultSquadFeature = SquadFeatureEntity.Factory.Create(AllBlacksSquad, paymentFeature, on, user);
+                AllBlacksSquad.Features.Add(defaultSquadFeature);                
+
+                var defaultSource = SourceEntity.Factory.Create(defaultProduct, "login requests", on, user);
+                defaultProduct.Sources.Add(defaultSource);
+
+                var registrationSource = SourceEntity.Factory.Create(defaultProduct, "registration requests", on, user);
+                defaultProduct.Sources.Add(registrationSource);
+
+                var paymentSource = SourceEntity.Factory.Create(defaultProduct, "payment requests", on, user);
+                defaultProduct.Sources.Add(paymentSource);
+
+                var year = DateTime.Now.Year;
+                var random = new System.Random();
+                for (int i = 1; i < 13; i++)
+                {
+                    var defaultSourceItem = SourceItemEntity.Factory.Create(defaultSource, new DateTime(year, i, 1), new DateTime(year, i, 27), random.Next(800, 1000), 1000, on, user);
+                    defaultSource.SourceItems.Add(defaultSourceItem);
+
+                    var registrationSourceItem = SourceItemEntity.Factory.Create(registrationSource, new DateTime(year, i, 1), new DateTime(year, i, 27), random.Next(800, 1000), 1000, on, user);
+                    registrationSource.SourceItems.Add(registrationSourceItem);
+
+                    var paymentSourceItem = SourceItemEntity.Factory.Create(paymentSource, new DateTime(year, i, 1), new DateTime(year, i, 27), random.Next(800, 1000), 1000, on, user);
+                    paymentSource.SourceItems.Add(paymentSourceItem);
+                }
+
+                var defaultIndicator = IndicatorEntity.Factory.Create(defaultFeature, defaultSource, on, user);
+                defaultFeature.Indicators.Add(defaultIndicator);
+
+                var registrationIndicator = IndicatorEntity.Factory.Create(defaultRegistration, registrationSource, on, user);
+                defaultRegistration.Indicators.Add(registrationIndicator);
+
+                var paymentIndicator = IndicatorEntity.Factory.Create(paymentFeature, paymentSource, on, user);
+                paymentFeature.Indicators.Add(paymentIndicator);
+            }
+
             public static CustomerEntity Create(string user, DateTime on, 
                 string name,
                 string avatar = "https://cdn.iconscout.com/icon/free/png-256/avatar-375-456327.png")
@@ -24,36 +103,7 @@ namespace Owlvey.Falcon.Core.Entities
                 };
                 result.Validate();
 
-                var defaultProduct = ProductEntity.Factory.Create("sample product", on, user, result);
-                result.Products.Add(defaultProduct);
-
-                var defaultFeature = FeatureEntity.Factory.Create("feature sample", "default feature", on, user, defaultProduct);
-                defaultProduct.Features.Add(defaultFeature);
-
-                var defaultService = ServiceEntity.Factory.Create("service sample", 0.99m, on, user, defaultProduct);
-                defaultProduct.Services.Add(defaultService);
-
-                var defaultMap = ServiceMapEntity.Factory.Create(defaultService, defaultFeature, on, user);
-                defaultService.FeatureMap.Add(defaultMap);                                
-
-                var defaultSquad = SquadEntity.Factory.Create("squad sample ", on, user, result);
-                result.Squads.Add(defaultSquad);
-
-                var defaultSource = SourceEntity.Factory.Create(defaultProduct, "sample source", on, user);
-                defaultProduct.Sources.Add(defaultSource);
-
-                var year = DateTime.Now.Year;
-                var random = new System.Random();
-                for (int i = 1; i < 13; i++)
-                {
-                    var defaultSourceItem = SourceItemEntity.Factory.Create(defaultSource,
-                        new DateTime(year, i, 1), new DateTime(2019, i, 27), random.Next(800, 1000), 1000, on, user);
-                    defaultSource.SourceItems.Add(defaultSourceItem);
-                }
-
-                var defaultIndicator = IndicatorEntity.Factory.Create(defaultFeature, defaultSource, on, user);
-
-                defaultFeature.Indicators.Add(defaultIndicator);                
+                DefaultValues(result, on, user);
 
                 return result;
             }

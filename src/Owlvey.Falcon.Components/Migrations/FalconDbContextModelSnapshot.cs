@@ -291,11 +291,15 @@ namespace Owlvey.Falcon.Migrations
 
                     b.Property<int>("ServiceId");
 
+                    b.Property<int?>("SquadEntityId");
+
                     b.HasKey("Id");
 
                     b.HasIndex("FeatureId");
 
                     b.HasIndex("ServiceId");
+
+                    b.HasIndex("SquadEntityId");
 
                     b.ToTable("ServiceMapEntity");
                 });
@@ -542,6 +546,10 @@ namespace Owlvey.Falcon.Migrations
                         .WithMany("FeatureMap")
                         .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Owlvey.Falcon.Core.Entities.SquadEntity")
+                        .WithMany("Services")
+                        .HasForeignKey("SquadEntityId");
                 });
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.SourceEntity", b =>

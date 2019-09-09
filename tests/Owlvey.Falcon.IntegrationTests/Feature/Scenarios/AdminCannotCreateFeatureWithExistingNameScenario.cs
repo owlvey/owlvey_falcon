@@ -27,8 +27,7 @@ namespace Owlvey.Falcon.IntegrationTests.Feature.Scenarios
         public void given_information()
         {
             representation = Builder<FeaturePostRp>.CreateNew()
-                                .With(x => x.Name = KeyConstants.FeatureName)
-                                .With(x => x.Description = $"{Guid.NewGuid()}")
+                                .With(x => x.Name = KeyConstants.FeatureName)                                
                                 .With(x => x.ProductId = KeyConstants.ProductId)
                                 .Build();
         }

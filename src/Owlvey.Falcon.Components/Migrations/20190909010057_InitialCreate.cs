@@ -282,7 +282,8 @@ namespace Owlvey.Falcon.Migrations
                     ModifiedBy = table.Column<string>(nullable: false),
                     Deleted = table.Column<bool>(nullable: false),
                     ServiceId = table.Column<int>(nullable: false),
-                    FeatureId = table.Column<int>(nullable: false)
+                    FeatureId = table.Column<int>(nullable: false),
+                    SquadEntityId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -299,6 +300,12 @@ namespace Owlvey.Falcon.Migrations
                         principalTable: "ServiceEntity",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ServiceMapEntity_SquadEntity_SquadEntityId",
+                        column: x => x.SquadEntityId,
+                        principalTable: "SquadEntity",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -412,6 +419,11 @@ namespace Owlvey.Falcon.Migrations
                 name: "IX_ServiceMapEntity_ServiceId",
                 table: "ServiceMapEntity",
                 column: "ServiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ServiceMapEntity_SquadEntityId",
+                table: "ServiceMapEntity",
+                column: "SquadEntityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SourceEntity_ProductId",

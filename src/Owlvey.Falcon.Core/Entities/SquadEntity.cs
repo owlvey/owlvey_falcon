@@ -28,7 +28,9 @@ namespace Owlvey.Falcon.Core.Entities
         public string Avatar { get; protected set; }
 
         public virtual ICollection<MemberEntity> Members { get; set; } = new List<MemberEntity>();
-        public virtual ICollection<SquadFeatureEntity> Features { get; set; } = new List<SquadFeatureEntity>(); 
+        public virtual ICollection<SquadFeatureEntity> Features { get; set; } = new List<SquadFeatureEntity>();
+
+        public virtual ICollection<ServiceMapEntity> Services { get; set; } = new List<ServiceMapEntity>();
         
         public virtual CustomerEntity Customer { get; set; }
         public int CustomerId { get; set; }

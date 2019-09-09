@@ -159,7 +159,7 @@ namespace Owlvey.Falcon.ComponentsTests
 
             var component = container.GetInstance<FeatureComponent>();
             var queryComponent = container.GetInstance<FeatureQueryComponent>();
-            await component.CreateFeature(new Models.FeaturePostRp() { Name = name, Description = name, ProductId = product.Value });
+            await component.CreateFeature(new Models.FeaturePostRp() { Name = name,  ProductId = product.Value });
             var feature = await queryComponent.GetFeatureByName(product.Value, name);
             return feature.Id;
         }

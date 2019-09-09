@@ -68,7 +68,7 @@ namespace Owlvey.Falcon.API.Controllers
 
             if (end.HasValue)
             {
-                model.Features = await this._featureQueryComponent.GetFeaturesByServiceIdWithAvailability(id, end.Value);
+                model.Features = await this._featureQueryComponent.GetFeaturesByServiceIdWithAvailability(id, start.Value, end.Value);
             }
             else {
                 model.Features = await this._featureQueryComponent.GetFeaturesByServiceId(id);

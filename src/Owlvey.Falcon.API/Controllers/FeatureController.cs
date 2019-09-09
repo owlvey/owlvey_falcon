@@ -45,7 +45,7 @@ namespace Owlvey.Falcon.API.Controllers
             }
             else if (start.HasValue && end.HasValue)
             {
-                model = await this._featureQueryService.GetFeaturesWithAvailability(productId, end.Value);
+                model = await this._featureQueryService.GetFeaturesWithAvailability(productId, start.Value, end.Value);
             }
             else
             {

@@ -11,10 +11,18 @@ namespace Owlvey.Falcon.Components
     {
         public static void ConfigureMappers(IMapperConfigurationExpression cfg)
         {
-            cfg.CreateMap<SquadEntity, Models.SquadGetListRp>();
+            cfg.CreateMap<SquadEntity, Models.SquadGetListRp>()
+                .ForMember(d => d.Points, m => m.Ignore());
             cfg.CreateMap<SquadEntity, Models.SquadGetRp>()
                 .ForMember(d=>d.Members, m=> m.MapFrom(c=>c.Members.Select(d=>d.User)))
                 .ForMember(d => d.Features, m => m.MapFrom(c => c.Features.Select(d => d.Feature)));
+
+            cfg.CreateMap<SquadEntity, Models.SquadGetDetailRp>()
+                .ForMember(d => d.Members, m => m.MapFrom(c => c.Members.Select(d => d.User)))
+                .ForMember(d => d.Points, m => m.Ignore())
+                .ForMember(d => d.Features, m => m.Ignore());
+
+            
         }
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -65,6 +66,32 @@ namespace Owlvey.Falcon.ComponentsTests
             squad = await squadQueryComponent.GetSquadById(squad.Id);
 
             Assert.Empty(squad.Features);
+
+        }
+
+
+        [Fact]
+        public async Task SquadgetDetailSucces() {
+            var container = ComponentTestFactory.BuildContainer();
+            var (customer, product) = await ComponentTestFactory.BuildCustomerProduct(container);
+
+            var squadComponent = container.GetInstance<SquadComponent>();
+            var squadQueryComponent = container.GetInstance<SquadQueryComponent>();
+
+            var squads = await squadQueryComponent.GetSquads(customer);
+
+            var result = await squadQueryComponent.GetSquadByIdWithAvailability(squads.First().Id,
+                OwlveyCalendar.StartJanuary2019, OwlveyCalendar.EndJuly2019);
+            
+            Assert.NotEmpty(result.Features);
+
+
+
+
+
+
+
+
 
         }
 

@@ -67,20 +67,11 @@ namespace Owlvey.Falcon.Components
         /// Get All Customer
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<CustomerGetListRp>> GetCustomers(DateTime? target = null)
+        public async Task<IEnumerable<CustomerGetListRp>> GetCustomers()
         {
-            if (!target.HasValue) {
-                target = DateTime.Now.Date;
-            }
             var entities = await this._dbContext.Customers.Include(c=>c.Products).Where(c=>c.Deleted==false).ToListAsync();
 
             var result = this._mapper.Map<IEnumerable<CustomerGetListRp>>(entities);
-
-            foreach (var customer in result)
-            {
-                var (_, availabilities, products ) = await this.GetAvailabilityByDateRange(customer.Id, target.Value, target.Value);
-                customer.Availability = availabilities.Single().Availability;
-            }
 
             return result;
         }

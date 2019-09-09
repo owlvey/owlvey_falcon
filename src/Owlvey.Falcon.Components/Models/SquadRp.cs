@@ -22,9 +22,16 @@ namespace Owlvey.Falcon.Models
         public IEnumerable<FeatureGetListRp> Features { get; set; } = new List<FeatureGetListRp>();
     }
 
+    public class SquadGetDetailRp : SquadBaseRp
+    {
+        public decimal Points { get; set; }
+        public IEnumerable<UserGetListRp> Members { get; set; } = new List<UserGetListRp>();
+        public List<FeatureBySquadRp> Features { get; set; } = new List<FeatureBySquadRp>();
+    }
+
     public class SquadGetListRp : SquadBaseRp
     {
-        
+        public decimal Points { get; set; }
     }
 
     public class SquadPostRp {

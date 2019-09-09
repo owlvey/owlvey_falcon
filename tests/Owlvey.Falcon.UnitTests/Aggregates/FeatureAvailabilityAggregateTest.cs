@@ -54,7 +54,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
 
             var (_, features_availabilities, _) = aggregate.MeasureAvailability();
 
-            Assert.Equal(365, features_availabilities.Count());
+            Assert.Equal(0, features_availabilities.Count());
         }
     }
 }

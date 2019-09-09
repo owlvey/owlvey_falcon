@@ -93,8 +93,7 @@ namespace Owlvey.Falcon.ManualTests
 
                 await comFeature.CreateFeature(new Models.FeaturePostRp()
                 {
-                    Name = item,
-                    Description = item,
+                    Name = item,                    
                     ProductId = product.Id
                 });
 

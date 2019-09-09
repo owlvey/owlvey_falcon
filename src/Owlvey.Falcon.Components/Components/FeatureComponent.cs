@@ -43,7 +43,7 @@ namespace Owlvey.Falcon.Components
                 return result;
             }
             
-            var entity = FeatureEntity.Factory.Create(model.Name, model.Description, this._datetimeGateway.GetCurrentDateTime(), createdBy, product);
+            var entity = FeatureEntity.Factory.Create(model.Name, this._datetimeGateway.GetCurrentDateTime(), createdBy, product);
             
             this._dbContext.Add(entity);
 

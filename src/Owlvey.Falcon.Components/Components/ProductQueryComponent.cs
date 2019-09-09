@@ -76,16 +76,9 @@ namespace Owlvey.Falcon.Components
                     Budget = service.Availability - (decimal)service.SLO
                 };
                 result.Nodes.Add(snode);
-                /*
-                var sedge = new GraphEdge()
-                {
-                    From = node.Id,
-                    To = snode.Id,
-                };
-                result.Edges.Add(sedge);
-                */
                 
-                var features = await this._featureQueryComponent.GetFeaturesByServiceIdWithAvailability(service.Id, end);
+                
+                var features = await this._featureQueryComponent.GetFeaturesByServiceIdWithAvailability(service.Id, start, end);
                 foreach (var feature in features)
                 {
                     var Id = string.Format("feature_{0}", feature.Id);

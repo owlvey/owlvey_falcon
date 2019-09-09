@@ -20,11 +20,15 @@ namespace Owlvey.Falcon.Core
             if (SLO < 1) {
                 SLO *= 100;
             }
-            double a = 50;
+            double a = 1000;
             double b = 0.05;
             double x = (100 - (double)SLO)/0.1;
             double impact = a * Math.Pow((1 - b), x);
-            return Math.Round((decimal)impact, 2);
+            return Math.Round((decimal)impact, 0);
+        }
+
+        public static decimal MeasurePoints(decimal SLO, decimal availability) {
+            return Math.Round((availability - SLO) * MeasureImpact(SLO), 2);
         }
 
         public static decimal MeasureBudgetInMinutes(decimal budget) {
