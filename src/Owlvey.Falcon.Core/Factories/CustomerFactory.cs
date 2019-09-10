@@ -23,10 +23,12 @@ namespace Owlvey.Falcon.Core.Entities
                 var paymentFeature = FeatureEntity.Factory.Create("Awesome Payment", on, user, defaultProduct);
                 defaultProduct.Features.Add(paymentFeature);
 
-                var defaultService = ServiceEntity.Factory.Create("Awesome Onboarding", 0.999m, on, user, defaultProduct);
+                var defaultService = ServiceEntity.Factory.Create("Awesome Onboarding", on, user, defaultProduct);
+                defaultService.Slo = 0.999m;
                 defaultProduct.Services.Add(defaultService);
 
-                var defaultPaymentService = ServiceEntity.Factory.Create("Awesome Payment Service", 0.99m, on, user, defaultProduct);
+                var defaultPaymentService = ServiceEntity.Factory.Create("Awesome Payment Service", on, user, defaultProduct);
+                defaultPaymentService.Slo = 0.99m;
                 defaultProduct.Services.Add(defaultPaymentService);
 
                 var defaultMap = ServiceMapEntity.Factory.Create(defaultService, defaultFeature, on, user);

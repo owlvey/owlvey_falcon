@@ -28,10 +28,8 @@ namespace Owlvey.Falcon.IntegrationTests.Service.Scenarios
         public void given_information()
         {
             representation = Builder<ServicePostRp>.CreateNew()
-                                 .With(x => x.Name = $"{Guid.NewGuid()}")
-                                 .With(x => x.Description = $"{Guid.NewGuid()}")
-                                 .With(x => x.ProductId = KeyConstants.ProductId)
-                                 .With(x => x.Slo = 99)
+                                 .With(x => x.Name = $"{Guid.NewGuid()}")                                 
+                                 .With(x => x.ProductId = KeyConstants.ProductId)                                 
                                  .Build();
         }
 
