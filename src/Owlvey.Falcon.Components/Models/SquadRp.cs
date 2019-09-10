@@ -32,6 +32,7 @@ namespace Owlvey.Falcon.Models
     public class SquadGetListRp : SquadBaseRp
     {
         public decimal Points { get; set; }
+        public int Features { get; set; }
     }
 
     public class SquadPostRp {

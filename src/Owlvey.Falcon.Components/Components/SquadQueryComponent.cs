@@ -53,8 +53,7 @@ namespace Owlvey.Falcon.Components
                         .ThenInclude(c=>c.ServiceMaps).ThenInclude(c=>c.Service).ThenInclude(c=>c.Product)
                 .SingleOrDefaultAsync(c => c.Id == id);
 
-            var common = new FeatureCommonComponent(this._dbContext, this._datetimeGateway);
-                    
+            var common = new FeatureCommonComponent(this._dbContext, this._datetimeGateway);                   
 
             SquadGetDetailRp result = this._mapper.Map<SquadGetDetailRp>(entity);            
 
@@ -91,7 +90,9 @@ namespace Owlvey.Falcon.Components
                     result.Points += tmp.Points;
                     result.Features.Add(tmp);
                 }
-            }            
+            }
+
+            result.Features = result.Features.OrderBy(c => c.Service).ToList();
             return result;
         }
 
@@ -124,11 +125,13 @@ namespace Owlvey.Falcon.Components
             foreach (var squad in entities)
             {
                 var tmp = await this.GetSquadByIdWithAvailability(squad.Id.Value, start, end);
+                
                 result.Add(new SquadGetListRp() {
                      Id = tmp.Id,
                      Name = tmp.Name,
                      Avatar = tmp.Avatar,
-                     Points = tmp.Points
+                     Points = tmp.Points,
+                     Features = tmp.Features.Count()
                 });
             }
             return result;
