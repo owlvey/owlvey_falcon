@@ -59,7 +59,10 @@ namespace Owlvey.Falcon.Components
         public async Task<IEnumerable<SourceGetListRp>> GetSourcesComplement(int featureId)
         {
             IEnumerable<SourceGetListRp> result = new List<SourceGetListRp>();
-            var sources = this._dbContext.Sources.ToList();
+            var feature = await this._dbContext.Features.SingleAsync(c => c.Id == featureId);
+            
+            var sources = await this._dbContext.Sources.Where(c=>c.ProductId == feature.ProductId).ToListAsync();
+            
             var existing = await this._dbContext.Indicators.Include(c => c.Source)
                 .Where(c => c.FeatureId == featureId).Select(c => c.Source).ToListAsync();
             result = this._mapper.Map<IEnumerable<SourceGetListRp>>(sources.Except(existing, new SourceEntityComparer()));            
