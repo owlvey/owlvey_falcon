@@ -69,18 +69,8 @@ namespace Owlvey.Falcon.API.Controllers
         {
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
-
-            var response = await this._sourceComponent.Create(resource);
-
-            if (response.HasConflicts())
-            {
-                return this.Conflict(response.GetConflicts());
-            }
-
-            var id = response.GetResult<int>("Id");
-            var newResource = await this._sourceComponent.GetById(id);
-
-            return this.Created(Url.RouteUrl("GetSourceById", new { id }), newResource);
+            var response = await this._sourceComponent.Create(resource);            
+            return this.Created(Url.RouteUrl("GetSourceById", new { response.Id }), response);
         }
 
         [HttpPut("{id}")]

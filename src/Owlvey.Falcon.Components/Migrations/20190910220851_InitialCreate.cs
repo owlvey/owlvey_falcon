@@ -195,7 +195,7 @@ namespace Owlvey.Falcon.Migrations
                     GoodDefinition = table.Column<string>(nullable: false),
                     TotalDefinition = table.Column<string>(nullable: false),
                     Avatar = table.Column<string>(nullable: true),
-                    ProductId = table.Column<int>(nullable: true)
+                    ProductId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -205,7 +205,7 @@ namespace Owlvey.Falcon.Migrations
                         column: x => x.ProductId,
                         principalTable: "ProductEntity",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(

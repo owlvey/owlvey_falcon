@@ -86,17 +86,9 @@ namespace Owlvey.Falcon.API.Controllers
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._customerService.CreateCustomer(resource);
+            var response = await this._customerService.CreateCustomer(resource);            
 
-            if (response.HasConflicts())
-            {
-                return this.Conflict(response.GetConflicts());
-            }
-
-            var id = response.GetResult<int>("Id");
-            var newResource = await this._customerQueryService.GetCustomerById(id);
-
-            return this.Created(Url.RouteUrl("GetCustomerId", new { id = id }), newResource);
+            return this.Created(Url.RouteUrl("GetCustomerId", new { id = response.Id }), response);
         }
 
         /// <summary>
@@ -173,5 +165,25 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok(result);
         }
 
+
+        #region reports
+
+        [HttpGet("{id}/squads/reports/graph")]
+        [ProducesResponseType(typeof(GraphGetRp), 200)]
+        public async Task<IActionResult> GetSquadGraph(int id, DateTime? start, DateTime? end)
+        {
+            if (start.HasValue && end.HasValue)
+            {
+                GraphGetRp result = await this._customerQueryService.GetSquadsGraph(id, start.Value, end.Value);
+                return this.Ok(result);
+            }
+            else
+            {
+                return this.BadRequest();
+            }
+
+        }
+
+        #endregion
     }
 }

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using Owlvey.Falcon.Repositories.Products;
 
 namespace Owlvey.Falcon.Components
 {
@@ -25,30 +26,20 @@ namespace Owlvey.Falcon.Components
             
         }
         
-        public async Task<BaseComponentResultRp> CreateProduct(ProductPostRp model)
-        {
-            var result = new BaseComponentResultRp();
+        public async Task<ProductGetListRp> CreateProduct(ProductPostRp model)
+        {            
             var createdBy = this._identityService.GetIdentity();
-
-            var customer = await this._dbContext.Customers.Include(c=> c.Products).SingleAsync(c => c.Id == model.CustomerId);
-
-            // Validate if the resource exists.
-            if (customer.Products.Any(c => c.Name.Equals(model.Name))) {
-                result.AddConflict($"The Resource {model.Name} has already been taken.");
-                return result;
+            var entity = await this._dbContext.GetProduct(model.CustomerId, model.Name);
+            if (entity == null) {
+                var customer = await this._dbContext.Customers.SingleAsync(c => c.Id == model.CustomerId);
+                entity = ProductEntity.Factory.Create(model.Name,
+                    this._datetimeGateway.GetCurrentDateTime(),
+                    createdBy, customer);
+                this._dbContext.Products.Add(entity);
+                await this._dbContext.SaveChangesAsync();
             }
 
-            var entity = ProductEntity.Factory.Create(model.Name, 
-                this._datetimeGateway.GetCurrentDateTime(),
-                createdBy, customer);
-            
-            this._dbContext.Products.Add(entity);
-
-            await this._dbContext.SaveChangesAsync();
-
-            result.AddResult("Id", entity.Id);
-
-            return result;
+            return this._mapper.Map<ProductGetListRp>(entity);
         }
 
         /// <summary>

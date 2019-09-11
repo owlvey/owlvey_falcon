@@ -13,11 +13,11 @@ namespace Owlvey.Falcon.UnitTests.Entities
         {
             var createdBy = Guid.NewGuid().ToString("n");
             var name = Guid.NewGuid().ToString("n");
-            decimal slo = 99m;
+            decimal slo = 0.99m;
 
             var (_, product) = TestDataFactory.BuildCustomerProduct();
             
-            var serviceEntity = ServiceEntity.Factory.Create(name, slo, DateTime.UtcNow, createdBy, product);
+            var serviceEntity = ServiceEntity.Factory.Create(name, DateTime.UtcNow, createdBy, product);
 
             Assert.Equal(name, serviceEntity.Name);
             Assert.Equal(slo, serviceEntity.Slo);
@@ -42,7 +42,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
 
             Assert.Throws<InvalidStateException>(() =>
             {
-                ServiceEntity.Factory.Create(name,  slo, DateTime.UtcNow, createdBy, product);
+                ServiceEntity.Factory.Create(name,  DateTime.UtcNow, createdBy, product);
             });
 
         }

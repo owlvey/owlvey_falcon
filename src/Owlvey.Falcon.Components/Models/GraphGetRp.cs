@@ -18,17 +18,18 @@ namespace Owlvey.Falcon.Models
         public string Name { get; set; }
         public string Id { get; set; }
         public string Avatar { get; set; }
-        public decimal Availability { get; set; }
+        public decimal Value { get; set; }
         public decimal Slo { get; set; }
         public decimal Budget { get; set; }
         public string Group { get; set; }
         public decimal Importance { get; set; }
+        public Dictionary<string, object> Tags { get; set; } = new Dictionary<string, object>();
     }
 
     public class GraphEdge {
         public string From { get; set; }
         public string To { get; set; }
-        public decimal Budget { get; set; }
-        public decimal Availability { get; set; }
+        public decimal Value { get; set; }
+        public Dictionary<string, object> Tags { get; set; } = new Dictionary<string, object>();
     }
 }

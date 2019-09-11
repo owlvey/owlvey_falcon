@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using Owlvey.Falcon.Repositories.Customers;
 
 namespace Owlvey.Falcon.Components
 {
@@ -20,18 +21,16 @@ namespace Owlvey.Falcon.Components
             this._dbContext = dbContext;                        
         }
 
-        public async Task<BaseComponentResultRp> CreateCustomer(CustomerPostRp model)
-        {
-            var result = new BaseComponentResultRp();
+        public async Task<CustomerGetListRp> CreateCustomer(CustomerPostRp model)
+        {            
             var createdBy = this._identityService.GetIdentity();
-            var entity = CustomerEntity.Factory.Create(createdBy, DateTime.Now, model.Name);
-            
-            await this._dbContext.AddAsync(entity);
-            await this._dbContext.SaveChangesAsync();
-
-            result.AddResult("Id", entity.Id);
-
-            return result;
+            var entity =  await this._dbContext.GetCustomer(model.Name);
+            if (entity == null) {
+                entity = CustomerEntity.Factory.Create(createdBy, DateTime.Now, model.Name);
+                await this._dbContext.AddAsync(entity);
+                await this._dbContext.SaveChangesAsync();
+            }            
+            return this._mapper.Map<CustomerGetListRp>(entity);
         }        
 
         public async Task<BaseComponentResultRp> DeleteCustomer(int id)

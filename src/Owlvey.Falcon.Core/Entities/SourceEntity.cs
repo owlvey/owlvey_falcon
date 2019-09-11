@@ -36,7 +36,8 @@ namespace Owlvey.Falcon.Core.Entities
 
         public virtual ProductEntity Product { get; set; }
 
-
+        public int ProductId { get; set; }
+        
         public virtual ICollection<IndicatorEntity> Indicators { get; set; } = new List<IndicatorEntity>();
         public virtual ICollection<SourceItemEntity> SourceItems { get; set; } = new List<SourceItemEntity>();
 

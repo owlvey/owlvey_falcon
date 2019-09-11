@@ -29,7 +29,7 @@ namespace Owlvey.Falcon.UnitTests
         }
         public static ServiceEntity BuildService(string name, decimal slo, string createdBy, DateTime on) {
             var (_, product) = TestDataFactory.BuildCustomerProduct();
-            var entity = ServiceEntity.Factory.Create(name, slo, on, createdBy, product);
+            var entity = ServiceEntity.Factory.Create(name, on, createdBy, product);
             return entity;
         }
         public static FeatureEntity BuildFeature(string name, string createdBy, DateTime on)

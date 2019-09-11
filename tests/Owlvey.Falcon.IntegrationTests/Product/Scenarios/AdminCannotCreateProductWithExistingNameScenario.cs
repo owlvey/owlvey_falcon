@@ -39,11 +39,10 @@ namespace Owlvey.Falcon.IntegrationTests.Product.Scenarios
             responsePost = _client.PostAsync($"/products", jsonContent).Result;
         }
 
-        [Then("The Product was rejected")]
+        [Then("The Product was ok")]
         public void then_created()
         {
-            Assert.Equal(StatusCodes.Status409Conflict, (int)responsePost.StatusCode);
-            
+            Assert.Equal(StatusCodes.Status200OK, (int)responsePost.StatusCode);            
         }
         
         public void Dispose()

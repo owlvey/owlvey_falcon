@@ -42,7 +42,7 @@ namespace Owlvey.Falcon.Components
                 return result;
             }
 
-            var service = ServiceEntity.Factory.Create(model.Name, model.Slo.Value, this._datetimeGateway.GetCurrentDateTime(), createdBy, product);
+            var service = ServiceEntity.Factory.Create(model.Name, this._datetimeGateway.GetCurrentDateTime(), createdBy, product);
 
             this._dbContext.Services.Add(service);
 

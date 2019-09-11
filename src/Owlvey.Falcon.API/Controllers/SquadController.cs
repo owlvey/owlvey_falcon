@@ -9,7 +9,7 @@ using Owlvey.Falcon.Models;
 namespace Owlvey.Falcon.API.Controllers
 {
     [Route("squads")]
-    public partial class SquadController : BaseController
+    public class SquadController : BaseController
     {
         private readonly SquadQueryComponent _squadQueryService;
         private readonly SquadComponent _squadService;        
@@ -23,7 +23,7 @@ namespace Owlvey.Falcon.API.Controllers
 
         
         [HttpGet]
-        [ProducesResponseType(typeof(SquadPostRp), 200)]
+        [ProducesResponseType(typeof(IEnumerable<SquadGetListRp>), 200)]
         public async Task<IActionResult> Get([FromQuery]int customerId, 
             [FromQuery] DateTime? start,
             [FromQuery] DateTime? end)
@@ -184,6 +184,8 @@ namespace Owlvey.Falcon.API.Controllers
 
             return this.NoContent();
         }
+
+        
 
 
     }

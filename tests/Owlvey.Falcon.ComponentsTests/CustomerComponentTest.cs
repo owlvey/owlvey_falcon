@@ -14,27 +14,24 @@ namespace Owlvey.Falcon.ComponentsTests
 {
     public class CustomerComponentTest
     {
-        //TODO: Ricardo check unique constraint
         [Fact]
-        public async Task CustomerNotUniqueNameFail() {
+        public async Task CustomerIdempotenceTest()
+        {
             var container = ComponentTestFactory.BuildContainer();
             var customerComponet = container.GetInstance<CustomerComponent>();
             var customerQueryComponent = container.GetInstance<CustomerQueryComponent>();
 
-            await customerComponet.CreateCustomer(new Models.CustomerPostRp()
+            var result = await customerComponet.CreateCustomer(new Models.CustomerPostRp()
             {
                 Name = "test"
             });
-            /*
-            await Assert.ThrowsAsync<Exception>(async () =>
+
+            var result2 = await customerComponet.CreateCustomer(new Models.CustomerPostRp()
             {
-                _ = await customerComponet.CreateCustomer(new Models.CustomerPostRp()
-                {
-                    Name = "test",
-                    Avatar = "default"
-                });
+                Name = "test"
             });
-            */
+
+            Assert.Equal(result.Id, result2.Id);
         }
 
         [Fact]

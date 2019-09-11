@@ -47,6 +47,7 @@ namespace Owlvey.Falcon.Models
         public int ProductId { get; set; }
         public int ServiceId { get; set; }
         public string Service { get; set; }
+        public string ServiceAvatar { get; set; }
         public string Product { get; set; }
         public int IndicatorsCount { get; set; }
         public decimal SLO { get; set; }

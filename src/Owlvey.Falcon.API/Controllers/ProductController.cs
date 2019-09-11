@@ -80,18 +80,8 @@ namespace Owlvey.Falcon.API.Controllers
         {
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
-
-            var response = await this._productService.CreateProduct(resource);
-
-            if (response.HasConflicts())
-            {
-                return this.Conflict(response.GetConflicts());
-            }
-
-            var id = response.GetResult<int>("Id");
-            var newResource = await this._productQueryService.GetProductById(id);
-
-            return this.Created(Url.RouteUrl("GetProductId", new { id }), newResource);
+            var response = await this._productService.CreateProduct(resource);                        
+            return this.Created(Url.RouteUrl("GetProductId", new { response.Id }), response);
         }
 
         /// <summary>

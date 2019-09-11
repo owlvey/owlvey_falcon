@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using Owlvey.Falcon.Core.Aggregates;
 using Owlvey.Falcon.Core;
+using Owlvey.Falcon.Repositories.Sources;
 
 namespace Owlvey.Falcon.Components
 {
@@ -43,21 +44,21 @@ namespace Owlvey.Falcon.Components
             return result;
         }
 
-        public async Task<BaseComponentResultRp> Create(SourcePostRp model)
+        public async Task<SourceGetListRp> Create(SourcePostRp model)
         {
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
 
-            var product = await this._dbContext.Products.SingleAsync(c => c.Id == model.ProductId);
-            var entity = SourceEntity.Factory.Create(product, model.Name, this._datetimeGateway.GetCurrentDateTime(), createdBy);
-            
-            await this._dbContext.AddAsync(entity);
+            var entity = await this._dbContext.GetSource(model.ProductId, model.Name);
 
-            await this._dbContext.SaveChangesAsync();
+            if (entity == null) {
+                var product = await this._dbContext.Products.SingleAsync(c => c.Id == model.ProductId);
+                entity = SourceEntity.Factory.Create(product, model.Name, this._datetimeGateway.GetCurrentDateTime(), createdBy);
+                await this._dbContext.AddAsync(entity);
+                await this._dbContext.SaveChangesAsync();
+            }
 
-            result.AddResult("Id", entity.Id);
-
-            return result;
+            return this._mapper.Map<SourceGetListRp>(entity);
         }
 
         public async Task<SourceGetRp> GetByName(int productId, string name)

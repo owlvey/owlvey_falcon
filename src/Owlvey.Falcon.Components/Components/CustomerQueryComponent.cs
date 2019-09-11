@@ -16,9 +16,13 @@ namespace Owlvey.Falcon.Components
 {
     public class CustomerQueryComponent : BaseComponent
     {
-        private readonly FalconDbContext _dbContext;        
-        public CustomerQueryComponent(FalconDbContext dbContext, IMapper mapper, IDateTimeGateway dateTimeGateway, IUserIdentityGateway identityService) : base(dateTimeGateway, mapper, identityService)
-        {            
+        private readonly FalconDbContext _dbContext;
+        private readonly SquadQueryComponent _squadQueryComponent;
+        public CustomerQueryComponent(FalconDbContext dbContext, IMapper mapper,
+            IDateTimeGateway dateTimeGateway, IUserIdentityGateway identityService,
+            SquadQueryComponent squadQueryComponent) : base(dateTimeGateway, mapper, identityService)
+        {
+            this._squadQueryComponent = squadQueryComponent;
             this._dbContext = dbContext;
         }
 
@@ -129,5 +133,69 @@ namespace Owlvey.Falcon.Components
             }
             return result;
         }
+
+
+        public async Task<GraphGetRp> GetSquadsGraph(int customerId, DateTime start, DateTime end)
+        {
+            GraphGetRp result = new GraphGetRp();
+            var root = await this.GetCustomerById(customerId);
+            result.Name = root.Name;
+            result.Id = root.Id;
+            result.Avatar = root.Avatar;
+            
+            var squads = await this._dbContext.Squads.Where(c => c.Customer.Id.Equals(customerId)).ToListAsync();
+            var squadsDetail = new List<SquadGetDetailRp>();
+
+            foreach (var item in squads)
+            {
+                var detail = await this._squadQueryComponent.GetSquadByIdWithAvailability(item.Id.Value, start, end);
+                squadsDetail.Add(detail);
+            }                       
+
+            foreach (var node in squadsDetail)
+            {
+                var snode = new GraphNode
+                {
+                    Id = string.Format("squad_{0}", node.Id),
+                    Avatar = node.Avatar,
+                    Name = node.Name,
+                    Value = node.Points,
+                    Group = "squads",                    
+                };
+                result.Nodes.Add(snode);
+                                               
+                foreach (var feature in node.Features)
+                {
+                    var feature_id = string.Format("feature_{0}", feature.Id);
+                    var fnode = result.Nodes.SingleOrDefault(c => c.Id == feature_id);
+                    if (fnode == null)
+                    {
+                        fnode = new GraphNode
+                        {
+                            Id = feature_id,
+                            Avatar = feature.Avatar,
+                            Name = feature.Name,
+                            Value = feature.Availability,
+                            Group = string.Format("features_{0}", feature.Product),                            
+                        };
+                        result.Nodes.Add(fnode);
+
+                    }                    
+                    var edge_squad_feature = result.Edges.Where(c => c.From == snode.Id && c.To == fnode.Id).SingleOrDefault();
+                    if (edge_squad_feature == null) {
+                        var fedge = new GraphEdge()
+                        {
+                            From = snode.Id,
+                            To = fnode.Id,
+                            Value = feature.Points
+                        };
+                        result.Edges.Add(fedge);
+                    }
+                }
+            }
+            return result;
+        }
+
+
     }
 }

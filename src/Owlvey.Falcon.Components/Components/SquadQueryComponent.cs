@@ -77,6 +77,7 @@ namespace Owlvey.Falcon.Components
                         ProductId = service.ProductId,
                         Product = service.Product.Name,
                         ServiceId = service.Id.Value,
+                        ServiceAvatar = service.Avatar,
                         Service = service.Name,
                         SLO = service.Slo,
                         Name = feature.Name,
@@ -115,6 +116,7 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<SquadGetListRp>>(entities);
         }
 
+        
         public async Task<IEnumerable<SquadGetListRp>> GetSquadsWithPoints(int customerId, 
             DateTime start, 
             DateTime end)

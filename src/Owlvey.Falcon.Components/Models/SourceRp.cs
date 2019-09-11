@@ -15,7 +15,6 @@ namespace Owlvey.Falcon.Models
         public DateTime? CreatedOn { get; set; }
         public string GoodDefinition { get; set; }
         public string TotalDefinition { get; set; }
-
         public decimal Availability { get; set; }
     }
     public class SourceLitRp: SourceBaseRp {

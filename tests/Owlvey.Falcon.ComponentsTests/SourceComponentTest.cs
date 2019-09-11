@@ -7,6 +7,26 @@ namespace Owlvey.Falcon.ComponentsTests
 {
     public class SourceComponentTest
     {
+
+        [Fact]
+        public async Task SourceIdempotenceTest()
+        {
+            var container = ComponentTestFactory.BuildContainer();
+            var (_, product) = await ComponentTestFactory.BuildCustomerProduct(container);
+            var component = container.GetInstance<SourceComponent>();
+            var result = await component.Create(new Models.SourcePostRp()
+            {
+                Name = "test",
+                ProductId = product
+            });
+            var result2 = await component.Create(new Models.SourcePostRp()
+            {
+                Name = "test",
+                ProductId = product
+            });
+            Assert.Equal(result.Id, result2.Id);
+        }
+
         [Fact]
         public async Task SourceMaintenanceSuccess()
         {

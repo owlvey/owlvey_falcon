@@ -69,7 +69,7 @@ namespace Owlvey.Falcon.Components
                     Id = string.Format("service_{0}", service.Id),
                     Avatar = service.Avatar,
                     Name = service.Name,
-                    Availability = service.Availability,
+                    Value = service.Availability,
                     Group = "services",
                     Slo = service.SLO,
                     Importance = AvailabilityUtils.MeasureImpact(service.SLO),
@@ -89,7 +89,7 @@ namespace Owlvey.Falcon.Components
                             Id = Id,
                             Avatar = feature.Avatar,
                             Name = feature.Name,
-                            Availability = feature.Availability,
+                            Value = feature.Availability,
                             Group = "features"
                         };
                         result.Nodes.Add(fnode);
@@ -98,8 +98,10 @@ namespace Owlvey.Falcon.Components
                     {
                         From = snode.Id,
                         To = fnode.Id,
-                        Budget = fnode.Availability - (decimal)snode.Slo,
-                        Availability = fnode.Availability
+                        Value = fnode.Value - (decimal)snode.Slo,
+                        Tags = new Dictionary<string, object>() {                            
+                            { "Availability", fnode.Value }
+                        }                                                 
                     };
                     result.Edges.Add(fedge);
                 }

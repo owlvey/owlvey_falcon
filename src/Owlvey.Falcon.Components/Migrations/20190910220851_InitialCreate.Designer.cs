@@ -9,7 +9,7 @@ using Owlvey.Falcon.Repositories;
 namespace Owlvey.Falcon.Migrations
 {
     [DbContext(typeof(FalconDbContext))]
-    [Migration("20190909114655_InitialCreate")]
+    [Migration("20190910220851_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -333,7 +333,7 @@ namespace Owlvey.Falcon.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
-                    b.Property<int?>("ProductId");
+                    b.Property<int>("ProductId");
 
                     b.Property<string>("Tags");
 
@@ -558,7 +558,8 @@ namespace Owlvey.Falcon.Migrations
                 {
                     b.HasOne("Owlvey.Falcon.Core.Entities.ProductEntity", "Product")
                         .WithMany("Sources")
-                        .HasForeignKey("ProductId");
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.SourceItemEntity", b =>

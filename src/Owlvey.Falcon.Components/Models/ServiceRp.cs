@@ -67,12 +67,7 @@ namespace Owlvey.Falcon.Models
         public string Name { get; set; }
 
         [Required]
-        public int ProductId { get; set; }
-
-        [Required]
-        public decimal? Slo { get; set; }
-
-        public string Description { get; set; }
+        public int ProductId { get; set; }        
     }
 
     public class ServicePutRp
