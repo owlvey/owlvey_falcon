@@ -19,7 +19,11 @@ namespace Owlvey.Falcon.Components
             cfg.CreateMap<FeatureEntity, Models.FeatureGetRp>()
                 .ForMember(c => c.Availability, opt => opt.Ignore())
                 .ForMember(c => c.Squads, opt => opt.MapFrom(c=>c.Squads.Select(d=>d.Squad)));
-            cfg.CreateMap<FeatureEntity, Models.FeatureLiteRp>();            
+            cfg.CreateMap<FeatureEntity, Models.FeatureLiteRp>();
+
+            cfg.CreateMap<FeatureEntity, Models.FeatureMigrateRp>();
+
+
         }
     }
 }

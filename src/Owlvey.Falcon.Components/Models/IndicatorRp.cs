@@ -5,7 +5,10 @@ namespace Owlvey.Falcon.Models
     {
         public int Id { get; set; }        
     }
-
+    public class IndicatorMigrateRp {
+        public string Source { get; set; }
+        public string Feature { get; set; }
+    }
     public class IndicatorGetRp : IndicatorBaseRp
     {
         public string CreatedBy { get; set; }

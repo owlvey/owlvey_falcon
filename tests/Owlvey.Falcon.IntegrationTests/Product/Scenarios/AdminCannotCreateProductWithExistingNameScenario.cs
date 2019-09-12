@@ -42,7 +42,7 @@ namespace Owlvey.Falcon.IntegrationTests.Product.Scenarios
         [Then("The Product was ok")]
         public void then_created()
         {
-            Assert.Equal(StatusCodes.Status200OK, (int)responsePost.StatusCode);            
+            Assert.Equal(StatusCodes.Status201Created, (int)responsePost.StatusCode);            
         }
         
         public void Dispose()

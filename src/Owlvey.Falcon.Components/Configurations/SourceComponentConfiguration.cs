@@ -14,6 +14,7 @@ namespace Owlvey.Falcon.Components
             cfg.CreateMap<SourceEntity, Models.SourceGetListRp>().ForMember(c => c.Availability, opt => opt.Ignore());
             cfg.CreateMap<SourceEntity, Models.SourceGetRp>().ForMember(c => c.Availability, opt => opt.Ignore());  
             cfg.CreateMap<SourceEntity, Models.SourceLitRp>();
+            cfg.CreateMap<SourceEntity, Models.SourceMigrateRp>();
         }
     }
 }

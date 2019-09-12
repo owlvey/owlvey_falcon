@@ -23,7 +23,8 @@ namespace Owlvey.Falcon.Components
                 .ForMember(d => d.Points, m => m.Ignore())
                 .ForMember(d => d.Features, m => m.Ignore());
 
-            
+            cfg.CreateMap<SquadEntity, Models.SquadMigrationRp>();
+
         }
     }
 }

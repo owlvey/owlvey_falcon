@@ -8,6 +8,10 @@ namespace Owlvey.Falcon.Models
         public int Id { get; set; }
     }
 
+    public class ServiceMapMigrateRp {
+        public string Service { get; set; }
+        public string Feature { get; set; }
+    }
     public class ServiceMapGetRp : ServiceMapBaseRp
     {
         public string CreatedBy { get; set; }

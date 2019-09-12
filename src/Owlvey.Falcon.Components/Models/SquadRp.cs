@@ -17,6 +17,12 @@ namespace Owlvey.Falcon.Models
         public DateTime? CreatedOn { get; set; }
     }
 
+    public class SquadMigrationRp {
+        public string Name { get; set; }
+        public string Description { get; set; }                   
+        public string Avatar { get; set; }
+    }
+
     public class SquadGetRp : SquadBaseRp {
         public IEnumerable<UserGetListRp> Members { get; set; } = new List<UserGetListRp>();
         public IEnumerable<FeatureGetListRp> Features { get; set; } = new List<FeatureGetListRp>();

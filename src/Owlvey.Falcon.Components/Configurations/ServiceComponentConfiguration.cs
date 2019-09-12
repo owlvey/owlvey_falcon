@@ -20,6 +20,8 @@ namespace Owlvey.Falcon.Components
             cfg.CreateMap<ServiceEntity, Models.ServiceGetRp>()
                 .ForMember(m=>m.Features, ope=> ope.Ignore())
                 .ForMember(m => m.Availability, ope => ope.Ignore());
+
+            cfg.CreateMap<ServiceEntity, Models.ServiceMigrateRp>();
         }
     }
 }

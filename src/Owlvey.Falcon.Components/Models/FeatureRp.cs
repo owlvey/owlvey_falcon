@@ -17,6 +17,16 @@ namespace Owlvey.Falcon.Models
         public decimal MTBF { get; set; }
     }
 
+    public class FeatureMigrateRp  {
+        public string Name { get; set; }
+        public string Avatar { get; set; }
+        public string Description { get; set; }        
+        public decimal MTTD { get; set; }
+        public decimal MTTR { get; set; }
+        public decimal MTTF { get; set; }
+        public decimal MTBF { get; set; }        
+    }
+
     public class FeatureLiteRp : FeatureBaseRp {
         
     }

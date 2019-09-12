@@ -25,6 +25,14 @@ namespace Owlvey.Falcon.Models
 
     }
 
+    public class ServiceMigrateRp {
+        public string Name { get; set; }
+        public string Avatar { get; set; }
+        public string Description { get; set; }
+        public decimal SLO { get; set; }
+        public string ProductName { get; set; }
+    }
+
     public class ServiceGetRp : ServiceBaseRp {
         public IEnumerable<FeatureGetListRp> Features { get; set; } = new List<FeatureGetListRp>();
         public decimal Availability { get; set; }        

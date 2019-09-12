@@ -17,6 +17,12 @@ namespace Owlvey.Falcon.Models
         public DateTime? CreatedOn { get; set; }
     }
 
+    public class ProductMigrationRp {        
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Avatar { get; set; }                
+    }
+
     public class ProductGetRp : ProductBaseRp {
         public IEnumerable<ServiceGetListRp> Services { get; set; } = new List<ServiceGetListRp>();
     }
