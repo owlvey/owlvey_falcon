@@ -71,25 +71,25 @@ namespace Owlvey.Falcon.ComponentsTests
             });
             var feature = response.GetResult<int>("Id");
 
-            var squadResponse = await squadComponent.CreateSquad(new Models.SquadPostRp()
+            var squad = await squadComponent.CreateSquad(new Models.SquadPostRp()
             {
                 Name = "test",
                 CustomerId = customer
             });
 
-            var squad = squadResponse.GetResult<int>("Id");
+            
 
             await featureComponent.RegisterSquad(new Models.SquadFeaturePostRp()
             {
                 FeatureId = feature,
-                SquadId = squad
+                SquadId = squad.Id
             });
 
             var detail = await featureQueryComponent.GetFeatureByIdWithAvailability(feature, OwlveyCalendar.January201903, OwlveyCalendar.January201906);
 
             Assert.NotEmpty(detail.Squads);
 
-            var squadDetail = await squadQueryComponent.GetSquadById(squad);
+            var squadDetail = await squadQueryComponent.GetSquadById(squad.Id);
 
             Assert.NotEmpty(squadDetail.Features);                       
 

@@ -125,7 +125,7 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
                     }
                 }
             };
-            customer.Squads = new List<Core.Entities.SquadEntity> {
+            customer.Squads = new List<SquadEntity> {
                 SquadEntity.Factory.Create("Default Squad", DateTime.UtcNow, "user", customer)};
             
             dbContext.Customers.Add(customer);

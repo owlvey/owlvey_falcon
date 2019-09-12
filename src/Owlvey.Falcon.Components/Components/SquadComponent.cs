@@ -28,27 +28,31 @@ namespace Owlvey.Falcon.Components
         /// </summary>
         /// <param name="model">Squad Model</param>
         /// <returns></returns>
-        public async Task<BaseComponentResultRp> CreateSquad(SquadPostRp model)
-        {
-            var result = new BaseComponentResultRp();
+        public async Task<SquadGetRp> CreateSquad(SquadPostRp model)
+        {            
             var createdBy = this._identityService.GetIdentity();
-            var customer = await this._dbContext.Customers.Include(c=> c.Squads).SingleAsync(c => c.Id == model.CustomerId);
-
-            // Validate if the resource exists.
-            if (customer.Squads.Any(c => c.Name.Equals(model.Name)))
-            {
-                result.AddConflict($"The Resource {model.Name} has already been taken.");
-                return result;
-            }
-
+            var customer = await this._dbContext.Customers.Where(c => c.Id == model.CustomerId).SingleAsync();
+                                   
             var entity = SquadEntity.Factory.Create(model.Name, this._datetimeGateway.GetCurrentDateTime(), createdBy, customer);
             this._dbContext.Squads.Add(entity);
-            await this._dbContext.SaveChangesAsync();
+            await this._dbContext.SaveChangesAsync();            
 
-            result.AddResult("Id", entity.Id);
-
-            return result;
+            return this._mapper.Map< SquadGetRp>(entity);
         }
+
+        public async Task<SquadGetRp> CreateOrUpdate(CustomerEntity customer, string name, string description, string avatar) {
+            var createdBy = this._identityService.GetIdentity();
+            this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
+            var entity = await this._dbContext.Squads.Where(c => c.CustomerId == customer.Id && c.Name == name).SingleOrDefaultAsync();
+            if (entity == null) {
+                entity = SquadEntity.Factory.Create(name, this._datetimeGateway.GetCurrentDateTime(), createdBy, customer);
+            }
+            entity.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, name, description, avatar);
+            this._dbContext.Squads.Update(entity);
+            await this._dbContext.SaveChangesAsync();
+            return this._mapper.Map<SquadGetRp>(entity);           
+        }
+
 
         /// <summary>
         /// Delete Squad

@@ -48,7 +48,9 @@ namespace Owlvey.Falcon.IoC
 
             services.AddTransient<MemberComponent>();
             services.AddTransient<MemberQueryComponent>();
-            
+
+            services.AddTransient<MigrationComponent>();
+
             // Gateways
             services.AddTransient<IDateTimeGateway, DateTimeGateway>();
 

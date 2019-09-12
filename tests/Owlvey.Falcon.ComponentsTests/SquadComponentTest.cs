@@ -47,7 +47,7 @@ namespace Owlvey.Falcon.ComponentsTests
                 CustomerId = customer
             });
 
-            var squad = await squadQueryComponent.GetSquadById(squadResponse.GetResult<int>("Id"));                        
+            var squad = await squadQueryComponent.GetSquadById(squadResponse.Id);                        
 
             var feature = await ComponentTestFactory.BuildFeature(container, product);
 
@@ -111,7 +111,7 @@ namespace Owlvey.Falcon.ComponentsTests
                 CustomerId = customer
             });
 
-            var squad =  await squadQueryComponent.GetSquadById(squadResponse.GetResult<int>("Id"));
+            var squad =  await squadQueryComponent.GetSquadById(squadResponse.Id);
 
             var userComponent = container.GetInstance<UserComponent>();
             var userQueryComponent = container.GetInstance<UserQueryComponent>();

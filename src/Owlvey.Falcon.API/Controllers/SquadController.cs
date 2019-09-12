@@ -91,16 +91,9 @@ namespace Owlvey.Falcon.API.Controllers
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._squadService.CreateSquad(resource);
-
-            if (response.HasConflicts()) {
-                return this.Conflict(response.GetConflicts());
-            }
-
-            var id = response.GetResult<int>("Id");
-            var newResource = await this._squadQueryService.GetSquadById(id);
-
-            return this.Created(Url.RouteUrl("GetSquadId", new { id = id }), newResource);
+            var response = await this._squadService.CreateSquad(resource);            
+            
+            return this.Created(Url.RouteUrl("GetSquadId", new { id = response.Id }), response);
         }
 
 

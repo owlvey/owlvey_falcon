@@ -39,10 +39,10 @@ namespace Owlvey.Falcon.IntegrationTests.Squad.Scenarios
             responsePost = _client.PostAsync($"/Squads", jsonContent).Result;
         }
 
-        [Then("The Squad was rejected")]
+        [Then("The Squad was acapted")]
         public void then_created()
         {
-            Assert.Equal(StatusCodes.Status409Conflict, (int)responsePost.StatusCode);
+            Assert.Equal(StatusCodes.Status201Created, (int)responsePost.StatusCode);
             
         }
         

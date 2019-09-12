@@ -18,8 +18,8 @@ namespace Owlvey.Falcon.API.Controllers
         private readonly ProductQueryComponent _productQueryComponent;
 
         public CustomerController(CustomerQueryComponent CustomerQueryService,
-                                    CustomerComponent CustomerService,
-                                    ProductQueryComponent productQueryComponent) : base()
+                                  CustomerComponent CustomerService,
+                                  ProductQueryComponent productQueryComponent) : base()
         {
             this._productQueryComponent = productQueryComponent;
             this._customerQueryService = CustomerQueryService;
@@ -168,7 +168,7 @@ namespace Owlvey.Falcon.API.Controllers
         }
 
 
-        #region reports
+        
 
         [HttpGet("{id}/squads/reports/graph")]
         [ProducesResponseType(typeof(GraphGetRp), 200)]
@@ -186,41 +186,6 @@ namespace Owlvey.Falcon.API.Controllers
 
         }
 
-        [HttpGet("{id}/export/metadata/excel")]
-        public async Task<IActionResult> GetExportMetadataExcel(int id)
-        {
-            var (customer, stream) = await this._customerQueryService.ExportMetadataExcel(id);
-                        
-            string excelName = $"{customer.Name}-metadata-{DateTime.Now.ToString("yyyyMMdd")}.xlsx";
-
-            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
-        }
-
-
-        [HttpPost("{id}/import/metadata/excel")]
-        public async Task<IActionResult> PostImportMetadataExcel(int id,
-            FileUploadRp file)
-        {
-            //var filePath = "/Users/Gregory/Documents/demo.xlsx";
-
-            MemoryStream excelStream = new MemoryStream();
-
-            file.Data.CopyTo(excelStream);
-
-            var i = this._customerQueryService.ImportMetadata(id, excelStream);
-
-            /*
-            if (file.Data.Length > 0)
-            {
-                using (var stream = new FileStream(filePath, FileMode.Append))
-                {
-                    await file.Data.CopyToAsync(stream);
-                }
-            }
-            */
-            return Ok(new { count = i, file.Data.Length });
-        }
-
-        #endregion
+        
     }
 }
