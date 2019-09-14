@@ -9,6 +9,7 @@ namespace Owlvey.Falcon.Models
     }
 
     public class ServiceMapMigrateRp {
+        public string Product { get; set; }
         public string Service { get; set; }
         public string Feature { get; set; }
     }

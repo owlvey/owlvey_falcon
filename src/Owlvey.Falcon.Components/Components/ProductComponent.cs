@@ -25,7 +25,21 @@ namespace Owlvey.Falcon.Components
             this._dbContext = dbContext;
             
         }
-        
+
+        public async Task<ProductGetListRp> CreateOrUpdate(CustomerEntity customer, string name, string description, string avatar) {
+            var createdBy = this._identityService.GetIdentity();
+            this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
+            var entity = await this._dbContext.Products.Where(c => c.CustomerId == customer.Id && c.Name == name).SingleOrDefaultAsync();
+            if (entity == null)
+            {
+                entity = ProductEntity.Factory.Create(name, this._datetimeGateway.GetCurrentDateTime(), createdBy, customer);
+            }
+            entity.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, name, description, avatar);
+            this._dbContext.Products.Update(entity);
+            await this._dbContext.SaveChangesAsync();
+            return this._mapper.Map<ProductGetListRp>(entity);
+        }
+
         public async Task<ProductGetListRp> CreateProduct(ProductPostRp model)
         {            
             var createdBy = this._identityService.GetIdentity();
@@ -100,10 +114,8 @@ namespace Owlvey.Falcon.Components
                     return result;
                 }
             }
-           
-            product.Name = model.Name ?? product.Name;
-            product.Description = model.Description ?? product.Description;
-            product.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy);
+                       
+            product.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, name: model.Name, description: model.Description, null);
 
             this._dbContext.Update(product);
 

@@ -32,26 +32,11 @@ namespace Owlvey.Falcon.API.Controllers
         [HttpPost("{id}/import/metadata/excel")]
         public async Task<IActionResult> PostImportMetadataExcel(int id, FileUploadRp file)
         {
-            //var filePath = "/Users/Gregory/Documents/demo.xlsx";
-
-            MemoryStream excelStream = new MemoryStream();
-
-            file.Data.CopyTo(excelStream);
-
-            var i = this._migrationComponent.ImportMetadata(id, excelStream);
-
-            /*
-            if (file.Data.Length > 0)
-            {
-                using (var stream = new FileStream(filePath, FileMode.Append))
-                {
-                    await file.Data.CopyToAsync(stream);
-                }
+            using (MemoryStream excelStream = new MemoryStream()) {
+                file.Data.CopyTo(excelStream);
+                var logs = await this._migrationComponent.ImportMetadata(id, excelStream);
+                return Ok(logs);                
             }
-            */
-            return Ok(new { count = i, file.Data.Length });
         }
-
-
     }
 }

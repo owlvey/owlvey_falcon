@@ -32,6 +32,18 @@ namespace Owlvey.Falcon.Components
             return result;
         }
 
+        public async Task Create(int customerId, string product, string source, string feature)
+        {
+            var productEntity = await this._dbContext.Products.Where(c => c.CustomerId == customerId && c.Name == product).SingleAsync();
+            var sourceEntity = await this._dbContext.Sources.Where(c => c.ProductId == productEntity.Id && c.Name == source).SingleAsync();
+            var featureEntity = await this._dbContext.Features.Where(c => c.ProductId == productEntity.Id && c.Name == feature).SingleAsync();
+            await this.Create(new IndicatorPostRp
+            {                 
+                 FeatureId = featureEntity.Id.Value,
+                 SourceId = sourceEntity.Id.Value,
+            });
+        }
+
         public async Task<BaseComponentResultRp> Create(IndicatorPostRp model)
         {
             var result = new BaseComponentResultRp();

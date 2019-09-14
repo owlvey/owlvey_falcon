@@ -6,6 +6,7 @@ namespace Owlvey.Falcon.Models
         public int Id { get; set; }        
     }
     public class IndicatorMigrateRp {
+        public string Product { get; set; }
         public string Source { get; set; }
         public string Feature { get; set; }
     }

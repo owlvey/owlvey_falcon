@@ -23,6 +23,26 @@ namespace Owlvey.Falcon.Components
             this._dbContext = dbContext;
             
         }
+        
+
+        public async Task<FeatureGetListRp> CreateOrUpdate(CustomerEntity customer,
+            string product,
+            string name, string description, string avatar,
+            decimal mttd, decimal mttr, decimal mttf)
+        {
+            var createdBy = this._identityService.GetIdentity();
+            this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
+            var entity = await this._dbContext.Features.Where(c=> c.ProductId == customer.Id && c.Product.Name == product && c.Name == name).SingleOrDefaultAsync();
+            if (entity == null)
+            {
+                var productEntity = await this._dbContext.Products.Where(c => c.CustomerId == customer.Id && c.Name == product).SingleAsync();
+                entity = FeatureEntity.Factory.Create(name, this._datetimeGateway.GetCurrentDateTime(), createdBy, productEntity);
+            }
+            entity.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, name, avatar, description, mttd, mttr, mttf);
+            this._dbContext.Features.Update(entity);
+            await this._dbContext.SaveChangesAsync();
+            return this._mapper.Map<FeatureGetListRp>(entity);
+        }
 
         /// <summary>
         /// Create a new Feature

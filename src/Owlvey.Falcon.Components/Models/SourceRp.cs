@@ -24,6 +24,7 @@ namespace Owlvey.Falcon.Models
         public string Avatar { get; set; }
         public string GoodDefinition { get; set; }
         public string TotalDefinition { get; set; }
+        public string ProductName { get; set; }
     }
 
     public class SourceGetListRp : SourceLitRp

@@ -39,19 +39,20 @@ namespace Owlvey.Falcon.Core.Entities
         public int ProductId { get; set; }
         
         public virtual ICollection<IndicatorEntity> Indicators { get; set; } = new List<IndicatorEntity>();
+
         public virtual ICollection<SourceItemEntity> SourceItems { get; set; } = new List<SourceItemEntity>();
-
-
+        
         public virtual void Update(
             string name, string avatar,
-            string goodDefinition, string totalDefinition,
-            DateTime on, string modifiedBy)
+            string goodDefinition, string totalDefinition,            
+            DateTime on, string modifiedBy, string tags = null)
         {
             this.Name = string.IsNullOrWhiteSpace(name) ? this.Name : name;
             this.Avatar = string.IsNullOrWhiteSpace(avatar) ? this.Avatar : avatar;
             this.GoodDefinition = string.IsNullOrWhiteSpace(goodDefinition) ? this.GoodDefinition : goodDefinition;
             this.TotalDefinition = string.IsNullOrWhiteSpace(totalDefinition) ? this.TotalDefinition : totalDefinition;
             this.ModifiedOn = on;
+            this.Tags = tags ?? this.Tags;
             this.ModifiedBy = modifiedBy;
         }
     }

@@ -39,6 +39,7 @@ namespace Owlvey.Falcon.Core.Entities
         [Required]
         public decimal MTTF { get; set; }
 
+        //TODO: Error
         [NotMapped]
         public decimal MTBF
         {
@@ -62,7 +63,7 @@ namespace Owlvey.Falcon.Core.Entities
         public virtual ICollection<SquadFeatureEntity> Squads { get; set; } = new List<SquadFeatureEntity>(); 
         
         public virtual void Update(DateTime on, string modifiedBy, string name, string avatar , string description,
-            decimal? mttd, decimal? mttr)
+            decimal? mttd, decimal? mttr, decimal? mttf = null)
         {
             this.Name = string.IsNullOrWhiteSpace(name) ? this.Name : name;
             this.Avatar = string.IsNullOrWhiteSpace(avatar) ? this.Avatar : avatar;
@@ -71,7 +72,7 @@ namespace Owlvey.Falcon.Core.Entities
             this.ModifiedBy = modifiedBy;
             this.MTTD = mttd ?? this.MTTD;
             this.MTTR = mttr ?? this.MTTR;
-
+            this.MTTF = mttf ?? this.MTTF;
         }
 
     }

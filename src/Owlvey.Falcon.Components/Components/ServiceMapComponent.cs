@@ -8,7 +8,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.Core.Entities;
 using System.Collections.Generic;
-
+//
 namespace Owlvey.Falcon.Components
 {
     public class ServiceMapComponent : BaseComponent
@@ -30,6 +30,16 @@ namespace Owlvey.Falcon.Components
             return result;
         }
 
+        public async Task CreateServiceMap(int customerId, string product, string service, string feature ) {
+            var productEntity = await this._dbContext.Products.Where(c => c.CustomerId == customerId && c.Name == product).SingleAsync();
+            var serviceEntity = await this._dbContext.Services.Where(c => c.ProductId == productEntity.Id && c.Name == service).SingleAsync();
+            var featureEntity = await this._dbContext.Features.Where(c => c.ProductId == productEntity.Id && c.Name == feature).SingleAsync();
+            await this.CreateServiceMap(new ServiceMapPostRp() {
+                FeatureId = featureEntity.Id,
+                ServiceId = serviceEntity.Id });
+        }
+
+
         public async Task<BaseComponentResultRp> CreateServiceMap(ServiceMapPostRp model)
         {
             var result = new BaseComponentResultRp();
@@ -41,7 +51,7 @@ namespace Owlvey.Falcon.Components
                 return result;
             }
 
-            var service = await this._dbContext.Services.SingleAsync(c=>c.Id == model.ServiceId);
+            var service = await this._dbContext.Services.SingleAsync(c => c.Id == model.ServiceId);
             var feature = await this._dbContext.Features.SingleAsync(c => c.Id == model.FeatureId);
 
             var entity = ServiceMapEntity.Factory.Create(service, feature, this._datetimeGateway.GetCurrentDateTime(), createdBy);
