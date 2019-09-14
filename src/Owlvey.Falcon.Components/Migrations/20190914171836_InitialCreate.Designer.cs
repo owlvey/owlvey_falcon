@@ -9,7 +9,7 @@ using Owlvey.Falcon.Repositories;
 namespace Owlvey.Falcon.Migrations
 {
     [DbContext(typeof(FalconDbContext))]
-    [Migration("20190913211616_InitialCreate")]
+    [Migration("20190914171836_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -102,12 +102,6 @@ namespace Owlvey.Falcon.Migrations
                     b.Property<string>("Description")
                         .IsRequired();
 
-                    b.Property<decimal>("MTTD");
-
-                    b.Property<decimal>("MTTF");
-
-                    b.Property<decimal>("MTTR");
-
                     b.Property<string>("ModifiedBy")
                         .IsRequired();
 
@@ -126,6 +120,90 @@ namespace Owlvey.Falcon.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("FeatureEntity");
+                });
+
+            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.IncidentEntity", b =>
+                {
+                    b.Property<int?>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired();
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .IsRequired();
+
+                    b.Property<bool>("Deleted");
+
+                    b.Property<string>("Description")
+                        .IsRequired();
+
+                    b.Property<decimal>("MTTD");
+
+                    b.Property<decimal>("MTTE");
+
+                    b.Property<decimal>("MTTF");
+
+                    b.Property<decimal>("MTTM");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired();
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .IsRequired();
+
+                    b.Property<int?>("ProductId")
+                        .IsRequired();
+
+                    b.Property<int?>("ServiceMapEntityId");
+
+                    b.Property<string>("Tags");
+
+                    b.Property<string>("Title")
+                        .IsRequired();
+
+                    b.Property<string>("Url")
+                        .IsRequired();
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("ServiceMapEntityId");
+
+                    b.ToTable("IncidentEntity");
+                });
+
+            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.IncidentMapEntity", b =>
+                {
+                    b.Property<int?>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired();
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .IsRequired();
+
+                    b.Property<bool>("Deleted");
+
+                    b.Property<int>("FeatureId");
+
+                    b.Property<int>("IncidentId");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired();
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .IsRequired();
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FeatureId");
+
+                    b.HasIndex("IncidentId");
+
+                    b.ToTable("IncidentMapEntity");
                 });
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.IndicatorEntity", b =>
@@ -257,6 +335,9 @@ namespace Owlvey.Falcon.Migrations
                         .IsRequired();
 
                     b.Property<string>("Name")
+                        .IsRequired();
+
+                    b.Property<string>("Owner")
                         .IsRequired();
 
                     b.Property<int>("ProductId");
@@ -492,6 +573,31 @@ namespace Owlvey.Falcon.Migrations
                     b.HasOne("Owlvey.Falcon.Core.Entities.ProductEntity", "Product")
                         .WithMany("Features")
                         .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.IncidentEntity", b =>
+                {
+                    b.HasOne("Owlvey.Falcon.Core.Entities.ProductEntity", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Owlvey.Falcon.Core.Entities.ServiceMapEntity")
+                        .WithMany("Incidents")
+                        .HasForeignKey("ServiceMapEntityId");
+                });
+
+            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.IncidentMapEntity", b =>
+                {
+                    b.HasOne("Owlvey.Falcon.Core.Entities.FeatureEntity", "Feature")
+                        .WithMany("IncidentMap")
+                        .HasForeignKey("FeatureId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Owlvey.Falcon.Core.Entities.IncidentEntity", "Incident")
+                        .WithMany()
+                        .HasForeignKey("IncidentId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using System.Linq;
 
 namespace Owlvey.Falcon.Core.Entities
 {
@@ -29,26 +30,6 @@ namespace Owlvey.Falcon.Core.Entities
         public string Description { get; set; }
         [Required]
         public string Avatar { get; set; }
-        
-        [Required]
-        public decimal MTTD { get; set; }
-
-        [Required]
-        public decimal MTTR { get; set; }
-
-        [Required]
-        public decimal MTTF { get; set; }
-
-        //TODO: Error
-        [NotMapped]
-        public decimal MTBF
-        {
-            get
-            {
-                return this.MTTD + this.MTTR + this.MTTF;
-            }
-        }
-
 
         public int ProductId { get; set; }
 
@@ -60,20 +41,62 @@ namespace Owlvey.Falcon.Core.Entities
 
         public virtual ICollection<IndicatorEntity> Indicators { get; set; } = new List<IndicatorEntity>();
 
-        public virtual ICollection<SquadFeatureEntity> Squads { get; set; } = new List<SquadFeatureEntity>(); 
-        
-        public virtual void Update(DateTime on, string modifiedBy, string name, string avatar , string description,
-            decimal? mttd, decimal? mttr, decimal? mttf = null)
+        public virtual ICollection<SquadFeatureEntity> Squads { get; set; } = new List<SquadFeatureEntity>();
+
+        public virtual ICollection<IncidentMapEntity> IncidentMap { get; set; } = new List<IncidentMapEntity>();
+
+        public virtual void Update(DateTime on, string modifiedBy, string name, string avatar , string description)
         {
             this.Name = string.IsNullOrWhiteSpace(name) ? this.Name : name;
             this.Avatar = string.IsNullOrWhiteSpace(avatar) ? this.Avatar : avatar;
             this.Description = string.IsNullOrWhiteSpace(description) ? this.Description : description;
             this.ModifiedOn = on;
-            this.ModifiedBy = modifiedBy;
-            this.MTTD = mttd ?? this.MTTD;
-            this.MTTR = mttr ?? this.MTTR;
-            this.MTTF = mttf ?? this.MTTF;
+            this.ModifiedBy = modifiedBy;            
         }
 
+        [NotMapped]
+        public decimal MTTD { get {
+                if (this.IncidentMap.Count > 0)
+                {
+                    return Math.Ceiling(this.IncidentMap.Select(c => c.Incident).Average(c => c.MTTD));
+                }
+                return -1;                
+            } }
+        [NotMapped]
+        public decimal MTTE
+        {
+            get
+            {
+                if (this.IncidentMap.Count > 0)
+                {
+                    return Math.Ceiling(this.IncidentMap.Select(c => c.Incident).Average(c => c.MTTE));
+                }
+                return -1;
+            }
+        }
+        [NotMapped]
+        public decimal MTTF
+        {
+            get
+            {
+                if (this.IncidentMap.Count > 0)
+                {
+                    return Math.Ceiling(this.IncidentMap.Select(c => c.Incident).Average(c => c.MTTF));
+                }
+                return -1;
+            }
+        }
+        [NotMapped]
+        public decimal MTTM
+        {
+            get
+            {
+                if (this.IncidentMap.Count > 0)
+                {
+                    return Math.Ceiling(this.IncidentMap.Select(c => c.Incident).Average(c => c.MTTM));
+                }
+                return -1;
+            }
+        }
     }
 }

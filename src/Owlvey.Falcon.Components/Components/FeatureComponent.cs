@@ -32,13 +32,15 @@ namespace Owlvey.Falcon.Components
         {
             var createdBy = this._identityService.GetIdentity();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
-            var entity = await this._dbContext.Features.Where(c=> c.ProductId == customer.Id && c.Product.Name == product && c.Name == name).SingleOrDefaultAsync();
+            var entity = await this._dbContext.Features.Where(c=> c.Product.CustomerId == customer.Id &&
+                        c.Product.Name == product &&
+                        c.Name == name).SingleOrDefaultAsync();
             if (entity == null)
             {
                 var productEntity = await this._dbContext.Products.Where(c => c.CustomerId == customer.Id && c.Name == product).SingleAsync();
                 entity = FeatureEntity.Factory.Create(name, this._datetimeGateway.GetCurrentDateTime(), createdBy, productEntity);
             }
-            entity.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, name, avatar, description, mttd, mttr, mttf);
+            entity.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, name, avatar, description);
             this._dbContext.Features.Update(entity);
             await this._dbContext.SaveChangesAsync();
             return this._mapper.Map<FeatureGetListRp>(entity);
@@ -136,9 +138,7 @@ namespace Owlvey.Falcon.Components
             feature.Update(this._datetimeGateway.GetCurrentDateTime(),
                 createdBy, model.Name,
                 model.Avatar,
-                model.Description,
-                model.MTTD,
-                model.MTTR);
+                model.Description);
 
             this._dbContext.Features.Update(feature);
 

@@ -12,9 +12,9 @@ namespace Owlvey.Falcon.Models
         public string Description { get; set; }
         public int Id { get; set; }        
         public decimal MTTD { get; set; }        
-        public decimal MTTR { get; set; }        
+        public decimal MTTE { get; set; }        
         public decimal MTTF { get; set; }        
-        public decimal MTBF { get; set; }
+        public decimal MTTM { get; set; }
     }
 
     public class FeatureMigrateRp  {
@@ -22,9 +22,9 @@ namespace Owlvey.Falcon.Models
         public string Description { get; set; }
         public string Avatar { get; set; }            
         public decimal MTTD { get; set; }
-        public decimal MTTR { get; set; }
+        public decimal MTTE { get; set; }
         public decimal MTTF { get; set; }
-        public decimal MTBF { get; set; }
+        public decimal MTTM { get; set; }
         public string ProductName { get; set; }
     }
 

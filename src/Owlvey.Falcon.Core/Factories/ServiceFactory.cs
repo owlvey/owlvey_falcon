@@ -10,7 +10,6 @@ namespace Owlvey.Falcon.Core.Entities
 
             public static ServiceEntity Create(string name, DateTime on, string user, ProductEntity product)
             {
-
                 var entity = new ServiceEntity()
                 {
                     Name = name,                    
@@ -18,11 +17,11 @@ namespace Owlvey.Falcon.Core.Entities
                     Avatar = "https://cdn.iconscout.com/icon/free/png-256/avatar-375-456327.png",
                     CreatedBy = user,
                     ModifiedBy = user,
+                    Owner = user,
                     CreatedOn = on,
                     ModifiedOn = on,
                     Product = product                    
-                };
-                
+                };                
                 entity.Validate();
                 return entity;
             }

@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Builder;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -77,6 +78,7 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
             dbContext.Database.EnsureCreated();
 
             // Setup Default Data
+                       
 
             var customer = new Core.Entities.CustomerEntity
             {
@@ -114,6 +116,7 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
                                  Id = 9999,
                                 Description= "Default Service",
                                 Name = "Default Service",
+                                Owner = "test",
                                 Slo = 99,
                                 Avatar = "default",
                                 CreatedBy = "test",

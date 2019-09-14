@@ -101,7 +101,7 @@ namespace Owlvey.Falcon.Components
                 else {
                     tmp.Deploy = "forbiden";
                 }
-                if (tmp.BudgetMinutes >= tmp.MTTD + tmp.MTTR)
+                if (tmp.BudgetMinutes >= tmp.MTTM)
                 {
                     tmp.Risk = "low";
                 }

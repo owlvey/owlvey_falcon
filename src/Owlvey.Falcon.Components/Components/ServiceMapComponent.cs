@@ -8,6 +8,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.Core.Entities;
 using System.Collections.Generic;
+using System.Diagnostics;
 //
 namespace Owlvey.Falcon.Components
 {
@@ -33,10 +34,22 @@ namespace Owlvey.Falcon.Components
         public async Task CreateServiceMap(int customerId, string product, string service, string feature ) {
             var productEntity = await this._dbContext.Products.Where(c => c.CustomerId == customerId && c.Name == product).SingleAsync();
             var serviceEntity = await this._dbContext.Services.Where(c => c.ProductId == productEntity.Id && c.Name == service).SingleAsync();
-            var featureEntity = await this._dbContext.Features.Where(c => c.ProductId == productEntity.Id && c.Name == feature).SingleAsync();
-            await this.CreateServiceMap(new ServiceMapPostRp() {
-                FeatureId = featureEntity.Id,
-                ServiceId = serviceEntity.Id });
+            try
+            {
+                var featureEntity = await this._dbContext.Features.Where(c => c.ProductId == productEntity.Id && c.Name == feature).SingleAsync();
+
+                await this.CreateServiceMap(new ServiceMapPostRp()
+                {
+                    FeatureId = featureEntity.Id,
+                    ServiceId = serviceEntity.Id
+                });
+            }
+            catch (Exception)
+            {
+                Debugger.Break(); 
+                throw;
+            }
+            
         }
 
 

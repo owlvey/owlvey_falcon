@@ -32,6 +32,10 @@ namespace Owlvey.Falcon.Repositories
         public DbSet<SourceEntity> Sources { get; set; }
         public DbSet<SourceItemEntity> SourcesItems { get; set; }
         public DbSet<IndicatorEntity> Indicators { get; set; }
+
+        public DbSet<IncidentEntity> Incidents { get; set; }
+        public DbSet<IncidentMapEntity> IncidentMaps { get; set; }
+        
         public DbSet<MemberEntity> Members { get; set; }
  
 

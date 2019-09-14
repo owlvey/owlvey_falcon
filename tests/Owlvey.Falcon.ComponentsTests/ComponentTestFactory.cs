@@ -15,6 +15,7 @@ namespace Owlvey.Falcon.ComponentsTests
         public static DateTime StartJanuary2017 = new DateTime(2017, 01, 01);
         public static DateTime EndJanuary2017 = new DateTime(2017, 12, 31);
         public static DateTime StartJanuary2019 = new DateTime(2019, 01, 01);
+        public static DateTime StartJanuary2020 = new DateTime(2020, 01, 01);
         public static DateTime January201903 = new DateTime(2019, 01, 03);
         public static DateTime January201904 = new DateTime(2019, 01, 04);
         public static DateTime January201905 = new DateTime(2019, 01, 05);
@@ -49,6 +50,7 @@ namespace Owlvey.Falcon.ComponentsTests
                 CustomerComponentConfiguration.ConfigureMappers(cfg);
                 ProductComponentConfiguration.ConfigureMappers(cfg);
                 FeatureComponentConfiguration.ConfigureMappers(cfg);
+                IncidentComponentConfiguration.ConfigureMappers(cfg);
                 ServiceComponentConfiguration.ConfigureMappers(cfg);
                 UserComponentConfiguration.ConfigureMappers(cfg);
                 SquadComponentConfiguration.ConfigureMappers(cfg);

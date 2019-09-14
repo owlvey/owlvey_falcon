@@ -51,6 +51,8 @@ namespace Owlvey.Falcon.IoC
 
             services.AddTransient<MigrationComponent>();
 
+            services.AddTransient<IncidentComponent>();
+
             // Gateways
             services.AddTransient<IDateTimeGateway, DateTimeGateway>();
 
@@ -63,6 +65,7 @@ namespace Owlvey.Falcon.IoC
                 CustomerComponentConfiguration.ConfigureMappers(cfg);
                 ProductComponentConfiguration.ConfigureMappers(cfg);
                 FeatureComponentConfiguration.ConfigureMappers(cfg);
+                IncidentComponentConfiguration.ConfigureMappers(cfg);
                 ServiceComponentConfiguration.ConfigureMappers(cfg);
                 UserComponentConfiguration.ConfigureMappers(cfg);
                 SquadComponentConfiguration.ConfigureMappers(cfg);

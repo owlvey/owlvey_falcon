@@ -19,9 +19,9 @@ namespace Owlvey.Falcon.Models
         public DateTime? CreatedOn { get; set; }
         
         public decimal MTTD { get; set; }        
-        public decimal MTTR { get; set; }        
+        public decimal MTTE { get; set; }        
         public decimal MTTF { get; set; }
-        public decimal MTBF { get; set; }
+        public decimal MTTM { get; set; }
 
     }
 

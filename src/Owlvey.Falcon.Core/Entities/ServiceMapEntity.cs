@@ -11,5 +11,7 @@ namespace Owlvey.Falcon.Core.Entities
         public virtual FeatureEntity Feature { get; set; }
         public int FeatureId { get; set; }
 
+        public virtual ICollection<IncidentEntity> Incidents { get; set; }
+        
     }
 }

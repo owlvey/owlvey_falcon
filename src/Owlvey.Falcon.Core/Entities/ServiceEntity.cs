@@ -15,7 +15,11 @@ namespace Owlvey.Falcon.Core.Entities
         public string Description { get; set; }
 
         [Required]
+        public string Owner { get; set; }
+
+        [Required]
         public decimal Slo { get; set; }
+       
 
         [NotMapped]
         public decimal MTTD { get {
@@ -27,10 +31,10 @@ namespace Owlvey.Falcon.Core.Entities
             } }
 
         [NotMapped]
-        public decimal MTTR { get {
+        public decimal MTTE { get {
                 if (this.FeatureMap.Count > 0)
                 {
-                    return Math.Ceiling(this.FeatureMap.Select(c => c.Feature).Average(c => c.MTTR));
+                    return Math.Ceiling(this.FeatureMap.Select(c => c.Feature).Average(c => c.MTTE));
                 }
                 return -1;
             } }
@@ -45,12 +49,16 @@ namespace Owlvey.Falcon.Core.Entities
             } }
 
         [NotMapped]
-        public decimal MTBF { get {
-                if (this.FeatureMap.Count > 0) {
-                    return  Math.Ceiling(this.FeatureMap.Select(c => c.Feature).Average(c => c.MTBF));
+        public decimal MTTM
+        {
+            get
+            {
+                if (this.FeatureMap.Count > 0)
+                {
+                    return Math.Ceiling(this.FeatureMap.Select(c => c.Feature).Average(c => c.MTTM));
                 }
-                return -1;                
-           }
+                return -1;
+            }
         }
 
         [Required]
