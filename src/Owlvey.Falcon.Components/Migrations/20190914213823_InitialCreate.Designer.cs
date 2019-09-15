@@ -9,7 +9,7 @@ using Owlvey.Falcon.Repositories;
 namespace Owlvey.Falcon.Migrations
 {
     [DbContext(typeof(FalconDbContext))]
-    [Migration("20190914171836_InitialCreate")]
+    [Migration("20190914213823_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -152,8 +152,7 @@ namespace Owlvey.Falcon.Migrations
                     b.Property<DateTime?>("ModifiedOn")
                         .IsRequired();
 
-                    b.Property<int?>("ProductId")
-                        .IsRequired();
+                    b.Property<int>("ProductId");
 
                     b.Property<int?>("ServiceMapEntityId");
 
@@ -579,7 +578,7 @@ namespace Owlvey.Falcon.Migrations
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.IncidentEntity", b =>
                 {
                     b.HasOne("Owlvey.Falcon.Core.Entities.ProductEntity", "Product")
-                        .WithMany()
+                        .WithMany("Incidents")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade);
 
