@@ -18,48 +18,7 @@ namespace Owlvey.Falcon.Core.Entities
         public string Owner { get; set; }
 
         [Required]
-        public decimal Slo { get; set; }
-       
-
-        [NotMapped]
-        public decimal MTTD { get {
-                if (this.FeatureMap.Count > 0)
-                {
-                    return  Math.Ceiling(this.FeatureMap.Select(c => c.Feature).Average(c => c.MTTD));
-                }
-                return -1;
-            } }
-
-        [NotMapped]
-        public decimal MTTE { get {
-                if (this.FeatureMap.Count > 0)
-                {
-                    return Math.Ceiling(this.FeatureMap.Select(c => c.Feature).Average(c => c.MTTE));
-                }
-                return -1;
-            } }
-
-        [NotMapped]
-        public decimal MTTF { get {
-                if (this.FeatureMap.Count > 0)
-                {
-                    return Math.Ceiling(this.FeatureMap.Select(c => c.Feature).Average(c => c.MTTF));
-                }
-                return -1;
-            } }
-
-        [NotMapped]
-        public decimal MTTM
-        {
-            get
-            {
-                if (this.FeatureMap.Count > 0)
-                {
-                    return Math.Ceiling(this.FeatureMap.Select(c => c.Feature).Average(c => c.MTTM));
-                }
-                return -1;
-            }
-        }
+        public decimal Slo { get; set; }       
 
         [Required]
         public string Avatar { get; set; }

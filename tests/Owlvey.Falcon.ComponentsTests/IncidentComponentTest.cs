@@ -20,13 +20,20 @@ namespace Owlvey.Falcon.ComponentsTests
 
             var (customer, product) = await ComponentTestFactory.BuildCustomerProduct(container);
 
-            var result = await component.Post(product, "test");
+            var result = await component.Post( new Models.IncidentPostRp() { ProductId = product, Title = "test" });
 
             var items = await component.Get(product, new PeriodValue(OwlveyCalendar.StartJanuary2019, OwlveyCalendar.StartJanuary2020));
-
             Assert.NotEmpty(items);
 
+            result = await component.Put(new Models.IncidentPutRp() {
+                 Id = result.Id,
+                 Title = "change",
+                  Description = "change"
+            });
 
+            var tmp = await component.Get(result.Id);
+            Assert.Equal("change", tmp.Title);
+            Assert.Equal("change", tmp.Description);
 
         }
     }

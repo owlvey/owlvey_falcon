@@ -10,21 +10,13 @@ namespace Owlvey.Falcon.Models
         public string Name { get; set; }
         public string Avatar { get; set; }
         public string Description { get; set; }
-        public int Id { get; set; }        
-        public decimal MTTD { get; set; }        
-        public decimal MTTE { get; set; }        
-        public decimal MTTF { get; set; }        
-        public decimal MTTM { get; set; }
+        public int Id { get; set; }                
     }
 
     public class FeatureMigrateRp  {
         public string Name { get; set; }
         public string Description { get; set; }
-        public string Avatar { get; set; }            
-        public decimal MTTD { get; set; }
-        public decimal MTTE { get; set; }
-        public decimal MTTF { get; set; }
-        public decimal MTTM { get; set; }
+        public string Avatar { get; set; }                    
         public string ProductName { get; set; }
     }
 
@@ -37,8 +29,14 @@ namespace Owlvey.Falcon.Models
         public DateTime? CreatedOn { get; set; }
         public int ProductId { get; set; }
         public decimal Availability { get; set; }
+        public int MTTM { get; set; }
+        public int MTTE { get; set; }
+        public int MTTD { get; set; }
+        public int MTTF { get; set; }
         public IEnumerable<IndicatorGetListRp> Indicators { get; set; } = new List<IndicatorGetListRp>();
         public IEnumerable<SquadGetListRp> Squads { get; set; } = new List<SquadGetListRp>();
+
+        public IEnumerable<IncidentGetListRp> Incidents { get; set; } = new List<IncidentGetListRp>();
     }
 
     public class FeatureGetListRp : FeatureBaseRp
@@ -49,6 +47,10 @@ namespace Owlvey.Falcon.Models
         public string Product { get; set; }
         public int IndicatorsCount { get; set; }
         public decimal Availability { get; set; }
+        public int MTTM { get; set; }
+        public int MTTE { get; set; }
+        public int MTTD { get; set; }
+        public int MTTF { get; set; }
     }
 
     public class FeatureBySquadRp : FeatureBaseRp

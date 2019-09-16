@@ -30,7 +30,7 @@ namespace Owlvey.Falcon.Models
         public string Description { get; set; }
         public string Avatar { get; set; }        
         public decimal SLO { get; set; }
-        public string ProductName { get; set; }
+        public string ProductName { get; set; }        
     }
 
     public class ServiceGetRp : ServiceBaseRp {
@@ -39,13 +39,7 @@ namespace Owlvey.Falcon.Models
         public decimal Budget { get {
                 return AvailabilityUtils.MeasureBudget(Availability, SLO);
             } }
-        public decimal BudgetMinutes
-        {
-            get
-            {
-                return AvailabilityUtils.MeasureBudgetInMinutes(this.Budget);
-            }
-        }
+        public decimal BudgetMinutes { get; set; }
     }
 
     public class ServiceGetListRp : ServiceBaseRp
@@ -61,13 +55,7 @@ namespace Owlvey.Falcon.Models
                 return AvailabilityUtils.MeasureBudget(Availability, SLO);
             }
         }
-        public decimal BudgetMinutes
-        {
-            get
-            {
-                return AvailabilityUtils.MeasureBudgetInMinutes(this.Budget);
-            }
-        }        
+        public decimal BudgetMinutes { get; set; }
     }
 
     public class ServicePostRp {

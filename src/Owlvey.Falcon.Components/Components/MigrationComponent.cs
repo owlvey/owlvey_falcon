@@ -97,13 +97,9 @@ namespace Owlvey.Falcon.Components
                 {
                     var name = featureSheet.Cells[row, 1].GetValue<string>();
                     var description = featureSheet.Cells[row, 2].GetValue<string>();
-                    var avatar = featureSheet.Cells[row, 3].GetValue<string>();
-                    var mttd = featureSheet.Cells[row, 4].GetValue<decimal>();
-                    var mttr = featureSheet.Cells[row, 5].GetValue<decimal>();
-                    var mttf = featureSheet.Cells[row, 6].GetValue<decimal>();
-                    var mtbf = featureSheet.Cells[row, 7].GetValue<decimal>();
-                    var product = featureSheet.Cells[row, 8].GetValue<string>();
-                    await this._featureComponent.CreateOrUpdate(customer, product, name, description, avatar, mttd, mttr, mttf);
+                    var avatar = featureSheet.Cells[row, 3].GetValue<string>();                    
+                    var product = featureSheet.Cells[row, 4].GetValue<string>();
+                    await this._featureComponent.CreateOrUpdate(customer, product, name, description, avatar);
                 }
 
                 var sourceSheet = package.Workbook.Worksheets["Sources"];                

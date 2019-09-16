@@ -27,8 +27,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<FeatureGetListRp> CreateOrUpdate(CustomerEntity customer,
             string product,
-            string name, string description, string avatar,
-            decimal mttd, decimal mttr, decimal mttf)
+            string name, string description, string avatar)
         {
             var createdBy = this._identityService.GetIdentity();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;

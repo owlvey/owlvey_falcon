@@ -80,11 +80,7 @@ namespace Owlvey.Falcon.Components
                         ServiceAvatar = service.Avatar,
                         Service = service.Name,
                         SLO = service.Slo,
-                        Name = feature.Name,
-                        MTTE = feature.MTTE,
-                        MTTD = feature.MTTD,
-                        MTTF = feature.MTTF,
-                        MTTM = feature.MTTM,
+                        Name = feature.Name,                        
                         Impact = AvailabilityUtils.MeasureImpact(service.Slo),
                         Points = AvailabilityUtils.MeasurePoints(service.Slo, availabilty)
                     };

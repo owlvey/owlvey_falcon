@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Owlvey.Falcon.Repositories.Features;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Core;
 using Owlvey.Falcon.Core.Aggregates;
@@ -42,13 +43,20 @@ namespace Owlvey.Falcon.Components
         public async Task<FeatureGetRp> GetFeatureByIdWithAvailability(int id, DateTime start, DateTime end)
         {
             FeatureCommonComponent common = new FeatureCommonComponent(this._dbContext, this._datetimeGateway);
-
+            
             var (entity, availability) = await common.GetFeatureByIdWithAvailability(id, start, end);
 
             var model = this._mapper.Map<FeatureGetRp>(entity);
 
             model.Availability = availability;
-
+            
+            model.Incidents = this._mapper.Map<IEnumerable<IncidentGetListRp>>(await this._dbContext.GetIncidentsByFeature(id, start, end));
+            if (model.Incidents.Count() > 0) {
+                model.MTTM = (int)model.Incidents.Average(c => c.TTM);
+                model.MTTE = (int)model.Incidents.Average(c => c.TTE);
+                model.MTTD = (int)model.Incidents.Average(c => c.TTD);
+                model.MTTF = (int)model.Incidents.Average(c => c.TTF);
+            }            
             return model;
         }        
 
@@ -104,13 +112,24 @@ namespace Owlvey.Falcon.Components
 
         public async Task<IEnumerable<FeatureGetListRp>> GetFeaturesWithAvailability(int productId, DateTime start, DateTime end)
         {
-            var entities = await this._dbContext.Features.Include(c => c.Indicators).ThenInclude(c=>c.Source).Where(c => c.Product.Id.Value.Equals(productId)).ToListAsync();
+            var entities = await this._dbContext.Features
+                .Include(c => c.IncidentMap).ThenInclude(c=> c.Incident)
+                .Include(c => c.Indicators).ThenInclude(c=>c.Source)
+                .Where(c => c.Product.Id.Value.Equals(productId)).ToListAsync();
             var result = new List<FeatureGetListRp>();
             var common = new FeatureCommonComponent(this._dbContext, this._datetimeGateway); 
             foreach (var feature in entities)
             {
                 var tmp = this._mapper.Map<FeatureGetListRp>(feature);                
                 tmp.Availability = await common.GetAvailabilityByFeature(feature, start, end);
+                var tmpIncidents = await this._dbContext.GetIncidentsByFeature(feature.Id.Value, start, end);
+                if (tmpIncidents.Count() > 0)
+                {
+                    tmp.MTTM = (int)tmpIncidents.Average(c => c.TTM);
+                    tmp.MTTD = (int)tmpIncidents.Average(c => c.TTD);
+                    tmp.MTTE = (int)tmpIncidents.Average(c => c.TTE);
+                    tmp.MTTF = (int)tmpIncidents.Average(c => c.TTF);
+                }                
                 result.Add(tmp);
             }
             return result.OrderBy(c=>c.Availability).ToList();
@@ -140,6 +159,14 @@ namespace Owlvey.Falcon.Components
             {
                 var tmp = this._mapper.Map<FeatureGetListRp>(feature);
                 tmp.Availability = await common.GetAvailabilityByFeature(feature, start, end);
+                var incidents = await this._dbContext.GetIncidentsByFeature(feature.Id.Value, start, end);
+                if (incidents.Count() > 0) {
+                    var (mttd, mtte, mttf, mttm) = (new IncidentMetricAggregate(incidents)).Metrics();
+                    tmp.MTTD = mttd;
+                    tmp.MTTE = mtte;
+                    tmp.MTTF = mttf;
+                    tmp.MTTM = mttm;
+                }
                 result.Add(tmp);
             }
             return result.OrderBy(c => c.Availability).ToList();            

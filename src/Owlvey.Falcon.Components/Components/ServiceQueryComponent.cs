@@ -7,6 +7,7 @@ using Owlvey.Falcon.Core.Entities;
 using Owlvey.Falcon.Gateways;
 using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Repositories;
+using Owlvey.Falcon.Repositories.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,35 +81,48 @@ namespace Owlvey.Falcon.Components
 
         public async Task<IEnumerable<ServiceGetListRp>> GetServicesWithAvailability(int productId, DateTime start,  DateTime end)
         {
-            var entity = await this._dbContext.Products.Include(c=>c.Services)
+            var entity = await this._dbContext.Products                
+                .Include(c=>c.Services)
                 .ThenInclude(c => c.FeatureMap)
-                .ThenInclude(c=>c.Feature)
-                .ThenInclude(c=>c.Indicators)
-                .ThenInclude(c=>c.Source)
+                .ThenInclude(c=>c.Feature)                   
+                .ThenInclude(c=>c.Indicators)                
+                .ThenInclude(c=>c.Source)                
                 .Where(c => c.Id.Equals(productId))
                 .FirstOrDefaultAsync();
 
             var result = new List<ServiceGetListRp>();
             foreach (var item in entity.Services)
-            {
+            {                   
+
                 var tmp =  this._mapper.Map<ServiceGetListRp>(item);                
                 tmp.Availability = await this.MeasureAvailability(item, start, end);
+                var incidents =  await this._dbContext.GetIncidentsByService(item.Id.Value, start, end);
+
+                if (incidents.Count() > 0) {
+                    var agg = new IncidentMetricAggregate(incidents);
+                    var (mttd, mtte, mttf, mttm) = agg.Metrics();
+                    tmp.MTTD = mttd;
+                    tmp.MTTE = mtte;
+                    tmp.MTTF = mttf;
+                    tmp.MTTM = mttm;
+                }
+
+                tmp.BudgetMinutes = AvailabilityUtils.MeasureBudgetInMinutes(tmp.Budget, start, end);
+
+                tmp.Risk = "low";
 
                 if (tmp.Budget > 0 )
                 {
                     tmp.Deploy = "allow";
+                    if (tmp.BudgetMinutes < tmp.MTTM)
+                    {
+                        tmp.Risk = "high";
+                    }
                 }
                 else {
                     tmp.Deploy = "forbiden";
-                }
-                if (tmp.BudgetMinutes >= tmp.MTTM)
-                {
-                    tmp.Risk = "low";
-                }
-                else
-                {
-                    tmp.Risk = "high";                    
-                }
+                    tmp.Risk = "high";
+                }                
                 result.Add(tmp);
             }
             return result;

@@ -31,12 +31,12 @@ namespace Owlvey.Falcon.Core
             return Math.Round((availability - SLO) * MeasureImpact(SLO), 2);
         }
 
-        public static decimal MeasureBudgetInMinutes(decimal budget) {
+        public static decimal MeasureBudgetInMinutes(decimal budget, DateTime start, DateTime end) {
             if (budget <= 0) return 0;
 
-            decimal minutes = 60 * 24;
+            var minutes = (decimal)end.Subtract(start).TotalMinutes;                                  
 
-            return Math.Floor(budget * minutes);
+            return Math.Floor( (minutes * budget) / 100m);
         }
         public static decimal MeasureBudget(decimal avaialbility, decimal slo) {
             return avaialbility - slo;

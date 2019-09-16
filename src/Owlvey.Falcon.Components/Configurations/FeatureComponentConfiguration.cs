@@ -14,10 +14,19 @@ namespace Owlvey.Falcon.Components
             cfg.CreateMap<FeatureEntity, Models.FeatureGetListRp>()
                 .ForMember(c => c.IndicatorsCount,opt => opt.MapFrom(d => d.Indicators.Count))
                 .ForMember(c => c.Availability, opt => opt.Ignore())
+                .ForMember(c => c.MTTM, opt => opt.Ignore())
+                .ForMember(c => c.MTTD, opt => opt.Ignore())
+                .ForMember(c => c.MTTE, opt => opt.Ignore())
+                .ForMember(c => c.MTTF, opt => opt.Ignore())
                 .ForMember(c => c.Product, opt => opt.MapFrom(c=> c.Product == null ? "": c.Product.Name));
 
             cfg.CreateMap<FeatureEntity, Models.FeatureGetRp>()
                 .ForMember(c => c.Availability, opt => opt.Ignore())
+                .ForMember(c => c.MTTM, opt => opt.Ignore() )
+                .ForMember(c => c.MTTD, opt => opt.Ignore())
+                .ForMember(c => c.MTTE, opt => opt.Ignore())
+                .ForMember(c => c.MTTF, opt => opt.Ignore())
+                .ForMember(c => c.Incidents, opt => opt.Ignore())
                 .ForMember(c => c.Squads, opt => opt.MapFrom(c=>c.Squads.Select(d=>d.Squad)));
             cfg.CreateMap<FeatureEntity, Models.FeatureLiteRp>();
 

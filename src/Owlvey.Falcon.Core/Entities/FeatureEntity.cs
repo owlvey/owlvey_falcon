@@ -55,45 +55,45 @@ namespace Owlvey.Falcon.Core.Entities
         }
 
         [NotMapped]
-        public decimal MTTD { get {
+        public int MTTD { get {
                 if (this.IncidentMap.Count > 0)
                 {
-                    return Math.Ceiling(this.IncidentMap.Select(c => c.Incident).Average(c => c.MTTD));
+                    return (int)Math.Ceiling(this.IncidentMap.Select(c => c.Incident).Average(c => c.TTD));
                 }
                 return -1;                
             } }
         [NotMapped]
-        public decimal MTTE
+        public int MTTE
         {
             get
             {
                 if (this.IncidentMap.Count > 0)
                 {
-                    return Math.Ceiling(this.IncidentMap.Select(c => c.Incident).Average(c => c.MTTE));
+                    return (int)Math.Ceiling(this.IncidentMap.Select(c => c.Incident).Average(c => c.TTE));
                 }
                 return -1;
             }
         }
         [NotMapped]
-        public decimal MTTF
+        public int MTTF
         {
             get
             {
                 if (this.IncidentMap.Count > 0)
                 {
-                    return Math.Ceiling(this.IncidentMap.Select(c => c.Incident).Average(c => c.MTTF));
+                    return (int)Math.Ceiling(this.IncidentMap.Select(c => c.Incident).Average(c => c.TTF));
                 }
                 return -1;
             }
         }
         [NotMapped]
-        public decimal MTTM
+        public int MTTM
         {
             get
             {
                 if (this.IncidentMap.Count > 0)
                 {
-                    return Math.Ceiling(this.IncidentMap.Select(c => c.Incident).Average(c => c.MTTM));
+                    return (int)Math.Ceiling(this.IncidentMap.Select(c => c.Incident).Average(c => c.TTM));
                 }
                 return -1;
             }

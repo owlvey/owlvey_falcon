@@ -20,11 +20,14 @@ namespace Owlvey.Falcon.Core.Entities
                       ModifiedBy = user,
                       ModifiedOn = on,
                       Tags = "",
-                      Url = "enter url",
-                      MTTD = 10,
-                      MTTE =  10,
-                      MTTF = 10,
-                      Product = product
+                      Url = "https://landing.google.com/sre/books/",
+                      TTD = 10,
+                      TTE =  10,
+                      TTF = 10,
+                      Start = on,
+                      End = on.AddMinutes(30),
+                      Product = product,
+                      Affected = 1
                 };
                 entity.Validate();
                 return entity;
