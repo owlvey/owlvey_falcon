@@ -52,6 +52,7 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok(model);
         }
 
+        //TODO Refactor and delete
         [HttpPost]
         [ProducesResponseType(typeof(IndicatorGetRp), 200)]
         [ProducesResponseType(409)]

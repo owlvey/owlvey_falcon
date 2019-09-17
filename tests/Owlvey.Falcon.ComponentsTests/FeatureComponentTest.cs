@@ -64,12 +64,11 @@ namespace Owlvey.Falcon.ComponentsTests
             var featureComponent = container.GetInstance<FeatureComponent>();
             var featureQueryComponent = container.GetInstance<FeatureQueryComponent>();
 
-            var response = await featureComponent.CreateFeature(new Models.FeaturePostRp()
+            var feature = await featureComponent.CreateFeature(new Models.FeaturePostRp()
             {
                 Name = "test",                
                 ProductId = productId
-            });
-            var feature = response.GetResult<int>("Id");
+            });            
 
             var squad = await squadComponent.CreateSquad(new Models.SquadPostRp()
             {
@@ -81,11 +80,11 @@ namespace Owlvey.Falcon.ComponentsTests
 
             await featureComponent.RegisterSquad(new Models.SquadFeaturePostRp()
             {
-                FeatureId = feature,
+                FeatureId = feature.Id,
                 SquadId = squad.Id
             });
 
-            var detail = await featureQueryComponent.GetFeatureByIdWithAvailability(feature, OwlveyCalendar.January201903, OwlveyCalendar.January201906);
+            var detail = await featureQueryComponent.GetFeatureByIdWithAvailability(feature.Id, OwlveyCalendar.January201903, OwlveyCalendar.January201906);
 
             Assert.NotEmpty(detail.Squads);
 

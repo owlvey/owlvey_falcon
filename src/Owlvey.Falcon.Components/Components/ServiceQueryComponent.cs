@@ -77,7 +77,14 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<ServiceGetListRp>>(entities);
         }
 
-       
+        public async Task<IEnumerable<FeatureGetListRp>> GetFeaturesComplement(int serviceId) {
+            var service = await this._dbContext.Services.Include(c => c.FeatureMap).ThenInclude(c => c.Feature).Where(c => c.Id == serviceId).SingleAsync();
+
+            var serviceFeatures = service.FeatureMap.Select(c => c.Feature).ToList();
+            var features = await this._dbContext.Features.Where(c => c.ProductId == service.ProductId).ToListAsync();
+            var rest = features.Except(serviceFeatures,  new FeatureCompare());
+            return this._mapper.Map<IEnumerable<FeatureGetListRp>>(rest);
+        }       
 
         public async Task<IEnumerable<ServiceGetListRp>> GetServicesWithAvailability(int productId, DateTime start,  DateTime end)
         {
@@ -113,14 +120,14 @@ namespace Owlvey.Falcon.Components
 
                 if (tmp.Budget > 0 )
                 {
-                    tmp.Deploy = "allow";
+                    tmp.Deploy = "innovate";
                     if (tmp.BudgetMinutes < tmp.MTTM)
                     {
                         tmp.Risk = "high";
                     }
                 }
                 else {
-                    tmp.Deploy = "forbiden";
+                    tmp.Deploy = "improve";
                     tmp.Risk = "high";
                 }                
                 result.Add(tmp);

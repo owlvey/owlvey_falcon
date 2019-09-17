@@ -7,6 +7,19 @@ using System.Linq;
 
 namespace Owlvey.Falcon.Core.Entities
 {
+    public class ServiceCompare : IEqualityComparer<ServiceEntity>
+    {
+        public bool Equals(ServiceEntity x, ServiceEntity y)
+        {
+            return x.Id == y.Id;
+        }
+
+        public int GetHashCode(ServiceEntity obj)
+        {
+            return obj.GetHashCode();
+        }
+    }
+
     public partial class ServiceEntity: BaseEntity
     {
         [Required]

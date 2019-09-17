@@ -112,16 +112,21 @@ namespace Owlvey.Falcon.Components
 
         public async Task<IEnumerable<FeatureGetListRp>> GetFeaturesWithAvailability(int productId, DateTime start, DateTime end)
         {
+            var result = new List<FeatureGetListRp>();
+
             var entities = await this._dbContext.Features
+                .Include(c => c.ServiceMaps)
                 .Include(c => c.IncidentMap).ThenInclude(c=> c.Incident)
                 .Include(c => c.Indicators).ThenInclude(c=>c.Source)
                 .Where(c => c.Product.Id.Value.Equals(productId)).ToListAsync();
-            var result = new List<FeatureGetListRp>();
+            
             var common = new FeatureCommonComponent(this._dbContext, this._datetimeGateway); 
             foreach (var feature in entities)
             {
-                var tmp = this._mapper.Map<FeatureGetListRp>(feature);                
+                var tmp = this._mapper.Map<FeatureGetListRp>(feature);
+
                 tmp.Availability = await common.GetAvailabilityByFeature(feature, start, end);
+                tmp.ServiceCount = feature.ServiceMaps.Count();
                 var tmpIncidents = await this._dbContext.GetIncidentsByFeature(feature.Id.Value, start, end);
                 if (tmpIncidents.Count() > 0)
                 {

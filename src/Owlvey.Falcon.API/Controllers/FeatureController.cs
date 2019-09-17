@@ -38,12 +38,8 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(IEnumerable<FeatureGetListRp>), 200)]
         public async Task<IActionResult> Get(int productId, DateTime? start, DateTime? end, string filter)
         {
-            IEnumerable<FeatureGetListRp> model = null;
-            if (!string.IsNullOrWhiteSpace(filter))
-            {
-                model = await this._featureQueryService.GetFeaturesByFilter(productId, filter);
-            }
-            else if (start.HasValue && end.HasValue)
+            IEnumerable<FeatureGetListRp> model = null;            
+            if (start.HasValue && end.HasValue)
             {
                 model = await this._featureQueryService.GetFeaturesWithAvailability(productId, start.Value, end.Value);
             }
@@ -98,7 +94,7 @@ namespace Owlvey.Falcon.API.Controllers
         /// <param name="resource"></param>
         /// <returns></returns>
         [HttpPost]
-        [ProducesResponseType(typeof(FeatureGetRp), 200)]
+        [ProducesResponseType(typeof(FeatureGetListRp), 200)]
         [ProducesResponseType(409)]
         [ProducesResponseType(400)]
         public async Task<IActionResult> Post([FromBody]FeaturePostRp resource)
@@ -106,17 +102,9 @@ namespace Owlvey.Falcon.API.Controllers
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._featureService.CreateFeature(resource);
+            var response = await this._featureService.CreateFeature(resource);            
 
-            if (response.HasConflicts())
-            {
-                return this.Conflict(response.GetConflicts());
-            }
-
-            var id = response.GetResult<int>("Id");
-            var newResource = await this._featureQueryService.GetFeatureById(id);
-
-            return this.Created(Url.RouteUrl("GetFeatureId", new { id }), newResource);
+            return this.Created(Url.RouteUrl("GetFeatureId", new { id = response.Id }), response);
         }
 
         /// <summary>
@@ -178,7 +166,15 @@ namespace Owlvey.Falcon.API.Controllers
 
 
         #region
-        
+
+        [HttpPut("{id}/indicators/{sourceId}")]
+        [ProducesResponseType(typeof(void), 200)]
+        public async Task<IActionResult> GetIndicators(int id, int sourceId)
+        {
+            await this._indicatorComponent.Create(id, sourceId);            
+            return this.Ok();
+        }
+
         [HttpGet("{id}/indicators")]
         [ProducesResponseType(typeof(IEnumerable<IndicatorGetListRp>), 200)]
         public async Task<IActionResult> GetIndicators(int id)

@@ -25,6 +25,7 @@ namespace Owlvey.Falcon.Components
         private readonly FeatureComponent _featureComponent;
         private readonly ServiceMapComponent _serviceMapComponent;
         private readonly IndicatorComponent _indicatorComponent;
+        private readonly SourceItemComponent _sourceItemComponent;
         public MigrationComponent(FalconDbContext dbContext,
             ProductComponent productComponent,
             ServiceComponent serviceComponent,
@@ -32,7 +33,9 @@ namespace Owlvey.Falcon.Components
             SourceComponent sourceComponent,
             ServiceMapComponent serviceMapComponent,
             IndicatorComponent indicatorComponent,
-            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway, IMapper mapper,
+            SourceItemComponent sourceItemComponent,
+            IUserIdentityGateway identityService,
+            IDateTimeGateway dateTimeGateway, IMapper mapper,
             SquadComponent squadComponent, SquadQueryComponent squadQueryComponent) : base(dateTimeGateway, mapper, identityService)
         {
             this._sourceComponent = sourceComponent;
@@ -44,6 +47,8 @@ namespace Owlvey.Falcon.Components
             this._featureComponent = featureComponent;
             this._serviceMapComponent = serviceMapComponent;
             this._indicatorComponent = indicatorComponent;
+            this._sourceComponent = sourceComponent;
+            this._sourceItemComponent = sourceItemComponent;
         }
 
 
@@ -75,43 +80,56 @@ namespace Owlvey.Falcon.Components
                 {
                     var name = productSheet.Cells[row, 1].GetValue<string>();
                     var description = productSheet.Cells[row, 2].GetValue<string>();
-                    var avatar = productSheet.Cells[row, 3].GetValue<string>();
-                    await this._productComponent.CreateOrUpdate(customer, name, description, avatar);
+                    var avatar = productSheet.Cells[row, 3].GetValue<string>();                    
+                    if (name != null)
+                    {
+                        await this._productComponent.CreateOrUpdate(customer, name, description, avatar);
+                    }
                 }
 
                 var serviceSheet = package.Workbook.Worksheets["Services"];
 
                 for (int row = 2; row <= serviceSheet.Dimension.Rows; row++)
                 {
-                    var name = serviceSheet.Cells[row, 1].GetValue<string>();
-                    var description = serviceSheet.Cells[row, 2].GetValue<string>();
-                    var avatar = serviceSheet.Cells[row, 3].GetValue<string>();
-                    var slo = serviceSheet.Cells[row, 4].GetValue<decimal>();
-                    var product = serviceSheet.Cells[row, 5].GetValue<string>();
-                    await this._serviceComponent.CreateOrUpdate(customer, product, name, description, avatar, slo);
+                    var product = serviceSheet.Cells[row, 1].GetValue<string>();
+                    var name = serviceSheet.Cells[row, 2].GetValue<string>();
+                    var description = serviceSheet.Cells[row, 3].GetValue<string>();                    
+                    var slo = serviceSheet.Cells[row, 4].GetValue<decimal>();                    
+                    var avatar = serviceSheet.Cells[row, 5].GetValue<string>();                    
+                    if (product != null && name != null)
+                    {
+                        await this._serviceComponent.CreateOrUpdate(customer, product, name, description, avatar, slo);
+                    }
                 }
 
                 var featureSheet = package.Workbook.Worksheets["Features"];
                 
                 for (int row = 2; row <= featureSheet.Dimension.Rows; row++)
                 {
-                    var name = featureSheet.Cells[row, 1].GetValue<string>();
-                    var description = featureSheet.Cells[row, 2].GetValue<string>();
-                    var avatar = featureSheet.Cells[row, 3].GetValue<string>();                    
-                    var product = featureSheet.Cells[row, 4].GetValue<string>();
-                    await this._featureComponent.CreateOrUpdate(customer, product, name, description, avatar);
+                    var product = featureSheet.Cells[row, 1].GetValue<string>();
+                    var name = featureSheet.Cells[row, 2].GetValue<string>();
+                    var description = featureSheet.Cells[row, 3].GetValue<string>();                                        
+                    var avatar = featureSheet.Cells[row, 4].GetValue<string>();
+                    if (product != null && name != null)
+                    {
+                        await this._featureComponent.CreateOrUpdate(customer, product, name, description, avatar);
+                    }                    
                 }
 
                 var sourceSheet = package.Workbook.Worksheets["Sources"];                
                 for (int row = 2; row <= sourceSheet.Dimension.Rows; row++)
                 {
-                    var name = sourceSheet.Cells[row, 1].GetValue<string>();
-                    var tags = sourceSheet.Cells[row, 2].GetValue<string>();
-                    var avatar = sourceSheet.Cells[row, 3].GetValue<string>();
+                    var product = sourceSheet.Cells[row, 1].GetValue<string>();
+                    var name = sourceSheet.Cells[row, 2].GetValue<string>();
+                    var tags = sourceSheet.Cells[row, 3].GetValue<string>();                    
                     var good = sourceSheet.Cells[row, 4].GetValue<string>();
-                    var total = sourceSheet.Cells[row, 5].GetValue<string>();
-                    var product = sourceSheet.Cells[row, 6].GetValue<string>();
-                    await this._sourceComponent.CreateOrUpdate(customer, product, name, tags, avatar, good, total);
+                    var total = sourceSheet.Cells[row, 5].GetValue<string>();                    
+                    var avatar = sourceSheet.Cells[row, 6].GetValue<string>();
+                    if (product != null && name != null)
+                    {
+                        await this._sourceComponent.CreateOrUpdate(customer, product, name, tags, avatar, good, total);
+                    }
+                    
                 }
 
                 var serviceMapSheet = package.Workbook.Worksheets["ServicesMap"];
@@ -119,8 +137,11 @@ namespace Owlvey.Falcon.Components
                 {
                     var product = serviceMapSheet.Cells[row, 1].GetValue<string>();
                     var service = serviceMapSheet.Cells[row, 2].GetValue<string>();
-                    var feature = serviceMapSheet.Cells[row, 3].GetValue<string>();
-                    await this._serviceMapComponent.CreateServiceMap(customerId, product, service, feature);                    
+                    var feature = serviceMapSheet.Cells[row, 3].GetValue<string>();                    
+                    if (product != null && service != null)
+                    {
+                        await this._serviceMapComponent.CreateServiceMap(customerId, product, service, feature);
+                    }
                 }
 
                 var indicatorSheet = package.Workbook.Worksheets["Indicators"];
@@ -129,21 +150,56 @@ namespace Owlvey.Falcon.Components
                     var product = indicatorSheet.Cells[row, 1].GetValue<string>();
                     var source = indicatorSheet.Cells[row, 2].GetValue<string>();
                     var feature = indicatorSheet.Cells[row, 3].GetValue<string>();
-                    await this._indicatorComponent.Create(customerId, product, source, feature);                    
-                }               
+                    if (product != null && source != null) {
+                        await this._indicatorComponent.Create(customerId, product, source, feature);
+                    }                    
+                }
+
+                var sourceItemsSheet = package.Workbook.Worksheets["SourceItems"];
+
+                var sources = await this._dbContext.Sources.Include(c=>c.Product).Where(c => c.Product.CustomerId == customerId).ToListAsync();
+
+                for (int row = 2; row <= sourceItemsSheet.Dimension.Rows; row++)
+                {                    
+                    var product = sourceItemsSheet.Cells[row, 1].GetValue<string>();
+                    var source = sourceItemsSheet.Cells[row, 2].GetValue<string>();
+                    var good = sourceItemsSheet.Cells[row, 3].GetValue<int>();
+                    var total = sourceItemsSheet.Cells[row, 4].GetValue<int>();                    
+                    var start = DateTime.Parse(sourceItemsSheet.Cells[row, 5].GetValue<string>());
+                    var end = DateTime.Parse(sourceItemsSheet.Cells[row, 6].GetValue<string>());
+                    if (product != null && source != null)
+                    {
+                        await this._sourceItemComponent.Create(new SourceItemPostRp()
+                        {
+                            SourceId = sources.Where(c => c.Name == source && c.Product.Name == product).Single().Id.Value,
+                            Start = start,
+                            End = end,
+                            Good = good,
+                            Total = total
+                        });
+                    }                    
+                }
             }
             return logs;
         }
-
-        public async Task<(CustomerEntity entity, MemoryStream stream)> ExportMetadataExcel(int customerId)
+        public async Task<(
+            CustomerEntity customer,
+            IEnumerable<SquadMigrationRp> squads,
+            IEnumerable<MemberMigrateRp> members,
+            IEnumerable<ProductMigrationRp> products,
+            IEnumerable<ServiceMigrateRp> services,
+            IEnumerable<ServiceMapMigrateRp> serviceMaps,
+            IEnumerable<FeatureMigrateRp> features,
+            IEnumerable<IndicatorMigrateRp> indicators,
+            IEnumerable<SourceMigrateRp> sources,
+            IEnumerable<SourceItemMigrationRp> items
+            )> Export(int customerId, bool includeItems = false)
         {
-
             var customer = await this._dbContext.Customers.Include(c => c.Products).ThenInclude(c => c.Services).Where(c => c.Id == customerId).SingleAsync();
             var squads = await this._dbContext.Squads.Include(c => c.Members).ThenInclude(c => c.User).Where(c => c.CustomerId == customerId).ToListAsync();
             var squadLites = this._mapper.Map<IEnumerable<SquadMigrationRp>>(squads);
             var productLites = this._mapper.Map<IEnumerable<ProductMigrationRp>>(customer.Products);
             var serviceLites = this._mapper.Map<IEnumerable<ServiceMigrateRp>>(customer.Products.SelectMany(c => c.Services));
-
             var memberLites = new List<MemberMigrateRp>();
             foreach (var squad in squads)
             {
@@ -157,7 +213,7 @@ namespace Owlvey.Falcon.Components
                 }
             }
 
-            var features = await this._dbContext.Features.Include(c=>c.Product).Include(c => c.ServiceMaps).ThenInclude(c => c.Service).Where(c => c.Product.CustomerId == customerId).ToListAsync();
+            var features = await this._dbContext.Features.Include(c => c.Product).Include(c => c.ServiceMaps).ThenInclude(c => c.Service).Where(c => c.Product.CustomerId == customerId).ToListAsync();
             var featureLites = new List<FeatureMigrateRp>();
             var serviceMapLites = new List<ServiceMapMigrateRp>();
 
@@ -177,7 +233,7 @@ namespace Owlvey.Falcon.Components
                 }
             }
 
-            var sources = await this._dbContext.Sources.Include(c=>c.Product).Include(c => c.Indicators).ThenInclude(c => c.Feature).Where(c => c.Product.CustomerId == customerId).ToListAsync();
+            var sources = await this._dbContext.Sources.Include(c => c.Product).Include(c => c.Indicators).ThenInclude(c => c.Feature).Where(c => c.Product.CustomerId == customerId).ToListAsync();
             var sourceLites = this._mapper.Map<IEnumerable<SourceMigrateRp>>(sources);
 
             var indicatorLites = new List<IndicatorMigrateRp>();
@@ -194,6 +250,36 @@ namespace Owlvey.Falcon.Components
                     });
                 }
             }
+
+            List<SourceItemMigrationRp> items = new List<SourceItemMigrationRp>();
+            if (includeItems) {
+                var temp = await this._dbContext.SourcesItems.Include(c=>c.Source).Where(c => c.Source.Product.CustomerId == customerId).ToListAsync();
+                foreach (var item in temp)
+                {
+                    var product = customer.Products.Where(c => c.Id == item.Source.ProductId).Single();
+
+                    items.Add(new SourceItemMigrationRp()
+                    {
+                        Product = product.Name,
+                        End = item.End.ToString("s", System.Globalization.CultureInfo.InvariantCulture),
+                        Start = item.Start.ToString("s", System.Globalization.CultureInfo.InvariantCulture),
+                        Good = item.Good,
+                        Source = item.Source.Name,
+                        Total = item.Total
+                    });
+
+                }
+
+            }
+
+            return (customer, squadLites, memberLites, productLites, serviceLites, serviceMapLites, featureLites, indicatorLites, sourceLites, items);
+
+        }
+
+        public async Task<(CustomerEntity entity, MemoryStream stream)> ExportExcel(int customerId, bool includeData)
+        {
+            var (customer, squadLites, memberLites, productLites, serviceLites, serviceMapLites, featureLites,
+                  indicatorLites, sourceLites, sourceItemsLites) = await this.Export(customerId, includeData);
 
             var stream = new MemoryStream();
             using (var package = new ExcelPackage(stream))
@@ -222,11 +308,15 @@ namespace Owlvey.Falcon.Components
                 var sourcesSheet = package.Workbook.Worksheets.Add("Sources");
                 sourcesSheet.Cells.LoadFromCollection(sourceLites, true);
 
+                var sourceItemsSheet = package.Workbook.Worksheets.Add("SourceItems");
+                sourceItemsSheet.Cells.LoadFromCollection(sourceItemsLites, true);
+
                 package.Save();
             }
             stream.Position = 0;
             return (customer, stream);
         }
+       
 
         #endregion
 

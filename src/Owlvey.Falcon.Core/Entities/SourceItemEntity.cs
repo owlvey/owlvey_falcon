@@ -53,6 +53,14 @@ namespace Owlvey.Falcon.Core.Entities
             return result; 
         }
 
+        public void Update(int total, int good, DateTime start, DateTime end)
+        {
+            this.Total = total;
+            this.Good = good;
+            this.Start = start;
+            this.End = end;
+        }
+
 
     }
 }

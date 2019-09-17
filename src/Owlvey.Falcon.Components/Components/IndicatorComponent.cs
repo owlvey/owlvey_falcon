@@ -44,6 +44,18 @@ namespace Owlvey.Falcon.Components
             });
         }
 
+        public async Task Create(int featureId, int sourceId) {
+            var createdBy = this._identityService.GetIdentity();
+            var sli = await this._dbContext.Indicators.Where(c => c.FeatureId == featureId && c.SourceId == sourceId).SingleOrDefaultAsync();
+            if (sli == null) {
+                var feature = await this._dbContext.Features.Where(c => c.Id == featureId).SingleAsync();
+                var source = await this._dbContext.Sources.Where(c => c.Id == sourceId).SingleAsync();
+                sli = IndicatorEntity.Factory.Create(feature, source, this._datetimeGateway.GetCurrentDateTime(), createdBy);
+                this._dbContext.Indicators.Add(sli);
+                await this._dbContext.SaveChangesAsync();
+            }
+        }
+
         public async Task<BaseComponentResultRp> Create(IndicatorPostRp model)
         {
             var result = new BaseComponentResultRp();

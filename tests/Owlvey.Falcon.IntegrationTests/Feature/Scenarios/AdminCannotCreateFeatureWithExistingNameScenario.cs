@@ -39,10 +39,10 @@ namespace Owlvey.Falcon.IntegrationTests.Feature.Scenarios
             responsePost = _client.PostAsync($"/features", jsonContent).Result;
         }
 
-        [Then("The Feature was rejected")]
+        [Then("The Feature was acepted")]
         public void then_created()
         {
-            Assert.Equal(StatusCodes.Status409Conflict, (int)responsePost.StatusCode);
+            Assert.Equal(StatusCodes.Status201Created, (int)responsePost.StatusCode);
             
         }
         

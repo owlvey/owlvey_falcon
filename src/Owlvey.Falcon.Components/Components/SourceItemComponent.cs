@@ -19,7 +19,7 @@ namespace Owlvey.Falcon.Components
         public SourceItemComponent(FalconDbContext dbContext, IDateTimeGateway dataTimeGateway, IMapper mapper, IUserIdentityGateway identityService) : base(dataTimeGateway, mapper, identityService)
         {
             this._dbContext = dbContext;            
-        }
+        }        
         public async Task<BaseComponentResultRp> Create(SourceItemPostRp model)
         {
             var result = new BaseComponentResultRp();
@@ -30,6 +30,17 @@ namespace Owlvey.Falcon.Components
             await this._dbContext.SaveChangesAsync();
             result.AddResult("Id", entity.Id);
             return result;
+        }
+        public async Task<SourceItemGetListRp> Update(int sourceItemId,
+            int total, int good, DateTime start, DateTime end ) {
+
+            var entity = await this._dbContext.SourcesItems.Where(c => c.Id == sourceItemId).SingleAsync();
+            this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
+            entity.Update(total, good, start, end);
+            this._dbContext.SourcesItems.Update(entity);
+            await this._dbContext.SaveChangesAsync();
+
+            return this._mapper.Map<SourceItemGetListRp>(entity);            
         }
 
         public async Task<BaseComponentResultRp> Delete(int id)

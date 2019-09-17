@@ -26,11 +26,11 @@ namespace Owlvey.Falcon.Models
     }
 
     public class ServiceMigrateRp {
+        public string ProductName { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public string Avatar { get; set; }        
-        public decimal SLO { get; set; }
-        public string ProductName { get; set; }        
+        public decimal SLO { get; set; }        
+        public string Avatar { get; set; }
     }
 
     public class ServiceGetRp : ServiceBaseRp {

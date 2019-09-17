@@ -50,29 +50,19 @@ namespace Owlvey.Falcon.Components
         /// </summary>
         /// <param name="model">Feature Model</param>
         /// <returns></returns>
-        public async Task<BaseComponentResultRp> CreateFeature(FeaturePostRp model)
+        public async Task<FeatureGetListRp> CreateFeature(FeaturePostRp model)
         {
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
 
-            var product = await this._dbContext.Products.Include(c=> c.Features).SingleAsync(c => c.Id == model.ProductId);
-
-            // Validate if the resource exists.
-            if (product.Features.Any(c => c.Name.Equals(model.Name)))
-            {
-                result.AddConflict($"The Resource {model.Name} has already been taken.");
-                return result;
+            var entity = await this._dbContext.Features.Where(c => c.ProductId == model.ProductId && c.Name == model.Name).SingleOrDefaultAsync();
+            if (entity == null) {
+                var product = await this._dbContext.Products.SingleAsync(c => c.Id == model.ProductId);
+                entity = FeatureEntity.Factory.Create(model.Name, this._datetimeGateway.GetCurrentDateTime(), createdBy, product);
+                this._dbContext.Add(entity);
+                await this._dbContext.SaveChangesAsync();
             }
-            
-            var entity = FeatureEntity.Factory.Create(model.Name, this._datetimeGateway.GetCurrentDateTime(), createdBy, product);
-            
-            this._dbContext.Add(entity);
-
-            await this._dbContext.SaveChangesAsync();
-
-            result.AddResult("Id", entity.Id);
-
-            return result;
+            return this._mapper.Map<FeatureGetListRp>(entity);
         }
 
         /// <summary>

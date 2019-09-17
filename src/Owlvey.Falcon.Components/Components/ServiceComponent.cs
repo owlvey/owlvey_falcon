@@ -48,29 +48,21 @@ namespace Owlvey.Falcon.Components
         /// </summary>
         /// <param name="model">Service Model</param>
         /// <returns></returns>
-        public async Task<BaseComponentResultRp> CreateService(ServicePostRp model)
+        public async Task<ServiceGetListRp> CreateService(ServicePostRp model)
         {
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
 
-            var product = await this._dbContext.Products.Include(c => c.Services).SingleAsync(c => c.Id == model.ProductId);
-
-            // Validate if the resource exists.
-            if (product.Services.Any(c => c.Name.Equals(model.Name)))
+            var entity = await this._dbContext.Services.Where(c => c.ProductId == model.ProductId && c.Name == model.Name).SingleOrDefaultAsync();
+            if (entity == null)
             {
-                result.AddConflict($"The Resource {model.Name} has already been taken.");
-                return result;
+                var product = await this._dbContext.Products.Where(c => c.Id == model.ProductId).SingleAsync();
+                entity = ServiceEntity.Factory.Create(model.Name, this._datetimeGateway.GetCurrentDateTime(),
+                    createdBy, product);
+                this._dbContext.Services.Add(entity);
+                await this._dbContext.SaveChangesAsync();
             }
-
-            var service = ServiceEntity.Factory.Create(model.Name, this._datetimeGateway.GetCurrentDateTime(), createdBy, product);
-
-            this._dbContext.Services.Add(service);
-
-            await this._dbContext.SaveChangesAsync();
-
-            result.AddResult("Id", service.Id);
-
-            return result;
+            return this._mapper.Map<ServiceGetListRp>(entity);
         }
 
         /// <summary>

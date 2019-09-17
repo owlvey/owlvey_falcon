@@ -21,9 +21,19 @@ namespace Owlvey.Falcon.API.Controllers
         [HttpGet("{id}/export/metadata/excel")]
         public async Task<IActionResult> GetExportMetadataExcel(int id)
         {
-            var (customer, stream) = await this._migrationComponent.ExportMetadataExcel(id);
+            var (customer, stream) = await this._migrationComponent.ExportExcel(id, false);
 
             string excelName = $"{customer.Name}-metadata-{DateTime.Now.ToString("yyyyMMdd")}.xlsx";
+
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
+        }
+
+        [HttpGet("{id}/export/data/excel")]
+        public async Task<IActionResult> ExportData(int id)
+        {
+            var (customer, stream) = await this._migrationComponent.ExportExcel(id, true);
+
+            string excelName = $"{customer.Name}-data-{DateTime.Now.ToString("yyyyMMdd")}.xlsx";
 
             return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
         }

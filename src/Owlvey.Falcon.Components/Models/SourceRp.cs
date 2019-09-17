@@ -19,12 +19,12 @@ namespace Owlvey.Falcon.Models
     }
 
     public class SourceMigrateRp {
-        public string Name { get; set; }
-        public string Tags { get; set; } = "";
-        public string Avatar { get; set; }
-        public string GoodDefinition { get; set; }
-        public string TotalDefinition { get; set; }
         public string ProductName { get; set; }
+        public string Name { get; set; }
+        public string Tags { get; set; } = "";        
+        public string GoodDefinition { get; set; }
+        public string TotalDefinition { get; set; }        
+        public string Avatar { get; set; }
     }
 
     public class SourceGetListRp : SourceLitRp

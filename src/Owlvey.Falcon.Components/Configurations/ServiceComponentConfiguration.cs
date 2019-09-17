@@ -18,6 +18,7 @@ namespace Owlvey.Falcon.Components
                 .ForMember(m => m.MTTE, ope => ope.Ignore())
                 .ForMember(m => m.MTTF, ope => ope.Ignore())
                 .ForMember(m => m.MTTM, ope => ope.Ignore())
+                .ForMember(m => m.BudgetMinutes, ope => ope.Ignore())
                 .ForMember(m => m.Risk, ope => ope.Ignore());
 
 
@@ -27,6 +28,7 @@ namespace Owlvey.Falcon.Components
                 .ForMember(m => m.MTTE, ope => ope.Ignore())
                 .ForMember(m => m.MTTF, ope => ope.Ignore())
                 .ForMember(m => m.MTTM, ope => ope.Ignore())
+                .ForMember(m => m.BudgetMinutes, ope => ope.Ignore())
                 .ForMember(m => m.Availability, ope => ope.Ignore());
 
             cfg.CreateMap<ServiceEntity, Models.ServiceMigrateRp>();

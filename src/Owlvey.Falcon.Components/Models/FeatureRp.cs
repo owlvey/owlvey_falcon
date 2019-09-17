@@ -14,10 +14,10 @@ namespace Owlvey.Falcon.Models
     }
 
     public class FeatureMigrateRp  {
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public string Avatar { get; set; }                    
         public string ProductName { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }                
+        public string Avatar { get; set; }
     }
 
     public class FeatureLiteRp : FeatureBaseRp {
@@ -46,7 +46,9 @@ namespace Owlvey.Falcon.Models
         public int ProductId { get; set; }
         public string Product { get; set; }
         public int IndicatorsCount { get; set; }
+        public int ServiceCount { get; set; }
         public decimal Availability { get; set; }
+
         public int MTTM { get; set; }
         public int MTTE { get; set; }
         public int MTTD { get; set; }

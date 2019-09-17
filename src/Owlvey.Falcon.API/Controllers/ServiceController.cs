@@ -90,25 +90,15 @@ namespace Owlvey.Falcon.API.Controllers
         /// <param name="resource"></param>
         /// <returns></returns>
         [HttpPost]
-        [ProducesResponseType(typeof(ServiceGetRp), 200)]
+        [ProducesResponseType(typeof(ServiceGetListRp), 200)]
         [ProducesResponseType(409)]
         [ProducesResponseType(400)]
         public async Task<IActionResult> Post([FromBody]ServicePostRp resource)
         {
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
-
             var response = await this._serviceService.CreateService(resource);
-
-            if (response.HasConflicts())
-            {
-                return this.Conflict(response.GetConflicts());
-            }
-
-            var id = response.GetResult<int>("Id");
-            var newResource = await this._serviceQueryService.GetServiceById(id);
-
-            return this.Created(Url.RouteUrl("GetServiceId", new { id = id }), newResource);
+            return this.Created(Url.RouteUrl("GetServiceId", new { id = response.Id }), response);
         }
 
         /// <summary>
@@ -168,8 +158,14 @@ namespace Owlvey.Falcon.API.Controllers
             return this.NoContent();
         }
 
-        
 
+        [HttpGet("{id}/features/complement")]
+        [ProducesResponseType(typeof(IEnumerable<FeatureGetListRp>), 200)]
+        public async Task<IActionResult> GetIndicatorsComplement(int id)
+        {
+            var model = await this._serviceQueryService.GetFeaturesComplement(id);
+            return this.Ok(model);
+        }
 
 
         #region reports

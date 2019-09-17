@@ -597,7 +597,7 @@ namespace Owlvey.Falcon.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Owlvey.Falcon.Core.Entities.IncidentEntity", "Incident")
-                        .WithMany()
+                        .WithMany("FeatureMaps")
                         .HasForeignKey("IncidentId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

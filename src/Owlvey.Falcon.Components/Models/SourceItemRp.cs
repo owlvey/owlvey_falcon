@@ -22,6 +22,15 @@ namespace Owlvey.Falcon.Models
 
     }
 
+    public class SourceItemMigrationRp {
+        public string Product { get; set; }
+        public string Source { get; set; }
+        public int Good { get; set; }
+        public int Total { get; set; }
+        public string Start { get; set; }
+        public string End { get; set; }
+    }
+
     
 
     public class SourceItemGetListRp : SourceItemBaseRp
