@@ -30,7 +30,7 @@ namespace Owlvey.Falcon.ComponentsTests
             await migrationComponent.ImportMetadata(customer.Id.Value, stream);
 
         }
-                
+        
         public async Task ImportFromFileData() {
             var container = ComponentTestFactory.BuildContainer();
             var customerComponet = container.GetInstance<CustomerComponent>();
@@ -40,8 +40,8 @@ namespace Owlvey.Falcon.ComponentsTests
             {
                 Name = "test"
             });
-
-            var bytes = File.ReadAllBytes("/Users/Gregory/Downloads/SBP-data.xlsx");
+            
+            var bytes = File.ReadAllBytes("C:/Users/gcval/Downloads/SBP-data.xlsx");
             var stream = new MemoryStream(bytes);
             stream.Position = 0;
             await migrationComponent.ImportMetadata(result.Id, stream);

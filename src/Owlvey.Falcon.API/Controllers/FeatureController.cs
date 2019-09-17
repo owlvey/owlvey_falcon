@@ -69,11 +69,7 @@ namespace Owlvey.Falcon.API.Controllers
             }
 
             if (model == null)
-                return this.NotFound($"The Resource {id} doesn't exists.");
-
-            if (end.HasValue) {
-                model.Indicators = await this._indicatorComponent.GetByFeatureWithAvailability(id, end.Value);
-            }            
+                return this.NotFound($"The Resource {id} doesn't exists.");            
 
             return this.Ok(model);
         }

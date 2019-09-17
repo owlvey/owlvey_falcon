@@ -145,7 +145,7 @@ namespace Owlvey.Falcon.Components
                 }
 
                 var indicatorSheet = package.Workbook.Worksheets["Indicators"];
-                for (int row = 2; row <= serviceMapSheet.Dimension.Rows; row++)
+                for (int row = 2; row <= indicatorSheet.Dimension.Rows; row++)
                 {                    
                     var product = indicatorSheet.Cells[row, 1].GetValue<string>();
                     var source = indicatorSheet.Cells[row, 2].GetValue<string>();

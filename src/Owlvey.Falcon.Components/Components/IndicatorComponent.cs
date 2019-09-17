@@ -32,19 +32,25 @@ namespace Owlvey.Falcon.Components
             return result;
         }
 
-        public async Task Create(int customerId, string product, string source, string feature)
+        public async Task<IndicatorGetListRp>  Create(int customerId, string product, string source, string feature)
         {
+            var createdBy = this._identityService.GetIdentity();
             var productEntity = await this._dbContext.Products.Where(c => c.CustomerId == customerId && c.Name == product).SingleAsync();
             var sourceEntity = await this._dbContext.Sources.Where(c => c.ProductId == productEntity.Id && c.Name == source).SingleAsync();
             var featureEntity = await this._dbContext.Features.Where(c => c.ProductId == productEntity.Id && c.Name == feature).SingleAsync();
-            await this.Create(new IndicatorPostRp
-            {                 
-                 FeatureId = featureEntity.Id.Value,
-                 SourceId = sourceEntity.Id.Value,
-            });
+
+            var sli = await this._dbContext.Indicators.Where(c => 
+                            c.FeatureId == featureEntity.Id && c.SourceId == sourceEntity.Id).SingleOrDefaultAsync();
+            if (sli == null) {
+                sli = IndicatorEntity.Factory.Create(featureEntity, sourceEntity,
+                    this._datetimeGateway.GetCurrentDateTime(), createdBy);
+                this._dbContext.Indicators.Add(sli);
+                await this._dbContext.SaveChangesAsync();
+            }
+            return this._mapper.Map<IndicatorGetListRp>(sli);
         }
 
-        public async Task Create(int featureId, int sourceId) {
+        public async Task<IndicatorGetListRp> Create(int featureId, int sourceId) {
             var createdBy = this._identityService.GetIdentity();
             var sli = await this._dbContext.Indicators.Where(c => c.FeatureId == featureId && c.SourceId == sourceId).SingleOrDefaultAsync();
             if (sli == null) {
@@ -54,6 +60,7 @@ namespace Owlvey.Falcon.Components
                 this._dbContext.Indicators.Add(sli);
                 await this._dbContext.SaveChangesAsync();
             }
+            return this._mapper.Map<IndicatorGetListRp>(sli);
         }
 
         public async Task<BaseComponentResultRp> Create(IndicatorPostRp model)
@@ -99,22 +106,22 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<IndicatorGetListRp>>(entity);
         }
 
-        private async Task<decimal> GetAvailabilityByIndicator(IndicatorEntity entity, DateTime end)
+        private async Task<decimal> GetAvailabilityByIndicator(IndicatorEntity entity, DateTime start, DateTime end)
         {
-            var sourceItems = await this._dbContext.GetSourceItemsByDate(entity.Source.Id.Value, end);
+            var sourceItems = await this._dbContext.GetSourceItems(entity.Source.Id.Value, start, end);
             entity.Source.SourceItems = sourceItems;
             var agg = new IndicatorDateAvailabilityAggregate(entity);
             return agg.MeasureAvailability();
         }
         
-        public async Task<IEnumerable<IndicatorGetListRp>> GetByFeatureWithAvailability(int featureId, DateTime end)
+        public async Task<IEnumerable<IndicatorGetListRp>> GetByFeatureWithAvailability(int featureId, DateTime start, DateTime end)
         {
             var entities = await this._dbContext.Indicators.Include(c => c.Feature).Include(c => c.Source).Where(c => c.Feature.Id == featureId).ToListAsync();
             var result = new List<IndicatorGetListRp>();
             foreach (var item in entities)
             {                
                 var tmp = this._mapper.Map<IndicatorGetListRp>(item);
-                tmp.Availability = await this.GetAvailabilityByIndicator(item, end);
+                tmp.Availability = await this.GetAvailabilityByIndicator(item, start, end);
                 result.Add(tmp);
             }
             return result;

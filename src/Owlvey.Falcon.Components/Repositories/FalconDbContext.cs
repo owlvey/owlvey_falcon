@@ -53,27 +53,6 @@ namespace Owlvey.Falcon.Repositories
             
             base.OnModelCreating(modelBuilder);
         }
-
-        internal async Task<ICollection<SourceItemEntity>> GetSourceItemsByDate(int sourceId, DateTime end) {
-            end = end.Date;                       
-            List<SourceItemEntity> result = new List<SourceItemEntity>();
-            var ends= await this.SourcesItems.Where(c => c.SourceId == sourceId && end >= c.Start &&  end <= c.End).ToListAsync();
-            if (ends.Count == 0)
-            {
-                var lastTask = await this.SourcesItems.Where(c => c.SourceId == sourceId && c.End < end).OrderByDescending(c => c.End).FirstOrDefaultAsync();
-
-                if (lastTask != null)
-                {
-                    var previous = await this.SourcesItems.Where(c => c.SourceId == sourceId && c.End == lastTask.End).ToListAsync();
-                    result.AddRange(previous);
-                }
-            }
-            else {
-                result.AddRange(ends);
-            }                        
-
-            return result;
-        }
         internal async Task<ICollection<SourceItemEntity>> GetSourceItems(int sourceId,
             DateTime start, DateTime end) {
             start = start.Date;

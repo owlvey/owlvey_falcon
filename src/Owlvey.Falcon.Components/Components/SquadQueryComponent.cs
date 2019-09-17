@@ -58,10 +58,9 @@ namespace Owlvey.Falcon.Components
             SquadGetDetailRp result = this._mapper.Map<SquadGetDetailRp>(entity);            
 
             foreach (var featureMap in entity.Features)
-            {
-                //var service = featureMap.Feature.ServiceMaps.
+            {                
                 var feature = featureMap.Feature;
-                var (_, availabilty) = await common.GetFeatureByIdWithAvailability(featureMap.FeatureId, start, end);
+                var availabilty = await common.GetAvailabilityByFeature(feature, start, end);
 
                 foreach (var serviceMap in featureMap.Feature.ServiceMaps)
                 {

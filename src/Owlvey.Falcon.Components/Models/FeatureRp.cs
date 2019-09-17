@@ -33,7 +33,7 @@ namespace Owlvey.Falcon.Models
         public int MTTE { get; set; }
         public int MTTD { get; set; }
         public int MTTF { get; set; }
-        public IEnumerable<IndicatorGetListRp> Indicators { get; set; } = new List<IndicatorGetListRp>();
+        public List<IndicatorGetListRp> Indicators { get; set; } = new List<IndicatorGetListRp>();
         public IEnumerable<SquadGetListRp> Squads { get; set; } = new List<SquadGetListRp>();
 
         public IEnumerable<IncidentGetListRp> Incidents { get; set; } = new List<IncidentGetListRp>();

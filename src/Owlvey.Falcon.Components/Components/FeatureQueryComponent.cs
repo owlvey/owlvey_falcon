@@ -42,15 +42,37 @@ namespace Owlvey.Falcon.Components
 
         public async Task<FeatureGetRp> GetFeatureByIdWithAvailability(int id, DateTime start, DateTime end)
         {
-            FeatureCommonComponent common = new FeatureCommonComponent(this._dbContext, this._datetimeGateway);
+
+            var feature = await this._dbContext.Features.Where(c => c.Id == id)
+                .Include(c => c.Squads).ThenInclude(c => c.Squad)
+                .Include(c => c.Indicators).ThenInclude(c => c.Source)
+                .FirstOrDefaultAsync();
+
+            if ( feature == null  ) {
+                return null;
+            }
+
+            foreach (var indicator in feature.Indicators)
+            {
+                var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, start, end);
+                indicator.Source.SourceItems = sourceItems;
+            }
+
+            var agg = new FeatureDateAvailabilityAggregate(feature);
+                       
+            var model = this._mapper.Map<FeatureGetRp>(feature);
             
-            var (entity, availability) = await common.GetFeatureByIdWithAvailability(id, start, end);
+            model.Availability = agg.MeasureAvailability();
 
-            var model = this._mapper.Map<FeatureGetRp>(entity);
-
-            model.Availability = availability;
+            foreach (var indicator in feature.Indicators)
+            {                
+                var tmp = this._mapper.Map<IndicatorGetListRp>(indicator);
+                tmp.Availability = (new IndicatorDateAvailabilityAggregate(indicator)).MeasureAvailability();
+                model.Indicators.Add(tmp);
+            }
             
             model.Incidents = this._mapper.Map<IEnumerable<IncidentGetListRp>>(await this._dbContext.GetIncidentsByFeature(id, start, end));
+
             if (model.Incidents.Count() > 0) {
                 model.MTTM = (int)model.Incidents.Average(c => c.TTM);
                 model.MTTE = (int)model.Incidents.Average(c => c.TTE);
@@ -119,7 +141,7 @@ namespace Owlvey.Falcon.Components
                 .Include(c => c.IncidentMap).ThenInclude(c=> c.Incident)
                 .Include(c => c.Indicators).ThenInclude(c=>c.Source)
                 .Where(c => c.Product.Id.Value.Equals(productId)).ToListAsync();
-            
+                        
             var common = new FeatureCommonComponent(this._dbContext, this._datetimeGateway); 
             foreach (var feature in entities)
             {

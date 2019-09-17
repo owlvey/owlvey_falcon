@@ -15,21 +15,7 @@ namespace Owlvey.Falcon.API.Controllers
         {
             this._indicatorComponent = indicatorComponent;
         }
-
-        [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<IndicatorGetListRp>), 200)]
-        public async Task<IActionResult> GetByFeatureId(int featureId, DateTime? end)
-        {
-                       
-            IEnumerable<IndicatorGetListRp> model = new List<IndicatorGetListRp>();
-            if (end.HasValue) {
-                model = await this._indicatorComponent.GetByFeatureWithAvailability(featureId, end.Value);
-            }
-            else {
-                model = await this._indicatorComponent.GetByFeature(featureId);
-            }   
-            return this.Ok(model);
-        }
+                
 
         [HttpGet("{id}", Name = "GetIndicatorById")]
         [ProducesResponseType(typeof(IndicatorGetRp), 200)]
