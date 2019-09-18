@@ -96,15 +96,18 @@ namespace Owlvey.Falcon.Components
             var entity = await this._dbContext.Sources.SingleOrDefaultAsync(c => c.Id == id);
             var result = this._mapper.Map<SourceGetRp>(entity);
             if (entity!= null) {
-                result.Availability = await GetAvailabilityBySource(entity, start, end);
+                var (ava, total, good) = await GetAvailabilityBySource(entity, start, end);
+                result.Availability = ava;
+                result.Total = total;
+                result.Good = good;
             }            
             return result;
         }
 
-        private async Task<decimal> GetAvailabilityBySource(SourceEntity entity, DateTime start, DateTime end) {
+        private async Task<(decimal, int, int)> GetAvailabilityBySource(SourceEntity entity, DateTime start, DateTime end) {
             var sourceItems = await this._dbContext.GetSourceItems(entity.Id.Value, start, end);
             entity.SourceItems = sourceItems;
-            var agg = new SourceDateAvailabilityAggregate(entity);            
+            var agg = new SourceDateAvailabilityAggregate(entity);
             return agg.MeasureAvailability();
         }
 
@@ -120,7 +123,8 @@ namespace Owlvey.Falcon.Components
             foreach (var item in entities)
             {
                 var tmp = this._mapper.Map<SourceGetListRp>(item);
-                tmp.Availability = await this.GetAvailabilityBySource(item, start, end);
+                var (ava, total, good) = await this.GetAvailabilityBySource(item, start, end);
+                tmp.Availability = ava;
                 result.Add(tmp);
             }
             return result.OrderBy(c=>c.Availability).ToList();

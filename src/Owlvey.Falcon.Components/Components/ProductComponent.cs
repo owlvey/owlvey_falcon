@@ -115,7 +115,7 @@ namespace Owlvey.Falcon.Components
                 }
             }
                        
-            product.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, name: model.Name, description: model.Description, null);
+            product.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, name: model.Name, description: model.Description, avatar: null);
 
             this._dbContext.Update(product);
 

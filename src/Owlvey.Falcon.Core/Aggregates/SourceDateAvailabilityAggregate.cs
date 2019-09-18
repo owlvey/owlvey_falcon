@@ -14,8 +14,12 @@ namespace Owlvey.Falcon.Core.Aggregates
         {            
             this.Source = source;                        
         }        
-        public decimal MeasureAvailability() {            
-            return AvailabilityUtils.CalculateAvailability(this.Source.SourceItems.Select(c => c.Availability).ToList());            
+        public (decimal availability, int total, int good) MeasureAvailability() {            
+
+            var availability = AvailabilityUtils.CalculateAvailability(this.Source.SourceItems.Select(c => c.Availability).ToList());
+            var total = this.Source.SourceItems.Sum(c => c.Total);
+            var good = this.Source.SourceItems.Sum(c => c.Good);
+            return (availability, total, good);
         }
     }
 }
