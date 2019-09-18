@@ -34,9 +34,9 @@ namespace Owlvey.Falcon.Models
         public int MTTD { get; set; }
         public int MTTF { get; set; }
         public List<IndicatorGetListRp> Indicators { get; set; } = new List<IndicatorGetListRp>();
-        public IEnumerable<SquadGetListRp> Squads { get; set; } = new List<SquadGetListRp>();
-
-        public IEnumerable<IncidentGetListRp> Incidents { get; set; } = new List<IncidentGetListRp>();
+        public List<SquadGetListRp> Squads { get; set; } = new List<SquadGetListRp>();
+        public List<IncidentGetListRp> Incidents { get; set; } = new List<IncidentGetListRp>();
+        public List<ServiceGetListRp> Services { get; set; } = new List<ServiceGetListRp>();
     }
 
     public class FeatureGetListRp : FeatureBaseRp

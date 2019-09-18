@@ -27,6 +27,7 @@ namespace Owlvey.Falcon.Components
                 .ForMember(c => c.MTTD, opt => opt.Ignore())
                 .ForMember(c => c.MTTE, opt => opt.Ignore())                
                 .ForMember(c => c.MTTF, opt => opt.Ignore())
+                .ForMember(c => c.Services, opt => opt.Ignore())
                 .ForMember(c => c.Incidents, opt => opt.Ignore())
                 .ForMember(c => c.Indicators, opt => opt.Ignore())
                 .ForMember(c => c.Squads, opt => opt.MapFrom(c=>c.Squads.Select(d=>d.Squad)));

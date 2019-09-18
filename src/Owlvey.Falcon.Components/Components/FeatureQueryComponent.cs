@@ -42,10 +42,10 @@ namespace Owlvey.Falcon.Components
 
         public async Task<FeatureGetRp> GetFeatureByIdWithAvailability(int id, DateTime start, DateTime end)
         {
-
             var feature = await this._dbContext.Features.Where(c => c.Id == id)
                 .Include(c => c.Squads).ThenInclude(c => c.Squad)
                 .Include(c => c.Indicators).ThenInclude(c => c.Source)
+                .Include(c => c.ServiceMaps).ThenInclude(c => c.Service)
                 .FirstOrDefaultAsync();
 
             if ( feature == null  ) {
@@ -70,8 +70,14 @@ namespace Owlvey.Falcon.Components
                 tmp.Availability = (new IndicatorDateAvailabilityAggregate(indicator)).MeasureAvailability();
                 model.Indicators.Add(tmp);
             }
+
+            foreach (var map in  feature.ServiceMaps)
+            {
+                var tmp = this._mapper.Map<ServiceGetListRp>(map.Service);
+                model.Services.Add(tmp);
+            }
             
-            model.Incidents = this._mapper.Map<IEnumerable<IncidentGetListRp>>(await this._dbContext.GetIncidentsByFeature(id, start, end));
+            model.Incidents = this._mapper.Map<List<IncidentGetListRp>>(await this._dbContext.GetIncidentsByFeature(id, start, end));
 
             if (model.Incidents.Count() > 0) {
                 model.MTTM = (int)model.Incidents.Average(c => c.TTM);
