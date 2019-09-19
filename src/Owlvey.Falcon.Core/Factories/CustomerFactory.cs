@@ -88,7 +88,7 @@ namespace Owlvey.Falcon.Core.Entities
                 var paymentIndicator = IndicatorEntity.Factory.Create(paymentFeature, paymentSource, on, user);
                 paymentFeature.Indicators.Add(paymentIndicator);
 
-                var incident = IncidentEntity.Factory.Create("Awful incident", on, user, defaultProduct);
+                var incident = IncidentEntity.Factory.Create("AWC01","Awful incident", on, user, defaultProduct);
                 defaultProduct.Incidents.Add(incident);
 
                 var incidentMap = IncidentMapEntity.Factory.Create(on, user, defaultFeature, incident);

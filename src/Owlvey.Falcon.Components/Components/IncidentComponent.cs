@@ -23,9 +23,11 @@ namespace Owlvey.Falcon.Components
         {
             this._dbContext = dbContext;                       
         }
-        public async Task<IEnumerable<IncidentGetListRp>> Get(int productId, PeriodValue period) {
+        public async Task<IEnumerable<IncidentGetListRp>> GetByProduct(int productId) {
             var incidents = await this._dbContext.Incidents
-                .Where(c => c.ProductId == productId && ( c.ModifiedOn >= period.Start && c.ModifiedOn <= period.End) ).ToListAsync();
+                .Where(c => c.ProductId == productId).ToListAsync();
+
+            incidents = incidents.OrderByDescending(c => c.End).ToList();
             return this._mapper.Map<IEnumerable<IncidentGetListRp>>(incidents);
         }
 
@@ -55,18 +57,21 @@ namespace Owlvey.Falcon.Components
         public async Task<IncidentGetListRp> Post(IncidentPostRp model) {
             var createdBy = this._identityService.GetIdentity();
             var product = await this._dbContext.Products.Where(c => c.Id == model.ProductId).SingleAsync();
-            var entity = IncidentEntity.Factory.Create(model.Title, this._datetimeGateway.GetCurrentDateTime(), createdBy, product);
-            this._dbContext.Incidents.Add(entity);
-            await this._dbContext.SaveChangesAsync();
+            var entity = await this._dbContext.Incidents.Where(c => c.Key == model.Key && c.ProductId == model.ProductId).SingleOrDefaultAsync();
+            if (entity == null) {
+                entity = IncidentEntity.Factory.Create(model.Key, model.Title, this._datetimeGateway.GetCurrentDateTime(), createdBy, product);
+                this._dbContext.Incidents.Add(entity);
+                await this._dbContext.SaveChangesAsync();
+            }            
             return this._mapper.Map<IncidentGetListRp>(entity);
         }
 
-        public async Task<IncidentGetListRp> Put(IncidentPutRp model) {
+        public async Task<IncidentGetListRp> Put(int id, IncidentPutRp model) {
             var createdBy = this._identityService.GetIdentity();
-            var incident = await this._dbContext.Incidents.Where(c => c.Id == model.Id).SingleAsync();
+            var incident = await this._dbContext.Incidents.Where(c => c.Id == id).SingleAsync();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
-            incident.Update(model.Title, model.Description, createdBy, this._datetimeGateway.GetCurrentDateTime(),
-                 model.Start,
+            incident.Update(model.Title, createdBy, this._datetimeGateway.GetCurrentDateTime(),
+                 model.End,
                  model.TTD, model.TTE, model.TTF, model.URL);
             this._dbContext.Incidents.Update(incident);
             await this._dbContext.SaveChangesAsync();

@@ -18,9 +18,9 @@ namespace Owlvey.Falcon.API.Controllers
         }
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<IncidentGetListRp>), 200)]
-        public async Task<IActionResult> Get(int productId, DateTime? start ,DateTime? end)
+        public async Task<IActionResult> GetList(int productId)
         {
-            var model = await this._incidentComponent.Get(productId, new PeriodValue(start.Value, end.Value));
+            var model = await this._incidentComponent.GetByProduct(productId);
             return this.Ok(model);
         }
 
@@ -61,7 +61,7 @@ namespace Owlvey.Falcon.API.Controllers
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var result = await this._incidentComponent.Put(model);
+            var result = await this._incidentComponent.Put(id, model);
             return this.Ok(result);
         }
 

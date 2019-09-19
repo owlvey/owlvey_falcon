@@ -9,13 +9,13 @@ namespace Owlvey.Falcon.Core.Entities
     {
         public static class Factory
         {
-            public static IncidentEntity Create(string title, DateTime on, string user, ProductEntity product)
+            public static IncidentEntity Create(string key, string title, DateTime on, string user, ProductEntity product)
             {
                 var entity = new IncidentEntity()
                 {  
                       CreatedBy = user,
-                      CreatedOn  = on, 
-                      Description = title,
+                      CreatedOn  = on,
+                      Key = key,                      
                       Title = title,
                       ModifiedBy = user,
                       ModifiedOn = on,
@@ -23,8 +23,7 @@ namespace Owlvey.Falcon.Core.Entities
                       Url = "https://landing.google.com/sre/books/",
                       TTD = 10,
                       TTE =  10,
-                      TTF = 10,
-                      Start = on,
+                      TTF = 10,                      
                       End = on.AddMinutes(30),
                       Product = product,
                       Affected = 1

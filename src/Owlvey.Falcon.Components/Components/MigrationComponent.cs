@@ -192,10 +192,16 @@ namespace Owlvey.Falcon.Components
             IEnumerable<FeatureMigrateRp> features,
             IEnumerable<IndicatorMigrateRp> indicators,
             IEnumerable<SourceMigrateRp> sources,
-            IEnumerable<SourceItemMigrationRp> items
+            IEnumerable<SourceItemMigrationRp> items,
+            IEnumerable<IncidentMigrationRp> incidents,
+            IEnumerable<IncidentFeatureMigrationRp> incidentMaps
             )> Export(int customerId, bool includeItems = false)
         {
-            var customer = await this._dbContext.Customers.Include(c => c.Products).ThenInclude(c => c.Services).Where(c => c.Id == customerId).SingleAsync();
+            var customer = await this._dbContext.Customers
+                .Include(c => c.Products).ThenInclude(c => c.Services).Where(c => c.Id == customerId)                
+                .SingleAsync();
+
+            var incidents = await this._dbContext.Incidents.Include(c=>c.FeatureMaps).ThenInclude(c=>c.Feature).Where(c => c.Product.CustomerId == customerId).ToListAsync();
             var squads = await this._dbContext.Squads.Include(c => c.Members).ThenInclude(c => c.User).Where(c => c.CustomerId == customerId).ToListAsync();
             var squadLites = this._mapper.Map<IEnumerable<SquadMigrationRp>>(squads);
             var productLites = this._mapper.Map<IEnumerable<ProductMigrationRp>>(customer.Products);
@@ -269,17 +275,41 @@ namespace Owlvey.Falcon.Components
                     });
 
                 }
-
             }
 
-            return (customer, squadLites, memberLites, productLites, serviceLites, serviceMapLites, featureLites, indicatorLites, sourceLites, items);
+            List<IncidentMigrationRp> incidentsLite = new List<IncidentMigrationRp>();
+            List<IncidentFeatureMigrationRp> incidentFeaturesLite = new List<IncidentFeatureMigrationRp>();
+            foreach (var item in incidents)
+            {
+                incidentsLite.Add(new IncidentMigrationRp() {
+                    Product = item.Product.Name,
+                    Key = item.Key,
+                    Affected = item.Affected,
+                    Start = item.Start.ToString("s", System.Globalization.CultureInfo.InvariantCulture),
+                    End = item.End.ToString("s", System.Globalization.CultureInfo.InvariantCulture),                     
+                    Title = item.Title,
+                    TTD = item.TTD,
+                    TTE = item.TTE,
+                    TTF = item.TTF,
+                    URL = item.Url
+                });
+                foreach (var incidentFeature in item.FeatureMaps)
+                {
+                    incidentFeaturesLite.Add(new IncidentFeatureMigrationRp() {
+                         Product = item.Product.Name,
+                         Feature = incidentFeature.Feature.Name,
+                         IncidentKey = item.Key
+                    });
+                }
+            }
+            return (customer, squadLites, memberLites, productLites, serviceLites, serviceMapLites, featureLites, indicatorLites, sourceLites, items, incidentsLite, incidentFeaturesLite);
 
         }
 
         public async Task<(CustomerEntity entity, MemoryStream stream)> ExportExcel(int customerId, bool includeData)
         {
             var (customer, squadLites, memberLites, productLites, serviceLites, serviceMapLites, featureLites,
-                  indicatorLites, sourceLites, sourceItemsLites) = await this.Export(customerId, includeData);
+                  indicatorLites, sourceLites, sourceItemsLites, incidentLites, incidentFeatureMap) = await this.Export(customerId, includeData);
 
             var stream = new MemoryStream();
             using (var package = new ExcelPackage(stream))
@@ -310,6 +340,12 @@ namespace Owlvey.Falcon.Components
 
                 var sourceItemsSheet = package.Workbook.Worksheets.Add("SourceItems");
                 sourceItemsSheet.Cells.LoadFromCollection(sourceItemsLites, true);
+
+                var incidentSheet = package.Workbook.Worksheets.Add("Incidents");
+                incidentSheet.Cells.LoadFromCollection(incidentLites, true);
+
+                var incidentFeaturesSheet = package.Workbook.Worksheets.Add("IncidentFeatures");
+                incidentFeaturesSheet.Cells.LoadFromCollection(incidentFeatureMap, true);
 
                 package.Save();
             }

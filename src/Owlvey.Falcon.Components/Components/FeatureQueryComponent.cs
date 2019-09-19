@@ -71,6 +71,8 @@ namespace Owlvey.Falcon.Components
                 model.Indicators.Add(tmp);
             }
 
+            model.Indicators = model.Indicators.OrderByDescending(c => c.Availability).ToList();
+
             foreach (var map in  feature.ServiceMaps)
             {
                 var tmp = this._mapper.Map<ServiceGetListRp>(map.Service);

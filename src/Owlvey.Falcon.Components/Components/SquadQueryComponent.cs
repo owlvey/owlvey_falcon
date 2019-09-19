@@ -60,6 +60,11 @@ namespace Owlvey.Falcon.Components
             foreach (var featureMap in entity.Features)
             {                
                 var feature = featureMap.Feature;
+
+                //await this._dbContext.Entry(feature).Collection(c => c.Indicators).LoadAsync();
+
+                feature.Indicators = await this._dbContext.Indicators.Include(c=>c.Source).Where(c => c.FeatureId == feature.Id).ToListAsync();
+
                 var availabilty = await common.GetAvailabilityByFeature(feature, start, end);
 
                 foreach (var serviceMap in featureMap.Feature.ServiceMaps)

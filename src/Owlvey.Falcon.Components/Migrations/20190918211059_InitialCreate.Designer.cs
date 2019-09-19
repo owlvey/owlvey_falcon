@@ -9,7 +9,7 @@ using Owlvey.Falcon.Repositories;
 namespace Owlvey.Falcon.Migrations
 {
     [DbContext(typeof(FalconDbContext))]
-    [Migration("20190918031511_InitialCreate")]
+    [Migration("20190918211059_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -137,10 +137,10 @@ namespace Owlvey.Falcon.Migrations
 
                     b.Property<bool>("Deleted");
 
-                    b.Property<string>("Description")
-                        .IsRequired();
-
                     b.Property<DateTime>("End");
+
+                    b.Property<string>("Key")
+                        .IsRequired();
 
                     b.Property<string>("ModifiedBy")
                         .IsRequired();
@@ -151,8 +151,6 @@ namespace Owlvey.Falcon.Migrations
                     b.Property<int>("ProductId");
 
                     b.Property<int?>("ServiceMapEntityId");
-
-                    b.Property<DateTime>("Start");
 
                     b.Property<int>("TTD");
 
