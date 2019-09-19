@@ -65,7 +65,10 @@ namespace Owlvey.Falcon.Models
 
     }
     public class IncidentPutRp
-    {        
+    {
+        [Required]
+        public int? Affected { get; set; }
+
         [Required]
         public string Title { get; set; }        
 

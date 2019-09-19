@@ -26,6 +26,7 @@ namespace Owlvey.Falcon.Components
         private readonly ServiceMapComponent _serviceMapComponent;
         private readonly IndicatorComponent _indicatorComponent;
         private readonly SourceItemComponent _sourceItemComponent;
+        private readonly IncidentComponent _incidentComponent;
         public MigrationComponent(FalconDbContext dbContext,
             ProductComponent productComponent,
             ServiceComponent serviceComponent,
@@ -34,6 +35,7 @@ namespace Owlvey.Falcon.Components
             ServiceMapComponent serviceMapComponent,
             IndicatorComponent indicatorComponent,
             SourceItemComponent sourceItemComponent,
+            IncidentComponent incidentComponent,
             IUserIdentityGateway identityService,
             IDateTimeGateway dateTimeGateway, IMapper mapper,
             SquadComponent squadComponent, SquadQueryComponent squadQueryComponent) : base(dateTimeGateway, mapper, identityService)
@@ -49,6 +51,7 @@ namespace Owlvey.Falcon.Components
             this._indicatorComponent = indicatorComponent;
             this._sourceComponent = sourceComponent;
             this._sourceItemComponent = sourceItemComponent;
+            this._incidentComponent = incidentComponent;
         }
 
 
@@ -66,7 +69,7 @@ namespace Owlvey.Falcon.Components
                 var squadSheet = package.Workbook.Worksheets["Squads"];
 
                 for (int row = 2; row <= squadSheet.Dimension.Rows; row++)
-                {                    
+                {
                     var name = squadSheet.Cells[row, 1].GetValue<string>();
                     var description = squadSheet.Cells[row, 2].GetValue<string>();
                     var avatar = squadSheet.Cells[row, 3].GetValue<string>();
@@ -80,7 +83,7 @@ namespace Owlvey.Falcon.Components
                 {
                     var name = productSheet.Cells[row, 1].GetValue<string>();
                     var description = productSheet.Cells[row, 2].GetValue<string>();
-                    var avatar = productSheet.Cells[row, 3].GetValue<string>();                    
+                    var avatar = productSheet.Cells[row, 3].GetValue<string>();
                     if (name != null)
                     {
                         await this._productComponent.CreateOrUpdate(customer, name, description, avatar);
@@ -93,9 +96,9 @@ namespace Owlvey.Falcon.Components
                 {
                     var product = serviceSheet.Cells[row, 1].GetValue<string>();
                     var name = serviceSheet.Cells[row, 2].GetValue<string>();
-                    var description = serviceSheet.Cells[row, 3].GetValue<string>();                    
-                    var slo = serviceSheet.Cells[row, 4].GetValue<decimal>();                    
-                    var avatar = serviceSheet.Cells[row, 5].GetValue<string>();                    
+                    var description = serviceSheet.Cells[row, 3].GetValue<string>();
+                    var slo = serviceSheet.Cells[row, 4].GetValue<decimal>();
+                    var avatar = serviceSheet.Cells[row, 5].GetValue<string>();
                     if (product != null && name != null)
                     {
                         await this._serviceComponent.CreateOrUpdate(customer, product, name, description, avatar, slo);
@@ -103,33 +106,33 @@ namespace Owlvey.Falcon.Components
                 }
 
                 var featureSheet = package.Workbook.Worksheets["Features"];
-                
+
                 for (int row = 2; row <= featureSheet.Dimension.Rows; row++)
                 {
                     var product = featureSheet.Cells[row, 1].GetValue<string>();
                     var name = featureSheet.Cells[row, 2].GetValue<string>();
-                    var description = featureSheet.Cells[row, 3].GetValue<string>();                                        
+                    var description = featureSheet.Cells[row, 3].GetValue<string>();
                     var avatar = featureSheet.Cells[row, 4].GetValue<string>();
                     if (product != null && name != null)
                     {
                         await this._featureComponent.CreateOrUpdate(customer, product, name, description, avatar);
-                    }                    
+                    }
                 }
 
-                var sourceSheet = package.Workbook.Worksheets["Sources"];                
+                var sourceSheet = package.Workbook.Worksheets["Sources"];
                 for (int row = 2; row <= sourceSheet.Dimension.Rows; row++)
                 {
                     var product = sourceSheet.Cells[row, 1].GetValue<string>();
                     var name = sourceSheet.Cells[row, 2].GetValue<string>();
-                    var tags = sourceSheet.Cells[row, 3].GetValue<string>();                    
+                    var tags = sourceSheet.Cells[row, 3].GetValue<string>();
                     var good = sourceSheet.Cells[row, 4].GetValue<string>();
-                    var total = sourceSheet.Cells[row, 5].GetValue<string>();                    
+                    var total = sourceSheet.Cells[row, 5].GetValue<string>();
                     var avatar = sourceSheet.Cells[row, 6].GetValue<string>();
                     if (product != null && name != null)
                     {
                         await this._sourceComponent.CreateOrUpdate(customer, product, name, tags, avatar, good, total);
                     }
-                    
+
                 }
 
                 var serviceMapSheet = package.Workbook.Worksheets["ServicesMap"];
@@ -137,7 +140,7 @@ namespace Owlvey.Falcon.Components
                 {
                     var product = serviceMapSheet.Cells[row, 1].GetValue<string>();
                     var service = serviceMapSheet.Cells[row, 2].GetValue<string>();
-                    var feature = serviceMapSheet.Cells[row, 3].GetValue<string>();                    
+                    var feature = serviceMapSheet.Cells[row, 3].GetValue<string>();
                     if (product != null && service != null)
                     {
                         await this._serviceMapComponent.CreateServiceMap(customerId, product, service, feature);
@@ -146,25 +149,26 @@ namespace Owlvey.Falcon.Components
 
                 var indicatorSheet = package.Workbook.Worksheets["Indicators"];
                 for (int row = 2; row <= indicatorSheet.Dimension.Rows; row++)
-                {                    
+                {
                     var product = indicatorSheet.Cells[row, 1].GetValue<string>();
                     var source = indicatorSheet.Cells[row, 2].GetValue<string>();
                     var feature = indicatorSheet.Cells[row, 3].GetValue<string>();
-                    if (product != null && source != null) {
+                    if (product != null && source != null)
+                    {
                         await this._indicatorComponent.Create(customerId, product, source, feature);
-                    }                    
+                    }
                 }
 
                 var sourceItemsSheet = package.Workbook.Worksheets["SourceItems"];
 
-                var sources = await this._dbContext.Sources.Include(c=>c.Product).Where(c => c.Product.CustomerId == customerId).ToListAsync();
+                var sources = await this._dbContext.Sources.Include(c => c.Product).Where(c => c.Product.CustomerId == customerId).ToListAsync();
 
                 for (int row = 2; row <= sourceItemsSheet.Dimension.Rows; row++)
-                {                    
+                {
                     var product = sourceItemsSheet.Cells[row, 1].GetValue<string>();
                     var source = sourceItemsSheet.Cells[row, 2].GetValue<string>();
                     var good = sourceItemsSheet.Cells[row, 3].GetValue<int>();
-                    var total = sourceItemsSheet.Cells[row, 4].GetValue<int>();                    
+                    var total = sourceItemsSheet.Cells[row, 4].GetValue<int>();
                     var start = DateTime.Parse(sourceItemsSheet.Cells[row, 5].GetValue<string>());
                     var end = DateTime.Parse(sourceItemsSheet.Cells[row, 6].GetValue<string>());
                     if (product != null && source != null)
@@ -177,7 +181,56 @@ namespace Owlvey.Falcon.Components
                             Good = good,
                             Total = total
                         });
-                    }                    
+                    }
+                }
+
+                var incidentsSheet = package.Workbook.Worksheets["Incidents"];
+                var products = await this._dbContext.Products.Where(c => c.CustomerId == customerId).ToListAsync();
+
+                for (int row = 2; row <= incidentsSheet.Dimension.Rows; row++)
+                {
+                    IncidentMigrationRp a;
+                    var product = incidentsSheet.Cells[row, 1].GetValue<string>();
+                    var key = incidentsSheet.Cells[row, 2].GetValue<string>();
+                    if (!string.IsNullOrWhiteSpace(product) && !string.IsNullOrWhiteSpace(key)) {
+                        var title = incidentsSheet.Cells[row, 3].GetValue<string>();
+                        var affected = incidentsSheet.Cells[row, 4].GetValue<int>();
+                        var ttd = incidentsSheet.Cells[row, 5].GetValue<int>();
+                        var tte = incidentsSheet.Cells[row, 6].GetValue<int>();
+                        var ttf = incidentsSheet.Cells[row, 7].GetValue<int>();
+                        var url = incidentsSheet.Cells[row, 8].GetValue<string>();
+                        var end = DateTime.Parse(incidentsSheet.Cells[row, 9].GetValue<string>());
+
+                        var incident = await this._incidentComponent.Post(new IncidentPostRp()
+                        {
+                            Key = key,
+                            Title = title,
+                            ProductId = products.Where(c => c.Name == product).Single().Id.Value
+                        });
+
+                        await this._incidentComponent.Put(incident.Id, new IncidentPutRp()
+                        {
+                            End = end,
+                            Title = title,
+                            TTD = ttd,
+                            TTE = tte,
+                            TTF = ttf,
+                            URL = url,
+                            Affected = affected
+                        });
+                    }
+                }
+
+                var incidentsFeaturesSheet = package.Workbook.Worksheets["IncidentFeatures"];
+                var incidents = await  this._dbContext.Incidents.Where(c => c.Product.CustomerId == customerId).ToListAsync();
+                var features = await this._dbContext.Features.Where(c => c.Product.CustomerId == customerId).ToListAsync();
+                for (int row = 2; row <= incidentsFeaturesSheet.Dimension.Rows; row++) {
+                    var product = incidentsFeaturesSheet.Cells[row, 1].GetValue<string>();
+                    var key = incidentsFeaturesSheet.Cells[row, 2].GetValue<string>();
+                    var feature = incidentsFeaturesSheet.Cells[row, 3].GetValue<string>();
+                    await this._incidentComponent.RegisterFeature(
+                        incidents.Where(c=>c.Key == key).Single().Id.Value, 
+                        features.Where(c=>c.Name == feature).Single().Id.Value);                    
                 }
             }
             return logs;

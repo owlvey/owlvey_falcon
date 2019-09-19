@@ -53,7 +53,7 @@ namespace Owlvey.Falcon.Core.Entities
         public void Update(string title,
             string modifiedBy, DateTime on,
             DateTime? end = null,
-            int? ttd = null, int? tte =null, int? ttf=null, string url = null) {
+            int? ttd = null, int? tte =null, int? ttf=null, string url = null, int? affected = null) {
 
             this.ModifiedBy = modifiedBy;
             this.ModifiedOn = on;
@@ -63,6 +63,7 @@ namespace Owlvey.Falcon.Core.Entities
             this.TTF = ttf ?? this.TTF;
             this.End = this.Start.AddMinutes(this.TTM);
             this.Url = url ?? this.Url;
+            this.Affected = affected ?? this.Affected;
             this.Validate();
         }
 
