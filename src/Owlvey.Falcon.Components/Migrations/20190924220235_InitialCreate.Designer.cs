@@ -9,7 +9,7 @@ using Owlvey.Falcon.Repositories;
 namespace Owlvey.Falcon.Migrations
 {
     [DbContext(typeof(FalconDbContext))]
-    [Migration("20190924215112_InitialCreate")]
+    [Migration("20190924220235_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -535,9 +535,8 @@ namespace Owlvey.Falcon.Migrations
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.SquadFeatureEntity", b =>
                 {
-                    b.Property<int>("FeatureId");
-
-                    b.Property<int>("SquadId");
+                    b.Property<int?>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("CreatedBy")
                         .IsRequired();
@@ -547,8 +546,7 @@ namespace Owlvey.Falcon.Migrations
 
                     b.Property<bool>("Deleted");
 
-                    b.Property<int?>("Id")
-                        .IsRequired();
+                    b.Property<int>("FeatureId");
 
                     b.Property<string>("ModifiedBy")
                         .IsRequired();
@@ -556,9 +554,11 @@ namespace Owlvey.Falcon.Migrations
                     b.Property<DateTime?>("ModifiedOn")
                         .IsRequired();
 
-                    b.HasKey("FeatureId", "SquadId");
+                    b.Property<int>("SquadId");
 
-                    b.HasAlternateKey("Id");
+                    b.HasKey("Id");
+
+                    b.HasIndex("FeatureId");
 
                     b.HasIndex("SquadId");
 

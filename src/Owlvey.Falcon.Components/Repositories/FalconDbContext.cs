@@ -57,7 +57,7 @@ namespace Owlvey.Falcon.Repositories
             modelBuilder.Entity<SourceItemEntity>().HasIndex(p => p.End);
             modelBuilder.Entity<CustomerEntity>().HasIndex(c => c.Name).IsUnique();
 
-            modelBuilder.Entity<SquadFeatureEntity>().HasKey(x => new { x.FeatureId, x.SquadId });
+            modelBuilder.Entity<SquadFeatureEntity>().HasKey(x => new { x.Id });
 
             modelBuilder.Entity<SquadFeatureEntity>()
                .HasOne(pt => pt.Feature)

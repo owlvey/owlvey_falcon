@@ -300,19 +300,19 @@ namespace Owlvey.Falcon.Migrations
                 name: "SquadFeatureEntity",
                 columns: table => new
                 {
-                    FeatureId = table.Column<int>(nullable: false),
-                    SquadId = table.Column<int>(nullable: false),
-                    Id = table.Column<int>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
                     ModifiedBy = table.Column<string>(nullable: false),
-                    Deleted = table.Column<bool>(nullable: false)
+                    Deleted = table.Column<bool>(nullable: false),
+                    FeatureId = table.Column<int>(nullable: false),
+                    SquadId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SquadFeatureEntity", x => new { x.FeatureId, x.SquadId });
-                    table.UniqueConstraint("AK_SquadFeatureEntity_Id", x => x.Id);
+                    table.PrimaryKey("PK_SquadFeatureEntity", x => x.Id);
                     table.ForeignKey(
                         name: "FK_SquadFeatureEntity_FeatureEntity_FeatureId",
                         column: x => x.FeatureId,
@@ -557,6 +557,11 @@ namespace Owlvey.Falcon.Migrations
                 name: "IX_SquadEntity_CustomerId",
                 table: "SquadEntity",
                 column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SquadFeatureEntity_FeatureId",
+                table: "SquadFeatureEntity",
+                column: "FeatureId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SquadFeatureEntity_SquadId",
