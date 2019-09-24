@@ -331,19 +331,19 @@ namespace Owlvey.Falcon.Migrations
                 name: "IncidentMapEntity",
                 columns: table => new
                 {
-                    FeatureId = table.Column<int>(nullable: false),
-                    IncidentId = table.Column<int>(nullable: false),
-                    Id = table.Column<int>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
                     ModifiedBy = table.Column<string>(nullable: false),
-                    Deleted = table.Column<bool>(nullable: false)
+                    Deleted = table.Column<bool>(nullable: false),
+                    FeatureId = table.Column<int>(nullable: false),
+                    IncidentId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_IncidentMapEntity", x => new { x.FeatureId, x.IncidentId });
-                    table.UniqueConstraint("AK_IncidentMapEntity_Id", x => x.Id);
+                    table.PrimaryKey("PK_IncidentMapEntity", x => x.Id);
                     table.ForeignKey(
                         name: "FK_IncidentMapEntity_FeatureEntity_FeatureId",
                         column: x => x.FeatureId,
@@ -362,20 +362,20 @@ namespace Owlvey.Falcon.Migrations
                 name: "ServiceMapEntity",
                 columns: table => new
                 {
-                    ServiceId = table.Column<int>(nullable: false),
-                    FeatureId = table.Column<int>(nullable: false),
-                    Id = table.Column<int>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
                     ModifiedBy = table.Column<string>(nullable: false),
                     Deleted = table.Column<bool>(nullable: false),
+                    ServiceId = table.Column<int>(nullable: false),
+                    FeatureId = table.Column<int>(nullable: false),
                     SquadEntityId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ServiceMapEntity", x => new { x.FeatureId, x.ServiceId });
-                    table.UniqueConstraint("AK_ServiceMapEntity_Id", x => x.Id);
+                    table.PrimaryKey("PK_ServiceMapEntity", x => x.Id);
                     table.ForeignKey(
                         name: "FK_ServiceMapEntity_FeatureEntity_FeatureId",
                         column: x => x.FeatureId,
@@ -400,21 +400,21 @@ namespace Owlvey.Falcon.Migrations
                 name: "IndicatorEntity",
                 columns: table => new
                 {
-                    SourceId = table.Column<int>(nullable: false),
-                    FeatureId = table.Column<int>(nullable: false),
-                    Id = table.Column<int>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
                     ModifiedBy = table.Column<string>(nullable: false),
                     Deleted = table.Column<bool>(nullable: false),
+                    SourceId = table.Column<int>(nullable: false),
+                    FeatureId = table.Column<int>(nullable: false),
                     Avatar = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_IndicatorEntity", x => new { x.FeatureId, x.SourceId });
-                    table.UniqueConstraint("AK_IndicatorEntity_Id", x => x.Id);
+                    table.PrimaryKey("PK_IndicatorEntity", x => x.Id);
                     table.ForeignKey(
                         name: "FK_IndicatorEntity_FeatureEntity_FeatureId",
                         column: x => x.FeatureId,
@@ -479,9 +479,19 @@ namespace Owlvey.Falcon.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_IncidentMapEntity_FeatureId",
+                table: "IncidentMapEntity",
+                column: "FeatureId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_IncidentMapEntity_IncidentId",
                 table: "IncidentMapEntity",
                 column: "IncidentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_IndicatorEntity_FeatureId",
+                table: "IndicatorEntity",
+                column: "FeatureId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_IndicatorEntity_SourceId",
@@ -507,6 +517,11 @@ namespace Owlvey.Falcon.Migrations
                 name: "IX_ServiceEntity_ProductId",
                 table: "ServiceEntity",
                 column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ServiceMapEntity_FeatureId",
+                table: "ServiceMapEntity",
+                column: "FeatureId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ServiceMapEntity_ServiceId",
