@@ -26,7 +26,7 @@ namespace Owlvey.Falcon.Components
         {
             foreach (var indicator in entity.Indicators)
             {
-                var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, start, end);
+                var sourceItems = this._dbContext.GetSourceItems(indicator.SourceId, start, end);
                 indicator.Source.SourceItems = sourceItems;
             }
             var agg = new FeatureDateAvailabilityAggregate(entity);

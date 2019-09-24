@@ -27,6 +27,19 @@ namespace Owlvey.Falcon.Components
             this._dbContext = dbContext;
         }
 
+        public async Task<DateTime> GetAnchor(int productId, string name)
+        {
+            var entity = await this._dbContext.Anchors
+                .Where(c => c.ProductId == productId && c.Name == name).SingleAsync();
+            return entity.Target;
+        }
+        public async Task<IEnumerable<AnchorRp>> GetAnchors(int productId)
+        {
+            var entities = await this._dbContext.Anchors
+                .Where(c => c.ProductId == productId).ToListAsync();
+            return this._mapper.Map<IEnumerable<AnchorRp>>(entities);
+        }
+
         public async Task<ProductGetRp> GetProductByName(string Name)
         {
             var entity = await this._dbContext.Products.SingleAsync(c => c.Name == Name);
@@ -143,7 +156,7 @@ namespace Owlvey.Falcon.Components
 
                     foreach (var indicator in entity.Indicators)
                     {                        
-                        var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, start, end);
+                        var sourceItems = this._dbContext.GetSourceItems(indicator.SourceId, start, end);
                         indicator.Source.SourceItems = sourceItems;
                     }
                     map.Feature = entity;

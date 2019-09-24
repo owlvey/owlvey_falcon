@@ -10,10 +10,9 @@ namespace Owlvey.Falcon.Repositories.Features
 {
     public static class FeatureExtensions
     {
-        public static async Task<IEnumerable<IncidentEntity>> GetIncidentsByFeature(this FalconDbContext context,
-            int featureId, DateTime start, DateTime end)
+        public static async Task<IEnumerable<IncidentEntity>> GetIncidentsByFeature(this FalconDbContext context,int featureId)
         {
-            return await context.IncidentMaps.Where(c=>c.FeatureId == featureId && c.Incident.Start >= start && c.Incident.End <= end).Select(c=>c.Incident).ToListAsync();
+            return await context.IncidentMaps.Where(c=>c.FeatureId == featureId).Select(c=>c.Incident).ToListAsync();
         }
     }
 }

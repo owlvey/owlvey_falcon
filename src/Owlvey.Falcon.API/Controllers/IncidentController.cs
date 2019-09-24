@@ -24,9 +24,9 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok(model);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetIncidentId")]
         [ProducesResponseType(typeof(IEnumerable<IncidentDetailtRp>), 200)]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> GetIncidentId(int id)
         {
             var model = await this._incidentComponent.Get(id);
             return this.Ok(model);
@@ -70,8 +70,14 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(IEnumerable<IndicatorGetListRp>), 200)]
         public async Task<IActionResult> Post([FromBody]IncidentPostRp model)
         {
-            var result = await this._incidentComponent.Post(model);
-            return this.Ok(result);
+            var (result, created) = await this._incidentComponent.Post(model);
+            if (created)
+            {
+                return this.Created(Url.RouteUrl("GetIncidentId", new { id = result.Id }), result);                
+            }
+            else {
+                return this.Ok(result);
+            }
         }
 
 

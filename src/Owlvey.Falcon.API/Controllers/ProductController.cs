@@ -155,6 +155,35 @@ namespace Owlvey.Falcon.API.Controllers
             }
             
         }
+        #region Anchors
+
+        [HttpGet("{id}/sync")]
+        [ProducesResponseType(typeof(AnchorRp), 200)]
+        public async Task<IActionResult> GetAnchors(int id)
+        {
+            var entities = await this._productQueryService.GetAnchors(id);
+            return this.Ok(entities);
+        }
+
+        [HttpGet("{id}/sync/{name}")]
+        [ProducesResponseType(typeof(DateTime), 200)]
+        public async Task<IActionResult> GetAnchor(int id, string name)
+        {
+            var source = await this._productQueryService.GetAnchor(id, name);
+            return this.Ok(new { data = source });
+        }
+
+        [HttpPut("{id}/sync/{name}")]
+        [ProducesResponseType(typeof(DateTime), 200)]
+        public async Task<IActionResult> SetAnchor(int id, string name, [FromBody]AnchorPutRp model)
+        {
+            await this._productService.PutAnchor(id, name, model);
+            return this.Ok();
+        }
+
+        #endregion
+
+
 
         #region reports
         [HttpGet("{id}/reports/daily/series")]

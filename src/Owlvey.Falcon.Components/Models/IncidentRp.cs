@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using Owlvey.Falcon.Core;
 
 namespace Owlvey.Falcon.Models
 {
@@ -23,13 +24,44 @@ namespace Owlvey.Falcon.Models
 
         public int TTM { get {
                 return this.TTD + this.TTE + this.TTF;
-         } }
+        } }
+
+
+        public string TTDS
+        {
+            get
+            {
+                return DateTimeUtils.FormatTimeToInMinutes(this.TTD);
+            }
+        }
+
+        public string TTES
+        {
+            get
+            {
+                return DateTimeUtils.FormatTimeToInMinutes(this.TTE);
+            }
+        }
+
+        public string TTFS
+        {
+            get
+            {
+                return DateTimeUtils.FormatTimeToInMinutes(this.TTF);
+            }
+        }
+
+        public string TTMS {
+            get {
+                return DateTimeUtils.FormatTimeToInMinutes(this.TTM);
+            }
+        }
     }
 
 
     public class IncidentGetListRp : IncidentBaseRp
     {
-        
+        public int FeaturesCount { get; set; }        
     }
 
     public class IncidentDetailtRp : IncidentBaseRp

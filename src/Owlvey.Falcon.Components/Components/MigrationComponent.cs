@@ -201,7 +201,7 @@ namespace Owlvey.Falcon.Components
                         var url = incidentsSheet.Cells[row, 8].GetValue<string>();
                         var end = DateTime.Parse(incidentsSheet.Cells[row, 9].GetValue<string>());
 
-                        var incident = await this._incidentComponent.Post(new IncidentPostRp()
+                        var (incident, created) = await this._incidentComponent.Post(new IncidentPostRp()
                         {
                             Key = key,
                             Title = title,

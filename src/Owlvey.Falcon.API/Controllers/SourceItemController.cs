@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Core.Values;
 using Owlvey.Falcon.Models;
 
 namespace Owlvey.Falcon.API.Controllers
@@ -59,18 +60,22 @@ namespace Owlvey.Falcon.API.Controllers
         }
 
         [HttpGet()]
-        [ProducesResponseType(typeof(IEnumerable<SourceItemGetRp>), 200)]
-        public async Task<IActionResult> GetBySourceId(int? sourceId)
-        {  
-            if (sourceId.HasValue)
+        [ProducesResponseType(typeof(IEnumerable<SourceItemGetListRp>), 200)]
+        public async Task<IActionResult> GetBySourceId(int? sourceId, DateTime? start, DateTime? end)
+        {
+            IEnumerable<SourceItemGetListRp> model = new List<SourceItemGetListRp>();
+            if (sourceId.HasValue && start.HasValue && end.HasValue) {
+                model = this._sourceItemComponent.GetBySourceIdAndDateRange(sourceId.Value, start.Value, end.Value);
+            }
+            else if (sourceId.HasValue)
             {
-                var model = await this._sourceItemComponent.GetBySource(sourceId.Value);
-                return this.Ok(model);
+                model = await this._sourceItemComponent.GetBySource(sourceId.Value);                
             }
             else {
-                var model = await this._sourceItemComponent.GetAll();
-                return this.Ok(model);
-            }            
+                model = await this._sourceItemComponent.GetAll();                
+            }
+            return this.Ok(model);
         }
+        
     }
 }

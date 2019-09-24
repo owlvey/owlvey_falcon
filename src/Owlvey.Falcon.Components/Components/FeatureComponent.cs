@@ -15,12 +15,16 @@ namespace Owlvey.Falcon.Components
 {
     public class FeatureComponent : BaseComponent
     {
-        private readonly FalconDbContext _dbContext;        
+        private readonly FalconDbContext _dbContext;
+        private readonly CacheComponent _cacheComponent;
 
         public FeatureComponent(FalconDbContext dbContext,
-            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway, IMapper mapper) : base(dateTimeGateway, mapper, identityService)
+            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway,
+            IMapper mapper,
+            CacheComponent cacheComponent) : base(dateTimeGateway, mapper, identityService)
         {
             this._dbContext = dbContext;
+            this._cacheComponent = cacheComponent;            
             
         }
         
@@ -42,6 +46,7 @@ namespace Owlvey.Falcon.Components
             entity.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, name, avatar, description);
             this._dbContext.Features.Update(entity);
             await this._dbContext.SaveChangesAsync();
+            this._cacheComponent.InvalidateFeaturesCache(entity.ProductId);
             return this._mapper.Map<FeatureGetListRp>(entity);
         }
 
@@ -62,6 +67,9 @@ namespace Owlvey.Falcon.Components
                 this._dbContext.Add(entity);
                 await this._dbContext.SaveChangesAsync();
             }
+
+            this._cacheComponent.InvalidateFeaturesCache(entity.ProductId);
+
             return this._mapper.Map<FeatureGetListRp>(entity);
         }
 
@@ -88,6 +96,8 @@ namespace Owlvey.Falcon.Components
             this._dbContext.Features.Remove(feature);
 
             await this._dbContext.SaveChangesAsync();
+
+            this._cacheComponent.InvalidateFeaturesCache(feature.ProductId);
 
             return result;
         }
@@ -133,6 +143,8 @@ namespace Owlvey.Falcon.Components
 
             await this._dbContext.SaveChangesAsync();
 
+            this._cacheComponent.InvalidateFeaturesCache(feature.ProductId);
+
             return result;
         }
 
@@ -157,18 +169,24 @@ namespace Owlvey.Falcon.Components
 
             result.AddResult("Id", entity.Id);
 
+            this._cacheComponent.InvalidateFeaturesCache(feature.ProductId);
+
             return result;
         }
 
         public async Task<BaseComponentResultRp> UnRegisterFeature(int squadId, int featureId)
         {
             var result = new BaseComponentResultRp();
-            var item = await this._dbContext.SquadFeatures.Where(c => c.SquadId == squadId && c.FeatureId == featureId).SingleOrDefaultAsync();
+            var item = await this._dbContext.SquadFeatures.Include(c=>c.Feature).Where(c => c.SquadId == squadId && c.FeatureId == featureId).SingleOrDefaultAsync();
             if (item != null)
             {
                 this._dbContext.SquadFeatures.Remove(item);
+
                 await this._dbContext.SaveChangesAsync();
-            }
+
+                this._cacheComponent.InvalidateFeaturesCache(item.Feature.ProductId);
+            }            
+
             return result;
         }
         #endregion

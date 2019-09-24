@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.Core.Entities;
 using System.Collections.Generic;
 using Owlvey.Falcon.Core;
+using Owlvey.Falcon.Core.Values;
 
 namespace Owlvey.Falcon.Components
 {
@@ -62,11 +63,14 @@ namespace Owlvey.Falcon.Components
 
             return this._mapper.Map<IEnumerable<SourceItemGetListRp>>(entity);
         }
+                
         public async Task<IEnumerable<SourceItemGetListRp>> GetAll()
         {
             var entity = await this._dbContext.SourcesItems.ToListAsync();
             return this._mapper.Map<IEnumerable<SourceItemGetListRp>>(entity);
         }
+
+      
     
         public async Task<IEnumerable<SourceItemGetListRp>> GetById(int id)
         {
@@ -75,9 +79,9 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<SourceItemGetListRp>>(entity);
         }
 
-        public async Task<IEnumerable<SourceItemGetListRp>> GetBySourceIdAndDateRange(int sourceId, DateTime start, DateTime end)
+        public IEnumerable<SourceItemGetListRp> GetBySourceIdAndDateRange(int sourceId, DateTime start, DateTime end)
         {
-            var entity = await this._dbContext.GetSourceItems(sourceId, start, end);
+            var entity = this._dbContext.GetSourceItems(sourceId, start, end);
             return this._mapper.Map<IEnumerable<SourceItemGetListRp>>(entity);
         }
     }

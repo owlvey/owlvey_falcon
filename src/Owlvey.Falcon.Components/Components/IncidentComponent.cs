@@ -25,10 +25,13 @@ namespace Owlvey.Falcon.Components
         }
         public async Task<IEnumerable<IncidentGetListRp>> GetByProduct(int productId) {
             var incidents = await this._dbContext.Incidents
-                .Where(c => c.ProductId == productId).ToListAsync();
+                .Include(c=>c.FeatureMaps)
+                .Where(c => c.ProductId == productId)
+                .ToListAsync();
 
             incidents = incidents.OrderByDescending(c => c.End).ToList();
-            return this._mapper.Map<IEnumerable<IncidentGetListRp>>(incidents);
+            var result = this._mapper.Map<IEnumerable<IncidentGetListRp>>(incidents);
+            return result;
         }
 
         public async Task<IncidentDetailtRp> Get(int id)
@@ -54,16 +57,18 @@ namespace Owlvey.Falcon.Components
 
 
 
-        public async Task<IncidentGetListRp> Post(IncidentPostRp model) {
+        public async Task<(IncidentGetListRp incident, bool created)> Post(IncidentPostRp model) {
+            bool created = false;
             var createdBy = this._identityService.GetIdentity();
             var product = await this._dbContext.Products.Where(c => c.Id == model.ProductId).SingleAsync();
             var entity = await this._dbContext.Incidents.Where(c => c.Key == model.Key && c.ProductId == model.ProductId).SingleOrDefaultAsync();
             if (entity == null) {
+                created = true;
                 entity = IncidentEntity.Factory.Create(model.Key, model.Title, this._datetimeGateway.GetCurrentDateTime(), createdBy, product);
                 this._dbContext.Incidents.Add(entity);
                 await this._dbContext.SaveChangesAsync();
             }            
-            return this._mapper.Map<IncidentGetListRp>(entity);
+            return (this._mapper.Map<IncidentGetListRp>(entity), created);
         }
 
         public async Task<IncidentGetListRp> Put(int id, IncidentPutRp model) {

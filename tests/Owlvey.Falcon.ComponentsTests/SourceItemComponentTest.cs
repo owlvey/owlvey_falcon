@@ -24,7 +24,7 @@ namespace Owlvey.Falcon.ComponentsTests
                 Good = 900,
                 Total = 1000
             });
-            var items = await itemComponent.GetBySourceIdAndDateRange(source, OwlveyCalendar.StartJanuary2019, OwlveyCalendar.January201908);
+            var items = itemComponent.GetBySourceIdAndDateRange(source, OwlveyCalendar.StartJanuary2019, OwlveyCalendar.January201908);
             Assert.NotEmpty(items);             
         }
 
@@ -46,7 +46,7 @@ namespace Owlvey.Falcon.ComponentsTests
                 Good = 900,
                 Total = 1000
             });
-            var items = await itemComponent.GetBySourceIdAndDateRange(source, OwlveyCalendar.January201908, OwlveyCalendar.January201912);
+            var items = itemComponent.GetBySourceIdAndDateRange(source, OwlveyCalendar.January201908, OwlveyCalendar.January201912);
             Assert.NotEmpty(items);
         }
 
@@ -81,6 +81,40 @@ namespace Owlvey.Falcon.ComponentsTests
             var list = await itemComponent.GetBySource(source.Id);
 
             Assert.NotEmpty(list);
+
+        }
+
+        [Fact]
+        public async Task SourceQueryAvailability()
+        {
+            var container = ComponentTestFactory.BuildContainer();
+
+            var (_, product) = await ComponentTestFactory.BuildCustomerProduct(container);
+
+            var component = container.GetInstance<SourceComponent>();
+            var sourceItemComponent = container.GetInstance<SourceItemComponent>();
+
+            await component.Create(new Models.SourcePostRp()
+            {
+                Name = "test",
+                ProductId = product
+            });
+            var testSource = await component.GetByName(product, "test");
+
+            var item = await sourceItemComponent.Create(new Models.SourceItemPostRp()
+            {
+                SourceId = testSource.Id,
+                Total = 1000,
+                Good = 800,
+                Start = OwlveyCalendar.January201904,
+                End = OwlveyCalendar.January201906
+            });
+
+            var result = sourceItemComponent.GetBySourceIdAndDateRange(testSource.Id, OwlveyCalendar.January201903, OwlveyCalendar.January201907);
+            Assert.NotEmpty(result);
+
+            result = sourceItemComponent.GetBySourceIdAndDateRange(testSource.Id, OwlveyCalendar.January201905, OwlveyCalendar.January201907);       
+            Assert.NotEmpty(result);
 
         }
     }

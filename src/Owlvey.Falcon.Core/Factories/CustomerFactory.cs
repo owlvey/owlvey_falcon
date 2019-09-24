@@ -12,7 +12,7 @@ namespace Owlvey.Falcon.Core.Entities
 
             private static void DefaultValues(CustomerEntity result, DateTime on , string user) {
                 var defaultProduct = ProductEntity.Factory.Create("Awesome Product", on, user, result);
-                result.Products.Add(defaultProduct);
+                result.Products.Add(defaultProduct);                
 
                 var defaultFeature = FeatureEntity.Factory.Create("Awesome Login", on, user, defaultProduct);
                 defaultProduct.Features.Add(defaultFeature);

@@ -96,7 +96,7 @@ namespace Owlvey.Falcon.Components
                     {
                         foreach (var indicator in map.Feature.Indicators)
                         {
-                            var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, start, end);
+                            var sourceItems = this._dbContext.GetSourceItems(indicator.SourceId, start, end);
                             indicator.Source.SourceItems = sourceItems;
                         }
                     }

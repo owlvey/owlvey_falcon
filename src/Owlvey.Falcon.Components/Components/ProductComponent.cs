@@ -26,6 +26,16 @@ namespace Owlvey.Falcon.Components
             
         }
 
+        public async Task PutAnchor(int productId, string name, AnchorPutRp model)
+        {
+            var createdBy = this._identityService.GetIdentity();
+            var entity = await this._dbContext.Anchors.Where(c => c.ProductId == productId && c.Name == name).SingleAsync();
+            this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
+            entity.Update(model.Target, this._datetimeGateway.GetCurrentDateTime(), createdBy);
+            this._dbContext.Anchors.Update(entity);
+            await this._dbContext.SaveChangesAsync();
+        }
+
         public async Task<ProductGetListRp> CreateOrUpdate(CustomerEntity customer, string name, string description, string avatar) {
             var createdBy = this._identityService.GetIdentity();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;

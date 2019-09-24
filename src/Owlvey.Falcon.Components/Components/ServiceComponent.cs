@@ -16,11 +16,15 @@ namespace Owlvey.Falcon.Components
     public class ServiceComponent : BaseComponent
     {
         private readonly FalconDbContext _dbContext;
+        private readonly CacheComponent _cacheComponent;
 
         public ServiceComponent(FalconDbContext dbContext,
-            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway, IMapper mapper) : base(dateTimeGateway, mapper, identityService)
+            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway,
+            IMapper mapper,
+            CacheComponent cacheComponent) : base(dateTimeGateway, mapper, identityService)
         {
             this._dbContext = dbContext;
+            this._cacheComponent = cacheComponent;
         }
 
         public async Task<ServiceGetListRp> CreateOrUpdate(CustomerEntity customer,
@@ -40,6 +44,10 @@ namespace Owlvey.Falcon.Components
 
             this._dbContext.Services.Update(entity);
             await this._dbContext.SaveChangesAsync();
+
+
+            this._cacheComponent.InvalidateServicesCache(entity.ProductId);
+
             return this._mapper.Map<ServiceGetListRp>(entity);
         }
 
@@ -62,6 +70,10 @@ namespace Owlvey.Falcon.Components
                 this._dbContext.Services.Add(entity);
                 await this._dbContext.SaveChangesAsync();
             }
+
+
+            this._cacheComponent.InvalidateServicesCache(entity.ProductId);
+
             return this._mapper.Map<ServiceGetListRp>(entity);
         }
 
@@ -88,6 +100,8 @@ namespace Owlvey.Falcon.Components
             this._dbContext.Services.Remove(service);
 
             await this._dbContext.SaveChangesAsync();
+
+            this._cacheComponent.InvalidateServicesCache(service.ProductId);
 
             return result;
         }
@@ -129,6 +143,8 @@ namespace Owlvey.Falcon.Components
             this._dbContext.Services.Update(service);
 
             await this._dbContext.SaveChangesAsync();
+
+            this._cacheComponent.InvalidateServicesCache(service.ProductId);
 
             return result;
         }

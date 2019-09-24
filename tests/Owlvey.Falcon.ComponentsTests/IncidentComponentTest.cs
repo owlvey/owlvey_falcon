@@ -20,7 +20,7 @@ namespace Owlvey.Falcon.ComponentsTests
 
             var (customer, product) = await ComponentTestFactory.BuildCustomerProduct(container);
 
-            var result = await component.Post( new Models.IncidentPostRp() {
+            var (result, _) = await component.Post( new Models.IncidentPostRp() {
                 Key = "test01",
                 ProductId = product, Title = "test" });
 
@@ -34,6 +34,36 @@ namespace Owlvey.Falcon.ComponentsTests
             var tmp = await component.Get(result.Id);
             Assert.Equal("change", tmp.Title);
 
+        }
+
+        [Fact]
+        public async Task IncidentAssociations()
+        {
+            var container = ComponentTestFactory.BuildContainer();
+
+            var incidentComponent = container.GetInstance<IncidentComponent>();
+            var featureComponent = container.GetInstance<FeatureComponent>();
+            var featureQueryComponent  = container.GetInstance<FeatureQueryComponent>();
+
+            var (customer, product) = await ComponentTestFactory.BuildCustomerProduct(container);
+
+            var (result, _) = await incidentComponent.Post(new Models.IncidentPostRp()
+            {
+                Key = "test01",
+                ProductId = product,
+                Title = "test"
+            });
+
+            var items = await incidentComponent.GetByProduct(product);
+            Assert.NotEmpty(items);                        
+
+            var feature = await featureComponent.CreateFeature(new Models.FeaturePostRp() { Name = "test", ProductId = product });
+
+            await incidentComponent.RegisterFeature(result.Id, feature.Id);
+
+            var featureDetail = await featureQueryComponent.GetFeatureByIdWithAvailability(feature.Id, OwlveyCalendar.StartJanuary2019, OwlveyCalendar.StartJanuary2020);
+
+            Assert.NotEmpty(featureDetail.Incidents);
         }
     }
 }

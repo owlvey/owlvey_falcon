@@ -29,10 +29,10 @@ namespace Owlvey.Falcon.Models
         public DateTime? CreatedOn { get; set; }
         public int ProductId { get; set; }
         public decimal Availability { get; set; }
-        public int MTTM { get; set; }
-        public int MTTE { get; set; }
-        public int MTTD { get; set; }
-        public int MTTF { get; set; }
+        public string MTTM { get; set; }
+        public string MTTE { get; set; }
+        public string MTTD { get; set; }
+        public string MTTF { get; set; }
         public List<IndicatorGetListRp> Indicators { get; set; } = new List<IndicatorGetListRp>();
         public List<SquadGetListRp> Squads { get; set; } = new List<SquadGetListRp>();
         public List<IncidentGetListRp> Incidents { get; set; } = new List<IncidentGetListRp>();
@@ -49,10 +49,10 @@ namespace Owlvey.Falcon.Models
         public int ServiceCount { get; set; }
         public decimal Availability { get; set; }
 
-        public int MTTM { get; set; }
-        public int MTTE { get; set; }
-        public int MTTD { get; set; }
-        public int MTTF { get; set; }
+        public string MTTM { get; set; }
+        public string MTTE { get; set; }
+        public string MTTD { get; set; }
+        public string MTTF { get; set; }
     }
 
     public class FeatureBySquadRp : FeatureBaseRp

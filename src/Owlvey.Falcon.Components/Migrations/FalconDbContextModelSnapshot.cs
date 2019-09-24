@@ -16,6 +16,39 @@ namespace Owlvey.Falcon.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
 
+            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.AnchorEntity", b =>
+                {
+                    b.Property<int?>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired();
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .IsRequired();
+
+                    b.Property<bool>("Deleted");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired();
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .IsRequired();
+
+                    b.Property<string>("Name")
+                        .IsRequired();
+
+                    b.Property<int>("ProductId");
+
+                    b.Property<DateTime>("Target");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("AnchorEntity");
+                });
+
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.AppSettingEntity", b =>
                 {
                     b.Property<int?>("Id")
@@ -148,8 +181,6 @@ namespace Owlvey.Falcon.Migrations
 
                     b.Property<int>("ProductId");
 
-                    b.Property<int?>("ServiceMapEntityId");
-
                     b.Property<int>("TTD");
 
                     b.Property<int>("TTE");
@@ -167,8 +198,6 @@ namespace Owlvey.Falcon.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("ServiceMapEntityId");
 
                     b.ToTable("IncidentEntity");
                 });
@@ -567,6 +596,14 @@ namespace Owlvey.Falcon.Migrations
                     b.ToTable("UserEntity");
                 });
 
+            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.AnchorEntity", b =>
+                {
+                    b.HasOne("Owlvey.Falcon.Core.Entities.ProductEntity", "Product")
+                        .WithMany("Anchors")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.FeatureEntity", b =>
                 {
                     b.HasOne("Owlvey.Falcon.Core.Entities.ProductEntity", "Product")
@@ -581,10 +618,6 @@ namespace Owlvey.Falcon.Migrations
                         .WithMany("Incidents")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Owlvey.Falcon.Core.Entities.ServiceMapEntity")
-                        .WithMany("Incidents")
-                        .HasForeignKey("ServiceMapEntityId");
                 });
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.IncidentMapEntity", b =>

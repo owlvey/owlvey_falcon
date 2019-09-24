@@ -28,16 +28,22 @@ namespace Owlvey.Falcon.Repositories
         public DbSet<ServiceMapEntity> ServiceMaps { get; set; }
 
         public DbSet<UserEntity> Users { get; set; }
-        public DbSet<FeatureEntity> Features { get; set; }        
+
+        public DbSet<FeatureEntity> Features { get; set; }
+
         public DbSet<SourceEntity> Sources { get; set; }
+
         public DbSet<SourceItemEntity> SourcesItems { get; set; }
+
         public DbSet<IndicatorEntity> Indicators { get; set; }
 
         public DbSet<IncidentEntity> Incidents { get; set; }
+
         public DbSet<IncidentMapEntity> IncidentMaps { get; set; }
         
         public DbSet<MemberEntity> Members { get; set; }
- 
+
+        public DbSet<AnchorEntity> Anchors { get; set; } 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -53,7 +59,7 @@ namespace Owlvey.Falcon.Repositories
             
             base.OnModelCreating(modelBuilder);
         }
-        internal async Task<ICollection<SourceItemEntity>> GetSourceItems(int sourceId,
+        internal ICollection<SourceItemEntity> GetSourceItems(int sourceId,
             DateTime start, DateTime end) {
             start = start.Date;
             end = end.Date;
@@ -67,6 +73,22 @@ namespace Owlvey.Falcon.Repositories
             result =  result.Union(startTask.Result.Union(endTask.Result).Union(midTask.Result).Union(involveTask.Result).Distinct(new SourceItemEntity.EqualityComparer())).ToList();                        
             return result;
         }
+
+        internal ICollection<SourceItemEntity> GetSourceItems(DateTime start, DateTime end)
+        {
+            start = start.Date;
+            end = end.Date;
+            List<SourceItemEntity> result = new List<SourceItemEntity>();
+            var startTask = this.SourcesItems.Where(c => c.Start >= start && c.Start <= end).ToListAsync();
+            var endTask = this.SourcesItems.Where(c =>  c.End >= start && c.End <= end).ToListAsync();
+            var midTask = this.SourcesItems.Where(c =>  c.Start >= start && c.End <= end).ToListAsync();
+            var involveTask = this.SourcesItems.Where(c => start >= c.Start && end <= c.End).ToListAsync();
+
+            Task.WaitAll(startTask, endTask, midTask, involveTask);
+            result = result.Union(startTask.Result.Union(endTask.Result).Union(midTask.Result).Union(involveTask.Result).Distinct(new SourceItemEntity.EqualityComparer())).ToList();
+            return result;
+        }
+
 
         internal async Task LoadIndicators(IEnumerable<ServiceMapEntity> serviceMaps) {
             var sourceIds = serviceMaps.SelectMany(c => c.Feature.Indicators.Select(d => d.SourceId)).Distinct().ToList();

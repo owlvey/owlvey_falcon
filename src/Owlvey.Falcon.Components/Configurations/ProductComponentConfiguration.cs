@@ -11,8 +11,9 @@ namespace Owlvey.Falcon.Components
             cfg.CreateMap<ProductEntity, Models.ProductGetListRp>().ForMember(c => c.ServicesCount,
                 opt => opt.MapFrom(d => d.Services.Count)); 
             cfg.CreateMap<ProductEntity, Models.ProductGetRp>();
-
             cfg.CreateMap<ProductEntity, Models.ProductMigrationRp>();
+
+            cfg.CreateMap<AnchorEntity, Models.AnchorRp>();
         }
     }
 }

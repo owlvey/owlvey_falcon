@@ -11,8 +11,9 @@ namespace Owlvey.Falcon.Components
     {
         public static void ConfigureMappers(IMapperConfigurationExpression cfg)
         {
-            cfg.CreateMap<IncidentEntity, Models.IncidentGetListRp>();
-                
+            cfg.CreateMap<IncidentEntity, Models.IncidentGetListRp>()
+                    .ForMember(c => c.FeaturesCount, opt => opt.MapFrom(c => c.FeatureMaps.Count()));
+
             cfg.CreateMap<IncidentEntity, Models.IncidentDetailtRp>()
                 .ForMember(c => c.Features, opt => opt.MapFrom(c=>c.FeatureMaps.Select(d=>d.Feature).ToList()));
         }

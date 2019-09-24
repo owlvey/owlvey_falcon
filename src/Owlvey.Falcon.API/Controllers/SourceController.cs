@@ -19,7 +19,7 @@ namespace Owlvey.Falcon.API.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<SourceGetListRp>), 200)]
-        public async Task<IActionResult> Get(int? productId, int? indicatorId, int? customerId, DateTime? start, DateTime? end, string filter)
+        public async Task<IActionResult> Get(int? productId, int? indicatorId, DateTime? start, DateTime? end)
         {
             IEnumerable<SourceGetListRp> model = new List<SourceGetListRp>();
 
@@ -91,7 +91,9 @@ namespace Owlvey.Falcon.API.Controllers
             
             return this.Ok();               
         }
-               
+
+        
+
         #region reports
 
         [HttpGet("{id}/reports/daily/series")]

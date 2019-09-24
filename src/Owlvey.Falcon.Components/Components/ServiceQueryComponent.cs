@@ -19,10 +19,69 @@ namespace Owlvey.Falcon.Components
     public class ServiceQueryComponent : BaseComponent
     {
         private readonly FalconDbContext _dbContext;
+        private readonly CacheComponent _cacheComponent;
 
-        public ServiceQueryComponent(FalconDbContext dbContext, IDateTimeGateway dateTimeGateway, IMapper mapper, IUserIdentityGateway identityService) : base(dateTimeGateway, mapper, identityService)
+        public ServiceQueryComponent(FalconDbContext dbContext,
+            IDateTimeGateway dateTimeGateway,
+            IMapper mapper,
+            IUserIdentityGateway identityService,
+            CacheComponent cacheComponent) : base(dateTimeGateway, mapper, identityService)
         {
             this._dbContext = dbContext;
+            this._cacheComponent = cacheComponent;
+        }
+
+        public async Task<IEnumerable<ServiceGetListRp>> GetServicesWithAvailability(int productId, DateTime start, DateTime end)
+        {            
+
+            var entity = await this._dbContext.Products
+                .Include(c => c.Services)
+                .ThenInclude(c => c.FeatureMap)
+                .ThenInclude(c => c.Feature)
+                .ThenInclude(c => c.Indicators)
+                .ThenInclude(c => c.Source)
+                .Where(c => c.Id.Equals(productId))
+                .FirstOrDefaultAsync();
+
+            var result = new List<ServiceGetListRp>();
+            foreach (var item in entity.Services)
+            {
+
+                var tmp = this._mapper.Map<ServiceGetListRp>(item);
+                tmp.Availability = await this.MeasureAvailability(item, start, end);
+                var incidents = await this._dbContext.GetIncidentsByService(item.Id.Value, start, end);
+
+                if (incidents.Count() > 0)
+                {
+                    var agg = new IncidentMetricAggregate(incidents);
+                    var (mttd, mtte, mttf, mttm) = agg.Metrics();
+                    tmp.MTTD = mttd;
+                    tmp.MTTE = mtte;
+                    tmp.MTTF = mttf;
+                    tmp.MTTM = mttm;
+                }
+
+                tmp.BudgetMinutes = AvailabilityUtils.MeasureBudgetInMinutes(tmp.Budget, start, end);
+
+                tmp.Risk = "low";
+
+                if (tmp.Budget > 0)
+                {
+                    tmp.Deploy = "innovate";
+                    if (tmp.BudgetMinutes < tmp.MTTM)
+                    {
+                        tmp.Risk = "high";
+                    }
+                }
+                else
+                {
+                    tmp.Deploy = "improve";
+                    tmp.Risk = "high";
+                }
+                result.Add(tmp);
+            }            
+
+            return result;
         }
 
         public async Task<ServiceGetRp> GetServiceById(int id)
@@ -57,7 +116,7 @@ namespace Owlvey.Falcon.Components
             {
                 foreach (var indicator in map.Feature.Indicators)
                 {
-                    var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, start, end);
+                    var sourceItems = this._dbContext.GetSourceItems(indicator.SourceId, start, end);
                     indicator.Source.SourceItems = sourceItems;
                 }
             }
@@ -86,54 +145,10 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<FeatureGetListRp>>(rest);
         }       
 
-        public async Task<IEnumerable<ServiceGetListRp>> GetServicesWithAvailability(int productId, DateTime start,  DateTime end)
-        {
-            var entity = await this._dbContext.Products                
-                .Include(c=>c.Services)
-                .ThenInclude(c => c.FeatureMap)
-                .ThenInclude(c=>c.Feature)                   
-                .ThenInclude(c=>c.Indicators)                
-                .ThenInclude(c=>c.Source)                
-                .Where(c => c.Id.Equals(productId))
-                .FirstOrDefaultAsync();
+       
 
-            var result = new List<ServiceGetListRp>();
-            foreach (var item in entity.Services)
-            {                   
+     
 
-                var tmp =  this._mapper.Map<ServiceGetListRp>(item);                
-                tmp.Availability = await this.MeasureAvailability(item, start, end);
-                var incidents =  await this._dbContext.GetIncidentsByService(item.Id.Value, start, end);
-
-                if (incidents.Count() > 0) {
-                    var agg = new IncidentMetricAggregate(incidents);
-                    var (mttd, mtte, mttf, mttm) = agg.Metrics();
-                    tmp.MTTD = mttd;
-                    tmp.MTTE = mtte;
-                    tmp.MTTF = mttf;
-                    tmp.MTTM = mttm;
-                }
-
-                tmp.BudgetMinutes = AvailabilityUtils.MeasureBudgetInMinutes(tmp.Budget, start, end);
-
-                tmp.Risk = "low";
-
-                if (tmp.Budget > 0 )
-                {
-                    tmp.Deploy = "innovate";
-                    if (tmp.BudgetMinutes < tmp.MTTM)
-                    {
-                        tmp.Risk = "high";
-                    }
-                }
-                else {
-                    tmp.Deploy = "improve";
-                    tmp.Risk = "high";
-                }                
-                result.Add(tmp);
-            }
-            return result;
-        }
 
         public async Task<MultiSeriesGetRp> GetDailySeriesById(int serviceId, DateTime start, DateTime end)
         {
@@ -146,7 +161,7 @@ namespace Owlvey.Falcon.Components
 
                 foreach (var indicator in entity.Indicators)
                 {
-                    var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, start, end);
+                    var sourceItems =  this._dbContext.GetSourceItems(indicator.SourceId, start, end);
                     indicator.Source.SourceItems = sourceItems;
                 }
                 map.Feature = entity;
