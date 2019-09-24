@@ -204,8 +204,9 @@ namespace Owlvey.Falcon.Migrations
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.IncidentMapEntity", b =>
                 {
-                    b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("FeatureId");
+
+                    b.Property<int>("IncidentId");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired();
@@ -215,9 +216,8 @@ namespace Owlvey.Falcon.Migrations
 
                     b.Property<bool>("Deleted");
 
-                    b.Property<int>("FeatureId");
-
-                    b.Property<int>("IncidentId");
+                    b.Property<int?>("Id")
+                        .IsRequired();
 
                     b.Property<string>("ModifiedBy")
                         .IsRequired();
@@ -225,9 +225,9 @@ namespace Owlvey.Falcon.Migrations
                     b.Property<DateTime?>("ModifiedOn")
                         .IsRequired();
 
-                    b.HasKey("Id");
+                    b.HasKey("FeatureId", "IncidentId");
 
-                    b.HasIndex("FeatureId");
+                    b.HasAlternateKey("Id");
 
                     b.HasIndex("IncidentId");
 
@@ -236,8 +236,9 @@ namespace Owlvey.Falcon.Migrations
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.IndicatorEntity", b =>
                 {
-                    b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("FeatureId");
+
+                    b.Property<int>("SourceId");
 
                     b.Property<string>("Avatar");
 
@@ -251,7 +252,8 @@ namespace Owlvey.Falcon.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<int>("FeatureId");
+                    b.Property<int?>("Id")
+                        .IsRequired();
 
                     b.Property<string>("ModifiedBy")
                         .IsRequired();
@@ -259,11 +261,9 @@ namespace Owlvey.Falcon.Migrations
                     b.Property<DateTime?>("ModifiedOn")
                         .IsRequired();
 
-                    b.Property<int>("SourceId");
+                    b.HasKey("FeatureId", "SourceId");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("FeatureId");
+                    b.HasAlternateKey("Id");
 
                     b.HasIndex("SourceId");
 
@@ -381,8 +381,9 @@ namespace Owlvey.Falcon.Migrations
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.ServiceMapEntity", b =>
                 {
-                    b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("FeatureId");
+
+                    b.Property<int>("ServiceId");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired();
@@ -392,7 +393,8 @@ namespace Owlvey.Falcon.Migrations
 
                     b.Property<bool>("Deleted");
 
-                    b.Property<int>("FeatureId");
+                    b.Property<int?>("Id")
+                        .IsRequired();
 
                     b.Property<string>("ModifiedBy")
                         .IsRequired();
@@ -400,13 +402,11 @@ namespace Owlvey.Falcon.Migrations
                     b.Property<DateTime?>("ModifiedOn")
                         .IsRequired();
 
-                    b.Property<int>("ServiceId");
-
                     b.Property<int?>("SquadEntityId");
 
-                    b.HasKey("Id");
+                    b.HasKey("FeatureId", "ServiceId");
 
-                    b.HasIndex("FeatureId");
+                    b.HasAlternateKey("Id");
 
                     b.HasIndex("ServiceId");
 
@@ -533,8 +533,9 @@ namespace Owlvey.Falcon.Migrations
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.SquadFeatureEntity", b =>
                 {
-                    b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("FeatureId");
+
+                    b.Property<int>("SquadId");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired();
@@ -544,7 +545,8 @@ namespace Owlvey.Falcon.Migrations
 
                     b.Property<bool>("Deleted");
 
-                    b.Property<int>("FeatureId");
+                    b.Property<int?>("Id")
+                        .IsRequired();
 
                     b.Property<string>("ModifiedBy")
                         .IsRequired();
@@ -552,11 +554,9 @@ namespace Owlvey.Falcon.Migrations
                     b.Property<DateTime?>("ModifiedOn")
                         .IsRequired();
 
-                    b.Property<int>("SquadId");
+                    b.HasKey("FeatureId", "SquadId");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("FeatureId");
+                    b.HasAlternateKey("Id");
 
                     b.HasIndex("SquadId");
 
@@ -625,12 +625,12 @@ namespace Owlvey.Falcon.Migrations
                     b.HasOne("Owlvey.Falcon.Core.Entities.FeatureEntity", "Feature")
                         .WithMany("IncidentMap")
                         .HasForeignKey("FeatureId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Owlvey.Falcon.Core.Entities.IncidentEntity", "Incident")
                         .WithMany("FeatureMaps")
                         .HasForeignKey("IncidentId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.IndicatorEntity", b =>
@@ -638,12 +638,12 @@ namespace Owlvey.Falcon.Migrations
                     b.HasOne("Owlvey.Falcon.Core.Entities.FeatureEntity", "Feature")
                         .WithMany("Indicators")
                         .HasForeignKey("FeatureId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Owlvey.Falcon.Core.Entities.SourceEntity", "Source")
                         .WithMany("Indicators")
                         .HasForeignKey("SourceId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.MemberEntity", b =>
@@ -680,12 +680,12 @@ namespace Owlvey.Falcon.Migrations
                     b.HasOne("Owlvey.Falcon.Core.Entities.FeatureEntity", "Feature")
                         .WithMany("ServiceMaps")
                         .HasForeignKey("FeatureId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Owlvey.Falcon.Core.Entities.ServiceEntity", "Service")
                         .WithMany("FeatureMap")
                         .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Owlvey.Falcon.Core.Entities.SquadEntity")
                         .WithMany("Services")
@@ -721,12 +721,12 @@ namespace Owlvey.Falcon.Migrations
                     b.HasOne("Owlvey.Falcon.Core.Entities.FeatureEntity", "Feature")
                         .WithMany("Squads")
                         .HasForeignKey("FeatureId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Owlvey.Falcon.Core.Entities.SquadEntity", "Squad")
                         .WithMany("Features")
                         .HasForeignKey("SquadId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 #pragma warning restore 612, 618
         }
