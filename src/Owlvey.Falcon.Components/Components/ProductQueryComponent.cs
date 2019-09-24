@@ -197,5 +197,45 @@ namespace Owlvey.Falcon.Components
             return result;
 
         }
+
+        #region Dashboard
+        public async Task<DashboardProductRp> GetProductDashboard(int productId, DateTime start, DateTime end)
+        {
+            var product = await this._dbContext.Products
+                .Include(c => c.Services)
+                .Include(c => c.Features)
+                .Include(c => c.Sources)
+                .Include(c => c.Incidents)
+                .Where(c => c.Id == productId).SingleAsync();
+
+            var sourceItems = this._dbContext.GetSourceItemsByProduct(productId, start, end);
+            var result = new DashboardProductRp();
+            foreach (var source in product.Sources)
+            {
+                source.SourceItems = sourceItems.Where(c => c.SourceId == source.Id).ToList();
+                var agg = new SourceAvailabilityAggregate(source);
+                var (ava, total, good) = agg.MeasureAvailability();
+                result.Sources.Add(new SourceGetListRp(){
+                     Id = source.Id.Value,
+                    Availability = ava,
+                    Total = total,
+                    Good = good,
+                    Avatar = source.Avatar,
+                    CreatedBy = source.CreatedBy,
+                    CreatedOn = source.CreatedOn.Value,
+                    GoodDefinition = source.GoodDefinition,
+                    TotalDefinition = source.TotalDefinition,
+                    Name = source.Name                               
+                });
+            }
+
+            result.SourceTotal = result.Sources.Select(c => c.Total).Sum();
+            result.SourceCount = result.Sources.Count();
+            result.SourceAvailability = AvailabilityUtils.CalculateAverageAvailability(result.Sources.Select(c=>c.Availability));
+            result.Sources = result.Sources.OrderBy(c => c.Availability).Take(10).ToList();
+
+            return result;
+        }
+        #endregion
     }
 }

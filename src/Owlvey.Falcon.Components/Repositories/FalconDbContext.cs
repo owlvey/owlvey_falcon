@@ -88,6 +88,20 @@ namespace Owlvey.Falcon.Repositories
             result = result.Union(startTask.Result.Union(endTask.Result).Union(midTask.Result).Union(involveTask.Result).Distinct(new SourceItemEntity.EqualityComparer())).ToList();
             return result;
         }
+        internal ICollection<SourceItemEntity> GetSourceItemsByProduct(int productId, DateTime start, DateTime end)
+        {
+            start = start.Date;
+            end = end.Date;
+            List<SourceItemEntity> result = new List<SourceItemEntity>();
+            var startTask = this.SourcesItems.Where(c => c.Source.ProductId == productId && c.Start >= start && c.Start <= end).ToListAsync();
+            var endTask = this.SourcesItems.Where(c => c.Source.ProductId == productId && c.End >= start && c.End <= end).ToListAsync();
+            var midTask = this.SourcesItems.Where(c => c.Source.ProductId == productId && c.Start >= start && c.End <= end).ToListAsync();
+            var involveTask = this.SourcesItems.Where(c => c.Source.ProductId == productId && start >= c.Start && end <= c.End).ToListAsync();
+
+            Task.WaitAll(startTask, endTask, midTask, involveTask);
+            result = result.Union(startTask.Result.Union(endTask.Result).Union(midTask.Result).Union(involveTask.Result).Distinct(new SourceItemEntity.EqualityComparer())).ToList();
+            return result;
+        }
 
 
         internal async Task LoadIndicators(IEnumerable<ServiceMapEntity> serviceMaps) {

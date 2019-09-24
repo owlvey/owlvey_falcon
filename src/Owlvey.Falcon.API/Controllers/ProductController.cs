@@ -141,6 +141,21 @@ namespace Owlvey.Falcon.API.Controllers
             return this.NoContent();
         }
 
+        [HttpGet("{id}/dashboard")]
+        [ProducesResponseType(typeof(DashboardProductRp), 200)]
+        public async Task<IActionResult> GetDashboard(int id, DateTime? start, DateTime? end)
+        {
+            if (start.HasValue && end.HasValue)
+            {
+                var result = await this._productQueryService.GetProductDashboard(id, start.Value, end.Value);
+                return this.Ok(result);
+            }
+            else
+            {
+                return this.BadRequest();
+            }
+        }
+
         [HttpGet("{id}/reports/graph")]
         [ProducesResponseType(typeof(GraphGetRp), 200)]
         public async Task<IActionResult> GetGraph(int id, DateTime? start, DateTime? end) {
