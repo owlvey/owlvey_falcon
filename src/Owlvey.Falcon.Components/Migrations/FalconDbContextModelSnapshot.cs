@@ -625,12 +625,12 @@ namespace Owlvey.Falcon.Migrations
                     b.HasOne("Owlvey.Falcon.Core.Entities.FeatureEntity", "Feature")
                         .WithMany("IncidentMap")
                         .HasForeignKey("FeatureId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Owlvey.Falcon.Core.Entities.IncidentEntity", "Incident")
                         .WithMany("FeatureMaps")
                         .HasForeignKey("IncidentId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.IndicatorEntity", b =>
@@ -638,12 +638,12 @@ namespace Owlvey.Falcon.Migrations
                     b.HasOne("Owlvey.Falcon.Core.Entities.FeatureEntity", "Feature")
                         .WithMany("Indicators")
                         .HasForeignKey("FeatureId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Owlvey.Falcon.Core.Entities.SourceEntity", "Source")
                         .WithMany("Indicators")
                         .HasForeignKey("SourceId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.MemberEntity", b =>
@@ -680,12 +680,12 @@ namespace Owlvey.Falcon.Migrations
                     b.HasOne("Owlvey.Falcon.Core.Entities.FeatureEntity", "Feature")
                         .WithMany("ServiceMaps")
                         .HasForeignKey("FeatureId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Owlvey.Falcon.Core.Entities.ServiceEntity", "Service")
                         .WithMany("FeatureMap")
                         .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Owlvey.Falcon.Core.Entities.SquadEntity")
                         .WithMany("Services")
@@ -721,12 +721,12 @@ namespace Owlvey.Falcon.Migrations
                     b.HasOne("Owlvey.Falcon.Core.Entities.FeatureEntity", "Feature")
                         .WithMany("Squads")
                         .HasForeignKey("FeatureId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Owlvey.Falcon.Core.Entities.SquadEntity", "Squad")
                         .WithMany("Features")
                         .HasForeignKey("SquadId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 #pragma warning restore 612, 618
         }

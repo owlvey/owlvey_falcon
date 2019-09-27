@@ -56,7 +56,63 @@ namespace Owlvey.Falcon.Repositories
             modelBuilder.Entity<SourceItemEntity>().HasIndex(p => p.Start);
             modelBuilder.Entity<SourceItemEntity>().HasIndex(p => p.End);
             modelBuilder.Entity<CustomerEntity>().HasIndex(c => c.Name).IsUnique();
-            
+
+            modelBuilder.Entity<SquadFeatureEntity>().HasKey(x => new { x.Id });
+
+            modelBuilder.Entity<SquadFeatureEntity>()
+               .HasOne(pt => pt.Feature)
+               .WithMany(p => p.Squads)
+               .OnDelete(DeleteBehavior.Restrict)
+               .HasForeignKey(pt => pt.FeatureId);
+
+            modelBuilder.Entity<SquadFeatureEntity>()
+               .HasOne(pt => pt.Squad)
+               .WithMany(p => p.Features)
+               .OnDelete(DeleteBehavior.Restrict)
+               .HasForeignKey(pt => pt.SquadId);
+
+            modelBuilder.Entity<IncidentMapEntity>().HasKey(x => new { x.Id });
+
+            modelBuilder.Entity<IncidentMapEntity>()
+               .HasOne(pt => pt.Feature)
+               .WithMany(p => p.IncidentMap)
+               .OnDelete(DeleteBehavior.Restrict)
+               .HasForeignKey(pt => pt.FeatureId);
+
+            modelBuilder.Entity<IncidentMapEntity>()
+               .HasOne(pt => pt.Incident)
+               .WithMany(p => p.FeatureMaps)
+               .OnDelete(DeleteBehavior.Restrict)
+               .HasForeignKey(pt => pt.IncidentId);
+
+            modelBuilder.Entity<ServiceMapEntity>().HasKey(x => new { x.Id });
+
+            modelBuilder.Entity<ServiceMapEntity>()
+               .HasOne(pt => pt.Feature)
+               .WithMany(p => p.ServiceMaps)
+               .OnDelete(DeleteBehavior.Restrict)
+               .HasForeignKey(pt => pt.FeatureId);
+
+            modelBuilder.Entity<ServiceMapEntity>()
+               .HasOne(pt => pt.Service)
+               .WithMany(p => p.FeatureMap)
+               .OnDelete(DeleteBehavior.Restrict)
+               .HasForeignKey(pt => pt.ServiceId);
+
+            modelBuilder.Entity<IndicatorEntity>().HasKey(x => new { x.Id });
+
+            modelBuilder.Entity<IndicatorEntity>()
+               .HasOne(pt => pt.Feature)
+               .WithMany(p => p.Indicators)
+               .OnDelete(DeleteBehavior.Restrict)
+               .HasForeignKey(pt => pt.FeatureId);
+
+            modelBuilder.Entity<IndicatorEntity>()
+               .HasOne(pt => pt.Source)
+               .WithMany(p => p.Indicators)
+               .OnDelete(DeleteBehavior.Restrict)
+               .HasForeignKey(pt => pt.SourceId);
+
             base.OnModelCreating(modelBuilder);
         }
         internal ICollection<SourceItemEntity> GetSourceItems(int sourceId,

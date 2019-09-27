@@ -83,7 +83,7 @@ namespace Owlvey.Falcon.Components
                     Avatar = item.feature.Avatar,
                     CreatedBy = item.feature.CreatedBy,
                     CreatedOn = item.feature.CreatedOn,
-                    Availability = item.points,
+                    Availability = item.availability,
                     ProductId = item.product.Id.Value,
                     Product = item.product.Name,
                     ServiceId = item.service.Id.Value,

@@ -13,9 +13,11 @@ namespace Owlvey.Falcon.Core.Aggregates
             this._squad = squad;
         }
 
-        public IEnumerable<(ProductEntity product, ServiceEntity service, FeatureEntity feature, decimal points)> MeasurePoints() {
+        public IEnumerable<(ProductEntity product, ServiceEntity service, FeatureEntity feature,
+            decimal availability,
+            decimal points)> MeasurePoints() {
 
-            var result = new List<(ProductEntity product, ServiceEntity service, FeatureEntity feature, decimal points)>();
+            var result = new List<(ProductEntity product, ServiceEntity service, FeatureEntity feature, decimal availability, decimal points)>();
 
             foreach (var featureMap in this._squad.Features)
             {
@@ -29,7 +31,7 @@ namespace Owlvey.Falcon.Core.Aggregates
                     var impact = AvailabilityUtils.MeasureImpact(service.Slo);
                     var points = AvailabilityUtils.MeasurePoints(service.Slo, availability);
 
-                    result.Add( (service.Product, service, featureMap.Feature, points) );
+                    result.Add( (service.Product, service, featureMap.Feature, availability, points) );
                 }
             }
             return result;
