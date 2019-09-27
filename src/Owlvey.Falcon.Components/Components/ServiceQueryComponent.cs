@@ -49,7 +49,7 @@ namespace Owlvey.Falcon.Components
 
                 var tmp = this._mapper.Map<ServiceGetListRp>(item);
                 tmp.Availability = await this.MeasureAvailability(item, start, end);
-                var incidents = await this._dbContext.GetIncidentsByService(item.Id.Value, start, end);
+                var incidents = await this._dbContext.GetIncidentsByService(item.Id.Value);
 
                 if (incidents.Count() > 0)
                 {
@@ -57,8 +57,7 @@ namespace Owlvey.Falcon.Components
                     var (mttd, mtte, mttf, mttm) = agg.Metrics();
                     tmp.MTTD = mttd;
                     tmp.MTTE = mtte;
-                    tmp.MTTF = mttf;
-                    tmp.MTTM = mttm;
+                    tmp.MTTF = mttf;                    
                 }
 
                 tmp.BudgetMinutes = AvailabilityUtils.MeasureBudgetInMinutes(tmp.Budget, start, end);
@@ -99,14 +98,19 @@ namespace Owlvey.Falcon.Components
             var entity = await this._dbContext.Services.Include(c=>c.FeatureMap)
                 .ThenInclude(c=>c.Feature)
                 .ThenInclude(c=>c.Indicators)
-                .ThenInclude(c=>c.Source)
+                .ThenInclude(c=>c.Source)                
                 .Where(c=>c.Id == id).FirstOrDefaultAsync();
 
             if (entity == null)
-                return null;            
+                return null;
 
-            
+            var featuresIds = entity.FeatureMap.Select(c => c.FeatureId).Distinct().ToList();            
+            var incidents = await this._dbContext.GetIncidentsByService(id);
+
             var model = this._mapper.Map<ServiceGetRp>(entity);
+            model.MTTD = AvailabilityUtils.MeanTimeInMinutes(incidents.Select(c => c.TTD));
+            model.MTTE = AvailabilityUtils.MeanTimeInMinutes(incidents.Select(c => c.TTE));
+            model.MTTF = AvailabilityUtils.MeanTimeInMinutes(incidents.Select(c => c.TTF));
             model.Availability = await this.MeasureAvailability(entity, start, end);
             return model;
         }

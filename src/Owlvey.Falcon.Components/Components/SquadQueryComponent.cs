@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Core;
+using Owlvey.Falcon.Core.Aggregates;
 using Owlvey.Falcon.Gateways;
 using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Repositories;
@@ -49,48 +50,53 @@ namespace Owlvey.Falcon.Components
         {
             var entity = await this._dbContext.Squads
                 .Include(c => c.Members).ThenInclude(c => c.User)
-                .Include(c => c.Features).ThenInclude(c => c.Feature)
-                        .ThenInclude(c=>c.ServiceMaps).ThenInclude(c=>c.Service).ThenInclude(c=>c.Product)
+                .Include(c => c.Features)
+                        .ThenInclude(c => c.Feature)
+                        .ThenInclude(c => c.ServiceMaps)
+                        .ThenInclude(c => c.Service)
+                        .ThenInclude(c => c.Product)
                 .SingleOrDefaultAsync(c => c.Id == id);
 
-            var common = new FeatureCommonComponent(this._dbContext, this._datetimeGateway);                   
+            var productIds = entity.Features.Select(c => c.Feature.ProductId).Distinct().ToList();
 
-            SquadGetDetailRp result = this._mapper.Map<SquadGetDetailRp>(entity);            
+            var sourceItems = this._dbContext.GetSourceItemsByProduct(productIds, start, end);
 
-            foreach (var featureMap in entity.Features)
-            {                
-                var feature = featureMap.Feature;
-
-                //await this._dbContext.Entry(feature).Collection(c => c.Indicators).LoadAsync();
-
-                feature.Indicators = await this._dbContext.Indicators.Include(c=>c.Source).Where(c => c.FeatureId == feature.Id).ToListAsync();
-
-                var availabilty = await common.GetAvailabilityByFeature(feature, start, end);
-
-                foreach (var serviceMap in featureMap.Feature.ServiceMaps)
+            foreach (var service in entity.Services)
+            {
+                foreach (var indicator in service.Feature.Indicators)
                 {
-                    var service = serviceMap.Service;
-                    var tmp = new FeatureBySquadRp()
-                    {
-                        Id = feature.Id.Value,
-                        Description = feature.Description,
-                        Avatar = feature.Avatar,
-                        CreatedBy = feature.CreatedBy,
-                        CreatedOn = feature.CreatedOn,
-                        Availability = availabilty,
-                        ProductId = service.ProductId,
-                        Product = service.Product.Name,
-                        ServiceId = service.Id.Value,
-                        ServiceAvatar = service.Avatar,
-                        Service = service.Name,
-                        SLO = service.Slo,
-                        Name = feature.Name,                        
-                        Impact = AvailabilityUtils.MeasureImpact(service.Slo),
-                        Points = AvailabilityUtils.MeasurePoints(service.Slo, availabilty)
-                    };
-                    result.Points += tmp.Points;
-                    result.Features.Add(tmp);
+                    indicator.Source.SourceItems = sourceItems.Where(c => c.SourceId == indicator.SourceId).ToList();
                 }
+            }
+            
+            var agg = new SquadPointsAggregate(entity);
+            var squadPonts = agg.MeasurePoints();
+
+            SquadGetDetailRp result = this._mapper.Map<SquadGetDetailRp>(entity);
+
+            foreach (var item in squadPonts)
+            {
+                var tmp = new FeatureBySquadRp()
+                {
+                    Id = item.feature.Id.Value,
+                    Description = item.feature.Description,
+                    Avatar = item.feature.Avatar,
+                    CreatedBy = item.feature.CreatedBy,
+                    CreatedOn = item.feature.CreatedOn,
+                    Availability = item.points,
+                    ProductId = item.product.Id.Value,
+                    Product = item.product.Name,
+                    ServiceId = item.service.Id.Value,
+                    ServiceAvatar = item.service.Avatar,
+                    Service =  item.service.Name,
+                    SLO = item.service.Slo,
+                    Name = item.feature.Name,
+                    Impact = AvailabilityUtils.MeasureImpact(item.service.Slo),
+                    Points = AvailabilityUtils.MeasurePoints(item.service.Slo, item.points)
+                };
+
+                result.Points += tmp.Points;
+                result.Features.Add(tmp);
             }
 
             result.Features = result.Features.OrderBy(c => c.Service).ToList();

@@ -42,6 +42,12 @@ namespace Owlvey.Falcon.Core
             return avaialbility - slo;
         }
 
+        public static int MeanTimeInMinutes(IEnumerable<int> input) {
+            if (input.Count() == 0) {
+                return 0;
+            }
+            return (int)Math.Round(input.Average());
+        }
         public static decimal CalculateDotAvailability(IEnumerable<decimal> availabilities)
         {
             return Math.Round(availabilities.Aggregate((a, x) => a * x),5);            

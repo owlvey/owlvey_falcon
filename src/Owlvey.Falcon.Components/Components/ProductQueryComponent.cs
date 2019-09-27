@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.Core;
 using Owlvey.Falcon.Core.Aggregates;
+using Owlvey.Falcon.Core.Values;
 using Owlvey.Falcon.Gateways;
 using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Repositories;
@@ -199,17 +200,21 @@ namespace Owlvey.Falcon.Components
         }
 
         #region Dashboard
-        public async Task<DashboardProductRp> GetProductDashboard(int productId, DateTime start, DateTime end)
+
+        public async Task<DashboardProductRp> GetProductDashboard(int productId,
+            DateTime start, DateTime end)
         {
             var product = await this._dbContext.Products
-                .Include(c => c.Services)
-                .Include(c => c.Features)
+                .Include(c => c.Services).ThenInclude(c=>c.FeatureMap)
+                .Include(c => c.Features).ThenInclude(c=>c.Indicators)
                 .Include(c => c.Sources)
                 .Include(c => c.Incidents)
                 .Where(c => c.Id == productId).SingleAsync();
 
             var sourceItems = this._dbContext.GetSourceItemsByProduct(productId, start, end);
             var result = new DashboardProductRp();
+                      
+            //fill sources
             foreach (var source in product.Sources)
             {
                 source.SourceItems = sourceItems.Where(c => c.SourceId == source.Id).ToList();
@@ -229,11 +234,34 @@ namespace Owlvey.Falcon.Components
                 });
             }
 
-            result.SourceTotal = result.Sources.Select(c => c.Total).Sum();
-            result.SourceCount = result.Sources.Count();
-            result.SourceAvailability = AvailabilityUtils.CalculateAverageAvailability(result.Sources.Select(c=>c.Availability));
-            result.Sources = result.Sources.OrderBy(c => c.Availability).Take(10).ToList();
+            foreach (var feature in product.Features)
+            {
+                foreach (var indicator in feature.Indicators)
+                {
+                    indicator.Source = product.Sources.Single(c => c.Id == indicator.SourceId);                    
+                }
+                var agg = new FeatureDateAvailabilityAggregate(feature);
+                var tmp = this._mapper.Map<FeatureGetListRp>(feature);
+                tmp.Availability = agg.MeasureAvailability();
+                result.Features.Add(tmp);
+            }
 
+            foreach (var service in product.Services)
+            {
+                foreach (var map in service.FeatureMap)
+                {
+                    map.Feature = product.Features.Single(c => c.Id == map.FeatureId);                    
+                }
+                var agg = new ServiceDateAvailabilityAggregate(service);
+                var tmp = this._mapper.Map<ServiceGetListRp>(service);
+                tmp.Availability = agg.MeasureAvailability();
+                result.Services.Add(tmp);
+            }
+                        
+            result.SourceStats = new StatsValue(result.Sources.Select(c => c.Availability));
+            result.SourceTotal = result.Sources.Sum(c => c.Total);
+            result.FeaturesStats = new StatsValue(result.Features.Select(c => c.Availability));
+            result.ServicesStats = new StatsValue(result.Services.Select(c => c.Availability));            
             return result;
         }
         #endregion

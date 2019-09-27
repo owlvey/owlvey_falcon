@@ -18,11 +18,18 @@ namespace Owlvey.Falcon.Models
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         
-        public decimal MTTD { get; set; }        
-        public decimal MTTE { get; set; }        
-        public decimal MTTF { get; set; }
-        public decimal MTTM { get; set; }
-
+        public int MTTD { get; set; }        
+        public int MTTE { get; set; }        
+        public int MTTF { get; set; }
+        public int MTTM { get {
+                return this.MTTD + this.MTTE + this.MTTF;
+            }
+        }
+        public string MTTMS {
+            get {
+                return DateTimeUtils.FormatTimeToInMinutes(this.MTTM);
+            }
+        }
     }
 
     public class ServiceMigrateRp {
