@@ -174,7 +174,7 @@ namespace Owlvey.Falcon.Components
             return result;
         }
 
-        public async Task<BaseComponentResultRp> UnRegisterFeature(int squadId, int featureId)
+        public async Task<BaseComponentResultRp> UnRegisterSquad(int squadId, int featureId)
         {
             var result = new BaseComponentResultRp();
             var item = await this._dbContext.SquadFeatures.Include(c=>c.Feature).Where(c => c.SquadId == squadId && c.FeatureId == featureId).SingleOrDefaultAsync();

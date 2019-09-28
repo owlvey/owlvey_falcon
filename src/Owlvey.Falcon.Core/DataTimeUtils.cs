@@ -4,7 +4,7 @@ namespace Owlvey.Falcon.Core
     public static class DateTimeUtils
     {
         public static string FormatTimeToInMinutes(double minutes) {
-            if (minutes <= 0) return "000w 0d 00h 00m";
+            if (minutes <= 0) return "00w 0d 00h 00m";
             double weeks = (minutes - (minutes % 10080D)) / 10080D;
             minutes -= (weeks * 10080D);
             double days = (minutes - (minutes % 1440D)) / 1440D;

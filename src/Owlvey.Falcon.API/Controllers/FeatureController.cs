@@ -203,7 +203,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(IEnumerable<SourceGetListRp>), 200)]
         public async Task<IActionResult> DeleteSquad(int id, int squadId)
         {
-            await this._featureService.UnRegisterFeature(squadId, id);
+            await this._featureService.UnRegisterSquad(squadId, id);
             return this.Ok();
         }
 

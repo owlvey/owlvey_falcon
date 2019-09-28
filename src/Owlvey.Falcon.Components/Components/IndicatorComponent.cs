@@ -61,30 +61,7 @@ namespace Owlvey.Falcon.Components
                 await this._dbContext.SaveChangesAsync();
             }
             return this._mapper.Map<IndicatorGetListRp>(sli);
-        }
-
-        public async Task<BaseComponentResultRp> Create(IndicatorPostRp model)
-        {
-            var result = new BaseComponentResultRp();
-            var createdBy = this._identityService.GetIdentity();
-            var source = await this._dbContext.Sources.SingleAsync(c => c.Id == model.SourceId);
-            var feature = await this._dbContext.Features.Include(c=>c.Indicators).SingleAsync(c => c.Id == model.FeatureId);
-            
-            // Validate if the resource exists.
-            if (feature.Indicators.Any(c => c.SourceId == source.Id))
-            {
-                result.AddConflict($"The Resource {model.FeatureId} has already been registered.");
-                return result;
-            }
-
-            var entity = IndicatorEntity.Factory.Create(feature, source, this._datetimeGateway.GetCurrentDateTime(), createdBy);
-            await this._dbContext.Indicators.AddAsync(entity);
-            await this._dbContext.SaveChangesAsync();
-
-            result.AddResult("Id", entity.Id);
-
-            return result;
-        }
+        }     
 
 
         public async Task<IEnumerable<SourceGetListRp>> GetSourcesComplement(int featureId)

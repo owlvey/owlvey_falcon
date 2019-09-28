@@ -44,17 +44,17 @@ namespace Owlvey.Falcon.Core.Entities
                 result.Squads.Add(defaultSquad);
 
                 var defaultSquadFeature = SquadFeatureEntity.Factory.Create(defaultSquad, defaultFeature, on, user);
-                defaultSquad.Features.Add(defaultSquadFeature);
+                defaultSquad.FeatureMaps.Add(defaultSquadFeature);
 
                 defaultSquadFeature = SquadFeatureEntity.Factory.Create(defaultSquad, defaultRegistration, on, user);
-                defaultSquad.Features.Add(defaultSquadFeature);
+                defaultSquad.FeatureMaps.Add(defaultSquadFeature);
 
 
                 var AllBlacksSquad = SquadEntity.Factory.Create("All Blacks", on, user, result);
                 result.Squads.Add(AllBlacksSquad);
 
                 defaultSquadFeature = SquadFeatureEntity.Factory.Create(AllBlacksSquad, paymentFeature, on, user);
-                AllBlacksSquad.Features.Add(defaultSquadFeature);                
+                AllBlacksSquad.FeatureMaps.Add(defaultSquadFeature);                
 
                 var defaultSource = SourceEntity.Factory.Create(defaultProduct, "login requests", on, user);
                 defaultProduct.Sources.Add(defaultSource);

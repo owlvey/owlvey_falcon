@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Core;
 using Owlvey.Falcon.Core.Aggregates;
+using Owlvey.Falcon.Core.Entities;
 using Owlvey.Falcon.Gateways;
 using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Repositories;
@@ -36,7 +37,7 @@ namespace Owlvey.Falcon.Components
         {
             var entity = await this._dbContext.Squads
                 .Include(c=>c.Members).ThenInclude(c=>c.User)
-                .Include(c => c.Features).ThenInclude(c => c.Feature)
+                .Include(c => c.FeatureMaps).ThenInclude(c => c.Feature)
                                          .ThenInclude(c => c.Product)
                 .SingleOrDefaultAsync(c=>c.Id == id);
 
@@ -48,27 +49,45 @@ namespace Owlvey.Falcon.Components
 
         public async Task<SquadGetDetailRp> GetSquadByIdWithAvailability(int id, DateTime start, DateTime end)
         {
-            var entity = await this._dbContext.Squads
+            var entity = await this._dbContext.Squads                
                 .Include(c => c.Members).ThenInclude(c => c.User)
-                .Include(c => c.Features)
+                .Include(c => c.FeatureMaps)
                         .ThenInclude(c => c.Feature)
-                        .ThenInclude(c => c.ServiceMaps)
-                        .ThenInclude(c => c.Service)
-                        .ThenInclude(c => c.Product)
-                .SingleOrDefaultAsync(c => c.Id == id);
+                        .ThenInclude(c => c.ServiceMaps)                                             
+                .SingleOrDefaultAsync(c => c.Id == id );
 
-            var productIds = entity.Features.Select(c => c.Feature.ProductId).Distinct().ToList();
+            var validProducts = entity.FeatureMaps.Select(c => c.Feature.ProductId).Distinct();
+
+            var products = await this._dbContext.Products.Where(c => validProducts.Contains(c.Id.Value)).ToListAsync();
+
+            var validServices = entity.FeatureMaps
+                .SelectMany(c => c.Feature.ServiceMaps)
+                .Select(c => c.ServiceId).Distinct();
+
+            var services = await this._dbContext.Services
+                .Include(c => c.FeatureMap)
+                .ThenInclude(c => c.Feature)
+                .ThenInclude(c => c.Indicators)
+                .ThenInclude(c => c.Source)
+                .Where(c => validServices.Contains(c.Id.Value)).ToListAsync();
+                        
+            var productIds = entity.FeatureMaps.Select(c => c.Feature.ProductId).Distinct().ToList();
 
             var sourceItems = this._dbContext.GetSourceItemsByProduct(productIds, start, end);
 
-            foreach (var service in entity.Services)
+            foreach (var service in services)
             {
-                foreach (var indicator in service.Feature.Indicators)
+                service.Product = products.Single(c => c.Id == service.ProductId);
+                foreach (var feature in service.FeatureMap)
                 {
-                    indicator.Source.SourceItems = sourceItems.Where(c => c.SourceId == indicator.SourceId).ToList();
-                }
+                    feature.Feature.Product = products.Single(c => c.Id == feature.Feature.ProductId);
+                    foreach (var indicator in feature.Feature.Indicators)
+                    {
+                        indicator.Source.SourceItems = sourceItems.Where(c => c.SourceId == indicator.SourceId).ToList();
+                    }
+                }                
             }
-            
+                        
             var agg = new SquadPointsAggregate(entity);
             var squadPonts = agg.MeasurePoints();
 
@@ -87,13 +106,13 @@ namespace Owlvey.Falcon.Components
                     ProductId = item.product.Id.Value,
                     Product = item.product.Name,
                     ServiceId = item.service.Id.Value,
-                    ServiceAvatar = item.service.Avatar,
-                    Service =  item.service.Name,
-                    SLO = item.service.Slo,
-                    Name = item.feature.Name,
-                    Impact = AvailabilityUtils.MeasureImpact(item.service.Slo),
-                    Points = AvailabilityUtils.MeasurePoints(item.service.Slo, item.points)
+                    ServiceAvatar = item.service.Avatar,                    
                 };
+                tmp.Name = item.feature.Name;
+                tmp.SLO = item.service.Slo;
+                tmp.Service = item.service.Name;
+                tmp.Impact = AvailabilityUtils.MeasureImpact(item.service.Slo);
+                tmp.Points = item.points;
 
                 result.Points += tmp.Points;
                 result.Features.Add(tmp);

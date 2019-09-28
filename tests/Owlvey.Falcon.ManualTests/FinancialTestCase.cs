@@ -111,11 +111,7 @@ namespace Owlvey.Falcon.ManualTests
 
                 var source = await comSource.GetByName(product.Id, item + "source");
 
-                await comIndicators.Create(new Models.IndicatorPostRp()
-                {
-                    SourceId = source.Id,
-                    FeatureId = feature.Id
-                });
+                await comIndicators.Create(feature.Id, source.Id);                
             }
         }
     }

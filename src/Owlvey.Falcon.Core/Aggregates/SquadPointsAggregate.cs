@@ -19,7 +19,7 @@ namespace Owlvey.Falcon.Core.Aggregates
 
             var result = new List<(ProductEntity product, ServiceEntity service, FeatureEntity feature, decimal availability, decimal points)>();
 
-            foreach (var featureMap in this._squad.Features)
+            foreach (var featureMap in this._squad.FeatureMaps)
             {
                 var agg = new FeatureDateAvailabilityAggregate(featureMap.Feature);
 
