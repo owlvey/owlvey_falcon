@@ -320,7 +320,8 @@ namespace Owlvey.Falcon.Migrations
 
                     b.Property<bool>("Deleted");
 
-                    b.Property<string>("Description");
+                    b.Property<string>("Description")
+                        .IsRequired();
 
                     b.Property<string>("ModifiedBy")
                         .IsRequired();
@@ -402,15 +403,11 @@ namespace Owlvey.Falcon.Migrations
 
                     b.Property<int>("ServiceId");
 
-                    b.Property<int?>("SquadEntityId");
-
                     b.HasKey("Id");
 
                     b.HasIndex("FeatureId");
 
                     b.HasIndex("ServiceId");
-
-                    b.HasIndex("SquadEntityId");
 
                     b.ToTable("ServiceMapEntity");
                 });
@@ -625,12 +622,12 @@ namespace Owlvey.Falcon.Migrations
                     b.HasOne("Owlvey.Falcon.Core.Entities.FeatureEntity", "Feature")
                         .WithMany("IncidentMap")
                         .HasForeignKey("FeatureId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Owlvey.Falcon.Core.Entities.IncidentEntity", "Incident")
                         .WithMany("FeatureMaps")
                         .HasForeignKey("IncidentId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.IndicatorEntity", b =>
@@ -638,12 +635,12 @@ namespace Owlvey.Falcon.Migrations
                     b.HasOne("Owlvey.Falcon.Core.Entities.FeatureEntity", "Feature")
                         .WithMany("Indicators")
                         .HasForeignKey("FeatureId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Owlvey.Falcon.Core.Entities.SourceEntity", "Source")
                         .WithMany("Indicators")
                         .HasForeignKey("SourceId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.MemberEntity", b =>
@@ -680,16 +677,12 @@ namespace Owlvey.Falcon.Migrations
                     b.HasOne("Owlvey.Falcon.Core.Entities.FeatureEntity", "Feature")
                         .WithMany("ServiceMaps")
                         .HasForeignKey("FeatureId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Owlvey.Falcon.Core.Entities.ServiceEntity", "Service")
                         .WithMany("FeatureMap")
                         .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Owlvey.Falcon.Core.Entities.SquadEntity")
-                        .WithMany("Services")
-                        .HasForeignKey("SquadEntityId");
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.SourceEntity", b =>
@@ -721,12 +714,12 @@ namespace Owlvey.Falcon.Migrations
                     b.HasOne("Owlvey.Falcon.Core.Entities.FeatureEntity", "Feature")
                         .WithMany("Squads")
                         .HasForeignKey("FeatureId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Owlvey.Falcon.Core.Entities.SquadEntity", "Squad")
-                        .WithMany("Features")
+                        .WithMany("FeatureMaps")
                         .HasForeignKey("SquadId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

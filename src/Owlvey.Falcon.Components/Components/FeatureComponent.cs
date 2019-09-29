@@ -78,28 +78,18 @@ namespace Owlvey.Falcon.Components
         /// </summary>
         /// <param name="key">Feature Id</param>
         /// <returns></returns>
-        public async Task<BaseComponentResultRp> DeleteFeature(int id)
-        {
-            var result = new BaseComponentResultRp();
+        public async Task DeleteFeature(int id)
+        {            
             var modifiedBy = this._identityService.GetIdentity();
 
             var feature = await this._dbContext.Features.SingleAsync(c => c.Id == id);
 
-            if (feature == null)
+            if (feature != null)
             {
-                result.AddNotFound($"The Resource {id} doesn't exists.");
-                return result;
-            }
-
-            feature.Delete(this._datetimeGateway.GetCurrentDateTime(), modifiedBy);
-
-            this._dbContext.Features.Remove(feature);
-
-            await this._dbContext.SaveChangesAsync();
-
-            this._cacheComponent.InvalidateFeaturesCache(feature.ProductId);
-
-            return result;
+                feature.Delete(this._datetimeGateway.GetCurrentDateTime(), modifiedBy);
+                this._dbContext.Features.Remove(feature);
+                await this._dbContext.SaveChangesAsync();
+            }            
         }
         
         /// <summary>

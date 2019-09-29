@@ -4,6 +4,7 @@ using AutoMapper;
 using Moq;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Gateways;
+using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Repositories;
 using SimpleInjector;
 
@@ -191,6 +192,61 @@ namespace Owlvey.Falcon.ComponentsTests
             return (customer.Id, product.Id);
         }
 
-        
+        public static async Task<(int customerId, int productId, int serviceId, int featureId, 
+            int sourceId, int squadId)> BuildCustomerWithSquad(Container container,
+            DateTime start, DateTime end) {
+
+            var squadComponent = container.GetInstance<SquadComponent>();
+            var featureComponent = container.GetInstance<FeatureComponent>();
+            var serviceComponent = container.GetInstance<ServiceComponent>();
+            var serviceMapComponent = container.GetInstance<ServiceMapComponent>();
+            var indicatorComponent = container.GetInstance<IndicatorComponent>();
+            var sourceComponent = container.GetInstance<SourceComponent>();
+            var sourceItemComponent = container.GetInstance<SourceItemComponent>();
+            var squadQueryComponent = container.GetInstance<SquadQueryComponent>();
+
+            var (customer, product) = await ComponentTestFactory.BuildCustomerProduct(container);
+            
+            var service = await serviceComponent.CreateService(new Models.ServicePostRp()
+            {
+                Name = "test service",
+                ProductId = product
+            });
+
+            var feature = await featureComponent.CreateFeature(new Models.FeaturePostRp()
+            {
+                Name = "test",
+                ProductId = product
+            });
+
+            await serviceMapComponent.CreateServiceMap(new ServiceMapPostRp()
+            {
+                FeatureId = feature.Id,
+                ServiceId = service.Id
+            });
+
+            var source = await sourceComponent.Create(new Models.SourcePostRp()
+            {
+                Name = "test source",
+                ProductId = product
+            });
+
+            await sourceItemComponent.Create(new Models.SourceItemPostRp()
+            {
+                SourceId = source.Id,
+                Start = start,
+                End = end,
+                Total = 1000,
+                Good = 800
+            });
+
+            await indicatorComponent.Create(feature.Id, source.Id);
+
+            var squad = await squadComponent.CreateSquad(new Models.SquadPostRp() { Name = "test", CustomerId = customer });
+
+            await featureComponent.RegisterSquad(new Models.SquadFeaturePostRp() { FeatureId = feature.Id, SquadId = squad.Id });
+
+            return (customer, product, service.Id, feature.Id, source.Id, squad.Id);
+        }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Repositories;
 using Xunit;
 
 namespace Owlvey.Falcon.ComponentsTests
@@ -47,6 +49,32 @@ namespace Owlvey.Falcon.ComponentsTests
             Assert.NotNull(target);
             Assert.NotNull(target.Avatar);
         }
+
+        [Fact]
+        public async Task SourceDeleteSuccess() {
+
+            var container = ComponentTestFactory.BuildContainer();
+            var dbcontext = container.GetInstance<FalconDbContext>();
+            var source = container.GetInstance<SourceComponent>();
+            var sourceItemComponent = container.GetInstance<SourceItemComponent>();
+            var result = await ComponentTestFactory.BuildCustomerWithSquad(container, 
+                OwlveyCalendar.January201903, OwlveyCalendar.January201905);
+
+            await source.Delete(result.sourceId);
+            var sources = await source.GetById(result.sourceId);
+            Assert.Null(sources);
+
+            var items = await sourceItemComponent.GetBySource(result.sourceId);
+            Assert.Empty(items);
+
+            var expected = dbcontext.SourcesItems.Where(c => c.Source.ProductId == result.productId).ToList();
+            Assert.Empty(expected);
+
+            var indicators = dbcontext.Indicators.Where(c => c.FeatureId == result.featureId).ToList();
+            Assert.Empty(indicators);
+        }
+
+
         [Fact]
         public async Task SourceQueryAvailability()
         {

@@ -62,13 +62,13 @@ namespace Owlvey.Falcon.Repositories
             modelBuilder.Entity<SquadFeatureEntity>()
                .HasOne(pt => pt.Feature)
                .WithMany(p => p.Squads)
-               .OnDelete(DeleteBehavior.Restrict)
+               .OnDelete(DeleteBehavior.Cascade)
                .HasForeignKey(pt => pt.FeatureId);
 
             modelBuilder.Entity<SquadFeatureEntity>()
                .HasOne(pt => pt.Squad)
                .WithMany(p => p.FeatureMaps)
-               .OnDelete(DeleteBehavior.Restrict)
+               .OnDelete(DeleteBehavior.Cascade)
                .HasForeignKey(pt => pt.SquadId);
 
             modelBuilder.Entity<IncidentMapEntity>().HasKey(x => new { x.Id });
@@ -76,13 +76,13 @@ namespace Owlvey.Falcon.Repositories
             modelBuilder.Entity<IncidentMapEntity>()
                .HasOne(pt => pt.Feature)
                .WithMany(p => p.IncidentMap)
-               .OnDelete(DeleteBehavior.Restrict)
+               .OnDelete(DeleteBehavior.Cascade)
                .HasForeignKey(pt => pt.FeatureId);
 
             modelBuilder.Entity<IncidentMapEntity>()
                .HasOne(pt => pt.Incident)
                .WithMany(p => p.FeatureMaps)
-               .OnDelete(DeleteBehavior.Restrict)
+               .OnDelete(DeleteBehavior.Cascade)
                .HasForeignKey(pt => pt.IncidentId);
 
             modelBuilder.Entity<ServiceMapEntity>().HasKey(x => new { x.Id });
@@ -90,13 +90,13 @@ namespace Owlvey.Falcon.Repositories
             modelBuilder.Entity<ServiceMapEntity>()
                .HasOne(pt => pt.Feature)
                .WithMany(p => p.ServiceMaps)
-               .OnDelete(DeleteBehavior.Restrict)
+               .OnDelete(DeleteBehavior.Cascade)
                .HasForeignKey(pt => pt.FeatureId);
 
             modelBuilder.Entity<ServiceMapEntity>()
                .HasOne(pt => pt.Service)
                .WithMany(p => p.FeatureMap)
-               .OnDelete(DeleteBehavior.Restrict)
+               .OnDelete(DeleteBehavior.Cascade)
                .HasForeignKey(pt => pt.ServiceId);
 
             modelBuilder.Entity<IndicatorEntity>().HasKey(x => new { x.Id });
@@ -104,17 +104,19 @@ namespace Owlvey.Falcon.Repositories
             modelBuilder.Entity<IndicatorEntity>()
                .HasOne(pt => pt.Feature)
                .WithMany(p => p.Indicators)
-               .OnDelete(DeleteBehavior.Restrict)
+               .OnDelete(DeleteBehavior.Cascade)
                .HasForeignKey(pt => pt.FeatureId);
 
             modelBuilder.Entity<IndicatorEntity>()
                .HasOne(pt => pt.Source)
                .WithMany(p => p.Indicators)
-               .OnDelete(DeleteBehavior.Restrict)
-               .HasForeignKey(pt => pt.SourceId);
+               .OnDelete(DeleteBehavior.Cascade)
+               .HasForeignKey(pt => pt.SourceId);         
 
             base.OnModelCreating(modelBuilder);
         }
+
+
         internal ICollection<SourceItemEntity> GetSourceItems(int sourceId,
             DateTime start, DateTime end) {
             start = start.Date;

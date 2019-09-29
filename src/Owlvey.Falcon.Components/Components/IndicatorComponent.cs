@@ -32,6 +32,18 @@ namespace Owlvey.Falcon.Components
             return result;
         }
 
+        public async Task<BaseComponentResultRp> Delete(int featureId, int sourceId)
+        {
+            var result = new BaseComponentResultRp();
+            var entity = await this._dbContext.Indicators.Where(c => c.FeatureId == featureId && c.SourceId == sourceId).SingleOrDefaultAsync();
+            if (entity != null)
+            {
+                this._dbContext.Indicators.Remove(entity);
+                await this._dbContext.SaveChangesAsync();
+            }
+            return result;
+        }
+
         public async Task<IndicatorGetListRp>  Create(int customerId, string product, string source, string feature)
         {
             var createdBy = this._identityService.GetIdentity();

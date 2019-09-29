@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Owlvey.Falcon.Components;
 using Xunit;
 using System.Linq;
+using Owlvey.Falcon.Repositories;
 
 namespace Owlvey.Falcon.ComponentsTests
 {
@@ -27,7 +28,47 @@ namespace Owlvey.Falcon.ComponentsTests
             Assert.NotEmpty(features);
             
         }
+        [Fact]
+        public async Task FeatureDeleteSuccess()
+        {
+            var container = ComponentTestFactory.BuildContainer();
+            var dbcontext = container.GetInstance<FalconDbContext>();
+            var featureComponent = container.GetInstance<FeatureComponent>();
+            var featureQueryComponent = container.GetInstance<FeatureQueryComponent>();
+            var data = await ComponentTestFactory.BuildCustomerWithSquad(container,
+                OwlveyCalendar.January201903, OwlveyCalendar.January201905);
 
+            await featureComponent.DeleteFeature(data.featureId);
+            var feature = await featureQueryComponent.GetFeatureById(data.featureId);
+
+            Assert.Null(feature);
+
+            var indicators = dbcontext.Indicators.Where(c => c.FeatureId == data.featureId).ToList();
+            Assert.Empty(indicators);
+        }
+
+
+        [Fact]
+        public async Task IndicatorDeleteSuccess()
+        {
+            var container = ComponentTestFactory.BuildContainer();
+            var dbcontext = container.GetInstance<FalconDbContext>();
+            var featureComponent = container.GetInstance<FeatureComponent>();
+            var indicatorComponent = container.GetInstance<IndicatorComponent>();
+            var featureQueryComponent = container.GetInstance<FeatureQueryComponent>();
+            var sourceComponent = container.GetInstance<SourceComponent>();
+            var data = await ComponentTestFactory.BuildCustomerWithSquad(container,
+                OwlveyCalendar.January201903, OwlveyCalendar.January201905);
+
+            await indicatorComponent.Delete(data.featureId, data.sourceId);
+            var indicators = dbcontext.Indicators.Where(c => c.FeatureId == data.featureId).ToList();
+            Assert.Empty(indicators);
+
+            var feature = featureQueryComponent.GetFeatureById(data.featureId);
+            Assert.NotNull(feature);
+            var source = sourceComponent.GetById(data.sourceId);
+            Assert.NotNull(source);
+        }
         [Fact]
         public async Task FeatureSeriesTest()
         {

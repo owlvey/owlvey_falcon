@@ -71,26 +71,22 @@ namespace Owlvey.Falcon.Components
         /// </summary>
         /// <param name="key">Product Id</param>
         /// <returns></returns>
-        public async Task<BaseComponentResultRp> DeleteProduct(int id)
+        public async Task DeleteProduct(int id)
         {
             var result = new BaseComponentResultRp();
             var modifiedBy = this._identityService.GetIdentity();
 
             var product = await this._dbContext.Products.SingleAsync(c => c.Id == id);
 
-            if (product == null)
+            if (product != null)
             {
-                result.AddNotFound($"The Resource {id} doesn't exists.");
-                return result;
+                product.Delete(this._datetimeGateway.GetCurrentDateTime(), modifiedBy);
+
+                this._dbContext.Products.Remove(product);
+
+                await this._dbContext.SaveChangesAsync();
             }
-
-            product.Delete(this._datetimeGateway.GetCurrentDateTime(), modifiedBy);
-
-            this._dbContext.Products.Remove(product);
-
-            await this._dbContext.SaveChangesAsync();
-
-            return result;
+            
         }
         
         /// <summary>
@@ -98,40 +94,26 @@ namespace Owlvey.Falcon.Components
         /// </summary>
         /// <param name="model">Product Model</param>
         /// <returns></returns>
-        public async Task<BaseComponentResultRp> UpdateProduct(int id, ProductPutRp model)
+        public async Task<ProductGetRp> UpdateProduct(int id, ProductPutRp model)
         {
-            var result = new BaseComponentResultRp();
+            
             var createdBy = this._identityService.GetIdentity();
 
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
 
             var product = await this._dbContext.Products.Include(c=> c.Customer).SingleAsync(c => c.Id == id);
 
-            if (product == null)
+            if (product != null)
             {
-                result.AddNotFound($"The Resource {id} doesn't exists.");
-                return result;
+                product.Update(this._datetimeGateway.GetCurrentDateTime(),
+                createdBy, name: model.Name,
+                description: model.Description,
+                avatar: model.Avatar);
+                this._dbContext.Update(product);
+                await this._dbContext.SaveChangesAsync();
             }
 
-            // Validate if the resource exists.
-            if (!product.Name.Equals(model.Name, StringComparison.InvariantCultureIgnoreCase)) {
-
-                var customer = await this._dbContext.Customers.Include(c=> c.Products).SingleAsync(c => c.Id.Equals(product.Customer.Id));
-                
-                if (customer.Products.Any(c => c.Name.Equals(model.Name)))
-                {
-                    result.AddConflict($"The Resource {model.Name} has already been taken.");
-                    return result;
-                }
-            }
-                       
-            product.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, name: model.Name, description: model.Description, avatar: null);
-
-            this._dbContext.Update(product);
-
-            await this._dbContext.SaveChangesAsync();
-
-            return result;
+            return this._mapper.Map<ProductGetRp>(product);
         }
     }
 }

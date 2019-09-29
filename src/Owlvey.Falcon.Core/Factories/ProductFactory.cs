@@ -12,7 +12,8 @@ namespace Owlvey.Falcon.Core.Entities
             {
                 var entity = new ProductEntity()
                 {
-                    Name = name,                    
+                    Name = name,         
+                    Description = name,
                     Avatar = "https://cdn.iconscout.com/icon/free/png-256/avatar-375-456327.png",
                     CreatedBy = user,
                     ModifiedBy = user,

@@ -64,8 +64,7 @@ namespace Owlvey.Falcon.Components
 
 
         public async Task<SourceGetListRp> Create(SourcePostRp model)
-        {
-            var result = new BaseComponentResultRp();
+        {            
             var createdBy = this._identityService.GetIdentity();
 
             var entity = await this._dbContext.GetSource(model.ProductId, model.Name);
@@ -80,6 +79,15 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<SourceGetListRp>(entity);
         }
 
+        public async Task Delete(int sourceId) {
+            var createdBy = this._identityService.GetIdentity();
+            var entity = await this._dbContext.Sources.Where(c => c.Id == sourceId).SingleOrDefaultAsync();
+            if (entity != null)
+            {
+                this._dbContext.Sources.Remove(entity);
+                await this._dbContext.SaveChangesAsync();
+            }            
+        }
         public async Task<SourceGetRp> GetByName(int productId, string name)
         {
             var entity = await this._dbContext.Sources.SingleOrDefaultAsync(c => c.Product.Id == productId && c.Name == name);

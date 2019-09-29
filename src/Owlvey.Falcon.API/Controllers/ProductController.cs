@@ -99,17 +99,7 @@ namespace Owlvey.Falcon.API.Controllers
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._productService.UpdateProduct(id, resource);
-
-            if (response.HasNotFounds())
-            {
-                return this.NotFound(response.GetNotFounds());
-            }
-
-            if (response.HasConflicts())
-            {
-                return this.Conflict(response.GetConflicts());
-            }
+            var response = await this._productService.UpdateProduct(id, resource);            
 
             return this.Ok();
         }
@@ -122,23 +112,9 @@ namespace Owlvey.Falcon.API.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         public async Task<IActionResult> Delete(int id)
-        {
-            if (!this.ModelState.IsValid)
-                return this.BadRequest(this.ModelState);
-
-            var response = await this._productService.DeleteProduct(id);
-
-            if (response.HasNotFounds())
-            {
-                return this.NotFound(response.GetNotFounds());
-            }
-
-            if (response.HasConflicts())
-            {
-                return this.Conflict(response.GetConflicts());
-            }
-
-            return this.NoContent();
+        {           
+            await this._productService.DeleteProduct(id);
+            return this.Ok();
         }
 
         [HttpGet("{id}/dashboard")]

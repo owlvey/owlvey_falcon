@@ -92,8 +92,14 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok();               
         }
 
+        [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(void), 200)]        
+        public async Task<IActionResult> Delete(int id)
+        {            
+            await this._sourceComponent.Delete(id);            
+            return this.Ok();
+        }
         
-
         #region reports
 
         [HttpGet("{id}/reports/daily/series")]

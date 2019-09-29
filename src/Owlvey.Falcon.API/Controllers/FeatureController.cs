@@ -13,20 +13,17 @@ namespace Owlvey.Falcon.API.Controllers
     {
         private readonly FeatureQueryComponent _featureQueryService;
         private readonly IndicatorComponent _indicatorComponent;
-        private readonly FeatureComponent _featureService;
-        private readonly SourceComponent _sourceComponent;
+        private readonly FeatureComponent _featureComponent;        
         private readonly SquadComponent _squadComponent; 
 
         public FeatureController(FeatureQueryComponent featureQueryService,
-            IndicatorComponent indicatorComponent,
-            SourceComponent sourceComponent,
+            IndicatorComponent indicatorComponent,            
             SquadComponent squadComponent,
             FeatureComponent featureService) : base()
         {
-            this._indicatorComponent = indicatorComponent;
-            this._sourceComponent = sourceComponent;
+            this._indicatorComponent = indicatorComponent;            
             this._featureQueryService = featureQueryService;
-            this._featureService = featureService;
+            this._featureComponent = featureService;
             this._squadComponent = squadComponent;
         }
 
@@ -98,7 +95,7 @@ namespace Owlvey.Falcon.API.Controllers
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._featureService.CreateFeature(resource);            
+            var response = await this._featureComponent.CreateFeature(resource);            
 
             return this.Created(Url.RouteUrl("GetFeatureId", new { id = response.Id }), response);
         }
@@ -118,7 +115,7 @@ namespace Owlvey.Falcon.API.Controllers
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._featureService.UpdateFeature(id, resource);
+            var response = await this._featureComponent.UpdateFeature(id, resource);
 
             if (response.HasNotFounds())
             {
@@ -142,22 +139,8 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(204)]
         public async Task<IActionResult> Delete(int id)
         {
-            if (!this.ModelState.IsValid)
-                return this.BadRequest(this.ModelState);
-
-            var response = await this._featureService.DeleteFeature(id);
-
-            if (response.HasNotFounds())
-            {
-                return this.NotFound(response.GetNotFounds());
-            }
-
-            if (response.HasConflicts())
-            {
-                return this.Conflict(response.GetConflicts());
-            }
-
-            return this.NoContent();
+            await this._featureComponent.DeleteFeature(id);           
+            return this.Ok();
         }
 
 
@@ -192,7 +175,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(IEnumerable<SourceGetListRp>), 200)]
         public async Task<IActionResult> PutSquad(int id, int squadId)
         {
-            await this._featureService.RegisterSquad(new SquadFeaturePostRp()
+            await this._featureComponent.RegisterSquad(new SquadFeaturePostRp()
             {
                  FeatureId = id, SquadId = squadId
             });            
@@ -203,7 +186,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(IEnumerable<SourceGetListRp>), 200)]
         public async Task<IActionResult> DeleteSquad(int id, int squadId)
         {
-            await this._featureService.UnRegisterSquad(squadId, id);
+            await this._featureComponent.UnRegisterSquad(squadId, id);
             return this.Ok();
         }
 
