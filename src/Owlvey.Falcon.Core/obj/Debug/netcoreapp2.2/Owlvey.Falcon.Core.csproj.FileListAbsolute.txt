@@ -1,0 +1,9 @@
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Core/bin/Debug/netcoreapp2.2/Owlvey.Falcon.Core.deps.json
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Core/bin/Debug/netcoreapp2.2/Owlvey.Falcon.Core.dll
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Core/bin/Debug/netcoreapp2.2/Owlvey.Falcon.Core.pdb
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Core/obj/Debug/netcoreapp2.2/Owlvey.Falcon.Core.csproj.CoreCompileInputs.cache
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Core/obj/Debug/netcoreapp2.2/Owlvey.Falcon.Core.AssemblyInfoInputs.cache
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Core/obj/Debug/netcoreapp2.2/Owlvey.Falcon.Core.AssemblyInfo.cs
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Core/obj/Debug/netcoreapp2.2/Owlvey.Falcon.Core.dll
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Core/obj/Debug/netcoreapp2.2/Owlvey.Falcon.Core.pdb
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Core/obj/Debug/netcoreapp2.2/Owlvey.Falcon.Core.csprojAssemblyReference.cache

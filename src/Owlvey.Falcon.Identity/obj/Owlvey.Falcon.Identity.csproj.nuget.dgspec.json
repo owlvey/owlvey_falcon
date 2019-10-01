@@ -1,0 +1,214 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Identity/Owlvey.Falcon.Identity.csproj": {}
+  },
+  "projects": {
+    "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Components/Owlvey.Falcon.Components.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Components/Owlvey.Falcon.Components.csproj",
+        "projectName": "Owlvey.Falcon.Components",
+        "projectPath": "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Components/Owlvey.Falcon.Components.csproj",
+        "packagesPath": "/Users/Gregory/.nuget/packages/",
+        "outputPath": "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Components/obj/",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "/Users/Gregory/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp2.2"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp2.2": {
+            "projectReferences": {
+              "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Core/Owlvey.Falcon.Core.csproj": {
+                "projectPath": "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Core/Owlvey.Falcon.Core.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp2.2": {
+          "dependencies": {
+            "AutoMapper": {
+              "target": "Package",
+              "version": "[8.1.1, )"
+            },
+            "EPPlus.Core": {
+              "target": "Package",
+              "version": "[1.5.4, )"
+            },
+            "Microsoft.AspNetCore.Hosting": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[2.2.6, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "target": "Package",
+              "version": "[2.2.6, )"
+            },
+            "Microsoft.EntityFrameworkCore.Relational": {
+              "target": "Package",
+              "version": "[2.2.6, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[2.2.6, )"
+            },
+            "Microsoft.EntityFrameworkCore.Sqlite": {
+              "target": "Package",
+              "version": "[2.2.6, )"
+            },
+            "Microsoft.Extensions.Configuration.Json": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
+            "Microsoft.NETCore.App": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.2.0, )",
+              "autoReferenced": true
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[12.0.2, )"
+            }
+          },
+          "imports": [
+            "net461"
+          ],
+          "assetTargetFallback": true,
+          "warn": true
+        }
+      }
+    },
+    "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Core/Owlvey.Falcon.Core.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Core/Owlvey.Falcon.Core.csproj",
+        "projectName": "Owlvey.Falcon.Core",
+        "projectPath": "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Core/Owlvey.Falcon.Core.csproj",
+        "packagesPath": "/Users/Gregory/.nuget/packages/",
+        "outputPath": "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Core/obj/",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "/Users/Gregory/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp2.2"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp2.2": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp2.2": {
+          "dependencies": {
+            "Microsoft.NETCore.App": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.2.0, )",
+              "autoReferenced": true
+            }
+          },
+          "imports": [
+            "net461"
+          ],
+          "assetTargetFallback": true,
+          "warn": true
+        }
+      }
+    },
+    "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Identity/Owlvey.Falcon.Identity.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Identity/Owlvey.Falcon.Identity.csproj",
+        "projectName": "Owlvey.Falcon.Identity",
+        "projectPath": "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Identity/Owlvey.Falcon.Identity.csproj",
+        "packagesPath": "/Users/Gregory/.nuget/packages/",
+        "outputPath": "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Identity/obj/",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "/Users/Gregory/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp2.2"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp2.2": {
+            "projectReferences": {
+              "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Components/Owlvey.Falcon.Components.csproj": {
+                "projectPath": "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Components/Owlvey.Falcon.Components.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp2.2": {
+          "dependencies": {
+            "Microsoft.Extensions.Configuration": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
+            "Microsoft.Extensions.DependencyInjection": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
+            "Microsoft.NETCore.App": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.2.0, )",
+              "autoReferenced": true
+            }
+          },
+          "imports": [
+            "net461"
+          ],
+          "assetTargetFallback": true,
+          "warn": true
+        }
+      }
+    }
+  }
+}

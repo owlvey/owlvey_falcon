@@ -42,25 +42,7 @@ namespace Owlvey.Falcon.Components
             var result = this._mapper.Map<CustomerGetRp>(entity);            
 
             return result;
-        }
-
-        public async Task<CustomerGetRp> GetCustomerByIdWithAvailability(int id, DateTime target)
-        {
-            var entities = await this._dbContext.Customers.Where(c => c.Deleted == false && c.Id.Equals(id)).ToListAsync();
-
-            var entity = entities.FirstOrDefault();
-
-            if (entity == null)
-                return null;
-
-            var result = this._mapper.Map<CustomerGetRp>(entity);
-
-            var tmp = await this.GetAvailabilityByDateRange(id, target, target);
-
-            result.Availability = tmp.availabilities.Single().Availability;
-
-            return result;
-        }
+        }        
 
         public async Task<CustomerGetRp> GetCustomerByName(string name)
         {
@@ -81,62 +63,8 @@ namespace Owlvey.Falcon.Components
             var result = this._mapper.Map<IEnumerable<CustomerGetListRp>>(entities);
 
             return result;
-        }
-
-        private async Task<(CustomerEntity customer, IEnumerable<DayAvailabilityEntity> availabilities, IEnumerable<(ProductEntity service, IEnumerable<DayAvailabilityEntity> availabilities)> products)> GetAvailabilityByDateRange(int customerId, DateTime start, DateTime end) {
-
-            var customer = await this._dbContext.Customers.Include(c => c.Products).ThenInclude(c => c.Services).Where(c => c.Id == customerId).SingleAsync();
-            foreach (var product in customer.Products)
-            {
-                foreach (var service in product.Services)
-                {
-                    var serviceMaps = await this._dbContext.ServiceMaps.Include(c => c.Feature).ThenInclude(c => c.Indicators).Where(c => c.Service.Id == service.Id).ToListAsync();
-                    await this._dbContext.LoadIndicators(serviceMaps);
-                    foreach (var map in serviceMaps)
-                    {
-                        foreach (var indicator in map.Feature.Indicators)
-                        {
-                            var sourceItems = this._dbContext.GetSourceItems(indicator.SourceId, start, end);
-                            indicator.Source.SourceItems = sourceItems;
-                        }
-                    }
-                }
-            }
-            
-            var aggregator = new CustomerAvailabilityAggregate(customer, start, end);
-
-            return aggregator.MeasureAvailability();
-
-        }
-        public async Task<MultiSeriesGetRp> GetDailySeriesById(int customerId, DateTime start, DateTime end)
-        {
-            var (customer, availability, features) =  await this.GetAvailabilityByDateRange(customerId, start, end);
-            var result = new MultiSeriesGetRp
-            {
-                Start = start,
-                End = end,
-                Name = customer.Name,
-                Avatar = customer.Avatar
-            };
-            result.Series.Add(new MultiSerieItemGetRp()
-            {
-                Name = "Availability",
-                Avatar = customer.Avatar,
-                Items = availability.Select(c => this._mapper.Map<SeriesItemGetRp>(c)).ToList()
-            });
-
-            foreach (var indicator in features)
-            {
-                result.Series.Add(new MultiSerieItemGetRp()
-                {
-                    Name = string.Format("Product:{0}", indicator.Item1.Id),
-                    Avatar = indicator.Item1.Avatar,
-                    Items = indicator.Item2.Select(c => this._mapper.Map<SeriesItemGetRp>(c)).ToList()
-                });
-            }
-            return result;
-        }
-
+        }   
+    
 
         public async Task<GraphGetRp> GetSquadsGraph(int customerId, DateTime start, DateTime end)
         {

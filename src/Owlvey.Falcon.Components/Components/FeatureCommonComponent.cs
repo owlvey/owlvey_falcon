@@ -29,7 +29,7 @@ namespace Owlvey.Falcon.Components
                 var sourceItems = this._dbContext.GetSourceItems(indicator.SourceId, start, end);
                 indicator.Source.SourceItems = sourceItems;
             }
-            var agg = new FeatureDateAvailabilityAggregate(entity);
+            var agg = new FeatureAvailabilityAggregate(entity);
 
             return agg.MeasureAvailability();
 

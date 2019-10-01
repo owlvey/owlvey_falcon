@@ -1,0 +1,16 @@
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Components/bin/Debug/netcoreapp2.2/dbsettings.docker.json
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Components/bin/Debug/netcoreapp2.2/dbsettings.json
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Components/bin/Debug/netcoreapp2.2/Owlvey.Falcon.Components.deps.json
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Components/bin/Debug/netcoreapp2.2/Owlvey.Falcon.Components.runtimeconfig.json
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Components/bin/Debug/netcoreapp2.2/Owlvey.Falcon.Components.runtimeconfig.dev.json
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Components/bin/Debug/netcoreapp2.2/Owlvey.Falcon.Components.dll
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Components/bin/Debug/netcoreapp2.2/Owlvey.Falcon.Components.pdb
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Components/bin/Debug/netcoreapp2.2/Owlvey.Falcon.Core.dll
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Components/bin/Debug/netcoreapp2.2/Owlvey.Falcon.Core.pdb
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Components/obj/Debug/netcoreapp2.2/Owlvey.Falcon.Components.csprojAssemblyReference.cache
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Components/obj/Debug/netcoreapp2.2/Owlvey.Falcon.Components.csproj.CoreCompileInputs.cache
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Components/obj/Debug/netcoreapp2.2/Owlvey.Falcon.Components.AssemblyInfoInputs.cache
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Components/obj/Debug/netcoreapp2.2/Owlvey.Falcon.Components.AssemblyInfo.cs
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Components/obj/Debug/netcoreapp2.2/Owlvey.Falcon.Components.csproj.CopyComplete
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Components/obj/Debug/netcoreapp2.2/Owlvey.Falcon.Components.dll
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Components/obj/Debug/netcoreapp2.2/Owlvey.Falcon.Components.pdb

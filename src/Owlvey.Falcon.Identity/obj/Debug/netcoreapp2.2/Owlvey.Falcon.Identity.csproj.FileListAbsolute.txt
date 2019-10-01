@@ -1,0 +1,16 @@
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Identity/bin/Debug/netcoreapp2.2/dbsettings.docker.json
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Identity/bin/Debug/netcoreapp2.2/dbsettings.json
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Identity/bin/Debug/netcoreapp2.2/Owlvey.Falcon.Identity.deps.json
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Identity/bin/Debug/netcoreapp2.2/Owlvey.Falcon.Identity.dll
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Identity/bin/Debug/netcoreapp2.2/Owlvey.Falcon.Identity.pdb
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Identity/bin/Debug/netcoreapp2.2/Owlvey.Falcon.Components.dll
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Identity/bin/Debug/netcoreapp2.2/Owlvey.Falcon.Core.dll
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Identity/bin/Debug/netcoreapp2.2/Owlvey.Falcon.Components.pdb
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Identity/bin/Debug/netcoreapp2.2/Owlvey.Falcon.Core.pdb
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Identity/obj/Debug/netcoreapp2.2/Owlvey.Falcon.Identity.csprojAssemblyReference.cache
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Identity/obj/Debug/netcoreapp2.2/Owlvey.Falcon.Identity.csproj.CoreCompileInputs.cache
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Identity/obj/Debug/netcoreapp2.2/Owlvey.Falcon.Identity.AssemblyInfoInputs.cache
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Identity/obj/Debug/netcoreapp2.2/Owlvey.Falcon.Identity.AssemblyInfo.cs
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Identity/obj/Debug/netcoreapp2.2/Owlvey.Falcon.Identity.csproj.CopyComplete
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Identity/obj/Debug/netcoreapp2.2/Owlvey.Falcon.Identity.dll
+/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Identity/obj/Debug/netcoreapp2.2/Owlvey.Falcon.Identity.pdb

@@ -32,6 +32,7 @@
   <ItemGroup>
     <Folder Include="Aggregates\" />
     <Folder Include="BuildReports\" />
+    <Folder Include="Values\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Entities\SquadProductEntityUnitTest.cs" />

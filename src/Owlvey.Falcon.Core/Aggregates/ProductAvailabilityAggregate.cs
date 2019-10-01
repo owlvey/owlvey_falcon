@@ -20,7 +20,7 @@ namespace Owlvey.Falcon.Core.Aggregates
             var result = new List<(ServiceEntity, IEnumerable<DayAvailabilityEntity>)>();
             foreach (var item in this.Product.Services)
             {
-                var agg = new ServiceAvailabilityAggregate(item, this.Start, this.End);
+                var agg = new ServiceDailyAvailabilityAggregate(item, this.Start, this.End);
                 var (ser, availabilities, features)  = agg.MeasureAvailability();
                 result.Add((ser, availabilities));                
             }

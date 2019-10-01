@@ -45,17 +45,10 @@ namespace Owlvey.Falcon.API.Controllers
         /// <returns></returns>
         [HttpGet("{id}", Name = "GetCustomerId")]
         [ProducesResponseType(typeof(CustomerGetRp), 200)]
-        public async Task<IActionResult> GetById(int id, DateTime? end = null)
+        public async Task<IActionResult> GetById(int id)
         {
-            CustomerGetRp model;
-            if (end.HasValue)
-            {
-                model = await this._customerQueryService.GetCustomerByIdWithAvailability(id, end.Value);
-            }
-            else {
-                model = await this._customerQueryService.GetCustomerById(id);
-            }            
-            
+            CustomerGetRp model;            
+            model = await this._customerQueryService.GetCustomerById(id);
             if (model == null)
                 return this.NotFound($"The Resource {id} doesn't exists.");
 
@@ -149,26 +142,6 @@ namespace Owlvey.Falcon.API.Controllers
 
             return this.NoContent();
         }
-
-        [HttpGet("{id}/reports/daily/series")]
-        [ProducesResponseType(typeof(MultiSeriesGetRp), 200)]
-        public async Task<IActionResult> ReportSeries(int id, DateTime? start, DateTime? end, int period = 1)
-        {
-            if (!start.HasValue)
-            {
-                return this.BadRequest("start is required");
-            }
-            if (!end.HasValue)
-            {
-                return this.BadRequest("end is required");
-            }
-            var result = await this._customerQueryService.GetDailySeriesById(id, start.Value, end.Value);
-
-            return this.Ok(result);
-        }
-
-
-        
 
         [HttpGet("{id}/squads/reports/graph")]
         [ProducesResponseType(typeof(GraphGetRp), 200)]

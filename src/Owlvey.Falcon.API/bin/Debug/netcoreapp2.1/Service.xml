@@ -1,0 +1,354 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Owlvey.Falcon.API</name>
+    </assembly>
+    <members>
+        <member name="M:Owlvey.Falcon.API.Controllers.AppSettingController.Get">
+            <summary>
+            Get appsettings
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.AppSettingController.GetById(System.String)">
+            <summary>
+            Get appsetting by id 
+            </summary>
+            <param name="id">id</param>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.AppSettingController.Post(Owlvey.Falcon.Models.AppSettingPostRp)">
+             <summary>
+             Create a new appsetting
+             </summary>
+             <remarks>
+             Sample request:
+            
+                 POST /appsettings
+                 {
+                    "id": "key1",
+                    "value": "Value1"
+                 }
+            
+             </remarks>
+             <param name="resource"></param>
+             <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.AppSettingController.Put(System.String,Owlvey.Falcon.Models.AppSettingPutRp)">
+            <summary>
+            Update an appsetting
+            </summary>
+            <param name="id"></param>
+            <param name="resource"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.AppSettingController.Delete(System.String)">
+            <summary>
+            Delete an appsetting
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.BaseController.Conflict(System.Object)">
+            <summary>
+            Conflict Result Model
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.BaseController.Error(System.Object)">
+            <summary>
+            Error Result Model
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.CustomerController.Get">
+            <summary>
+            Get Customers
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.CustomerController.GetById(System.Int32)">
+            <summary>
+            Get Customer by id 
+            </summary>
+            <param name="id">id</param>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.CustomerController.Post(Owlvey.Falcon.Models.CustomerPostRp)">
+             <summary>
+             Create a new Customer
+             </summary>
+             <remarks>
+             Sample request:
+            
+                 POST /Customers
+                 {
+                    "id": "key1",
+                    "value": "Value1"
+                 }
+            
+             </remarks>
+             <param name="resource"></param>
+             <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.CustomerController.Put(System.Int32,Owlvey.Falcon.Models.CustomerPutRp)">
+            <summary>
+            Update an Customer
+            </summary>
+            <param name="id"></param>
+            <param name="resource"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.CustomerController.Delete(System.Int32)">
+            <summary>
+            Delete an Customer
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.FeatureController.Get(System.Int32,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.String)">
+            <summary>
+            Get Features
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.FeatureController.GetFeatureId(System.Int32,System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
+            <summary>
+            Get Feature by id 
+            </summary>
+            <param name="id">id</param>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.FeatureController.Post(Owlvey.Falcon.Models.FeaturePostRp)">
+             <summary>
+             Create a new Feature
+             </summary>
+             <remarks>
+             Sample request:
+            
+                 POST /Features
+                 {
+                    "id": "key1",
+                    "value": "Value1"
+                 }
+            
+             </remarks>
+             <param name="resource"></param>
+             <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.FeatureController.Put(System.Int32,Owlvey.Falcon.Models.FeaturePutRp)">
+            <summary>
+            Update an Feature
+            </summary>
+            <param name="id"></param>
+            <param name="resource"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.FeatureController.Delete(System.Int32)">
+            <summary>
+            Delete an Feature
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.MemberController.GetMember(System.Int32)">
+            <summary>
+            Get Members
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.MemberController.GetSquadMemberId(System.Int32)">
+            <summary>
+            Get Members by id 
+            </summary>
+            <param name="id">id</param>        
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.MemberController.PostMember(Owlvey.Falcon.Models.MemberPostRp)">
+             <summary>
+             Create a new Squad Member
+             </summary>
+             <remarks>
+             Sample request:
+            
+                 POST /Squads
+                 {
+                    "id": "key1",
+                    "value": "Value1"
+                 }
+            
+             </remarks>
+             <param name="id"></param>
+             <param name="resource"></param>
+             <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.MemberController.DeleteMember(System.Int32)">
+            <summary>
+            Delete an Squad Member
+            </summary>
+            <param name="id"></param>        
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.ProductController.Get(System.Int32,System.String)">
+            <summary>
+            Get Products
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.ProductController.GetProductId(System.Int32)">
+            <summary>
+            Get Product by id 
+            </summary>
+            <param name="id">id</param>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.ProductController.Post(Owlvey.Falcon.Models.ProductPostRp)">
+             <summary>
+             Create a new Product
+             </summary>
+             <remarks>
+             Sample request:
+            
+                 POST /Products
+                 {
+                    "id": "key1",
+                    "value": "Value1"
+                 }
+            
+             </remarks>
+             <param name="resource"></param>
+             <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.ProductController.Put(System.Int32,Owlvey.Falcon.Models.ProductPutRp)">
+            <summary>
+            Update an Product
+            </summary>
+            <param name="id"></param>
+            <param name="resource"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.ProductController.Delete(System.Int32)">
+            <summary>
+            Delete an Product
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.ServiceController.Get(System.Int32,System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
+            <summary>
+            Get Services
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.ServiceController.GetById(System.Int32,System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
+            <summary>
+            Get Service by id 
+            </summary>
+            <param name="id">id</param>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.ServiceController.Post(Owlvey.Falcon.Models.ServicePostRp)">
+             <summary>
+             Create a new Service
+             </summary>
+             <remarks>
+             Sample request:
+            
+                 POST /Services
+                 {
+                    "id": "key1",
+                    "value": "Value1"
+                 }
+            
+             </remarks>
+             <param name="resource"></param>
+             <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.ServiceController.Put(System.Int32,Owlvey.Falcon.Models.ServicePutRp)">
+            <summary>
+            Update an Service
+            </summary>
+            <param name="id"></param>
+            <param name="resource"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.ServiceController.Delete(System.Int32)">
+            <summary>
+            Delete an Service
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.SquadController.GetById(System.Int32,System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
+            <summary>
+            Get Squad by id 
+            </summary>
+            <param name="id">id</param>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.SquadController.Post(Owlvey.Falcon.Models.SquadPostRp)">
+             <summary>
+             Create a new Squad
+             </summary>
+             <remarks>
+             Sample request:
+            
+                 POST /Squads
+                 {
+                    "id": "key1",
+                    "value": "Value1"
+                 }
+            
+             </remarks>
+             <param name="resource"></param>
+             <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.SquadController.Put(System.Int32,Owlvey.Falcon.Models.SquadPutRp)">
+            <summary>
+            Update an Squad
+            </summary>
+            <param name="id"></param>
+            <param name="resource"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.SquadController.Delete(System.Int32)">
+            <summary>
+            Delete an Squad
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.UserController.Get(System.String)">
+            <summary>
+            Get Users
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.UserController.GetById(System.Int32)">
+            <summary>
+            Get User by id 
+            </summary>
+            <param name="id">id</param>
+            <returns></returns>
+        </member>
+        <member name="M:Owlvey.Falcon.API.Controllers.UserController.Post(Owlvey.Falcon.Models.UserPostRp)">
+             <summary>
+             Create a new User
+             </summary>
+             <remarks>
+             Sample request:
+            
+                 POST /Users
+                 {
+                    "id": "key1",
+                    "value": "Value1"
+                 }
+            
+             </remarks>
+             <param name="resource"></param>
+             <returns></returns>
+        </member>
+    </members>
+</doc>
