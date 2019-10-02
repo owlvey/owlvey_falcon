@@ -21,6 +21,7 @@ namespace Owlvey.Falcon.API.Extensions
 
             var sp = services.BuildServiceProvider();
             var swaggerOptions = sp.GetService<IOptions<SwaggerAppOptions>>();
+            var authenticationOptions = sp.GetService<IOptions<AuthorityOptions>>();
 
             services.AddSwaggerGen(c =>
             {
@@ -33,6 +34,18 @@ namespace Owlvey.Falcon.API.Extensions
                     Contact = new Contact { Name = swaggerOptions.Value.ContactName, Email = swaggerOptions.Value.ContactEmail }
                 });
 
+                c.AddSecurityDefinition("oauth2", new OAuth2Scheme
+                {
+                    Type = "oauth2",
+                    Flow = "application",
+                    TokenUrl = $"{authenticationOptions.Value.Authority}/connect/token",
+                    Scopes = new Dictionary<string, string>
+                    {
+                        { "api.auth", "Identity Operations" },
+                        { "api", "Api Operations" },
+                    }
+                });
+
                 var basePath = AppContext.BaseDirectory;
                 var xmlPath = Path.Combine(basePath, @"Service.xml");
 
@@ -42,6 +55,10 @@ namespace Owlvey.Falcon.API.Extensions
                 }
 
                 c.DescribeAllEnumsAsStrings();
+                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
+                {
+                    { "oauth2", new string[] { } }
+                });
             });
 
         }

@@ -2,11 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using IdentityServer4.AccessTokenValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,8 +47,19 @@ namespace Owlvey.Falcon.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public virtual void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc(options =>
+            {
+                //Authorize Filter
+                var policy = new AuthorizationPolicyBuilder(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+                   .RequireAuthenticatedUser()
+                   .RequireRole("admin", "basicuser")
+                   .Build();
+
+                options.Filters.Add(new AuthorizeFilter(policy));
+            });
+
             services.AddCors();
+            services.AddAuthority(Configuration, Environment);
             services.AddApplicationServices(Configuration);
             services.SetupDataBase(Configuration, Environment.EnvironmentName);
             services.AddCustomSwagger(Configuration, Environment);            
@@ -68,6 +82,7 @@ namespace Owlvey.Falcon.API
                 app.UseHsts();
             }
 
+            app.UseAuthentication();
             //TODO
             if (!env.IsDocker())
             {
