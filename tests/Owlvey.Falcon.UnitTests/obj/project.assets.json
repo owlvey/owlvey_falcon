@@ -6093,35 +6093,37 @@
     ]
   },
   "packageFolders": {
-    "/Users/Gregory/.nuget/packages/": {},
-    "/usr/local/share/dotnet/sdk/NuGetFallbackFolder": {}
+    "C:\\Users\\gcval\\.nuget\\packages\\": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/Gregory/Documents/falcon/owlvey_falcon/tests/Owlvey.Falcon.UnitTests/Owlvey.Falcon.UnitTests.csproj",
+      "projectUniqueName": "F:\\nfalcon\\owlvey_falcon\\tests\\Owlvey.Falcon.UnitTests\\Owlvey.Falcon.UnitTests.csproj",
       "projectName": "Owlvey.Falcon.UnitTests",
-      "projectPath": "/Users/Gregory/Documents/falcon/owlvey_falcon/tests/Owlvey.Falcon.UnitTests/Owlvey.Falcon.UnitTests.csproj",
-      "packagesPath": "/Users/Gregory/.nuget/packages/",
-      "outputPath": "/Users/Gregory/Documents/falcon/owlvey_falcon/tests/Owlvey.Falcon.UnitTests/obj/",
+      "projectPath": "F:\\nfalcon\\owlvey_falcon\\tests\\Owlvey.Falcon.UnitTests\\Owlvey.Falcon.UnitTests.csproj",
+      "packagesPath": "C:\\Users\\gcval\\.nuget\\packages\\",
+      "outputPath": "F:\\nfalcon\\owlvey_falcon\\tests\\Owlvey.Falcon.UnitTests\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "/Users/Gregory/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\gcval\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp2.2"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "netcoreapp2.2": {
           "projectReferences": {
-            "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Core/Owlvey.Falcon.Core.csproj": {
-              "projectPath": "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Core/Owlvey.Falcon.Core.csproj"
+            "F:\\nfalcon\\owlvey_falcon\\src\\Owlvey.Falcon.Core\\Owlvey.Falcon.Core.csproj": {
+              "projectPath": "F:\\nfalcon\\owlvey_falcon\\src\\Owlvey.Falcon.Core\\Owlvey.Falcon.Core.csproj"
             }
           }
         }

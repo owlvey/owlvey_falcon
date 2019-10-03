@@ -59,11 +59,11 @@ namespace Owlvey.Falcon.Components
 
         public async Task<(IncidentGetListRp incident, bool created)> Post(IncidentPostRp model) {
             bool created = false;
-            var createdBy = this._identityService.GetIdentity();
-            var product = await this._dbContext.Products.Where(c => c.Id == model.ProductId).SingleAsync();
+            var createdBy = this._identityService.GetIdentity();            
             var entity = await this._dbContext.Incidents.Where(c => c.Key == model.Key && c.ProductId == model.ProductId).SingleOrDefaultAsync();
             if (entity == null) {
                 created = true;
+                var product = await this._dbContext.Products.Where(c => c.Id == model.ProductId).SingleAsync();
                 entity = IncidentEntity.Factory.Create(model.Key, model.Title, this._datetimeGateway.GetCurrentDateTime(), createdBy, product);
                 this._dbContext.Incidents.Add(entity);
                 await this._dbContext.SaveChangesAsync();

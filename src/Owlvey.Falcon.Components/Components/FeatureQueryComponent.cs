@@ -179,10 +179,12 @@ namespace Owlvey.Falcon.Components
 
             var common = new FeatureCommonComponent(this._dbContext, this._datetimeGateway);
 
-            foreach (var feature in entities.Select(c => c.Feature))
+            foreach (var map in entities)
             {
+                var feature = map.Feature;
                 var tmp = this._mapper.Map<FeatureGetListRp>(feature);
                 tmp.Availability = await common.GetAvailabilityByFeature(feature, start, end);
+                tmp.MapId = map.Id.Value;
                 var incidents = await this._dbContext.GetIncidentsByFeature(feature.Id.Value);
                 if (incidents.Count() > 0)
                 {

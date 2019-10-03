@@ -1,28 +1,30 @@
 {
   "format": 1,
   "restore": {
-    "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Options/Owlvey.Falcon.Options.csproj": {}
+    "F:\\nfalcon\\owlvey_falcon\\src\\Owlvey.Falcon.Options\\Owlvey.Falcon.Options.csproj": {}
   },
   "projects": {
-    "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Options/Owlvey.Falcon.Options.csproj": {
+    "F:\\nfalcon\\owlvey_falcon\\src\\Owlvey.Falcon.Options\\Owlvey.Falcon.Options.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Options/Owlvey.Falcon.Options.csproj",
+        "projectUniqueName": "F:\\nfalcon\\owlvey_falcon\\src\\Owlvey.Falcon.Options\\Owlvey.Falcon.Options.csproj",
         "projectName": "Owlvey.Falcon.Options",
-        "projectPath": "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Options/Owlvey.Falcon.Options.csproj",
-        "packagesPath": "/Users/Gregory/.nuget/packages/",
-        "outputPath": "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Options/obj/",
+        "projectPath": "F:\\nfalcon\\owlvey_falcon\\src\\Owlvey.Falcon.Options\\Owlvey.Falcon.Options.csproj",
+        "packagesPath": "C:\\Users\\gcval\\.nuget\\packages\\",
+        "outputPath": "F:\\nfalcon\\owlvey_falcon\\src\\Owlvey.Falcon.Options\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "/Users/Gregory/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\gcval\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp2.2"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {

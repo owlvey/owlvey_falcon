@@ -48,7 +48,7 @@ namespace Owlvey.Falcon.Models
         public int IndicatorsCount { get; set; }
         public int ServiceCount { get; set; }
         public decimal Availability { get; set; }
-
+        public int MapId { get; set; }
         public string MTTM { get; set; }
         public string MTTE { get; set; }
         public string MTTD { get; set; }
