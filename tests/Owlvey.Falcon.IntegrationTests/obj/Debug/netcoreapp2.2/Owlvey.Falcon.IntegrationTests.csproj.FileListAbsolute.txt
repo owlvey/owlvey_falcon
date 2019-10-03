@@ -28,3 +28,6 @@
 /Users/Gregory/Documents/falcon/owlvey_falcon/tests/Owlvey.Falcon.IntegrationTests/obj/Debug/netcoreapp2.2/Owlvey.Falcon.IntegrationTests.csproj.CopyComplete
 /Users/Gregory/Documents/falcon/owlvey_falcon/tests/Owlvey.Falcon.IntegrationTests/obj/Debug/netcoreapp2.2/Owlvey.Falcon.IntegrationTests.dll
 /Users/Gregory/Documents/falcon/owlvey_falcon/tests/Owlvey.Falcon.IntegrationTests/obj/Debug/netcoreapp2.2/Owlvey.Falcon.IntegrationTests.pdb
+/Users/Gregory/Documents/falcon/owlvey_falcon/tests/Owlvey.Falcon.IntegrationTests/bin/Debug/netcoreapp2.2/appsettings.docker.json
+/Users/Gregory/Documents/falcon/owlvey_falcon/tests/Owlvey.Falcon.IntegrationTests/bin/Debug/netcoreapp2.2/Dockerfile
+/Users/Gregory/Documents/falcon/owlvey_falcon/tests/Owlvey.Falcon.IntegrationTests/bin/Debug/netcoreapp2.2/falcondb.sh

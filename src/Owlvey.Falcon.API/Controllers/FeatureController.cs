@@ -71,6 +71,23 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok(model);
         }
 
+        [HttpGet("search")]
+        [ProducesResponseType(typeof(IEnumerable<FeatureGetListRp>), 200)]
+        public async Task<IActionResult> Search(int productId, string name = null)
+        {
+            IEnumerable<FeatureGetListRp> result = new List<FeatureGetListRp>();
+
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                result = await this._featureQueryService.SearchFeatureByName(productId, name);
+            }
+            else {
+                return BadRequest("name is required");
+            }
+
+            return this.Ok(result);
+        }
+
         /// <summary>
         /// Create a new Feature
         /// </summary>

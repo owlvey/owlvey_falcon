@@ -224,7 +224,6 @@ var assemblies = [
   {
     "name": "Owlvey.Falcon.Core",
     "classes": [
-      { "name": "Owlvey.Falcon.Core.Aggregates.BaseSourceAvailabilityAggregate", "rp": "Owlvey.Falcon.Core_BaseSourceAvailabilityAggregate.htm", "cl": 0, "ucl": 3, "cal": 3, "tl": 12, "ct": "LineCoverage", "mc": "-", "cb": 0, "tb": 0, "lch": [], "bch": [], "hc": [] },
       { "name": "Owlvey.Falcon.Core.Aggregates.FeatureAvailabilityAggregate", "rp": "Owlvey.Falcon.Core_FeatureAvailabilityAggregate.htm", "cl": 15, "ucl": 2, "cal": 17, "tl": 33, "ct": "LineCoverage", "mc": "-", "cb": 3, "tb": 4, "lch": [], "bch": [], "hc": [] },
       { "name": "Owlvey.Falcon.Core.Aggregates.FeatureDailyAvailabilityAggregate", "rp": "Owlvey.Falcon.Core_FeatureDailyAvailabilityAggregate.htm", "cl": 44, "ucl": 0, "cal": 44, "tl": 70, "ct": "LineCoverage", "mc": "-", "cb": 12, "tb": 12, "lch": [], "bch": [], "hc": [] },
       { "name": "Owlvey.Falcon.Core.Aggregates.IncidentMetricAggregate", "rp": "Owlvey.Falcon.Core_IncidentMetricAggregate.htm", "cl": 12, "ucl": 2, "cal": 14, "tl": 33, "ct": "LineCoverage", "mc": "-", "cb": 9, "tb": 10, "lch": [], "bch": [], "hc": [] },
@@ -235,9 +234,9 @@ var assemblies = [
       { "name": "Owlvey.Falcon.Core.Aggregates.ServiceDailyAvailabilityAggregate", "rp": "Owlvey.Falcon.Core_ServiceDailyAvailabilityAggregate.htm", "cl": 44, "ucl": 0, "cal": 44, "tl": 74, "ct": "LineCoverage", "mc": "-", "cb": 14, "tb": 14, "lch": [], "bch": [], "hc": [] },
       { "name": "Owlvey.Falcon.Core.Aggregates.SourceAvailabilityAggregate", "rp": "Owlvey.Falcon.Core_SourceAvailabilityAggregate.htm", "cl": 10, "ucl": 0, "cal": 10, "tl": 24, "ct": "LineCoverage", "mc": "-", "cb": 4, "tb": 4, "lch": [], "bch": [], "hc": [] },
       { "name": "Owlvey.Falcon.Core.Aggregates.SourcePeriodAvailabilityAggregate", "rp": "Owlvey.Falcon.Core_SourcePeriodAvailabilityAggregate.htm", "cl": 37, "ucl": 0, "cal": 37, "tl": 61, "ct": "LineCoverage", "mc": "-", "cb": 12, "tb": 12, "lch": [], "bch": [], "hc": [] },
-      { "name": "Owlvey.Falcon.Core.Aggregates.SquadPointsAggregate", "rp": "Owlvey.Falcon.Core_SquadPointsAggregate.htm", "cl": 0, "ucl": 20, "cal": 20, "tl": 40, "ct": "LineCoverage", "mc": "-", "cb": 0, "tb": 4, "lch": [], "bch": [], "hc": [] },
+      { "name": "Owlvey.Falcon.Core.Aggregates.SquadPointsAggregate", "rp": "Owlvey.Falcon.Core_SquadPointsAggregate.htm", "cl": 20, "ucl": 0, "cal": 20, "tl": 40, "ct": "LineCoverage", "mc": "-", "cb": 4, "tb": 4, "lch": [], "bch": [], "hc": [] },
       { "name": "Owlvey.Falcon.Core.AnchorFactory", "rp": "Owlvey.Falcon.Core_AnchorFactory.htm", "cl": 13, "ucl": 0, "cal": 13, "tl": 25, "ct": "LineCoverage", "mc": "-", "cb": 0, "tb": 0, "lch": [], "bch": [], "hc": [] },
-      { "name": "Owlvey.Falcon.Core.AvailabilityUtils", "rp": "Owlvey.Falcon.Core_AvailabilityUtils.htm", "cl": 25, "ucl": 28, "cal": 53, "tl": 81, "ct": "LineCoverage", "mc": "-", "cb": 9, "tb": 18, "lch": [], "bch": [], "hc": [] },
+      { "name": "Owlvey.Falcon.Core.AvailabilityUtils", "rp": "Owlvey.Falcon.Core_AvailabilityUtils.htm", "cl": 28, "ucl": 25, "cal": 53, "tl": 81, "ct": "LineCoverage", "mc": "-", "cb": 9, "tb": 18, "lch": [], "bch": [], "hc": [] },
       { "name": "Owlvey.Falcon.Core.DateTimeUtils", "rp": "Owlvey.Falcon.Core_DateTimeUtils.htm", "cl": 20, "ucl": 6, "cal": 26, "tl": 43, "ct": "LineCoverage", "mc": "-", "cb": 1, "tb": 2, "lch": [], "bch": [], "hc": [] },
       { "name": "Owlvey.Falcon.Core.Entities.AnchorEntity", "rp": "Owlvey.Falcon.Core_AnchorEntity.htm", "cl": 2, "ucl": 8, "cal": 10, "tl": 26, "ct": "LineCoverage", "mc": "-", "cb": 0, "tb": 0, "lch": [], "bch": [], "hc": [] },
       { "name": "Owlvey.Falcon.Core.Entities.AppSettingEntity", "rp": "Owlvey.Falcon.Core_AppSettingEntity.htm", "cl": 17, "ucl": 0, "cal": 17, "tl": 74, "ct": "LineCoverage", "mc": "-", "cb": 0, "tb": 0, "lch": [], "bch": [], "hc": [] },
