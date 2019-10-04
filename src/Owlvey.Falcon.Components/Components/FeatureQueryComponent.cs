@@ -196,7 +196,7 @@ namespace Owlvey.Falcon.Components
                 }
                 result.Add(tmp);
             }
-            return result.OrderBy(c => c.Availability).ToList();
+            return result.OrderBy(c => c.MapId).ToList();
         }
 
         public async Task<MultiSeriesGetRp> GetDailySeriesById(int featureId, DateTime start, DateTime end)

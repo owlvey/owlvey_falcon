@@ -686,30 +686,28 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\gcval\\.nuget\\packages\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "/Users/Gregory/.nuget/packages/": {},
+    "/usr/local/share/dotnet/sdk/NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\nfalcon\\owlvey_falcon\\src\\Owlvey.Falcon.Core\\Owlvey.Falcon.Core.csproj",
+      "projectUniqueName": "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Core/Owlvey.Falcon.Core.csproj",
       "projectName": "Owlvey.Falcon.Core",
-      "projectPath": "F:\\nfalcon\\owlvey_falcon\\src\\Owlvey.Falcon.Core\\Owlvey.Falcon.Core.csproj",
-      "packagesPath": "C:\\Users\\gcval\\.nuget\\packages\\",
-      "outputPath": "F:\\nfalcon\\owlvey_falcon\\src\\Owlvey.Falcon.Core\\obj\\",
+      "projectPath": "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Core/Owlvey.Falcon.Core.csproj",
+      "packagesPath": "/Users/Gregory/.nuget/packages/",
+      "outputPath": "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Core/obj/",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\gcval\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/Users/Gregory/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp2.2"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {

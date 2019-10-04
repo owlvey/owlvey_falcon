@@ -14,7 +14,7 @@ namespace Owlvey.Falcon.Core.Entities
                 {
                     Name = name,                    
                     Slo = 0.99m,
-                    Avatar = "https://cdn.iconscout.com/icon/free/png-256/avatar-375-456327.png",
+                    Avatar = "https://cdn4.iconfinder.com/data/icons/pretty-office-part-7-reflection-style/256/Cup-gold.png",
                     CreatedBy = user,
                     ModifiedBy = user,
                     Owner = user,
