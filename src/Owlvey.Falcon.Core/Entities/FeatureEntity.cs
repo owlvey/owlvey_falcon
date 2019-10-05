@@ -98,5 +98,10 @@ namespace Owlvey.Falcon.Core.Entities
                 return -1;
             }
         }
+
+        public void RegisterIncident(IncidentMapEntity map) {
+            this.IncidentMap.Add(map);
+        }
+
     }
 }

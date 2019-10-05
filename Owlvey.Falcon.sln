@@ -6,6 +6,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{8D36
 	ProjectSection(SolutionItems) = preProject
 		scripts\build.definition.yml = scripts\build.definition.yml
 		scripts\coverage.bash = scripts\coverage.bash
+		scripts\coverage.bat = scripts\coverage.bat
 		scripts\migrations.bash = scripts\migrations.bash
 		scripts\run_server.bash = scripts\run_server.bash
 		scripts\run_server.bat = scripts\run_server.bat
