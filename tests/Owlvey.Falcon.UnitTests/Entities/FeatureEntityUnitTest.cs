@@ -25,6 +25,47 @@ namespace Owlvey.Falcon.UnitTests.Entities
         }
 
         [Fact]
+        public void UpdateFeatureSuccess()
+        {
+            var createdBy = Guid.NewGuid().ToString("n");
+            var name = $"Feature A";
+
+            var (_, product) = TestDataFactory.BuildCustomerProduct();
+
+            var featureEntity = FeatureEntity.Factory.Create(name, DateTime.UtcNow, createdBy, product);
+            var value = Guid.NewGuid().ToString();
+            var change = DateTime.Now;
+            featureEntity.Update(change, value, value, value, value);
+
+            Assert.Equal(change, featureEntity.ModifiedOn);
+            Assert.Equal(value, featureEntity.Name);
+            Assert.Equal(value, featureEntity.Description);
+            Assert.Equal(value, featureEntity.Avatar);
+        }
+
+        [Fact]
+        public void MeasureIncidents() {
+            var createdBy = Guid.NewGuid().ToString("n");
+            var name = $"Feature A";
+
+            var (_, product) = TestDataFactory.BuildCustomerProduct();
+
+            var featureEntity = FeatureEntity.Factory.Create(name, DateTime.UtcNow, createdBy, product);
+
+            featureEntity.RegisterIncident(new IncidentMapEntity() {
+                 Incident  = new IncidentEntity() {
+                      TTD = 10, TTE = 20, TTF = 30
+                 }
+            });
+
+            Assert.Equal(featureEntity.MTTD, 10);
+            Assert.Equal(featureEntity.MTTE, 20);
+            Assert.Equal(featureEntity.MTTF, 30);
+            Assert.Equal(featureEntity.MTTM, 60);
+
+        }
+
+        [Fact]
         public void CreateFeatureEntityFail()
         {
             var createdBy = Guid.NewGuid().ToString("n");
