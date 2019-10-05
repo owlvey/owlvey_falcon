@@ -7,12 +7,12 @@
 using System;
 using System.Reflection;
 
-[assembly: Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryContentRootAttribute("Owlvey.Falcon.API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.API", "Owlvey.Falcon.API.csproj", "0")]
-[assembly: Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryContentRootAttribute("Owlvey.Falcon.Components, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Components", "Owlvey.Falcon.Components.csproj", "0")]
-[assembly: Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryContentRootAttribute("Owlvey.Falcon.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Core", "Owlvey.Falcon.Core.csproj", "0")]
-[assembly: Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryContentRootAttribute("Owlvey.Falcon.Identity, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Identity", "Owlvey.Falcon.Identity.csproj", "0")]
-[assembly: Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryContentRootAttribute("Owlvey.Falcon.IoC, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.IoC", "Owlvey.Falcon.IoC.csproj", "0")]
-[assembly: Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryContentRootAttribute("Owlvey.Falcon.Options, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "/Users/Gregory/Documents/falcon/owlvey_falcon/src/Owlvey.Falcon.Options", "Owlvey.Falcon.Options.csproj", "0")]
+[assembly: Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryContentRootAttribute("Owlvey.Falcon.API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "F:\\nfalcon\\owlvey_falcon\\src\\Owlvey.Falcon.API", "Owlvey.Falcon.API.csproj", "0")]
+[assembly: Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryContentRootAttribute("Owlvey.Falcon.Components, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "F:\\nfalcon\\owlvey_falcon\\src\\Owlvey.Falcon.Components", "Owlvey.Falcon.Components.csproj", "0")]
+[assembly: Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryContentRootAttribute("Owlvey.Falcon.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "F:\\nfalcon\\owlvey_falcon\\src\\Owlvey.Falcon.Core", "Owlvey.Falcon.Core.csproj", "0")]
+[assembly: Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryContentRootAttribute("Owlvey.Falcon.Identity, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "F:\\nfalcon\\owlvey_falcon\\src\\Owlvey.Falcon.Identity", "Owlvey.Falcon.Identity.csproj", "0")]
+[assembly: Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryContentRootAttribute("Owlvey.Falcon.IoC, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "F:\\nfalcon\\owlvey_falcon\\src\\Owlvey.Falcon.IoC", "Owlvey.Falcon.IoC.csproj", "0")]
+[assembly: Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryContentRootAttribute("Owlvey.Falcon.Options, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", "F:\\nfalcon\\owlvey_falcon\\src\\Owlvey.Falcon.Options", "Owlvey.Falcon.Options.csproj", "0")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("Owlvey.Falcon.IntegrationTests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
