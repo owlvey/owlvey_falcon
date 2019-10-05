@@ -24,7 +24,9 @@ bld/
 [Oo]bj/
 [Ll]og/
 
-*.cache
+[Oo]bj/*
+
+[Dd]ebug/*
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
