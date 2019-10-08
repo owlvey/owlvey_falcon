@@ -128,7 +128,7 @@ namespace Owlvey.Falcon.Repositories
             var involveTask =  this.SourcesItems.Where(c => c.SourceId == sourceId && start >= c.Start && end <= c.End).ToListAsync();
 
             Task.WaitAll(startTask, endTask, midTask, involveTask);
-            result =  result.Union(startTask.Result.Union(endTask.Result).Union(midTask.Result).Union(involveTask.Result).Distinct(new SourceItemEntity.EqualityComparer())).ToList();                        
+            result =  result.Union(startTask.Result.Union(endTask.Result).Union(midTask.Result).Union(involveTask.Result).Distinct(new SourceItemEntityComparer())).ToList();                        
             return result;
         }
 
@@ -143,7 +143,7 @@ namespace Owlvey.Falcon.Repositories
             var involveTask = this.SourcesItems.Where(c => start >= c.Start && end <= c.End).ToListAsync();
 
             Task.WaitAll(startTask, endTask, midTask, involveTask);
-            result = result.Union(startTask.Result.Union(endTask.Result).Union(midTask.Result).Union(involveTask.Result).Distinct(new SourceItemEntity.EqualityComparer())).ToList();
+            result = result.Union(startTask.Result.Union(endTask.Result).Union(midTask.Result).Union(involveTask.Result).Distinct(new SourceItemEntityComparer())).ToList();
             return result;
         }
 
@@ -159,7 +159,7 @@ namespace Owlvey.Falcon.Repositories
             var involveTask = this.SourcesItems.Where(c => productIds.Contains(c.Source.ProductId) && start >= c.Start && end <= c.End).ToListAsync();
 
             Task.WaitAll(startTask, endTask, midTask, involveTask);
-            result = result.Union(startTask.Result.Union(endTask.Result).Union(midTask.Result).Union(involveTask.Result).Distinct(new SourceItemEntity.EqualityComparer())).ToList();
+            result = result.Union(startTask.Result.Union(endTask.Result).Union(midTask.Result).Union(involveTask.Result).Distinct(new SourceItemEntityComparer())).ToList();
             return result;
         }
 

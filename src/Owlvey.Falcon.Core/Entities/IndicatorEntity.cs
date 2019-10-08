@@ -13,7 +13,7 @@ namespace Owlvey.Falcon.Core.Entities
 
         public int GetHashCode(IndicatorEntity obj)
         {
-            return obj.GetHashCode();
+            return obj.Id.Value;
         }
     }
 

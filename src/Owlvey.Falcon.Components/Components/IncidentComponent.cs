@@ -50,7 +50,7 @@ namespace Owlvey.Falcon.Components
 
             var features = await this._dbContext.Features.Where(c=>c.ProductId == incident.ProductId).ToListAsync();
 
-            var complement = features.Except(incident.FeatureMaps.Select(c => c.Feature).ToList(), new FeatureCompare());
+            var complement = features.Except(incident.FeatureMaps.Select(c => c.Feature).ToList(), new FeatureEntityCompare());
 
             return this._mapper.Map<IEnumerable<FeatureLiteRp>>(complement);
         }

@@ -17,5 +17,12 @@ namespace Owlvey.Falcon.UnitTests.Entities
             result = compare.Equals(new SourceEntity() { Id = 2 }, new SourceEntity() { Id = 2 });
             Assert.True(result);
         }
+        [Fact]
+        public void GetHashCodeSuccess()
+        {
+            var compare = new SourceEntityComparer();
+            var result = compare.GetHashCode(new SourceEntity() { Id = 3 });
+            Assert.Equal(3, result);
+        }
     }
 }

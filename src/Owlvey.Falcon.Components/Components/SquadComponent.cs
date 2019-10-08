@@ -101,7 +101,7 @@ namespace Owlvey.Falcon.Components
             
             var squadUsers = squad.Members.Select(c => c.User).ToList();
 
-            var diff = users.Except(squadUsers, new UserCompare());
+            var diff = users.Except(squadUsers, new UserEntityCompare());
 
             return this._mapper.Map<IEnumerable<UserGetListRp>>(diff);
         }

@@ -13,15 +13,18 @@ namespace Owlvey.Falcon.API.Controllers
     {
         private readonly ServiceQueryComponent _serviceQueryService;
         private readonly ServiceComponent _serviceService;
-        private readonly FeatureQueryComponent _featureQueryComponent; 
+        private readonly FeatureQueryComponent _featureQueryComponent;
+        private readonly ServiceMapComponent _serviceMapComponent;
 
         public ServiceController(ServiceQueryComponent serviceQueryService,
                                  ServiceComponent serviceService,
-                                 FeatureQueryComponent featureQueryComponent) 
+                                 FeatureQueryComponent featureQueryComponent,
+                                 ServiceMapComponent serviceMapComponent) 
         {
             this._serviceQueryService = serviceQueryService;
             this._serviceService = serviceService;
             this._featureQueryComponent = featureQueryComponent;
+            this._serviceMapComponent = serviceMapComponent;
         }
 
         /// <summary>
@@ -158,6 +161,42 @@ namespace Owlvey.Falcon.API.Controllers
             return this.NoContent();
         }
 
+        #region Features
+        [HttpPut("{id}/features/{featureId}")]
+        [ProducesResponseType(typeof(ServiceMapPostRp), 200)]
+        [ProducesResponseType(409)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> PutFeature(int? id, int? featureId)
+        {       
+            if (id.HasValue && featureId.HasValue)
+            {
+                var result = await this._serviceMapComponent.CreateServiceMap(new ServiceMapPostRp()
+                {
+                    FeatureId = featureId,
+                    ServiceId = id
+                });
+                return this.Ok(result);
+            }
+            else
+            {
+                return this.BadRequest();
+            }            
+        }
+
+        [HttpDelete("{id}/features/{featureId}")]
+        public async Task<IActionResult> Delete(int? id, int? featureId)
+        {
+            if (id.HasValue && featureId.HasValue)
+            {
+                var result = await this._serviceMapComponent.DeleteServiceMap(id.Value, featureId.Value);
+                return this.Ok(result);
+            }
+            else
+            {
+                return this.BadRequest();
+            }
+        }
 
         [HttpGet("{id}/features/complement")]
         [ProducesResponseType(typeof(IEnumerable<FeatureGetListRp>), 200)]
@@ -166,6 +205,10 @@ namespace Owlvey.Falcon.API.Controllers
             var model = await this._serviceQueryService.GetFeaturesComplement(id);
             return this.Ok(model);
         }
+        #endregion
+
+
+
 
 
         #region reports

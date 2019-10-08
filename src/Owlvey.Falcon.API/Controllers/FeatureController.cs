@@ -161,7 +161,7 @@ namespace Owlvey.Falcon.API.Controllers
         }
 
 
-        #region
+        #region Indicators
 
         [HttpPut("{id}/indicators/{sourceId}")]
         [ProducesResponseType(typeof(void), 200)]
@@ -187,6 +187,15 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok(result);
         }
 
+        #endregion
+
+        [HttpDelete("{id}/indicators/{sourceId}")]
+        public async Task<IActionResult> DeleteIndicator(int id, int sourceId)
+        {
+            await this._indicatorComponent.Delete(id, sourceId);
+            return this.Ok();
+        }
+        #region Squads
 
         [HttpPut("{id}/squads/{squadId}")]
         [ProducesResponseType(typeof(IEnumerable<SourceGetListRp>), 200)]

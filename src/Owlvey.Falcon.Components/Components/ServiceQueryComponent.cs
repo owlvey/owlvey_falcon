@@ -146,7 +146,7 @@ namespace Owlvey.Falcon.Components
 
             var serviceFeatures = service.FeatureMap.Select(c => c.Feature).ToList();
             var features = await this._dbContext.Features.Where(c => c.ProductId == service.ProductId).ToListAsync();
-            var rest = features.Except(serviceFeatures, new FeatureCompare());
+            var rest = features.Except(serviceFeatures, new FeatureEntityCompare());
             return this._mapper.Map<IEnumerable<FeatureGetListRp>>(rest);
         }
 

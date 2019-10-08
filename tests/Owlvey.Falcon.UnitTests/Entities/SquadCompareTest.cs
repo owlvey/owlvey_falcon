@@ -17,5 +17,13 @@ namespace Owlvey.Falcon.UnitTests.Entities
             result = compare.Equals(new SquadEntity() { Id = 2 }, new SquadEntity() { Id = 2 });
             Assert.True(result);
         }
+
+        [Fact]
+        public void GetHashCodeSuccess()
+        {
+            var compare = new SquadCompare();
+            var result = compare.GetHashCode(new SquadEntity() { Id = 3 });
+            Assert.Equal(3, result);
+        }
     }
 }

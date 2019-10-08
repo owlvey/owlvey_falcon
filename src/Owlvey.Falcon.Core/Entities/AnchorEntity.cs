@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Owlvey.Falcon.Core.Entities
 {
-    public class AnchorEntity : BaseEntity
+    public partial class AnchorEntity : BaseEntity
     {
         [Required]
         public string Name { get; set; }
