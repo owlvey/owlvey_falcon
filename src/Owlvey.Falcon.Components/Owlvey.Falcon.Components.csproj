@@ -42,4 +42,7 @@
     <Compile Remove="Components\SquadFeatureComponent.cs" />
     <Compile Remove="Components\SquadFeatureComponent.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
 </Project>
