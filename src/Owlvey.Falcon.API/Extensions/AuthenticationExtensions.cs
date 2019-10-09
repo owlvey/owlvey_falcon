@@ -25,7 +25,7 @@ namespace Owlvey.Falcon.API.Extensions
 
             var sp = services.BuildServiceProvider();
             var authenticationOptions = sp.GetService<IOptions<AuthorityOptions>>();
-
+            //
             services.AddAuthentication(options => {
                 options.DefaultAuthenticateScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
