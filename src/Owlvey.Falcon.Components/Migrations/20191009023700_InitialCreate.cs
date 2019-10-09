@@ -318,7 +318,7 @@ namespace Owlvey.Falcon.Migrations
                         column: x => x.FeatureId,
                         principalTable: "FeatureEntity",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_SquadFeatureEntity_SquadEntity_SquadId",
                         column: x => x.SquadId,
@@ -349,7 +349,7 @@ namespace Owlvey.Falcon.Migrations
                         column: x => x.FeatureId,
                         principalTable: "FeatureEntity",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_IncidentMapEntity_IncidentEntity_IncidentId",
                         column: x => x.IncidentId,
@@ -380,7 +380,7 @@ namespace Owlvey.Falcon.Migrations
                         column: x => x.FeatureId,
                         principalTable: "FeatureEntity",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ServiceMapEntity_ServiceEntity_ServiceId",
                         column: x => x.ServiceId,
@@ -413,7 +413,7 @@ namespace Owlvey.Falcon.Migrations
                         column: x => x.FeatureId,
                         principalTable: "FeatureEntity",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_IndicatorEntity_SourceEntity_SourceId",
                         column: x => x.SourceId,
