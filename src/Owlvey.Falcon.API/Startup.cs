@@ -64,7 +64,7 @@ namespace Owlvey.Falcon.API
             services.SetupDataBase(Configuration, Environment.EnvironmentName);
             services.AddCustomSwagger(Configuration, Environment);            
         }
-
+        
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public virtual void Configure(IApplicationBuilder app, IHostingEnvironment env,
             ILoggerFactory loggerFactory, IOptions<SwaggerAppOptions> swaggerOptions,
@@ -83,6 +83,7 @@ namespace Owlvey.Falcon.API
             }
 
             app.UseAuthentication();
+
             //TODO
             if (!env.IsDocker())
             {
