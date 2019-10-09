@@ -71,6 +71,23 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok(model);
         }
 
+        [HttpGet("search")]
+        [ProducesResponseType(typeof(IEnumerable<FeatureGetListRp>), 200)]
+        public async Task<IActionResult> Search(int productId, string name = null)
+        {
+            IEnumerable<FeatureGetListRp> result = new List<FeatureGetListRp>();
+
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                result = await this._featureQueryService.SearchFeatureByName(productId, name);
+            }
+            else {
+                return BadRequest("name is required");
+            }
+
+            return this.Ok(result);
+        }
+
         /// <summary>
         /// Create a new Feature
         /// </summary>
@@ -144,7 +161,7 @@ namespace Owlvey.Falcon.API.Controllers
         }
 
 
-        #region
+        #region Indicators
 
         [HttpPut("{id}/indicators/{sourceId}")]
         [ProducesResponseType(typeof(void), 200)]
@@ -170,6 +187,15 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok(result);
         }
 
+        #endregion
+
+        [HttpDelete("{id}/indicators/{sourceId}")]
+        public async Task<IActionResult> DeleteIndicator(int id, int sourceId)
+        {
+            await this._indicatorComponent.Delete(id, sourceId);
+            return this.Ok();
+        }
+        #region Squads
 
         [HttpPut("{id}/squads/{squadId}")]
         [ProducesResponseType(typeof(IEnumerable<SourceGetListRp>), 200)]

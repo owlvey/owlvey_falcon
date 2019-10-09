@@ -5,6 +5,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Owlvey.Falcon.Core.Entities
 {
+    public class SourceItemEntityComparer : IEqualityComparer<SourceItemEntity>
+    {
+        public bool Equals(SourceItemEntity x, SourceItemEntity y)
+        {
+            return x.Id == y.Id;
+        }
+
+        public int GetHashCode(SourceItemEntity obj)
+        {
+            return obj.Id.Value;
+        }
+    }
     public partial class SourceItemEntity: BaseEntity
     {
         public int SourceId { get; set; }
@@ -25,33 +37,8 @@ namespace Owlvey.Falcon.Core.Entities
                 return AvailabilityUtils.CalculateAvailability(this.Total, this.Good, 1);                
             } }
 
-        public class EqualityComparer : IEqualityComparer<SourceItemEntity>
-        {
-            public bool Equals(SourceItemEntity x, SourceItemEntity y)
-            {
-                return x.Id == y.Id;
-            }
-
-            public int GetHashCode(SourceItemEntity obj)
-            {
-                return obj.GetHashCode();
-            }
-        }
-
-        public SourceItemEntity Clone() {
-            SourceItemEntity result = new SourceItemEntity();
-            result.CreatedBy = this.CreatedBy;
-            result.CreatedOn = this.CreatedOn;
-            result.ModifiedBy = this.ModifiedBy;
-            result.ModifiedOn = this.ModifiedOn;
-            result.Source = this.Source;
-            result.SourceId = this.SourceId;
-            result.Start = this.Start;
-            result.End = this.Start;
-            result.Good = this.Good;
-            result.Total = this.Total; 
-            return result; 
-        }
+        
+    
 
         public void Update(int total, int good, DateTime start, DateTime end)
         {

@@ -62,7 +62,7 @@ namespace Owlvey.Falcon.Repositories
             modelBuilder.Entity<SquadFeatureEntity>()
                .HasOne(pt => pt.Feature)
                .WithMany(p => p.Squads)
-               .OnDelete(DeleteBehavior.Cascade)
+               .OnDelete(DeleteBehavior.Restrict)
                .HasForeignKey(pt => pt.FeatureId);
 
             modelBuilder.Entity<SquadFeatureEntity>()
@@ -76,7 +76,7 @@ namespace Owlvey.Falcon.Repositories
             modelBuilder.Entity<IncidentMapEntity>()
                .HasOne(pt => pt.Feature)
                .WithMany(p => p.IncidentMap)
-               .OnDelete(DeleteBehavior.Cascade)
+               .OnDelete(DeleteBehavior.Restrict)
                .HasForeignKey(pt => pt.FeatureId);
 
             modelBuilder.Entity<IncidentMapEntity>()
@@ -90,7 +90,7 @@ namespace Owlvey.Falcon.Repositories
             modelBuilder.Entity<ServiceMapEntity>()
                .HasOne(pt => pt.Feature)
                .WithMany(p => p.ServiceMaps)
-               .OnDelete(DeleteBehavior.Cascade)
+               .OnDelete(DeleteBehavior.Restrict)
                .HasForeignKey(pt => pt.FeatureId);
 
             modelBuilder.Entity<ServiceMapEntity>()
@@ -104,7 +104,7 @@ namespace Owlvey.Falcon.Repositories
             modelBuilder.Entity<IndicatorEntity>()
                .HasOne(pt => pt.Feature)
                .WithMany(p => p.Indicators)
-               .OnDelete(DeleteBehavior.Cascade)
+               .OnDelete(DeleteBehavior.Restrict)
                .HasForeignKey(pt => pt.FeatureId);
 
             modelBuilder.Entity<IndicatorEntity>()
@@ -128,7 +128,7 @@ namespace Owlvey.Falcon.Repositories
             var involveTask =  this.SourcesItems.Where(c => c.SourceId == sourceId && start >= c.Start && end <= c.End).ToListAsync();
 
             Task.WaitAll(startTask, endTask, midTask, involveTask);
-            result =  result.Union(startTask.Result.Union(endTask.Result).Union(midTask.Result).Union(involveTask.Result).Distinct(new SourceItemEntity.EqualityComparer())).ToList();                        
+            result =  result.Union(startTask.Result.Union(endTask.Result).Union(midTask.Result).Union(involveTask.Result).Distinct(new SourceItemEntityComparer())).ToList();                        
             return result;
         }
 
@@ -143,7 +143,7 @@ namespace Owlvey.Falcon.Repositories
             var involveTask = this.SourcesItems.Where(c => start >= c.Start && end <= c.End).ToListAsync();
 
             Task.WaitAll(startTask, endTask, midTask, involveTask);
-            result = result.Union(startTask.Result.Union(endTask.Result).Union(midTask.Result).Union(involveTask.Result).Distinct(new SourceItemEntity.EqualityComparer())).ToList();
+            result = result.Union(startTask.Result.Union(endTask.Result).Union(midTask.Result).Union(involveTask.Result).Distinct(new SourceItemEntityComparer())).ToList();
             return result;
         }
 
@@ -159,7 +159,7 @@ namespace Owlvey.Falcon.Repositories
             var involveTask = this.SourcesItems.Where(c => productIds.Contains(c.Source.ProductId) && start >= c.Start && end <= c.End).ToListAsync();
 
             Task.WaitAll(startTask, endTask, midTask, involveTask);
-            result = result.Union(startTask.Result.Union(endTask.Result).Union(midTask.Result).Union(involveTask.Result).Distinct(new SourceItemEntity.EqualityComparer())).ToList();
+            result = result.Union(startTask.Result.Union(endTask.Result).Union(midTask.Result).Union(involveTask.Result).Distinct(new SourceItemEntityComparer())).ToList();
             return result;
         }
 

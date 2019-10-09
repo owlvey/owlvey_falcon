@@ -32,7 +32,7 @@ namespace Owlvey.Falcon.Components
         }
 
         public async Task<IEnumerable<ServiceGetListRp>> GetServicesWithAvailability(int productId, DateTime start, DateTime end)
-        {            
+        {
 
             var entity = await this._dbContext.Products
                 .Include(c => c.Services)
@@ -57,7 +57,7 @@ namespace Owlvey.Falcon.Components
                     var (mttd, mtte, mttf, mttm) = agg.Metrics();
                     tmp.MTTD = mttd;
                     tmp.MTTE = mtte;
-                    tmp.MTTF = mttf;                    
+                    tmp.MTTF = mttf;
                 }
 
                 tmp.BudgetMinutes = AvailabilityUtils.MeasureBudgetInMinutes(tmp.Budget, start, end);
@@ -78,14 +78,14 @@ namespace Owlvey.Falcon.Components
                     tmp.Risk = "high";
                 }
                 result.Add(tmp);
-            }            
+            }
 
             return result;
         }
 
         public async Task<ServiceGetRp> GetServiceById(int id)
         {
-            var entity = await this._dbContext.Services.FirstOrDefaultAsync(c=> c.Id.Equals(id));
+            var entity = await this._dbContext.Services.FirstOrDefaultAsync(c => c.Id.Equals(id));
 
             if (entity == null)
                 return null;
@@ -95,16 +95,16 @@ namespace Owlvey.Falcon.Components
 
         public async Task<ServiceGetRp> GetServiceByIdWithAvailabilities(int id, DateTime start, DateTime end)
         {
-            var entity = await this._dbContext.Services.Include(c=>c.FeatureMap)
-                .ThenInclude(c=>c.Feature)
-                .ThenInclude(c=>c.Indicators)
-                .ThenInclude(c=>c.Source)                
-                .Where(c=>c.Id == id).FirstOrDefaultAsync();
+            var entity = await this._dbContext.Services.Include(c => c.FeatureMap)
+                .ThenInclude(c => c.Feature)
+                .ThenInclude(c => c.Indicators)
+                .ThenInclude(c => c.Source)
+                .Where(c => c.Id == id).FirstOrDefaultAsync();
 
             if (entity == null)
                 return null;
 
-            var featuresIds = entity.FeatureMap.Select(c => c.FeatureId).Distinct().ToList();            
+            var featuresIds = entity.FeatureMap.Select(c => c.FeatureId).Distinct().ToList();
             var incidents = await this._dbContext.GetIncidentsByService(id);
 
             var model = this._mapper.Map<ServiceGetRp>(entity);
@@ -124,7 +124,7 @@ namespace Owlvey.Falcon.Components
                     indicator.Source.SourceItems = sourceItems;
                 }
             }
-            var agg = new ServiceDateAvailabilityAggregate(entity);
+            var agg = new ServiceAvailabilityAggregate(entity);
             return agg.MeasureAvailability();
         }
         public async Task<ServiceGetRp> GetServiceByName(int productId, string name)
@@ -135,44 +135,45 @@ namespace Owlvey.Falcon.Components
 
         public async Task<IEnumerable<ServiceGetListRp>> GetServices(int productId)
         {
-            var entities = await this._dbContext.Services.Include(c=>c.FeatureMap).ThenInclude(c=>c.Feature).Where(c=> c.Product.Id.Equals(productId)).ToListAsync();
-                       
+            var entities = await this._dbContext.Services.Include(c => c.FeatureMap).ThenInclude(c => c.Feature).Where(c => c.Product.Id.Equals(productId)).ToListAsync();
+
             return this._mapper.Map<IEnumerable<ServiceGetListRp>>(entities);
         }
 
-        public async Task<IEnumerable<FeatureGetListRp>> GetFeaturesComplement(int serviceId) {
+        public async Task<IEnumerable<FeatureGetListRp>> GetFeaturesComplement(int serviceId)
+        {
             var service = await this._dbContext.Services.Include(c => c.FeatureMap).ThenInclude(c => c.Feature).Where(c => c.Id == serviceId).SingleAsync();
 
             var serviceFeatures = service.FeatureMap.Select(c => c.Feature).ToList();
             var features = await this._dbContext.Features.Where(c => c.ProductId == service.ProductId).ToListAsync();
-            var rest = features.Except(serviceFeatures,  new FeatureCompare());
+            var rest = features.Except(serviceFeatures, new FeatureEntityCompare());
             return this._mapper.Map<IEnumerable<FeatureGetListRp>>(rest);
-        }       
+        }
 
-       
 
-     
+
+
 
 
         public async Task<MultiSeriesGetRp> GetDailySeriesById(int serviceId, DateTime start, DateTime end)
         {
             var service = await this._dbContext.Services.Where(c => c.Id == serviceId).SingleAsync();
-            var serviceMaps = await this._dbContext.ServiceMaps.Include(c => c.Feature).ThenInclude(c=>c.Indicators).Where(c => c.Service.Id == serviceId).ToListAsync();
+            var serviceMaps = await this._dbContext.ServiceMaps.Include(c => c.Feature).ThenInclude(c => c.Indicators).Where(c => c.Service.Id == serviceId).ToListAsync();
 
             foreach (var map in serviceMaps)
-            {                
+            {
                 var entity = await this._dbContext.Features.Include(c => c.Indicators).ThenInclude(c => c.Source).SingleAsync(c => c.Id == map.Feature.Id);
 
                 foreach (var indicator in entity.Indicators)
                 {
-                    var sourceItems =  this._dbContext.GetSourceItems(indicator.SourceId, start, end);
+                    var sourceItems = this._dbContext.GetSourceItems(indicator.SourceId, start, end);
                     indicator.Source.SourceItems = sourceItems;
                 }
                 map.Feature = entity;
             }
 
             service.FeatureMap = serviceMaps;
-            
+
             var result = new MultiSeriesGetRp
             {
                 Start = start,
@@ -181,8 +182,8 @@ namespace Owlvey.Falcon.Components
                 Avatar = service.Avatar
             };
 
-            var aggregator = new ServiceAvailabilityAggregate(service, start, end);
-            
+            var aggregator = new ServiceDailyAvailabilityAggregate(service, start, end);
+
             var (_, availability, features) = aggregator.MeasureAvailability();
 
             result.Series.Add(new MultiSerieItemGetRp()

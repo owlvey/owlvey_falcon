@@ -1,12 +1,12 @@
 ﻿using System;
 using Owlvey.Falcon.Core.Entities;
 
-namespace Owlvey.Falcon.Core
+namespace Owlvey.Falcon.Core.Entities
 {
-    public class AnchorFactory
+    public partial class AnchorEntity
     {
         public static class Factory {
-            public static AnchorEntity Create(string name, DateTime on, string user)
+            public static AnchorEntity Create(string name, DateTime on, string user, ProductEntity product)
             {
                 var entity = new AnchorEntity()
                 {
@@ -16,7 +16,8 @@ namespace Owlvey.Falcon.Core
                     CreatedOn = on,
                     ModifiedOn = on,
                     Target = new DateTime(on.Year, 1, 1)
-                };                
+                };
+                entity.Product = product;                
                 entity.Validate();
                 return entity;
             }

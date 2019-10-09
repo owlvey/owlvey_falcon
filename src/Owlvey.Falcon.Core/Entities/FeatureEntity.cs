@@ -8,7 +8,7 @@ using System.Linq;
 namespace Owlvey.Falcon.Core.Entities
 {
 
-    public class FeatureCompare : IEqualityComparer<FeatureEntity>
+    public class FeatureEntityCompare : IEqualityComparer<FeatureEntity>
     {
         public bool Equals(FeatureEntity x, FeatureEntity y)
         {
@@ -17,7 +17,7 @@ namespace Owlvey.Falcon.Core.Entities
 
         public int GetHashCode(FeatureEntity obj)
         {
-            return obj.GetHashCode();
+            return obj.Id.Value;
         }
     }
 
@@ -98,5 +98,10 @@ namespace Owlvey.Falcon.Core.Entities
                 return -1;
             }
         }
+
+        public void RegisterIncident(IncidentMapEntity map) {
+            this.IncidentMap.Add(map);
+        }
+
     }
 }

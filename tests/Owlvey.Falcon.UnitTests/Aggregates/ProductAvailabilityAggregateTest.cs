@@ -23,7 +23,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             feature.Indicators.Add(indicator_b);
                         
             
-            var service_aggregate = new ServiceAvailabilityAggregate(service, OwlveyCalendar.StartJanuary2019, OwlveyCalendar.EndJanuary2019);
+            var service_aggregate = new ServiceDailyAvailabilityAggregate(service, OwlveyCalendar.StartJanuary2019, OwlveyCalendar.EndJanuary2019);
 
             var service_availabilities = service_aggregate.MeasureAvailability();
             

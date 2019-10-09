@@ -36,17 +36,22 @@ namespace Owlvey.Falcon.Components
         /// <returns></returns>
         public async Task<FeatureGetRp> GetFeatureById(int id)
         {
-            var entity = await this._dbContext.Features.FirstOrDefaultAsync(c=> c.Id.Equals(id));
+            var entity = await this._dbContext.Features.FirstOrDefaultAsync(c => c.Id.Equals(id));
 
             if (entity == null)
                 return null;
-            
+
             return this._mapper.Map<FeatureGetRp>(entity);
+        }
+
+        public async Task<IEnumerable<FeatureGetListRp>> SearchFeatureByName(int productId, string name) {
+            var entities = await this._dbContext.Features.Where(c => c.ProductId == productId && c.Name.Contains(name)).ToListAsync();
+            return this._mapper.Map<IEnumerable<FeatureGetListRp>>(entities);
         }
 
         public async Task<FeatureGetRp> GetFeatureByIdWithAvailability(int id, DateTime start, DateTime end)
         {
-            var feature = await this._dbContext.Features                
+            var feature = await this._dbContext.Features
                 .Include(c => c.Squads).ThenInclude(c => c.Squad)
                 .Include(c => c.Indicators).ThenInclude(c => c.Source)
                 .Include(c => c.ServiceMaps).ThenInclude(c => c.Service)
@@ -54,7 +59,8 @@ namespace Owlvey.Falcon.Components
                 .FirstOrDefaultAsync();
 
 
-            if ( feature == null  ) {
+            if (feature == null)
+            {
                 return null;
             }
 
@@ -64,14 +70,14 @@ namespace Owlvey.Falcon.Components
                 indicator.Source.SourceItems = sourceItems;
             }
 
-            var agg = new FeatureDateAvailabilityAggregate(feature);
-                       
+            var agg = new FeatureAvailabilityAggregate(feature);
+
             var model = this._mapper.Map<FeatureGetRp>(feature);
-            
+
             model.Availability = agg.MeasureAvailability();
 
             foreach (var indicator in feature.Indicators)
-            {                
+            {
                 var tmp = this._mapper.Map<IndicatorGetListRp>(indicator);
                 tmp.Availability = (new IndicatorDateAvailabilityAggregate(indicator)).MeasureAvailability();
                 model.Indicators.Add(tmp);
@@ -79,7 +85,7 @@ namespace Owlvey.Falcon.Components
 
             model.Indicators = model.Indicators.OrderByDescending(c => c.Availability).ToList();
 
-            foreach (var map in  feature.ServiceMaps)
+            foreach (var map in feature.ServiceMaps)
             {
                 var tmp = this._mapper.Map<ServiceGetListRp>(map.Service);
                 model.Services.Add(tmp);
@@ -87,14 +93,15 @@ namespace Owlvey.Falcon.Components
 
             model.Incidents = this._mapper.Map<List<IncidentGetListRp>>(await this._dbContext.GetIncidentsByFeature(feature.Id.Value));
 
-            if (model.Incidents.Count() > 0) {
+            if (model.Incidents.Count() > 0)
+            {
                 model.MTTM = DateTimeUtils.FormatTimeToInMinutes(model.Incidents.Average(c => c.TTM));
                 model.MTTE = DateTimeUtils.FormatTimeToInMinutes(model.Incidents.Average(c => c.TTE));
                 model.MTTD = DateTimeUtils.FormatTimeToInMinutes(model.Incidents.Average(c => c.TTD));
                 model.MTTF = DateTimeUtils.FormatTimeToInMinutes(model.Incidents.Average(c => c.TTF));
-            }            
+            }
             return model;
-        }        
+        }
 
 
         public async Task<FeatureGetRp> GetFeatureByName(int productId, string name)
@@ -113,25 +120,25 @@ namespace Owlvey.Falcon.Components
         /// <returns></returns>
         public async Task<IEnumerable<FeatureGetListRp>> GetFeatures(int productId)
         {
-            var entities = await this._dbContext.Features.Include(c=>c.Indicators).Where(c=> c.Product.Id.Value.Equals(productId)).ToListAsync();
-            return this._mapper.Map<IEnumerable< FeatureGetListRp>>(entities);
+            var entities = await this._dbContext.Features.Include(c => c.Indicators).Where(c => c.Product.Id.Value.Equals(productId)).ToListAsync();
+            return this._mapper.Map<IEnumerable<FeatureGetListRp>>(entities);
         }
 
         public async Task<IEnumerable<FeatureGetListRp>> GetFeaturesWithAvailability(int productId,
             DateTime start, DateTime end)
         {
 
-            
+
 
             var result = new List<FeatureGetListRp>();
 
-            var entities = await this._dbContext.Features                
+            var entities = await this._dbContext.Features
                 .Include(c => c.ServiceMaps)
-                .Include(c => c.IncidentMap).ThenInclude(c=> c.Incident)
-                .Include(c => c.Indicators).ThenInclude(c=>c.Source)
-                .Where(c => c.Product.Id.Value.Equals(productId)).ToListAsync();            
-                        
-            var common = new FeatureCommonComponent(this._dbContext, this._datetimeGateway); 
+                .Include(c => c.IncidentMap).ThenInclude(c => c.Incident)
+                .Include(c => c.Indicators).ThenInclude(c => c.Source)
+                .Where(c => c.Product.Id.Value.Equals(productId)).ToListAsync();
+
+            var common = new FeatureCommonComponent(this._dbContext, this._datetimeGateway);
             foreach (var feature in entities)
             {
                 var tmp = this._mapper.Map<FeatureGetListRp>(feature);
@@ -145,10 +152,10 @@ namespace Owlvey.Falcon.Components
                     tmp.MTTD = DateTimeUtils.FormatTimeToInMinutes(tmpIncidents.Average(c => c.TTD));
                     tmp.MTTE = DateTimeUtils.FormatTimeToInMinutes(tmpIncidents.Average(c => c.TTE));
                     tmp.MTTF = DateTimeUtils.FormatTimeToInMinutes(tmpIncidents.Average(c => c.TTF));
-                }                
+                }
                 result.Add(tmp);
             }
-            return result.OrderBy(c=>c.Availability).ToList();
+            return result.OrderBy(c => c.Availability).ToList();
         }
 
 
@@ -158,43 +165,47 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<FeatureGetListRp>>(entities);
         }
 
-        public async Task<IEnumerable<FeatureGetListRp>> GetFeaturesByServiceId(int serviceId) {
-            var entities = await this._dbContext.ServiceMaps.Include(c=>c.Feature).Where(c => c.Service.Id == serviceId).ToListAsync();
+        public async Task<IEnumerable<FeatureGetListRp>> GetFeaturesByServiceId(int serviceId)
+        {
+            var entities = await this._dbContext.ServiceMaps.Include(c => c.Feature).Where(c => c.Service.Id == serviceId).ToListAsync();
             var features = entities.Select(c => c.Feature).ToList();
             return this._mapper.Map<IEnumerable<FeatureGetListRp>>(features);
         }
 
         public async Task<IEnumerable<FeatureGetListRp>> GetFeaturesByServiceIdWithAvailability(int serviceId, DateTime start, DateTime end)
         {
-            var entities = await this._dbContext.ServiceMaps.Include(c => c.Feature).ThenInclude(c=>c.Indicators).ThenInclude(c=>c.Source).Where(c => c.Service.Id == serviceId).ToListAsync();
+            var entities = await this._dbContext.ServiceMaps.Include(c => c.Feature).ThenInclude(c => c.Indicators).ThenInclude(c => c.Source).Where(c => c.Service.Id == serviceId).ToListAsync();
             var result = new List<FeatureGetListRp>();
 
             var common = new FeatureCommonComponent(this._dbContext, this._datetimeGateway);
 
-            foreach (var feature in entities.Select(c=>c.Feature))
+            foreach (var map in entities)
             {
+                var feature = map.Feature;
                 var tmp = this._mapper.Map<FeatureGetListRp>(feature);
                 tmp.Availability = await common.GetAvailabilityByFeature(feature, start, end);
+                tmp.MapId = map.Id.Value;
                 var incidents = await this._dbContext.GetIncidentsByFeature(feature.Id.Value);
-                if (incidents.Count() > 0) {
+                if (incidents.Count() > 0)
+                {
                     var (mttd, mtte, mttf, mttm) = (new IncidentMetricAggregate(incidents)).Metrics();
                     tmp.MTTD = DateTimeUtils.FormatTimeToInMinutes(mttd);
                     tmp.MTTE = DateTimeUtils.FormatTimeToInMinutes(mtte);
-                    tmp.MTTF = DateTimeUtils.FormatTimeToInMinutes(mttf); 
+                    tmp.MTTF = DateTimeUtils.FormatTimeToInMinutes(mttf);
                     tmp.MTTM = DateTimeUtils.FormatTimeToInMinutes(mttm);
                 }
                 result.Add(tmp);
             }
-            return result.OrderBy(c => c.Availability).ToList();            
+            return result.OrderBy(c => c.MapId).ToList();
         }
 
         public async Task<MultiSeriesGetRp> GetDailySeriesById(int featureId, DateTime start, DateTime end)
         {
-            var entity = await this._dbContext.Features.Include(c=>c.Indicators).ThenInclude(c=>c.Source).SingleAsync(c => c.Id == featureId);
+            var entity = await this._dbContext.Features.Include(c => c.Indicators).ThenInclude(c => c.Source).SingleAsync(c => c.Id == featureId);
 
             foreach (var indicator in entity.Indicators)
             {
-                var sourceItems =  this._dbContext.GetSourceItems(indicator.SourceId, start, end);
+                var sourceItems = this._dbContext.GetSourceItems(indicator.SourceId, start, end);
                 indicator.Source.SourceItems = sourceItems;
             }
 
@@ -206,15 +217,15 @@ namespace Owlvey.Falcon.Components
                 Avatar = entity.Avatar
             };
 
-            var aggregator = new FeatureAvailabilityAggregate(entity, start, end);
+            var aggregator = new FeatureDailyAvailabilityAggregate(entity, start, end);
 
             var (feature, availability, indicators) = aggregator.MeasureAvailability();
 
             result.Series.Add(new MultiSerieItemGetRp()
             {
-                 Name = "Availability",
-                 Avatar = entity.Avatar,
-                 Items = availability.Select(c=> this._mapper.Map<SeriesItemGetRp>(c)).ToList()
+                Name = "Availability",
+                Avatar = entity.Avatar,
+                Items = availability.Select(c => this._mapper.Map<SeriesItemGetRp>(c)).ToList()
             });
 
             foreach (var indicator in indicators)

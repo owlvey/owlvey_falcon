@@ -15,7 +15,7 @@ namespace Owlvey.Falcon.Core.Entities
 
         public int GetHashCode(SquadEntity obj)
         {
-            return obj.GetHashCode();
+            return obj.Id.Value;
         }
     }
 

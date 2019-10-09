@@ -138,7 +138,7 @@ namespace Owlvey.Falcon.Components
                 }
             }
                         
-            service.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, model.Name, model.Slo, model.Avatar);
+            service.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, model.Name, model.Slo, model.Description, model.Avatar);
 
             this._dbContext.Services.Update(service);
 

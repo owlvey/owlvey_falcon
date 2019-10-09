@@ -20,7 +20,7 @@ namespace Owlvey.Falcon.ComponentsTests
             var serviceComponent = container.GetInstance<ServiceComponent>();
             var serviceQueryComponent = container.GetInstance<ServiceQueryComponent>();
 
-            await serviceComponent.CreateService(new Models.ServicePostRp()
+            var serviceInstance = await serviceComponent.CreateService(new Models.ServicePostRp()
             {
                 Name = "test",
                 ProductId = productId,                
@@ -28,6 +28,21 @@ namespace Owlvey.Falcon.ComponentsTests
             var services = await serviceQueryComponent.GetServices(productId);
             Assert.NotEmpty(services);
 
+            await serviceComponent.UpdateService(serviceInstance.Id, new Models.ServicePutRp() {
+                 Name = "change",
+                 Description = "change",
+                 Slo = 0.95m,
+                 Avatar = "http://change.org"
+            });
+
+            var serviceDetail = await serviceQueryComponent.GetServiceById(serviceInstance.Id);
+            Assert.NotNull(serviceDetail);
+
+            Assert.Equal("change", serviceDetail.Name);
+            Assert.Equal("change", serviceDetail.Description);
+            Assert.Equal("http://change.org", serviceDetail.Avatar);
+            Assert.Equal(0.95m, serviceDetail.SLO);
+            
         }
 
         [Fact]
