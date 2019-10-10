@@ -104,7 +104,7 @@ namespace Owlvey.Falcon.Repositories
             modelBuilder.Entity<IndicatorEntity>()
                .HasOne(pt => pt.Feature)
                .WithMany(p => p.Indicators)
-               .OnDelete(DeleteBehavior.Restrict)
+               .OnDelete(DeleteBehavior.Cascade)
                .HasForeignKey(pt => pt.FeatureId);
 
             modelBuilder.Entity<IndicatorEntity>()
