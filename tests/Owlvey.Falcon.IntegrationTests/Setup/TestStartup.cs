@@ -78,8 +78,7 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
             dbContext.Database.EnsureCreated();
 
             // Setup Default Data
-                       
-
+            app.UseMiddleware<AutoAuthorizeMiddleware>();
             var customer = new Core.Entities.CustomerEntity
             {
                 Id = 9999,

@@ -45,3 +45,14 @@ steps:
     dotnet ef migrations script -c FalconDbContext -o ../../artifactory/falcondb.sql --verbose
     cd  ../../
   displayName: Get Migration Scripts
+
+- task: Docker@2
+  displayName: buildAndPush
+  inputs:
+    containerRegistry: 'Owlvey Docker Connection'
+    repository: owlvey/api
+    Dockerfile: artifactory/Dockerfile
+    buildContext: artifactory
+    tags: |
+     $(Build.BuildId)
+     latest

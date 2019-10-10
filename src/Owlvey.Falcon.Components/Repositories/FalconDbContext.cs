@@ -62,7 +62,7 @@ namespace Owlvey.Falcon.Repositories
             modelBuilder.Entity<SquadFeatureEntity>()
                .HasOne(pt => pt.Feature)
                .WithMany(p => p.Squads)
-               .OnDelete(DeleteBehavior.Cascade)
+               .OnDelete(DeleteBehavior.Restrict)
                .HasForeignKey(pt => pt.FeatureId);
 
             modelBuilder.Entity<SquadFeatureEntity>()
@@ -76,7 +76,7 @@ namespace Owlvey.Falcon.Repositories
             modelBuilder.Entity<IncidentMapEntity>()
                .HasOne(pt => pt.Feature)
                .WithMany(p => p.IncidentMap)
-               .OnDelete(DeleteBehavior.Cascade)
+               .OnDelete(DeleteBehavior.Restrict)
                .HasForeignKey(pt => pt.FeatureId);
 
             modelBuilder.Entity<IncidentMapEntity>()
@@ -90,7 +90,7 @@ namespace Owlvey.Falcon.Repositories
             modelBuilder.Entity<ServiceMapEntity>()
                .HasOne(pt => pt.Feature)
                .WithMany(p => p.ServiceMaps)
-               .OnDelete(DeleteBehavior.Cascade)
+               .OnDelete(DeleteBehavior.Restrict)
                .HasForeignKey(pt => pt.FeatureId);
 
             modelBuilder.Entity<ServiceMapEntity>()
@@ -104,7 +104,7 @@ namespace Owlvey.Falcon.Repositories
             modelBuilder.Entity<IndicatorEntity>()
                .HasOne(pt => pt.Feature)
                .WithMany(p => p.Indicators)
-               .OnDelete(DeleteBehavior.Cascade)
+               .OnDelete(DeleteBehavior.Restrict)
                .HasForeignKey(pt => pt.FeatureId);
 
             modelBuilder.Entity<IndicatorEntity>()
