@@ -53,6 +53,24 @@ namespace Owlvey.Falcon.ComponentsTests
             var result = await userQueryComponent.GetUserById(id);
 
             Assert.NotNull(result);
+            Assert.NotNull(result.Avatar);
+
+            await userComponent.PutUser(id, new Models.UserPutRp() {
+                 Avatar = "change",
+                 Email = "change"
+            });
+
+            result = await userQueryComponent.GetUserById(id);
+
+            Assert.Equal("change", result.Avatar);
+
+
+            await userComponent.DeleteUser(id);
+
+            result = await userQueryComponent.GetUserById(id);
+
+            Assert.Null(result);
+
 
         }
     }

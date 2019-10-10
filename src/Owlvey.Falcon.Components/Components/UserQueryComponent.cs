@@ -35,7 +35,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<UserGetRp> GetUserById(int id)
         {
-            var entity = await this._dbContext.Users.SingleAsync(c => c.Id == id);
+            var entity = await this._dbContext.Users.SingleOrDefaultAsync(c => c.Id == id);
             return this._mapper.Map<UserGetRp>(entity);
         }
 

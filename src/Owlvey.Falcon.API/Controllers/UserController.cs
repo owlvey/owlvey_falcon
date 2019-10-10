@@ -68,6 +68,22 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok(model);
         }
 
+        [HttpPut("{id}")]
+        [ProducesResponseType(typeof(UserGetRp), 200)]
+        public async Task<IActionResult> Put(int id, UserPutRp model)
+        {
+            var result = await this._userService.PutUser(id, model);
+            return this.Ok(result);
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(UserGetRp), 200)]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await this._userService.DeleteUser(id);
+            return this.Ok();
+        }
+
         /// <summary>
         /// Create a new User
         /// </summary>

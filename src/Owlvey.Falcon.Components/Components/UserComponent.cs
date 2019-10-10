@@ -21,6 +21,27 @@ namespace Owlvey.Falcon.Components
             this._dbContext = dbContext;
         }
 
+
+        public async Task<UserGetListRp> PutUser(int id, UserPutRp model) {
+
+            this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
+
+            var target = await this._dbContext.Users.Where(c => c.Id == id).SingleOrDefaultAsync();
+
+            target.Update(model.Email, model.Avatar);
+
+            this._dbContext.Users.Update(target);
+            await this._dbContext.SaveChangesAsync();
+
+            return this._mapper.Map<UserGetListRp>(target); 
+        }
+        public async Task DeleteUser(int id) {
+            var target = await this._dbContext.Users.Where(c => c.Id == id).SingleOrDefaultAsync();
+            if (target != null) {
+                this._dbContext.Users.Remove(target);
+                await this._dbContext.SaveChangesAsync();
+            }
+        }
         public async Task<BaseComponentResultRp> CreateUser(UserPostRp model)
         {
             var result = new BaseComponentResultRp();

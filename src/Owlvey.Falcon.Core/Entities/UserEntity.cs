@@ -15,9 +15,9 @@ namespace Owlvey.Falcon.Core.Entities
         [Required]
         public string Avatar { get; set; }
 
-        internal void Update(string email) {
-            this.Email = email;
+        public void Update(string email, string avatar) {
+            this.Email =  !string.IsNullOrWhiteSpace(email) ? email : this.Email;
+            this.Avatar = !string.IsNullOrWhiteSpace(avatar) ? avatar : this.Avatar;
         }
-        
     }
 }

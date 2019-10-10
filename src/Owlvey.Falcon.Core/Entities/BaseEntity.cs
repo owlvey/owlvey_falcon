@@ -25,7 +25,7 @@ namespace Owlvey.Falcon.Core.Entities
         public virtual void Delete(DateTime on, string modifiedBy) {
             this.Deleted = true;
         }        
-
+       
         public virtual void Validate() {
             var context = new ValidationContext(this, serviceProvider: null, items: null);
             var results = new List<ValidationResult>();
