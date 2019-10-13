@@ -1,12 +1,12 @@
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Owlvey.Falcon.Components;
-using Owlvey.Falcon.Identity;
 using Owlvey.Falcon.Gateways;
 using AutoMapper;
+using Owlvey.Falcon.API.Extensions;
 
 namespace Owlvey.Falcon.IoC
 {
@@ -33,7 +33,7 @@ namespace Owlvey.Falcon.IoC
             services.AddTransient<IndicatorComponent>();
 
             services.AddTransient<FeatureQueryComponent>();
-            services.AddTransient<FeatureComponent>();            
+            services.AddTransient<FeatureComponent>();
 
             services.AddTransient<SquadQueryComponent>();
             services.AddTransient<SquadComponent>();
@@ -53,10 +53,10 @@ namespace Owlvey.Falcon.IoC
 
             services.AddTransient<IncidentComponent>();
 
-            services.AddSingleton<CacheComponent>(); 
+            services.AddSingleton<CacheComponent>();
 
             // Gateways
-            services.AddTransient<IDateTimeGateway, DateTimeGateway>();            
+            services.AddTransient<IDateTimeGateway, DateTimeGateway>();
 
             // Infra
             services.AddAspNetCoreIndentityService();

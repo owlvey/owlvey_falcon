@@ -1,14 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -17,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Owlvey.Falcon.API.Extensions;
 using Owlvey.Falcon.IoC;
-using Owlvey.Falcon.Options;
 using Owlvey.Falcon.Repositories;
 
 namespace Owlvey.Falcon.API
@@ -51,9 +43,8 @@ namespace Owlvey.Falcon.API
             {
                 //Authorize Filter
                 var policy = new AuthorizationPolicyBuilder(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-                   .RequireAuthenticatedUser()
-                   .RequireRole("admin", "basicuser")
-                   .Build();
+                  .RequireAuthenticatedUser()                  
+                  .Build();
 
                 options.Filters.Add(new AuthorizeFilter(policy));
             });

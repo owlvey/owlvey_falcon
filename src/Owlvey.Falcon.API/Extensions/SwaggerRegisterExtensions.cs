@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Owlvey.Falcon.Options;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;

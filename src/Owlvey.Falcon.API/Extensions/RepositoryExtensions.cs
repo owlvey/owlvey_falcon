@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -13,7 +13,7 @@ namespace Owlvey.Falcon.IoC
     {
         public static void SetupDataBase(this IServiceCollection services, IConfiguration configuration, string env)
         {
-            
+
             var connectionString = configuration.GetConnectionString("DefaultConnection");
 
             if (env.Equals("development", StringComparison.InvariantCultureIgnoreCase))
@@ -36,7 +36,7 @@ namespace Owlvey.Falcon.IoC
                 );
             }
 
-            
+
 
             /*
             services.AddDbContext<FalconDbContext>(options =>
@@ -52,6 +52,6 @@ namespace Owlvey.Falcon.IoC
             );
             */
         }
-        
+
     }
 }

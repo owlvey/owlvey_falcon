@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 
   <PropertyGroup>
@@ -13,9 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Owlvey.Falcon.Components\Owlvey.Falcon.Components.csproj" />
-    <ProjectReference Include="..\Owlvey.Falcon.Identity\Owlvey.Falcon.Identity.csproj" />
     <ProjectReference Include="..\Owlvey.Falcon.Core\Owlvey.Falcon.Core.csproj" />
-    <ProjectReference Include="..\Owlvey.Falcon.Identity\Owlvey.Falcon.Identity.csproj" />
   </ItemGroup>
 
 </Project>

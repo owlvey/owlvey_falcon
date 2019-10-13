@@ -12,11 +12,11 @@ using Owlvey.Falcon.API;
 using Owlvey.Falcon.API.Controllers;
 using Owlvey.Falcon.Core.Entities;
 using Owlvey.Falcon.IoC;
-using Owlvey.Falcon.Options;
 using Owlvey.Falcon.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Owlvey.Falcon.API.Extensions;
 
 namespace Owlvey.Falcon.IntegrationTests.Setup
 {

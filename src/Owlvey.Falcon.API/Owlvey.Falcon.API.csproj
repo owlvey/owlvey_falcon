@@ -33,12 +33,6 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Owlvey.Falcon.Identity\Owlvey.Falcon.Identity.csproj" />
-    <ProjectReference Include="..\Owlvey.Falcon.IoC\Owlvey.Falcon.IoC.csproj" />
-    <ProjectReference Include="..\Owlvey.Falcon.Options\Owlvey.Falcon.Options.csproj" />
-  </ItemGroup>
-
 
   <ItemGroup>
     <Content Update="appsettings.json">
@@ -64,6 +58,11 @@
     <Compile Remove="Controllers\SquadMemberController.cs" />
     <Compile Remove="Controllers\SquadProductController.cs" />
     <Compile Remove="Controllers\SquadFeatureController.cs" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\Owlvey.Falcon.Components\Owlvey.Falcon.Components.csproj" />
   </ItemGroup>
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>
 

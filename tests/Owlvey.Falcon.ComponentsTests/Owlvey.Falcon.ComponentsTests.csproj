@@ -29,14 +29,14 @@
     <PackageReference Include="SimpleInjector" Version="4.6.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\Owlvey.Falcon.Identity\Owlvey.Falcon.Identity.csproj" />
-    <ProjectReference Include="..\..\src\Owlvey.Falcon.IoC\Owlvey.Falcon.IoC.csproj" />
-  </ItemGroup>
-
 
   <ItemGroup>
     <Compile Remove="SquadProductComponentTest.cs" />
     <Compile Remove="SquadFeatureComponentTest.cs" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Owlvey.Falcon.Components\Owlvey.Falcon.Components.csproj" />
   </ItemGroup>
 </Project>

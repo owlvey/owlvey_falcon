@@ -1,8 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Owlvey.Falcon.Options
+namespace Owlvey.Falcon.API.Extensions
 {
     public class SwaggerAppOptions
     {

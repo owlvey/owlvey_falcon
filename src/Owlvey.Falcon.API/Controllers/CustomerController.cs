@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Owlvey.Falcon.Components;
@@ -73,9 +74,7 @@ namespace Owlvey.Falcon.API.Controllers
         /// <param name="resource"></param>
         /// <returns></returns>
         [HttpPost]
-        [ProducesResponseType(typeof(CustomerGetRp), 200)]
-        [ProducesResponseType(409)]
-        [ProducesResponseType(400)]
+        [ProducesResponseType(typeof(CustomerGetRp), 200)]        
         public async Task<IActionResult> Post([FromBody]CustomerPostRp resource)
         {
             if (!this.ModelState.IsValid)
