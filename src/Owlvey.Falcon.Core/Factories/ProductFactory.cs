@@ -21,10 +21,8 @@ namespace Owlvey.Falcon.Core.Entities
                     ModifiedOn = on,
                 };
 
-                var anchorSLI = AnchorEntity.Factory.Create("sli", on, user, entity);
-                var anchorIncidents = AnchorEntity.Factory.Create("incident", on, user, entity);
-                entity.Anchors.Add(anchorSLI);
-                entity.Anchors.Add(anchorIncidents);
+                var anchorSLI = AnchorEntity.Factory.Create("sample", on, user, entity);                
+                entity.Anchors.Add(anchorSLI);                
                 entity.Customer = customer;
                 entity.Validate();
                 return entity;

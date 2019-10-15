@@ -157,11 +157,11 @@ namespace Owlvey.Falcon.API.Controllers
         }
 
         [HttpGet("{id}/sync/{name}")]
-        [ProducesResponseType(typeof(DateTime), 200)]
+        [ProducesResponseType(typeof(AnchorRp), 200)]
         public async Task<IActionResult> GetAnchor(int id, string name)
         {
-            var source = await this._productQueryService.GetAnchor(id, name);
-            return this.Ok(new { data = source });
+            var result = await this._productQueryService.GetAnchor(id, name);
+            return this.Ok(result);
         }
 
         [HttpPut("{id}/sync/{name}")]
@@ -169,6 +169,22 @@ namespace Owlvey.Falcon.API.Controllers
         public async Task<IActionResult> SetAnchor(int id, string name, [FromBody]AnchorPutRp model)
         {
             await this._productService.PutAnchor(id, name, model);
+            return this.Ok();
+        }
+
+
+        [HttpPost("{id}/sync/{name}")]
+        [ProducesResponseType(typeof(AnchorRp), 200)]
+        public async Task<IActionResult> PostAnchor(int id, string name)
+        {
+            var result = await this._productService.PostAnchor(id, name);
+            return this.Ok(result);
+        }
+
+        [HttpDelete("{id}/sync/{name}")]        
+        public async Task<IActionResult> Delete(int id, string name)
+        {
+            await this._productService.DeleteAnchor(id, name);
             return this.Ok();
         }
 

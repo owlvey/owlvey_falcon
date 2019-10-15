@@ -29,11 +29,11 @@ namespace Owlvey.Falcon.Components
             this._dbContext = dbContext;
         }
 
-        public async Task<DateTime> GetAnchor(int productId, string name)
+        public async Task<AnchorRp> GetAnchor(int productId, string name)
         {
             var entity = await this._dbContext.Anchors
                 .Where(c => c.ProductId == productId && c.Name == name).SingleAsync();
-            return entity.Target;
+            return this._mapper.Map<AnchorRp>(entity);
         }
         public async Task<IEnumerable<AnchorRp>> GetAnchors(int productId)
         {

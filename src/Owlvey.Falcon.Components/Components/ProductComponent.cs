@@ -26,6 +26,35 @@ namespace Owlvey.Falcon.Components
             
         }
 
+
+        public async Task<AnchorRp> PostAnchor(int productId, string name)
+        {
+            var createdBy = this._identityService.GetIdentity();
+            var entity = await this._dbContext.Anchors.Where(c => c.ProductId == productId && c.Name == name).SingleOrDefaultAsync();
+            if (entity == null) {
+                var product = await this._dbContext.Products.Where(c => c.Id == productId).SingleAsync();
+                entity = AnchorEntity.Factory.Create(name, this._datetimeGateway.GetCurrentDateTime(), createdBy, product);
+                this._dbContext.Anchors.Add(entity);
+                await this._dbContext.SaveChangesAsync();
+            }
+            return this._mapper.Map<AnchorRp>(entity);
+        }
+
+
+        public async Task<AnchorRp> DeleteAnchor(int productId, string name)
+        {
+            var createdBy = this._identityService.GetIdentity();
+            var entity = await this._dbContext.Anchors.Where(c => c.ProductId == productId && c.Name == name).SingleOrDefaultAsync();
+            if (entity != null)
+            {
+                this._dbContext.Anchors.Remove(entity);
+                await this._dbContext.SaveChangesAsync();
+            }
+            return this._mapper.Map<AnchorRp>(entity);
+        }
+
+
+
         public async Task PutAnchor(int productId, string name, AnchorPutRp model)
         {
             var createdBy = this._identityService.GetIdentity();
