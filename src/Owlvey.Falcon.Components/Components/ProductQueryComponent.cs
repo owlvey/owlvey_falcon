@@ -42,9 +42,9 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<AnchorRp>>(entities);
         }
 
-        public async Task<ProductGetRp> GetProductByName(string Name)
+        public async Task<ProductGetRp> GetProductByName(int customerId, string Name)
         {
-            var entity = await this._dbContext.Products.SingleAsync(c => c.Name == Name);
+            var entity = await this._dbContext.Products.SingleAsync(c => c.Name == Name && c.CustomerId == customerId);
             return this._mapper.Map<ProductGetRp>(entity);
         }
 
@@ -141,8 +141,48 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<ProductGetListRp>>(entities);
         }
 
+        #region Daily Reports
 
-        public async Task<MultiSeriesGetRp> GetDailySeriesById(int productId, DateTime start, DateTime end)
+
+        public async Task<MultiSeriesGetRp> GetDailyFeaturesSeriesById(int productId, DateTime start, DateTime end) {
+
+            var product = await this._dbContext.Products
+                .Include(c => c.Features)
+                .ThenInclude(c=>c.Indicators)
+                .ThenInclude(c=>c.Source)
+                .Where(c => c.Id == productId).SingleAsync();
+
+            foreach (var feature in product.Features)
+            {
+                foreach (var indicator in feature.Indicators)
+                {
+                    var sourceItems = this._dbContext.GetSourceItems(indicator.SourceId, start, end);
+                    indicator.Source.SourceItems = sourceItems;
+                }
+            }
+            var result = new MultiSeriesGetRp
+            {
+                Start = start,
+                End = end,
+                Name = product.Name,
+                Avatar = product.Avatar
+            };
+
+            foreach (var feature in product.Features)
+            {
+                var aggregate = new FeatureDailyAvailabilityAggregate(feature, start, end);
+                var (_, series, _) = aggregate.MeasureAvailability();                
+                result.Series.Add(new MultiSerieItemGetRp()
+                {
+                    Name = string.Format("Feature:{0}", feature.Id),
+                    Avatar = feature.Avatar,
+                    Items  =  series.Select(c=> this._mapper.Map<SeriesItemGetRp>(c)).ToList()
+                });
+            }
+            return result;
+        }
+
+        public async Task<MultiSeriesGetRp> GetDailyServiceSeriesById(int productId, DateTime start, DateTime end)
         {
             var product = await this._dbContext.Products
                 .Include(c => c.Services).Where(c => c.Id == productId).SingleAsync();
@@ -202,6 +242,11 @@ namespace Owlvey.Falcon.Components
             return result;
 
         }
+
+
+
+        #endregion
+
 
         #region Dashboard
 

@@ -140,7 +140,7 @@ namespace Owlvey.Falcon.Components
 
 
         #region Features - Squad Relations
-               
+
 
         public async Task<BaseComponentResultRp> RegisterSquad(SquadFeaturePostRp model)
         {

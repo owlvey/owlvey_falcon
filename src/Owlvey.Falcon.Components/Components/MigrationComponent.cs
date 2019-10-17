@@ -19,6 +19,7 @@ namespace Owlvey.Falcon.Components
         private readonly FalconDbContext _dbContext;
         private readonly SquadComponent _squadComponent;
         private readonly ProductComponent _productComponent;
+        private readonly ProductQueryComponent _productQueryComponent;
         private readonly ServiceComponent _serviceComponent;
         private readonly SquadQueryComponent _squadQueryComponent;
         private readonly SourceComponent _sourceComponent;
@@ -27,6 +28,11 @@ namespace Owlvey.Falcon.Components
         private readonly IndicatorComponent _indicatorComponent;
         private readonly SourceItemComponent _sourceItemComponent;
         private readonly IncidentComponent _incidentComponent;
+        private readonly UserComponent _userComponent;
+        private readonly FeatureQueryComponent _featureQueryComponent;
+        
+
+
         public MigrationComponent(FalconDbContext dbContext,
             ProductComponent productComponent,
             ServiceComponent serviceComponent,
@@ -36,8 +42,11 @@ namespace Owlvey.Falcon.Components
             IndicatorComponent indicatorComponent,
             SourceItemComponent sourceItemComponent,
             IncidentComponent incidentComponent,
+            UserComponent userComponent,
+            ProductQueryComponent productQueryComponent,
             IUserIdentityGateway identityService,
             IDateTimeGateway dateTimeGateway, IMapper mapper,
+            FeatureQueryComponent featureQueryComponent,
             SquadComponent squadComponent, SquadQueryComponent squadQueryComponent) : base(dateTimeGateway, mapper, identityService)
         {
             this._sourceComponent = sourceComponent;
@@ -52,14 +61,297 @@ namespace Owlvey.Falcon.Components
             this._sourceComponent = sourceComponent;
             this._sourceItemComponent = sourceItemComponent;
             this._incidentComponent = incidentComponent;
+            this._userComponent = userComponent;
+            this._productQueryComponent = productQueryComponent;
+            this._featureQueryComponent = featureQueryComponent;
         }
 
 
         #region exports
 
+
+        public async Task<IEnumerable<SquadFeatureMigrationRp>> ExportSquadMap(int customerId) {
+
+            var result = new List<SquadFeatureMigrationRp>();
+
+            var squads = await this._dbContext.Squads.Include(c=>c.FeatureMaps)
+                .ThenInclude(c=>c.Feature)
+                .ThenInclude(c=>c.Product)
+                .Where(c => c.CustomerId == customerId).ToListAsync();
+
+            foreach (var squad in squads)
+            {
+                foreach (var map in squad.FeatureMaps)
+                {
+                    result.Add(new SquadFeatureMigrationRp()
+                    {
+                        Squad = squad.Name,
+                        Feature = map.Feature.Name,
+                        Product = map.Feature.Product.Name
+                    });
+                }                                           
+            }
+            return result;
+        }
+
+        public async Task<IEnumerable<AnchorMigrationRp>> ExportAnchors(int customerId)
+        {
+            var result = new List<AnchorMigrationRp>();
+            var anchors = await this._dbContext.Anchors.Include(c=>c.Product).Where(c => c.Product.CustomerId == customerId).ToListAsync();
+            foreach (var anchor in anchors)
+            {                
+                result.Add(new AnchorMigrationRp()
+                {
+                     Product = anchor.Product.Name,
+                     Name = anchor.Name,
+                     Target = anchor.Target.ToString("s", System.Globalization.CultureInfo.InvariantCulture) 
+                });                
+            }
+            return result;
+        }
+
+
+        public async Task<(
+            CustomerEntity customer,
+            IEnumerable<SquadMigrationRp> squads,
+            IEnumerable<MemberMigrateRp> members,
+            IEnumerable<ProductMigrationRp> products,
+            IEnumerable<ServiceMigrateRp> services,
+            IEnumerable<ServiceMapMigrateRp> serviceMaps,
+            IEnumerable<FeatureMigrateRp> features,
+            IEnumerable<IndicatorMigrateRp> indicators,
+            IEnumerable<SourceMigrateRp> sources,
+            IEnumerable<SourceItemMigrationRp> items,
+            IEnumerable<IncidentMigrationRp> incidents,
+            IEnumerable<IncidentFeatureMigrationRp> incidentMaps,
+            IEnumerable<SquadFeatureMigrationRp> squadMaps,
+            IEnumerable<AnchorMigrationRp> anchors
+            )> Export(int customerId, bool includeItems = false)
+        {
+            var customer = await this._dbContext.Customers
+                .Include(c => c.Products).ThenInclude(c => c.Services).Where(c => c.Id == customerId)
+                .SingleAsync();
+
+            var incidents = await this._dbContext.Incidents.Include(c => c.FeatureMaps).ThenInclude(c => c.Feature).Where(c => c.Product.CustomerId == customerId).ToListAsync();
+            var squads = await this._dbContext.Squads.Include(c => c.Members).ThenInclude(c => c.User).Where(c => c.CustomerId == customerId).ToListAsync();
+            var squadLites = this._mapper.Map<IEnumerable<SquadMigrationRp>>(squads);
+            var productLites = this._mapper.Map<IEnumerable<ProductMigrationRp>>(customer.Products);
+            var serviceLites = this._mapper.Map<IEnumerable<ServiceMigrateRp>>(customer.Products.SelectMany(c => c.Services));
+            var memberLites = new List<MemberMigrateRp>();
+            foreach (var squad in squads)
+            {
+                foreach (var item in squad.Members)
+                {
+                    memberLites.Add(new MemberMigrateRp()
+                    {
+                        Email = item.User.Email,
+                        Squad = squad.Name,
+                        Avatar = item.User.Avatar,
+                        Name = item.User.Name
+                    });
+                }
+            }
+
+            var features = await this._dbContext.Features.Include(c => c.Product).Include(c => c.ServiceMaps).ThenInclude(c => c.Service).Where(c => c.Product.CustomerId == customerId).ToListAsync();
+            var featureLites = new List<FeatureMigrateRp>();
+            var serviceMapLites = new List<ServiceMapMigrateRp>();
+
+            foreach (var item in features)
+            {
+                var tmp = this._mapper.Map<FeatureMigrateRp>(item);
+                featureLites.Add(tmp);
+
+                foreach (var serv in item.ServiceMaps)
+                {
+                    serviceMapLites.Add(new ServiceMapMigrateRp()
+                    {
+                        Product = item.Product.Name,
+                        Feature = item.Name,
+                        Service = serv.Service.Name
+                    });
+                }
+            }
+
+            var sources = await this._dbContext.Sources.Include(c => c.Product).Include(c => c.Indicators).ThenInclude(c => c.Feature).Where(c => c.Product.CustomerId == customerId).ToListAsync();
+            var sourceLites = this._mapper.Map<IEnumerable<SourceMigrateRp>>(sources);
+
+            var indicatorLites = new List<IndicatorMigrateRp>();
+
+            foreach (var item in sources)
+            {
+                foreach (var indicator in item.Indicators)
+                {
+                    indicatorLites.Add(new IndicatorMigrateRp()
+                    {
+                        Product = item.Product.Name,
+                        Feature = indicator.Feature.Name,
+                        Source = item.Name
+                    });
+                }
+            }
+
+            List<SourceItemMigrationRp> items = new List<SourceItemMigrationRp>();
+            if (includeItems)
+            {
+                var temp = await this._dbContext.SourcesItems.Include(c => c.Source).Where(c => c.Source.Product.CustomerId == customerId).ToListAsync();
+                foreach (var item in temp)
+                {
+                    var product = customer.Products.Where(c => c.Id == item.Source.ProductId).Single();
+
+                    items.Add(new SourceItemMigrationRp()
+                    {
+                        Product = product.Name,
+                        End = item.End.ToString("s", System.Globalization.CultureInfo.InvariantCulture),
+                        Start = item.Start.ToString("s", System.Globalization.CultureInfo.InvariantCulture),
+                        Good = item.Good,
+                        Source = item.Source.Name,
+                        Total = item.Total
+                    });
+
+                }
+            }
+
+            List<IncidentMigrationRp> incidentsLite = new List<IncidentMigrationRp>();
+            List<IncidentFeatureMigrationRp> incidentFeaturesLite = new List<IncidentFeatureMigrationRp>();
+            foreach (var item in incidents)
+            {
+                incidentsLite.Add(new IncidentMigrationRp()
+                {
+                    Product = item.Product.Name,
+                    Key = item.Key,
+                    Affected = item.Affected,
+                    Start = item.Start.ToString("s", System.Globalization.CultureInfo.InvariantCulture),
+                    End = item.End.ToString("s", System.Globalization.CultureInfo.InvariantCulture),
+                    Title = item.Title,
+                    TTD = item.TTD,
+                    TTE = item.TTE,
+                    TTF = item.TTF,
+                    URL = item.Url
+                });
+                foreach (var incidentFeature in item.FeatureMaps)
+                {
+                    incidentFeaturesLite.Add(new IncidentFeatureMigrationRp()
+                    {
+                        Product = item.Product.Name,
+                        Feature = incidentFeature.Feature.Name,
+                        IncidentKey = item.Key
+                    });
+                }
+            }
+
+            var squadFeatureLite = await this.ExportSquadMap(customerId);
+            var anchors = await this.ExportAnchors(customerId);
+
+            return (customer, squadLites, memberLites, productLites, serviceLites, serviceMapLites, featureLites, indicatorLites, sourceLites, items, incidentsLite,
+                        incidentFeaturesLite,
+                        squadFeatureLite,
+                        anchors);
+        }
+
+        public async Task<(CustomerEntity entity, MemoryStream stream)> ExportExcel(int customerId, bool includeData)
+        {
+            var (customer, squadLites, memberLites, productLites, serviceLites, serviceMapLites, featureLites,
+                  indicatorLites, sourceLites, sourceItemsLites, incidentLites, incidentFeatureMap,
+                  squadFeatureMap, anchors) = await this.Export(customerId, includeData);
+
+            var stream = new MemoryStream();
+            using (var package = new ExcelPackage(stream))
+            {
+                var squadSheet = package.Workbook.Worksheets.Add("Squads");
+                squadSheet.Cells.LoadFromCollection(squadLites, true);
+
+                var membersSheet = package.Workbook.Worksheets.Add("Members");
+                membersSheet.Cells.LoadFromCollection(memberLites, true);
+
+                var productSheet = package.Workbook.Worksheets.Add("Products");
+                productSheet.Cells.LoadFromCollection(productLites, true);
+
+                var servicesSheet = package.Workbook.Worksheets.Add("Services");
+                servicesSheet.Cells.LoadFromCollection(serviceLites, true);
+
+                var servicesMapSheet = package.Workbook.Worksheets.Add("ServicesMap");
+                servicesMapSheet.Cells.LoadFromCollection(serviceMapLites, true);
+
+                var featuresSheet = package.Workbook.Worksheets.Add("Features");
+                featuresSheet.Cells.LoadFromCollection(featureLites, true);
+
+                var indicatorsSheet = package.Workbook.Worksheets.Add("Indicators");
+                indicatorsSheet.Cells.LoadFromCollection(indicatorLites, true);
+
+                var sourcesSheet = package.Workbook.Worksheets.Add("Sources");
+                sourcesSheet.Cells.LoadFromCollection(sourceLites, true);
+
+                var sourceItemsSheet = package.Workbook.Worksheets.Add("SourceItems");
+                sourceItemsSheet.Cells.LoadFromCollection(sourceItemsLites, true);
+
+                var incidentSheet = package.Workbook.Worksheets.Add("Incidents");
+                incidentSheet.Cells.LoadFromCollection(incidentLites, true);
+
+                var incidentFeaturesSheet = package.Workbook.Worksheets.Add("IncidentFeatures");
+                incidentFeaturesSheet.Cells.LoadFromCollection(incidentFeatureMap, true);
+
+                var squadFeaturesSheet = package.Workbook.Worksheets.Add("SquadFeatures");
+                squadFeaturesSheet.Cells.LoadFromCollection(squadFeatureMap, true);
+
+                var syncSheet = package.Workbook.Worksheets.Add("Anchors");
+                syncSheet.Cells.LoadFromCollection(anchors);
+
+                package.Save();
+            }
+            stream.Position = 0;
+            return (customer, stream);
+        }
+
+
+        #endregion
+        #region Import
+
+        private async Task ImportMembers(int customerId, ExcelWorksheet membersSource) {
+
+            for (int row = 2; row <= membersSource.Dimension.Rows; row++)
+            {
+                var email = membersSource.Cells[row, 1].GetValue<string>();
+                var name = membersSource.Cells[row, 2].GetValue<string>();
+                var squad = membersSource.Cells[row, 3].GetValue<string>();
+                var avatar = membersSource.Cells[row, 4].GetValue<string>();
+                var user = await this._userComponent.CreateOrUpdate(email, name, avatar);
+                await this._squadComponent.RegisterMember(customerId, squad, user.Id);
+            }
+        }
+
+        private async Task ImportAnchors(int customerId, ExcelWorksheet source)
+        {
+
+            for (int row = 2; row <= source.Dimension.Rows; row++)
+            {
+                var product = source.Cells[row, 1].GetValue<string>();
+                var name = source.Cells[row, 2].GetValue<string>();                
+                var target = DateTime.Parse(source.Cells[row, 3].GetValue<string>());
+                var pproduct = await this._productQueryComponent.GetProductByName(customerId, product);
+                await this._productComponent.CreateOrUpdateAnchor(pproduct.Id, name, target);                
+            }
+        }
+
+        private async Task ImportSquadFeatures(int customerId, ExcelWorksheet source) {
+            for (int row = 2; row <= source.Dimension.Rows; row++)
+            {
+                var product = source.Cells[row, 1].GetValue<string>();                
+                var squad = source.Cells[row, 2].GetValue<string>();
+                var feature = source.Cells[row, 3].GetValue<string>();
+                var psquad = await this._squadQueryComponent.GetSquadByName(customerId, squad);
+                var pproduct = await this._productQueryComponent.GetProductByName(customerId, product);
+                var pfeature = await this._featureQueryComponent.GetFeatureByName(pproduct.Id, feature);
+
+                await this._featureComponent.RegisterSquad(new SquadFeaturePostRp() {
+                     SquadId = psquad.Id,
+                     FeatureId =  pfeature.Id
+                });                                
+            }
+        }
+
         public async Task<List<string>> ImportMetadata(int customerId, Stream input)
         {
-            var logs = new List<string>(); 
+            var logs = new List<string>();
 
             var customer = await this._dbContext.Customers.Where(c => c.Id == customerId).SingleAsync();
             var squads = await this._dbContext.Squads.Where(c => c.CustomerId == customerId).ToListAsync();
@@ -76,6 +368,9 @@ namespace Owlvey.Falcon.Components
                     logs.Add(" add update " + name);
                     await this._squadComponent.CreateOrUpdate(customer, name, description, avatar);
                 }
+
+                var memberSheet = package.Workbook.Worksheets["Members"];
+                await this.ImportMembers(customerId, memberSheet);
 
                 var productSheet = package.Workbook.Worksheets["Products"];
 
@@ -163,6 +458,7 @@ namespace Owlvey.Falcon.Components
 
                 var sources = await this._dbContext.Sources.Include(c => c.Product).Where(c => c.Product.CustomerId == customerId).ToListAsync();
 
+                var sourceItems = new List<(SourceEntity, SourceItemPostRp)>();
                 for (int row = 2; row <= sourceItemsSheet.Dimension.Rows; row++)
                 {
                     var product = sourceItemsSheet.Cells[row, 1].GetValue<string>();
@@ -173,16 +469,25 @@ namespace Owlvey.Falcon.Components
                     var end = DateTime.Parse(sourceItemsSheet.Cells[row, 6].GetValue<string>());
                     if (product != null && source != null)
                     {
-                        await this._sourceItemComponent.Create(new SourceItemPostRp()
+
+                        var tmp = sources.Where(c => c.Name == source && c.Product.Name == product).Single();
+                        sourceItems.Add((tmp, new SourceItemPostRp()
                         {
-                            SourceId = sources.Where(c => c.Name == source && c.Product.Name == product).Single().Id.Value,
+                            SourceId = tmp.Id.Value,
                             Start = start,
                             End = end,
                             Good = good,
                             Total = total
-                        });
+                        }));                        
                     }
                 }
+
+                var groups = sourceItems.GroupBy(c => c.Item1, new SourceEntityComparer());
+                foreach (var item in groups)
+                {
+                    await this._sourceItemComponent.BulkInsert(item.Key, item.Select(c=>c.Item2).ToList());
+                }
+
 
                 var incidentsSheet = package.Workbook.Worksheets["Incidents"];
                 var products = await this._dbContext.Products.Where(c => c.CustomerId == customerId).ToListAsync();
@@ -192,7 +497,8 @@ namespace Owlvey.Falcon.Components
                     IncidentMigrationRp a;
                     var product = incidentsSheet.Cells[row, 1].GetValue<string>();
                     var key = incidentsSheet.Cells[row, 2].GetValue<string>();
-                    if (!string.IsNullOrWhiteSpace(product) && !string.IsNullOrWhiteSpace(key)) {
+                    if (!string.IsNullOrWhiteSpace(product) && !string.IsNullOrWhiteSpace(key))
+                    {
                         var title = incidentsSheet.Cells[row, 3].GetValue<string>();
                         var affected = incidentsSheet.Cells[row, 4].GetValue<int>();
                         var ttd = incidentsSheet.Cells[row, 5].GetValue<int>();
@@ -222,192 +528,30 @@ namespace Owlvey.Falcon.Components
                 }
 
                 var incidentsFeaturesSheet = package.Workbook.Worksheets["IncidentFeatures"];
-                var incidents = await  this._dbContext.Incidents.Where(c => c.Product.CustomerId == customerId).ToListAsync();
+                var incidents = await this._dbContext.Incidents.Where(c => c.Product.CustomerId == customerId).ToListAsync();
                 var features = await this._dbContext.Features.Where(c => c.Product.CustomerId == customerId).ToListAsync();
-                for (int row = 2; row <= incidentsFeaturesSheet.Dimension.Rows; row++) {
+                for (int row = 2; row <= incidentsFeaturesSheet.Dimension.Rows; row++)
+                {
                     var product = incidentsFeaturesSheet.Cells[row, 1].GetValue<string>();
                     var key = incidentsFeaturesSheet.Cells[row, 2].GetValue<string>();
                     var feature = incidentsFeaturesSheet.Cells[row, 3].GetValue<string>();
                     await this._incidentComponent.RegisterFeature(
-                        incidents.Where(c=>c.Key == key).Single().Id.Value, 
-                        features.Where(c=>c.Name == feature).Single().Id.Value);                    
+                        incidents.Where(c => c.Key == key).Single().Id.Value,
+                        features.Where(c => c.Name == feature).Single().Id.Value);
                 }
+
+                var squadFeaturesSheet = package.Workbook.Worksheets["SquadFeatures"];
+                await this.ImportSquadFeatures(customerId, squadFeaturesSheet);
+
+                var anchorsSheet = package.Workbook.Worksheets["Anchors"];
+                await this.ImportAnchors(customerId, anchorsSheet);
             }
             return logs;
         }
-        public async Task<(
-            CustomerEntity customer,
-            IEnumerable<SquadMigrationRp> squads,
-            IEnumerable<MemberMigrateRp> members,
-            IEnumerable<ProductMigrationRp> products,
-            IEnumerable<ServiceMigrateRp> services,
-            IEnumerable<ServiceMapMigrateRp> serviceMaps,
-            IEnumerable<FeatureMigrateRp> features,
-            IEnumerable<IndicatorMigrateRp> indicators,
-            IEnumerable<SourceMigrateRp> sources,
-            IEnumerable<SourceItemMigrationRp> items,
-            IEnumerable<IncidentMigrationRp> incidents,
-            IEnumerable<IncidentFeatureMigrationRp> incidentMaps
-            )> Export(int customerId, bool includeItems = false)
-        {
-            var customer = await this._dbContext.Customers
-                .Include(c => c.Products).ThenInclude(c => c.Services).Where(c => c.Id == customerId)                
-                .SingleAsync();
-
-            var incidents = await this._dbContext.Incidents.Include(c=>c.FeatureMaps).ThenInclude(c=>c.Feature).Where(c => c.Product.CustomerId == customerId).ToListAsync();
-            var squads = await this._dbContext.Squads.Include(c => c.Members).ThenInclude(c => c.User).Where(c => c.CustomerId == customerId).ToListAsync();
-            var squadLites = this._mapper.Map<IEnumerable<SquadMigrationRp>>(squads);
-            var productLites = this._mapper.Map<IEnumerable<ProductMigrationRp>>(customer.Products);
-            var serviceLites = this._mapper.Map<IEnumerable<ServiceMigrateRp>>(customer.Products.SelectMany(c => c.Services));
-            var memberLites = new List<MemberMigrateRp>();
-            foreach (var squad in squads)
-            {
-                foreach (var item in squad.Members)
-                {
-                    memberLites.Add(new MemberMigrateRp()
-                    {
-                        Email = item.User.Email,
-                        Squad = squad.Name
-                    });
-                }
-            }
-
-            var features = await this._dbContext.Features.Include(c => c.Product).Include(c => c.ServiceMaps).ThenInclude(c => c.Service).Where(c => c.Product.CustomerId == customerId).ToListAsync();
-            var featureLites = new List<FeatureMigrateRp>();
-            var serviceMapLites = new List<ServiceMapMigrateRp>();
-
-            foreach (var item in features)
-            {
-                var tmp = this._mapper.Map<FeatureMigrateRp>(item);
-                featureLites.Add(tmp);
-
-                foreach (var serv in item.ServiceMaps)
-                {
-                    serviceMapLites.Add(new ServiceMapMigrateRp()
-                    {
-                        Product = item.Product.Name,
-                        Feature = item.Name,
-                        Service = serv.Service.Name
-                    });
-                }
-            }
-
-            var sources = await this._dbContext.Sources.Include(c => c.Product).Include(c => c.Indicators).ThenInclude(c => c.Feature).Where(c => c.Product.CustomerId == customerId).ToListAsync();
-            var sourceLites = this._mapper.Map<IEnumerable<SourceMigrateRp>>(sources);
-
-            var indicatorLites = new List<IndicatorMigrateRp>();
-
-            foreach (var item in sources)
-            {
-                foreach (var indicator in item.Indicators)
-                {
-                    indicatorLites.Add(new IndicatorMigrateRp()
-                    {
-                        Product = item.Product.Name,
-                        Feature = indicator.Feature.Name,
-                        Source = item.Name
-                    });
-                }
-            }
-
-            List<SourceItemMigrationRp> items = new List<SourceItemMigrationRp>();
-            if (includeItems) {
-                var temp = await this._dbContext.SourcesItems.Include(c=>c.Source).Where(c => c.Source.Product.CustomerId == customerId).ToListAsync();
-                foreach (var item in temp)
-                {
-                    var product = customer.Products.Where(c => c.Id == item.Source.ProductId).Single();
-
-                    items.Add(new SourceItemMigrationRp()
-                    {
-                        Product = product.Name,
-                        End = item.End.ToString("s", System.Globalization.CultureInfo.InvariantCulture),
-                        Start = item.Start.ToString("s", System.Globalization.CultureInfo.InvariantCulture),
-                        Good = item.Good,
-                        Source = item.Source.Name,
-                        Total = item.Total
-                    });
-
-                }
-            }
-
-            List<IncidentMigrationRp> incidentsLite = new List<IncidentMigrationRp>();
-            List<IncidentFeatureMigrationRp> incidentFeaturesLite = new List<IncidentFeatureMigrationRp>();
-            foreach (var item in incidents)
-            {
-                incidentsLite.Add(new IncidentMigrationRp() {
-                    Product = item.Product.Name,
-                    Key = item.Key,
-                    Affected = item.Affected,
-                    Start = item.Start.ToString("s", System.Globalization.CultureInfo.InvariantCulture),
-                    End = item.End.ToString("s", System.Globalization.CultureInfo.InvariantCulture),                     
-                    Title = item.Title,
-                    TTD = item.TTD,
-                    TTE = item.TTE,
-                    TTF = item.TTF,
-                    URL = item.Url
-                });
-                foreach (var incidentFeature in item.FeatureMaps)
-                {
-                    incidentFeaturesLite.Add(new IncidentFeatureMigrationRp() {
-                         Product = item.Product.Name,
-                         Feature = incidentFeature.Feature.Name,
-                         IncidentKey = item.Key
-                    });
-                }
-            }
-            return (customer, squadLites, memberLites, productLites, serviceLites, serviceMapLites, featureLites, indicatorLites, sourceLites, items, incidentsLite, incidentFeaturesLite);
-
-        }
-
-        public async Task<(CustomerEntity entity, MemoryStream stream)> ExportExcel(int customerId, bool includeData)
-        {
-            var (customer, squadLites, memberLites, productLites, serviceLites, serviceMapLites, featureLites,
-                  indicatorLites, sourceLites, sourceItemsLites, incidentLites, incidentFeatureMap) = await this.Export(customerId, includeData);
-
-            var stream = new MemoryStream();
-            using (var package = new ExcelPackage(stream))
-            {
-                var squadSheet = package.Workbook.Worksheets.Add("Squads");
-                squadSheet.Cells.LoadFromCollection(squadLites, true);
-
-                var membersSheet = package.Workbook.Worksheets.Add("Members");
-                membersSheet.Cells.LoadFromCollection(memberLites, true);
-
-                var productSheet = package.Workbook.Worksheets.Add("Products");
-                productSheet.Cells.LoadFromCollection(productLites, true);
-
-                var servicesSheet = package.Workbook.Worksheets.Add("Services");
-                servicesSheet.Cells.LoadFromCollection(serviceLites, true);
-
-                var servicesMapSheet = package.Workbook.Worksheets.Add("ServicesMap");
-                servicesMapSheet.Cells.LoadFromCollection(serviceMapLites, true);
-
-                var featuresSheet = package.Workbook.Worksheets.Add("Features");
-                featuresSheet.Cells.LoadFromCollection(featureLites, true);
-
-                var indicatorsSheet = package.Workbook.Worksheets.Add("Indicators");
-                indicatorsSheet.Cells.LoadFromCollection(indicatorLites, true);
-
-                var sourcesSheet = package.Workbook.Worksheets.Add("Sources");
-                sourcesSheet.Cells.LoadFromCollection(sourceLites, true);
-
-                var sourceItemsSheet = package.Workbook.Worksheets.Add("SourceItems");
-                sourceItemsSheet.Cells.LoadFromCollection(sourceItemsLites, true);
-
-                var incidentSheet = package.Workbook.Worksheets.Add("Incidents");
-                incidentSheet.Cells.LoadFromCollection(incidentLites, true);
-
-                var incidentFeaturesSheet = package.Workbook.Worksheets.Add("IncidentFeatures");
-                incidentFeaturesSheet.Cells.LoadFromCollection(incidentFeatureMap, true);
-
-                package.Save();
-            }
-            stream.Position = 0;
-            return (customer, stream);
-        }
-       
 
         #endregion
+
+
 
     }
 }

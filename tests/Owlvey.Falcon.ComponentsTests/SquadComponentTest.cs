@@ -129,7 +129,7 @@ namespace Owlvey.Falcon.ComponentsTests
                 Email = "test@test.com"
             });
 
-            var id = response.GetResult<int>("Id");
+            var id = response.Id;
 
             var user = await userQueryComponent.GetUserById(id);
 

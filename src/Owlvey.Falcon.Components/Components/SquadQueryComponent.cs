@@ -136,6 +136,7 @@ namespace Owlvey.Falcon.Components
         public async Task<IEnumerable<SquadGetListRp>> GetSquads(int customerId)
         {
             var entities = await this._dbContext.Squads
+                .Include(c=>c.Members)
                 .Where(c=> c.Customer.Id.Equals(customerId)).ToListAsync();
 
             return this._mapper.Map<IEnumerable<SquadGetListRp>>(entities);
@@ -147,6 +148,7 @@ namespace Owlvey.Falcon.Components
             DateTime end)
         {
             var entities = await this._dbContext.Squads
+                .Include(c => c.Members)
                 .Where(c => c.Customer.Id.Equals(customerId)).ToListAsync();
             List<SquadGetListRp> result = new List<SquadGetListRp>();
             foreach (var squad in entities)
@@ -158,7 +160,8 @@ namespace Owlvey.Falcon.Components
                      Name = tmp.Name,
                      Avatar = tmp.Avatar,
                      Points = tmp.Points,
-                     Features = tmp.Features.Count()
+                     Features = tmp.Features.Count(),
+                     Members = squad.Members.Count()
                 });
             }
             return result;

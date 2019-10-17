@@ -15,7 +15,7 @@ namespace Owlvey.Falcon.Core.Entities
                     ModifiedBy = user,
                     CreatedOn = on,
                     ModifiedOn = on,
-                    Target = new DateTime(on.Year, 1, 1)
+                    Target = new DateTime(on.Year, 1, 1).Date
                 };
                 entity.Product = product;                
                 entity.Validate();

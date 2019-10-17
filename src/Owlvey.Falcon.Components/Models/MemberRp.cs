@@ -12,7 +12,9 @@ namespace Owlvey.Falcon.Models
 
     public class MemberMigrateRp {
         public string Email { get; set; }
+        public string Name { get; set; }        
         public string Squad { get; set; }
+        public string Avatar { get; set; }
     }
 
     public class MemberGetRp : MemberBaseRp

@@ -5,6 +5,14 @@ using System.Text;
 
 namespace Owlvey.Falcon.Models
 {
+
+    public class SquadFeatureMigrationRp
+    {
+        public string Product { get; set; }
+        public string Squad { get; set; }
+        public string Feature { get; set; }
+    }
+
     public class SquadBaseRp
     {
         public string Name { get; set; }
@@ -39,6 +47,7 @@ namespace Owlvey.Falcon.Models
     {
         public decimal Points { get; set; }
         public int Features { get; set; }
+        public int Members { get; set; }
     }
 
     public class SquadPostRp {

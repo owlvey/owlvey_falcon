@@ -1,4 +1,5 @@
 ﻿using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Repositories;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,6 +18,9 @@ namespace Owlvey.Falcon.ComponentsTests
             
             var container = ComponentTestFactory.BuildContainer();
             var customerComponet = container.GetInstance<CustomerComponent>();
+            var userComponent = container.GetInstance<UserComponent>();
+            var squadQueryComponent = container.GetInstance<SquadQueryComponent>();
+            var squadComponent = container.GetInstance<SquadComponent>();
             var migrationComponent = container.GetInstance<MigrationComponent>();
 
             var result = await customerComponet.CreateCustomer(new Models.CustomerPostRp()
@@ -24,13 +28,77 @@ namespace Owlvey.Falcon.ComponentsTests
                 Name = "test"
             });
 
+            var user1 = await userComponent.CreateUser(new Models.UserPostRp() { Email = "test1@test.com" });
+            var user2 = await userComponent.CreateUser(new Models.UserPostRp() { Email = "test2@test.com" });
+
+            var squads = await squadQueryComponent.GetSquads(result.Id);
+
+            foreach (var item in squads)
+            {
+                await squadComponent.RegisterMember(item.Id, user1.Id);
+                await squadComponent.RegisterMember(item.Id, user2.Id);
+            }
+
             var (customer, stream) = await migrationComponent.ExportExcel(result.Id, false);
 
             stream.Position = 0;
+
             await migrationComponent.ImportMetadata(customer.Id.Value, stream);
+        }
+
+
+        [Fact]
+        public async Task ExporImportEmpty()
+        {
+            var container = ComponentTestFactory.BuildContainer();
+            var customerComponet = container.GetInstance<CustomerComponent>();
+            var userComponent = container.GetInstance<UserComponent>();            
+            
+            var squadQueryComponent = container.GetInstance<SquadQueryComponent>();
+            var squadComponent = container.GetInstance<SquadComponent>();
+            var migrationComponent = container.GetInstance<MigrationComponent>();
+            var dbcontext = container.GetInstance<FalconDbContext>();
+
+
+            var target = new Core.Entities.CustomerEntity() { Name = "target_test", Avatar = "target" };
+            dbcontext.Customers.Add(target);
+            await dbcontext.SaveChangesAsync();
+
+            var result = await customerComponet.CreateCustomer(new Models.CustomerPostRp()
+            {
+                Name = "test"
+            });
+
+            var user1 = await userComponent.CreateUser(new Models.UserPostRp() { Email = "test1@test.com" });
+            var user2 = await userComponent.CreateUser(new Models.UserPostRp() { Email = "test2@test.com" });
+
+            var squads = await squadQueryComponent.GetSquads(result.Id);
+
+            foreach (var item in squads)
+            {
+                await squadComponent.RegisterMember(item.Id, user1.Id);
+                await squadComponent.RegisterMember(item.Id, user2.Id);
+            }
+
+            var (_, stream) = await migrationComponent.ExportExcel(result.Id, false);
+
+            stream.Position = 0;
+
+            await migrationComponent.ImportMetadata(target.Id.Value, stream);
+
+
+            var squadsResult = await squadQueryComponent.GetSquads(target.Id.Value);
+
+            Assert.NotEmpty(squadsResult);
+
+            foreach (var item in squadsResult)
+            {
+                var squadResult = await squadQueryComponent.GetSquadById(item.Id);
+                Assert.NotEmpty(squadResult.Members);                
+            }
 
         }
-        
+
         public async Task ImportFromFileData() {
             var container = ComponentTestFactory.BuildContainer();
             var customerComponet = container.GetInstance<CustomerComponent>();

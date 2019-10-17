@@ -206,12 +206,9 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok(model);
         }
         #endregion
-
-
-
-
-
+        
         #region reports
+
         [HttpGet("{id}/reports/daily/series")]
         [ProducesResponseType(typeof(SeriesGetRp), 200)]
         public async Task<IActionResult> ReportSeries(int id, DateTime? start, DateTime? end)
@@ -228,6 +225,7 @@ namespace Owlvey.Falcon.API.Controllers
 
             return this.Ok(result);
         }
+
         #endregion
 
     }

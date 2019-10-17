@@ -186,15 +186,15 @@ namespace Owlvey.Falcon.API.Controllers
             var result = await this._indicatorComponent.GetSourcesComplement(id);
             return this.Ok(result);
         }
-
-        #endregion
-
         [HttpDelete("{id}/indicators/{sourceId}")]
         public async Task<IActionResult> DeleteIndicator(int id, int sourceId)
         {
             await this._indicatorComponent.Delete(id, sourceId);
             return this.Ok();
         }
+        #endregion
+
+
         #region Squads
 
         [HttpPut("{id}/squads/{squadId}")]

@@ -26,14 +26,13 @@ namespace Owlvey.Falcon.Components
 
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
 
-            var target = await this._dbContext.Users.Where(c => c.Id == id).SingleOrDefaultAsync();
-
-            target.Update(model.Email, model.Avatar);
-
+            var target = await this._dbContext.Users.Where(c => c.Id == id).SingleAsync();
+            target.Update(model.Email, model.Avatar, model.Name);
             this._dbContext.Users.Update(target);
             await this._dbContext.SaveChangesAsync();
 
-            return this._mapper.Map<UserGetListRp>(target); 
+            return this._mapper.Map<UserGetListRp>(target);
+
         }
         public async Task DeleteUser(int id) {
             var target = await this._dbContext.Users.Where(c => c.Id == id).SingleOrDefaultAsync();
@@ -42,26 +41,35 @@ namespace Owlvey.Falcon.Components
                 await this._dbContext.SaveChangesAsync();
             }
         }
-        public async Task<BaseComponentResultRp> CreateUser(UserPostRp model)
-        {
-            var result = new BaseComponentResultRp();
+
+        public async Task<UserGetListRp> CreateOrUpdate(string email, string name, string avatar) {
+            var createdBy = this._identityService.GetIdentity();
+            var entity = await this._dbContext.Users.Where(c => c.Email == email).SingleOrDefaultAsync();
+            if (entity == null)
+            {
+                entity = UserEntity.Factory.Create(createdBy, this._datetimeGateway.GetCurrentDateTime(), email);
+                this._dbContext.Users.Add(entity);
+                await this._dbContext.SaveChangesAsync();
+                
+            }
+            this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
+            entity.Update(email, name, avatar);
+            await this._dbContext.SaveChangesAsync();
+            return this._mapper.Map<UserGetListRp>(entity);
+        }
+
+        public async Task<UserGetListRp> CreateUser(UserPostRp model)
+        {            
             var createdBy = this._identityService.GetIdentity();
 
-            var exists = await this._dbContext.Users.Where(c => c.Email == model.Email).SingleOrDefaultAsync();
-            if (exists == null)
+            var entity = await this._dbContext.Users.Where(c => c.Email == model.Email).SingleOrDefaultAsync();
+            if (entity == null)
             {
-                var entity = UserEntity.Factory.Create(createdBy, this._datetimeGateway.GetCurrentDateTime(), model.Email);
-
+                entity = UserEntity.Factory.Create(createdBy, this._datetimeGateway.GetCurrentDateTime(), model.Email);
                 this._dbContext.Users.Add(entity);
-
                 await this._dbContext.SaveChangesAsync();
-
-                result.AddResult("Id", entity.Id);
-            }
-            else {
-                result.AddResult("Id", exists.Id);
-            }
-            return result;
+            }            
+            return this._mapper.Map<UserGetListRp>(entity);
         }
     }
 }

@@ -73,7 +73,7 @@ namespace Owlvey.Falcon.ManualTests
                 Name = "Application"
             });
 
-            var product = await comQueryProduct.GetProductByName("Application");
+            var product = await comQueryProduct.GetProductByName( customer.Id, "Application");
 
             var biz_names = new[] { "Login", "Onboarding", "Password Recovery",
                 "Mesa de cambio", "Mi Lista", "Pago de Servicios", "Pago de Tarjeta de Credito",

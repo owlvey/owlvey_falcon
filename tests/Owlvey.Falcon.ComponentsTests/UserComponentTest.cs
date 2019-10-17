@@ -48,7 +48,7 @@ namespace Owlvey.Falcon.ComponentsTests
                 Email = "test@test.com"
             });
 
-            var id = response.GetResult<int>("Id");
+            var id = response.Id;
 
             var result = await userQueryComponent.GetUserById(id);
 
@@ -57,12 +57,16 @@ namespace Owlvey.Falcon.ComponentsTests
 
             await userComponent.PutUser(id, new Models.UserPutRp() {
                  Avatar = "change",
-                 Email = "change"
+                 Email = "change",
+                 Name = "name"
+                 
             });
 
             result = await userQueryComponent.GetUserById(id);
 
             Assert.Equal("change", result.Avatar);
+            Assert.Equal("name", result.Name);
+            Assert.Equal("change", result.Email);
 
 
             await userComponent.DeleteUser(id);

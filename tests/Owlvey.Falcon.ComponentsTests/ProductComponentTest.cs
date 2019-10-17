@@ -82,6 +82,28 @@ namespace Owlvey.Falcon.ComponentsTests
         }
 
         [Fact]
+        public async Task ProductReportDaily() {
+            var container = ComponentTestFactory.BuildContainer();
+            var customerId = await ComponentTestFactory.BuildCustomer(container);
+            var productComponet = container.GetInstance<ProductComponent>();
+            var productQueryComponent = container.GetInstance<ProductQueryComponent>();
+
+
+            var product = (await productQueryComponent.GetProducts(customerId)).ElementAt(0);            
+
+            var result = await productQueryComponent.GetDailyServiceSeriesById(product.Id, OwlveyCalendar.StartJanuary2019,
+                OwlveyCalendar.January201910);
+
+            Assert.NotEmpty(result.Series);
+
+            var resultFeatures = await productQueryComponent.GetDailyFeaturesSeriesById(product.Id, OwlveyCalendar.StartJanuary2019,
+                OwlveyCalendar.January201910);
+
+            Assert.NotEmpty(resultFeatures.Series);
+            
+        }
+
+        [Fact]
         public async Task AnchorMaintenanceSuccess()
         {
             var container = ComponentTestFactory.BuildContainer();
@@ -95,10 +117,10 @@ namespace Owlvey.Falcon.ComponentsTests
                 Name = "test"
             });
 
-            var anchor = await productQueryComponent.GetAnchor(product.Id, "sli");
+            var anchor = await productQueryComponent.GetAnchor(product.Id, "sample");
             Assert.NotNull(anchor);
 
-            await productComponet.PutAnchor(product.Id, "sli", new Models.AnchorPutRp() { Target = DateTime.Now });
+            await productComponet.PutAnchor(product.Id, "sample", new Models.AnchorPutRp() { Target = DateTime.Now });
 
         }
     }

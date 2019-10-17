@@ -81,6 +81,11 @@ namespace Owlvey.Falcon.Components
             return result;
         }
 
+        public async Task RegisterMember(int customerId, string name, int userId) {
+            var squad = await this._dbContext.Squads.Where(c => c.CustomerId == customerId && c.Name == name).SingleAsync();
+            await this.RegisterMember(squad.Id.Value, userId);
+        }
+
         public async Task RegisterMember(int id, int userId) {
             var exists = await this._dbContext.Members.Where(c => c.UserId == userId && c.SquadId == id).SingleOrDefaultAsync();
             if (exists == null) {

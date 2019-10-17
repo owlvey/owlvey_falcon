@@ -36,12 +36,27 @@ namespace Owlvey.Falcon.Components
         /// <returns></returns>
         public async Task<FeatureGetRp> GetFeatureById(int id)
         {
-            var entity = await this._dbContext.Features.FirstOrDefaultAsync(c => c.Id.Equals(id));
+            var entity = await this._dbContext.Features
+                .Include(c => c.Indicators).ThenInclude(c=>c.Source)
+                .Include(c =>c.Squads).ThenInclude(c=>c.Squad)
+                .Where(c => c.Id.Equals(id))
+                .SingleAsync();
 
-            if (entity == null)
-                return null;
+            var result = this._mapper.Map<FeatureGetRp>(entity);
 
-            return this._mapper.Map<FeatureGetRp>(entity);
+            foreach (var item in entity.Indicators)
+            {
+                result.Indicators.Add(new IndicatorGetListRp() {
+                     Id = item.Id.Value,
+                     FeatureId = item.FeatureId,
+                     SourceId = item.SourceId,
+                     CreatedBy = item.CreatedBy,
+                     CreatedOn = item.CreatedOn,
+                     Source = item.Source.Name
+                });
+            }
+            result.Indicators = result.Indicators.OrderBy(c => c.Id).ToList();
+            return result;
         }
 
         public async Task<IEnumerable<FeatureGetListRp>> SearchFeatureByName(int productId, string name) {

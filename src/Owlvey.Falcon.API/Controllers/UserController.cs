@@ -70,7 +70,7 @@ namespace Owlvey.Falcon.API.Controllers
 
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(UserGetRp), 200)]
-        public async Task<IActionResult> Put(int id, UserPutRp model)
+        public async Task<IActionResult> Put(int id, [FromBody]UserPutRp model)
         {
             var result = await this._userService.PutUser(id, model);
             return this.Ok(result);
@@ -110,15 +110,7 @@ namespace Owlvey.Falcon.API.Controllers
                 return this.BadRequest(this.ModelState);
 
             var response = await this._userService.CreateUser(resource);
-
-            if (response.HasConflicts()) {
-                return this.Conflict(response.GetConflicts());
-            }
-
-            var id = response.GetResult<int>("Id");
-            var newResource = await this._userQueryService.GetUserById(id);
-
-            return this.Created(Url.RouteUrl("GetUserId", new { id = id }), newResource);
+            return this.Created(Url.RouteUrl("GetUserId", new { id = response.Id }), response);
         }
 
     }

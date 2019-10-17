@@ -9,11 +9,12 @@ namespace Owlvey.Falcon.Models
     {
         public string Email { get; set; }
         public int Id { get; set; }
+        public string Avatar { get; set; }
+        public string Name { get; set; }
     }
 
     public class UserGetRp : UserBaseRp
-    {
-        public string Avatar { get; set; }
+    {        
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
     }
@@ -35,6 +36,8 @@ namespace Owlvey.Falcon.Models
         public string Email { get; set; }
         [Required]
         public string Avatar { get; set; }
+        [Required]
+        public string Name { get; set; }
     }
 
 }

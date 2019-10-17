@@ -193,7 +193,8 @@ namespace Owlvey.Falcon.API.Controllers
 
 
         #region reports
-        [HttpGet("{id}/reports/daily/series")]
+
+        [HttpGet("{id}/reports/daily/services/series")]
         [ProducesResponseType(typeof(SeriesGetRp), 200)]
         public async Task<IActionResult> ReportSeries(int id, DateTime? start, DateTime? end, int period = 1)
         {
@@ -205,7 +206,26 @@ namespace Owlvey.Falcon.API.Controllers
             {
                 return this.BadRequest("end is required");
             }
-            var result = await this._productQueryService.GetDailySeriesById(id, start.Value, end.Value);
+            var result = await this._productQueryService.GetDailyServiceSeriesById(id, start.Value, end.Value);
+
+            return this.Ok(result);
+        }
+
+
+        [HttpGet("{id}/reports/daily/features/series")]
+        [ProducesResponseType(typeof(SeriesGetRp), 200)]
+        public async Task<IActionResult> ReportFeaturesSeries(int id,
+            DateTime? start, DateTime? end)
+        {
+            if (!start.HasValue)
+            {
+                return this.BadRequest("start is required");
+            }
+            if (!end.HasValue)
+            {
+                return this.BadRequest("end is required");
+            }
+            var result = await this._productQueryService.GetDailyFeaturesSeriesById(id, start.Value, end.Value);
 
             return this.Ok(result);
         }

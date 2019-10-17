@@ -13,6 +13,7 @@ namespace Owlvey.Falcon.Components
         {
             cfg.CreateMap<SquadEntity, Models.SquadGetListRp>()
                 .ForMember(d => d.Features, m => m.Ignore())
+                .ForMember(d => d.Members, m => m.MapFrom(c=>c.Members.Count()))
                 .ForMember(d => d.Points, m => m.Ignore());
             cfg.CreateMap<SquadEntity, Models.SquadGetRp>()
                 .ForMember(d=>d.Members, m=> m.MapFrom(c=>c.Members.Select(d=>d.User)))

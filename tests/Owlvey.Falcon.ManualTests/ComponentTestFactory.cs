@@ -169,7 +169,7 @@ namespace Owlvey.Falcon.ManualTests
                 Name = productName
             });
 
-            var product = await productQueryComponent.GetProductByName(productName);
+            var product = await productQueryComponent.GetProductByName(customer.Id, productName);
 
             return (customer.Id, product.Id);
         }
