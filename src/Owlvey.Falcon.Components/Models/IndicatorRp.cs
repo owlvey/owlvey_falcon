@@ -7,8 +7,8 @@ namespace Owlvey.Falcon.Models
     }
     public class IndicatorMigrateRp {
         public string Product { get; set; }
-        public string Source { get; set; }
         public string Feature { get; set; }
+        public string Source { get; set; }        
     }
     public class IndicatorGetRp : IndicatorBaseRp
     {

@@ -110,6 +110,47 @@ namespace Owlvey.Falcon.Components
             return result;
         }
 
+        public async Task<IEnumerable<IndicatorMigrateRp>> ExportIndicators(int customerId) {
+            var result = new List<IndicatorMigrateRp>();
+
+            var indicators = await this._dbContext.Indicators
+                .Include(c=>c.Source)
+                .Include(c=>c.Feature).ThenInclude(c=>c.Product)
+                .Where(c => c.Feature.Product.CustomerId == customerId).ToListAsync();
+
+            foreach (var item in indicators.OrderBy(c=>c.Id))
+            {
+                result.Add(new IndicatorMigrateRp() {
+                     Product = item.Feature.Product.Name,
+                     Feature = item.Feature.Name,
+                     Source = item.Source.Name
+                });
+            }
+
+            return result;
+
+        }
+
+        public async Task<IEnumerable<ServiceMapMigrateRp>> ExportServiceMap(int customerId)
+        {
+            var result = new List<ServiceMapMigrateRp>();
+
+            var maps = await this._dbContext.ServiceMaps
+                .Include(c=>c.Service).ThenInclude(c=>c.Product)
+                .Include(c=>c.Feature)
+                .Where(c => c.Service.Product.CustomerId == customerId).ToListAsync();
+
+            foreach (var item in maps.OrderBy(c=>c.Id))
+            {
+                result.Add(new ServiceMapMigrateRp() {
+                     Product = item.Service.Product.Name,
+                     Service = item.Service.Name,
+                     Feature = item.Feature.Name
+                });
+            }
+            return result;
+        }
+
 
         public async Task<(
             CustomerEntity customer,
@@ -136,7 +177,11 @@ namespace Owlvey.Falcon.Components
             var squads = await this._dbContext.Squads.Include(c => c.Members).ThenInclude(c => c.User).Where(c => c.CustomerId == customerId).ToListAsync();
             var squadLites = this._mapper.Map<IEnumerable<SquadMigrationRp>>(squads);
             var productLites = this._mapper.Map<IEnumerable<ProductMigrationRp>>(customer.Products);
-            var serviceLites = this._mapper.Map<IEnumerable<ServiceMigrateRp>>(customer.Products.SelectMany(c => c.Services));
+
+            var serviceLites = this._mapper.Map<IEnumerable<ServiceMigrateRp>>(
+                    customer.Products.SelectMany(c => c.Services).OrderBy(c=>c.Id).ToList()
+                );
+
             var memberLites = new List<MemberMigrateRp>();
             foreach (var squad in squads)
             {
@@ -152,43 +197,23 @@ namespace Owlvey.Falcon.Components
                 }
             }
 
-            var features = await this._dbContext.Features.Include(c => c.Product).Include(c => c.ServiceMaps).ThenInclude(c => c.Service).Where(c => c.Product.CustomerId == customerId).ToListAsync();
+            var features = await this._dbContext.Features
+                .Include(c => c.Product)
+                .Include(c => c.ServiceMaps).ThenInclude(c => c.Service)
+                .Where(c => c.Product.CustomerId == customerId).ToListAsync();
+
             var featureLites = new List<FeatureMigrateRp>();
-            var serviceMapLites = new List<ServiceMapMigrateRp>();
+            var serviceMapLites = await this.ExportServiceMap(customerId);
 
             foreach (var item in features)
             {
                 var tmp = this._mapper.Map<FeatureMigrateRp>(item);
-                featureLites.Add(tmp);
-
-                foreach (var serv in item.ServiceMaps)
-                {
-                    serviceMapLites.Add(new ServiceMapMigrateRp()
-                    {
-                        Product = item.Product.Name,
-                        Feature = item.Name,
-                        Service = serv.Service.Name
-                    });
-                }
+                featureLites.Add(tmp);             
             }
 
             var sources = await this._dbContext.Sources.Include(c => c.Product).Include(c => c.Indicators).ThenInclude(c => c.Feature).Where(c => c.Product.CustomerId == customerId).ToListAsync();
             var sourceLites = this._mapper.Map<IEnumerable<SourceMigrateRp>>(sources);
-
-            var indicatorLites = new List<IndicatorMigrateRp>();
-
-            foreach (var item in sources)
-            {
-                foreach (var indicator in item.Indicators)
-                {
-                    indicatorLites.Add(new IndicatorMigrateRp()
-                    {
-                        Product = item.Product.Name,
-                        Feature = indicator.Feature.Name,
-                        Source = item.Name
-                    });
-                }
-            }
+            var indicatorLites = await this.ExportIndicators(customerId);             
 
             List<SourceItemMigrationRp> items = new List<SourceItemMigrationRp>();
             if (includeItems)
@@ -446,8 +471,8 @@ namespace Owlvey.Falcon.Components
                 for (int row = 2; row <= indicatorSheet.Dimension.Rows; row++)
                 {
                     var product = indicatorSheet.Cells[row, 1].GetValue<string>();
-                    var source = indicatorSheet.Cells[row, 2].GetValue<string>();
-                    var feature = indicatorSheet.Cells[row, 3].GetValue<string>();
+                    var feature = indicatorSheet.Cells[row, 2].GetValue<string>();
+                    var source = indicatorSheet.Cells[row, 3].GetValue<string>();                    
                     if (product != null && source != null)
                     {
                         await this._indicatorComponent.Create(customerId, product, source, feature);

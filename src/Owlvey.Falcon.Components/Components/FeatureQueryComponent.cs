@@ -40,7 +40,11 @@ namespace Owlvey.Falcon.Components
                 .Include(c => c.Indicators).ThenInclude(c=>c.Source)
                 .Include(c =>c.Squads).ThenInclude(c=>c.Squad)
                 .Where(c => c.Id.Equals(id))
-                .SingleAsync();
+                .SingleOrDefaultAsync();
+
+            if (entity == null) {
+                return null;
+            }
 
             var result = this._mapper.Map<FeatureGetRp>(entity);
 
