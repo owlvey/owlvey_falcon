@@ -9,8 +9,9 @@ namespace Owlvey.Falcon.Models
     {
         public long SourceTotal { get; set; }
         public StatsValue SourceStats { get; set; } 
-        public StatsValue FeaturesStats { get; set; } 
-        public StatsValue ServicesStats { get; set; } 
+        public StatsValue FeaturesStats { get; set; }
+        public decimal FeaturesCoverage { get; set; }
+        public StatsValue ServicesStats { get; set; }
 
         public int SLOFail { get; set; }
         public decimal SLOProportion { get; set; }

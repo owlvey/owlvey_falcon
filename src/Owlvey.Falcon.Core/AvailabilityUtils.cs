@@ -53,14 +53,18 @@ namespace Owlvey.Falcon.Core
             return Math.Round(availabilities.Aggregate((a, x) => a * x),5);            
         }
 
-        public static decimal CalculateProportion(decimal total, decimal fail, decimal defaultValue = 1) {
+        public static decimal CalculateFailProportion(decimal total, decimal fail, decimal defaultValue = 1) {            
+            return CalculateProportion(total, total - fail, defaultValue);
+        }
+        public static decimal CalculateProportion(decimal total, decimal good, decimal defaultValue = 1)
+        {
             if (total == 0)
             {
                 return defaultValue;
             }
             else
             {
-                return Math.Round((total - fail)/ total, 1);
+                return Math.Round(good / total, 1);
             }
         }
         public static decimal CalculateAvailability(decimal total, decimal good, decimal defaultValue = 1) {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using Owlvey.Falcon.Core;
+using System.Linq;
 
 namespace Owlvey.Falcon.Models
 {
@@ -46,6 +47,14 @@ namespace Owlvey.Falcon.Models
         public decimal Budget { get {
                 return AvailabilityUtils.MeasureBudget(Availability, SLO);
             } }
+        public decimal FeatureSlo {
+            get {
+                if (this.Features.Count() == 0 ) {
+                    return this.SLO;
+                }
+                return Math.Round((decimal)Math.Pow((double)this.SLO, 1 / (double)this.Features.Count()), 4);
+            }            
+        }
         public decimal BudgetMinutes { get; set; }
     }
 
@@ -55,6 +64,10 @@ namespace Owlvey.Falcon.Models
         public decimal Availability { get; set; }
         public string Deploy { get; set; }
         public string Risk { get; set; }
+        public decimal FeatureSlo { get {
+                if (this.FeaturesCount == 0) return this.SLO;
+                return Math.Round((decimal)Math.Pow((double)this.SLO, 1 / (double)this.FeaturesCount), 4);                
+            } }
         public decimal Budget
         {
             get

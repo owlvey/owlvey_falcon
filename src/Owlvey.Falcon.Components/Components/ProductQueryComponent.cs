@@ -93,8 +93,9 @@ namespace Owlvey.Falcon.Components
                 };
                 result.Nodes.Add(snode);
 
-
                 var features = await this._featureQueryComponent.GetFeaturesByServiceIdWithAvailability(service.Id, start, end);
+                               
+
                 foreach (var feature in features)
                 {
                     var Id = string.Format("feature_{0}", feature.Id);
@@ -115,7 +116,7 @@ namespace Owlvey.Falcon.Components
                     {
                         From = snode.Id,
                         To = fnode.Id,
-                        Value = fnode.Value - (decimal)snode.Slo,
+                        Value =  fnode.Value - service.FeatureSlo,
                         Tags = new Dictionary<string, object>() {
                             { "Availability", fnode.Value }
                         }
@@ -324,7 +325,7 @@ namespace Owlvey.Falcon.Components
                     mttm = aggIncident.mttm
                 };
 
-                result.FeatureMaps[feature.Id.Value] = feature.Indicators.Select(c => c.SourceId).ToList();
+                result.FeatureMaps[feature.Id.Value] = feature.Indicators.OrderBy(c=>c.Id).Select(c => c.SourceId).ToList();
                 result.SquadMaps[feature.Id.Value] = squadsData.Where(c => c.FeatureId == feature.Id)
                                                      .Select(c => c.SquadId)
                                                      .Distinct().ToList();
@@ -349,7 +350,7 @@ namespace Owlvey.Falcon.Components
                 tmp.Availability = agg.MeasureAvailability();
                 result.Services.Add(tmp);
 
-                result.ServiceMaps[service.Id.Value] = service.FeatureMap.Select(c => c.FeatureId).ToList();
+                result.ServiceMaps[service.Id.Value] = service.FeatureMap.OrderBy(c=>c.Id).Select(c => c.FeatureId).ToList();
 
                 if (tmp.Availability < service.Slo)
                 {
@@ -357,14 +358,15 @@ namespace Owlvey.Falcon.Components
                 }
             }
 
-
-
             result.Services = result.Services.OrderBy(c => c.Availability).ToList();
             result.SLOFail = sloFails;
-            result.SLOProportion = AvailabilityUtils.CalculateProportion(product.Services.Count(), sloFails);
+            result.SLOProportion = AvailabilityUtils.CalculateFailProportion(product.Services.Count(), sloFails);
             result.SourceStats = new StatsValue(result.Sources.Select(c => c.Availability));
             result.SourceTotal = result.Sources.Sum(c => c.Total);
             result.FeaturesStats = new StatsValue(result.Features.Select(c => c.Availability));
+            result.FeaturesCoverage = AvailabilityUtils.CalculateProportion(product.Features.Count(),
+                squadsData.Select(c=>c.FeatureId).Distinct().Count());
+
             result.ServicesStats = new StatsValue(result.Services.Select(c => c.Availability));
             return result;
         }
