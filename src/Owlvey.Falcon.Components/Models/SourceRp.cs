@@ -36,6 +36,7 @@ namespace Owlvey.Falcon.Models
         public string TotalDefinition { get; set; }        
         public string Avatar { get; set; }
         public string Description { get; set; }
+        public string kind { get; set; }
     }
 
     public class SourceGetListRp : SourceLitRp

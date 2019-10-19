@@ -211,8 +211,16 @@ namespace Owlvey.Falcon.Components
                 featureLites.Add(tmp);             
             }
 
-            var sources = await this._dbContext.Sources.Include(c => c.Product).Include(c => c.Indicators).ThenInclude(c => c.Feature).Where(c => c.Product.CustomerId == customerId).ToListAsync();
+            var sources = await this._dbContext.Sources
+                .Include(c => c.Product)
+                .Include(c => c.Indicators)
+                .ThenInclude(c => c.Feature)
+                .Where(c => c.Product.CustomerId == customerId)
+                .ToListAsync();
+
             var sourceLites = this._mapper.Map<IEnumerable<SourceMigrateRp>>(sources);
+
+
             var indicatorLites = await this.ExportIndicators(customerId);             
 
             List<SourceItemMigrationRp> items = new List<SourceItemMigrationRp>();
@@ -373,6 +381,25 @@ namespace Owlvey.Falcon.Components
                 });                                
             }
         }
+        public async Task ImportSource(CustomerEntity customer, ExcelWorksheet source) {            
+            for (int row = 2; row <= source.Dimension.Rows; row++)
+            {
+                var product = source.Cells[row, 1].GetValue<string>();
+                var name = source.Cells[row, 2].GetValue<string>();
+                var tags = source.Cells[row, 3].GetValue<string>();
+                var good = source.Cells[row, 4].GetValue<string>();
+                var total = source.Cells[row, 5].GetValue<string>();
+                var avatar = source.Cells[row, 6].GetValue<string>();
+                var description = source.Cells[row, 7].GetValue<string>();
+                var kind = source.Cells[row, 8].GetValue<string>();
+                if (product != null && name != null)
+                {
+                    await this._sourceComponent.CreateOrUpdate(customer,
+                        product, name, tags, avatar, good, total, description, kind);
+                }
+            }
+        }
+        
 
         public async Task<List<string>> ImportMetadata(int customerId, Stream input)
         {
@@ -440,21 +467,7 @@ namespace Owlvey.Falcon.Components
                 }
 
                 var sourceSheet = package.Workbook.Worksheets["Sources"];
-                for (int row = 2; row <= sourceSheet.Dimension.Rows; row++)
-                {
-                    var product = sourceSheet.Cells[row, 1].GetValue<string>();
-                    var name = sourceSheet.Cells[row, 2].GetValue<string>();
-                    var tags = sourceSheet.Cells[row, 3].GetValue<string>();
-                    var good = sourceSheet.Cells[row, 4].GetValue<string>();
-                    var total = sourceSheet.Cells[row, 5].GetValue<string>();
-                    var avatar = sourceSheet.Cells[row, 6].GetValue<string>();
-                    var description = sourceSheet.Cells[row, 7].GetValue<string>();
-                    if (product != null && name != null)
-                    {
-                        await this._sourceComponent.CreateOrUpdate(customer, product, name, tags, avatar, good, total, description);
-                    }
-
-                }
+                await this.ImportSource(customer, sourceSheet);                
 
                 var serviceMapSheet = package.Workbook.Worksheets["ServicesMap"];
                 for (int row = 2; row <= serviceMapSheet.Dimension.Rows; row++)
