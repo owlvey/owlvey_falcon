@@ -43,7 +43,7 @@ namespace Owlvey.Falcon.Core.Entities
         public virtual ICollection<IndicatorEntity> Indicators { get; set; } = new List<IndicatorEntity>();
 
         public virtual ICollection<SourceItemEntity> SourceItems { get; set; } = new List<SourceItemEntity>();
-        
+          
         public virtual void Update(
             string name, string avatar,
             string goodDefinition, string totalDefinition,            
