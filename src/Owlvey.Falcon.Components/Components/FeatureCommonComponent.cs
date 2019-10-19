@@ -30,8 +30,8 @@ namespace Owlvey.Falcon.Components
                 indicator.Source.SourceItems = sourceItems;
             }
             var agg = new FeatureAvailabilityAggregate(entity);
-
-            return agg.MeasureAvailability();
+            var (availability, _, _) = agg.MeasureAvailability();
+            return availability;
 
         }
     }

@@ -36,6 +36,8 @@ namespace Owlvey.Falcon.Core.Entities
 
         public string Description { get; set; }
 
+        public SourceKindEnum Kind { get; set; }
+
         public virtual ProductEntity Product { get; set; }
 
         public int ProductId { get; set; }

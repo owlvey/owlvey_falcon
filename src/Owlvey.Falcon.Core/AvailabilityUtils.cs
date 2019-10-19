@@ -91,5 +91,22 @@ namespace Owlvey.Falcon.Core
             return Math.Round((decimal)Math.Pow((double)slo, 1 / (double)items), 4);
         }
 
+        public static (int good, int total) UptimeToMinutes(DateTime start, DateTime end, 
+            decimal availability) {
+
+            if (availability > 1)
+            {
+                availability = 1;
+            }
+            if (availability < 0) {
+                availability = 0;
+            }
+
+            var total = end.Subtract(start).TotalMinutes;
+            var good = (decimal)total * availability;
+
+            return ((int)Math.Round(good), (int)Math.Round(total));
+        }
+
     }
 }

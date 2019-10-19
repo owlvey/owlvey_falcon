@@ -253,6 +253,7 @@ namespace Owlvey.Falcon.Migrations
                     TotalDefinition = table.Column<string>(nullable: false),
                     Avatar = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
+                    Kind = table.Column<int>(nullable: false),
                     ProductId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>

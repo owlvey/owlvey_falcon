@@ -1,9 +1,17 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Owlvey.Falcon.Core.Entities;
+using System;
 namespace Owlvey.Falcon.Models
 {
     public class IndicatorBaseRp
     {
-        public int Id { get; set; }        
+        public int Id { get; set; }
+        public string Source { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
+        public SourceKindEnum Kind { get; set; }
+
+        public int SourceId { get; set; }
     }
     public class IndicatorMigrateRp {
         public string Product { get; set; }
@@ -13,10 +21,8 @@ namespace Owlvey.Falcon.Models
     public class IndicatorGetRp : IndicatorBaseRp
     {
         public string CreatedBy { get; set; }
-        public DateTime? CreatedOn { get; set; }
-        public int SourceId { get; set; }
-        public int FeatureId { get; set; }
-        public string Source { get; set; }
+        public DateTime? CreatedOn { get; set; }        
+        public int FeatureId { get; set; }        
         public string SourceAvatar { get; set; }
         public string Feature { get; set; }
         public string FeatureAvatar { get; set; }
@@ -25,10 +31,9 @@ namespace Owlvey.Falcon.Models
     public class IndicatorGetListRp : IndicatorBaseRp
     {
         public string CreatedBy { get; set; }
-        public DateTime? CreatedOn { get; set; }
-        public int SourceId { get; set; }
+        public DateTime? CreatedOn { get; set; }        
         public int FeatureId { get; set; }
-        public string Source { get; set; }
+        
         
     }
 

@@ -71,7 +71,9 @@ namespace Owlvey.Falcon.Components
 
             if (entity == null) {
                 var product = await this._dbContext.Products.SingleAsync(c => c.Id == model.ProductId);
-                entity = SourceEntity.Factory.Create(product, model.Name, this._datetimeGateway.GetCurrentDateTime(), createdBy);
+                entity = SourceEntity.Factory.Create(product, model.Name, 
+                    this._datetimeGateway.GetCurrentDateTime(), createdBy, 
+                    model.Kind);
                 await this._dbContext.AddAsync(entity);
                 await this._dbContext.SaveChangesAsync();
             }
@@ -165,7 +167,7 @@ namespace Owlvey.Falcon.Components
                 Avatar = source.Avatar
             };
 
-            var aggregator = new SourcePeriodAvailabilityAggregate(source, start, end);
+            var aggregator = new SourceDailyAvailabilityAggregate(source, start, end);
             var (_, items) = aggregator.MeasureAvailability();                        
 
             foreach (var item in items)

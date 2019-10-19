@@ -14,19 +14,24 @@ namespace Owlvey.Falcon.Core.Aggregates
         {            
             this.Feature = feature;                        
         }        
-        public decimal MeasureAvailability() {
-            var result = new List<Decimal>();
+        public (decimal availability, int total, int good) MeasureAvailability() {
+            var result = new List<decimal>();
+            int sumTotal = 0;
+            int sumGood = 0; 
             foreach (var item in this.Feature.Indicators)
             {
                 var agg = new IndicatorDateAvailabilityAggregate(item);
-                result.Add(agg.MeasureAvailability());
+                var (availability, total, good) = agg.MeasureAvailability();
+                result.Add(availability);
+                sumTotal += total;
+                sumGood += good;
             }
             if (result.Count > 0)
             {
-                return AvailabilityUtils.CalculateDotAvailability(result);
+                return (AvailabilityUtils.CalculateDotAvailability(result), sumTotal, sumGood);
             }
             else {
-                return 1;
+                return (1, 0, 0);
             }            
         }
     }

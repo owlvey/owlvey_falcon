@@ -28,7 +28,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             source.SourceItems.Add(sourceItemA);
             source.SourceItems.Add(sourceItemB);
 
-            var aggregate = new SourcePeriodAvailabilityAggregate(source,
+            var aggregate = new SourceDailyAvailabilityAggregate(source,
                 OwlveyCalendar.January201906,
                 OwlveyCalendar.January201920);
 
@@ -52,7 +52,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
 
             source.SourceItems.Add(sourceItemA);
 
-            var aggregate = new SourcePeriodAvailabilityAggregate(source,
+            var aggregate = new SourceDailyAvailabilityAggregate(source,
                 OwlveyCalendar.January201905,
                 OwlveyCalendar.January201910);
 
@@ -77,7 +77,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
 
             source.SourceItems.Add(sourceItemA);
 
-            var aggregate = new SourcePeriodAvailabilityAggregate(source,
+            var aggregate = new SourceDailyAvailabilityAggregate(source,
                 OwlveyCalendar.January201910,
                 OwlveyCalendar.January201920);
 
@@ -96,7 +96,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                 OwlveyCalendar.January201910,
                 900, 1000, DateTime.Now, "test");
 
-            var result = SourcePeriodAvailabilityAggregate.GenerateSourceItemDays(sourceItemA);
+            var result = SourceDailyAvailabilityAggregate.GenerateSourceItemDays(sourceItemA);
             Assert.Equal(6, result.Count());
             foreach (var item in result)
             {
@@ -124,7 +124,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             source.SourceItems.Add(sourceItemA);
             source.SourceItems.Add(sourceItemB );
 
-            var aggregate = new SourcePeriodAvailabilityAggregate(source,                
+            var aggregate = new SourceDailyAvailabilityAggregate(source,                
                 OwlveyCalendar.StartJanuary2019,
                 OwlveyCalendar.EndJanuary2019);
 
@@ -149,7 +149,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
 
             source.SourceItems.Add(sourceItemA);
 
-            var aggregate = new SourcePeriodAvailabilityAggregate(source,
+            var aggregate = new SourceDailyAvailabilityAggregate(source,
                 OwlveyCalendar.StartJuly2019,
                 OwlveyCalendar.EndJuly2019);
 

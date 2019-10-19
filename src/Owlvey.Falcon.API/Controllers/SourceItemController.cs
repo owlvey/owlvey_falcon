@@ -29,20 +29,24 @@ namespace Owlvey.Falcon.API.Controllers
             {
                 return this.BadRequest(this.ModelState);
             }
-            var response = await this._sourceItemComponent.Create(model);
+            var response = await this._sourceItemComponent.Create(model);                        
 
-            if (response.HasConflicts())
-            {
-                return this.Conflict(response.GetConflicts());
-            }
-
-            var id = response.GetResult<int>("Id");
-
-            var newResource = await this._sourceItemComponent.GetById(id);
-
-            return this.Created(Url.RouteUrl("GetBySourceItemId", new { id }), newResource);
+            return this.Created(Url.RouteUrl("GetBySourceItemId", new { response.Id }), response);
         }
-                
+
+        [HttpPost("uptime")]
+        [ProducesResponseType(typeof(SourceItemGetRp), 200)]        
+        public async Task<IActionResult> PostUptime([FromBody]SourceItemUptimePostRp model)
+        {
+            if (!this.ModelState.IsValid)
+            {
+                return this.BadRequest(this.ModelState);
+            }
+            var response = await this._sourceItemComponent.Create(model);            
+
+            return this.Created(Url.RouteUrl("GetBySourceItemId", new { response.Id }), response);
+        }
+
         [HttpGet("{id}", Name = "GetBySourceItemId")]
         [ProducesResponseType(typeof(SourceItemGetRp), 200)]
         public async Task<IActionResult> GetBySourceItemId(int id)

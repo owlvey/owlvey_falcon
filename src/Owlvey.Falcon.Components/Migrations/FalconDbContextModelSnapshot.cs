@@ -432,6 +432,8 @@ namespace Owlvey.Falcon.Migrations
                     b.Property<string>("GoodDefinition")
                         .IsRequired();
 
+                    b.Property<int>("Kind");
+
                     b.Property<string>("ModifiedBy")
                         .IsRequired();
 

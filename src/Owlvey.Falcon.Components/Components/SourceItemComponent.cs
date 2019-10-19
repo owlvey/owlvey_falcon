@@ -20,8 +20,20 @@ namespace Owlvey.Falcon.Components
         public SourceItemComponent(FalconDbContext dbContext, IDateTimeGateway dataTimeGateway, IMapper mapper, IUserIdentityGateway identityService) : base(dataTimeGateway, mapper, identityService)
         {
             this._dbContext = dbContext;            
-        }        
-        public async Task<BaseComponentResultRp> Create(SourceItemPostRp model)
+        }
+
+        public async Task<SourceItemGetListRp> Create(SourceItemUptimePostRp model) {
+            var (good, total) = AvailabilityUtils.UptimeToMinutes(model.Start, model.End, model.Uptime);
+            return await this.Create(new SourceItemPostRp()
+            {
+                 SourceId = model.SourceId,
+                 Start = model.Start,
+                 End = model.End,
+                 Good = good,
+                 Total = total
+            });
+        }
+        public async Task<SourceItemGetListRp> Create(SourceItemPostRp model)
         {
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
@@ -29,8 +41,7 @@ namespace Owlvey.Falcon.Components
             var entity = SourceItemEntity.Factory.Create(source, model.Start, model.End, model.Good, model.Total, this._datetimeGateway.GetCurrentDateTime(), createdBy);
             this._dbContext.SourcesItems.Add(entity);
             await this._dbContext.SaveChangesAsync();
-            result.AddResult("Id", entity.Id);
-            return result;
+            return this._mapper.Map<SourceItemGetListRp>(entity);
         }
         public async Task BulkInsert(SourceEntity source, IEnumerable<SourceItemPostRp> models) {
 

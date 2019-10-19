@@ -125,7 +125,8 @@ namespace Owlvey.Falcon.Components
                 }
             }
             var agg = new ServiceAvailabilityAggregate(entity);
-            return agg.MeasureAvailability();
+            var (availability, _, _) = agg.MeasureAvailability();
+            return availability;
         }
         public async Task<ServiceGetRp> GetServiceByName(int productId, string name)
         {

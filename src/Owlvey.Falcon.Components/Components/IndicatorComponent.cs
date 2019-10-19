@@ -100,7 +100,8 @@ namespace Owlvey.Falcon.Components
             var sourceItems = this._dbContext.GetSourceItems(entity.Source.Id.Value, start, end);
             entity.Source.SourceItems = sourceItems;
             var agg = new IndicatorDateAvailabilityAggregate(entity);
-            return agg.MeasureAvailability();
+            var (availability, _ , _ ) = agg.MeasureAvailability();
+            return availability;
         }
         
         public async Task<IEnumerable<IndicatorAvailabilityGetListRp>> GetByFeatureWithAvailability(int featureId, DateTime start, DateTime end)
