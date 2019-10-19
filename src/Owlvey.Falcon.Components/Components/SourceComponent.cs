@@ -33,7 +33,7 @@ namespace Owlvey.Falcon.Components
             var entity = await this._dbContext.Sources.Where(c => c.Id == sourceId).SingleAsync();
 
             entity.Update(model.Name, model.Avatar, model.GoodDefinition, model.TotalDefinition,
-                this._datetimeGateway.GetCurrentDateTime(), createdBy);
+                this._datetimeGateway.GetCurrentDateTime(), createdBy, null, model.Description);
                        
             this._dbContext.Update(entity);
 
@@ -46,7 +46,7 @@ namespace Owlvey.Falcon.Components
 
 
         public async Task<SourceGetListRp> CreateOrUpdate(CustomerEntity customer, string product, string name, string tags,
-            string avatar, string good, string total)
+            string avatar, string good, string total, string description)
         {
             var createdBy = this._identityService.GetIdentity();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;            
@@ -56,7 +56,7 @@ namespace Owlvey.Falcon.Components
                 var productEntity = await this._dbContext.Products.Where(c => c.CustomerId == customer.Id && c.Name == product).SingleAsync();
                 entity = SourceEntity.Factory.Create(productEntity, name, this._datetimeGateway.GetCurrentDateTime(), createdBy);
             }
-            entity.Update(name, avatar, good, total, this._datetimeGateway.GetCurrentDateTime(), createdBy, tags);
+            entity.Update(name, avatar, good, total, this._datetimeGateway.GetCurrentDateTime(), createdBy, tags, description);
             this._dbContext.Sources.Update(entity);
             await this._dbContext.SaveChangesAsync();            
             return this._mapper.Map<SourceGetListRp>(entity);

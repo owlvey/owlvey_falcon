@@ -157,22 +157,21 @@ namespace Owlvey.Falcon.Components
 
         public async Task<MultiSeriesGetRp> GetDailySeriesById(int serviceId, DateTime start, DateTime end)
         {
-            var service = await this._dbContext.Services.Where(c => c.Id == serviceId).SingleAsync();
-            var serviceMaps = await this._dbContext.ServiceMaps.Include(c => c.Feature).ThenInclude(c => c.Indicators).Where(c => c.Service.Id == serviceId).ToListAsync();
+            var service = await this._dbContext.Services
+                .Include(c=>c.FeatureMap)
+                .ThenInclude(c=>c.Feature)
+                .ThenInclude(c=>c.Indicators)
+                .ThenInclude(c=>c.Source)
+                .Where(c => c.Id == serviceId).SingleAsync();            
 
-            foreach (var map in serviceMaps)
+            foreach (var map in service.FeatureMap)
             {
-                var entity = await this._dbContext.Features.Include(c => c.Indicators).ThenInclude(c => c.Source).SingleAsync(c => c.Id == map.Feature.Id);
-
-                foreach (var indicator in entity.Indicators)
+                foreach (var indicator in map.Feature.Indicators)
                 {
                     var sourceItems = this._dbContext.GetSourceItems(indicator.SourceId, start, end);
                     indicator.Source.SourceItems = sourceItems;
-                }
-                map.Feature = entity;
-            }
-
-            service.FeatureMap = serviceMaps;
+                }                
+            }            
 
             var result = new MultiSeriesGetRp
             {
@@ -197,7 +196,7 @@ namespace Owlvey.Falcon.Components
             {
                 result.Series.Add(new MultiSerieItemGetRp()
                 {
-                    Name = string.Format("SLI:{0}", indicator.Item1.Id),
+                    Name = string.Format("Id:{0}", indicator.Item1.Id),
                     Avatar = indicator.Item1.Avatar,
                     Items = indicator.Item2.Select(c => this._mapper.Map<SeriesItemGetRp>(c)).ToList()
                 });

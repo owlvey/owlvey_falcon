@@ -81,5 +81,15 @@ namespace Owlvey.Falcon.Core
                 }                
             }            
         }
+
+        public static decimal CalculateFeatureSlo(decimal slo, int items) {
+
+            if (items == 0)
+            {
+                return slo;
+            }
+            return Math.Round((decimal)Math.Pow((double)slo, 1 / (double)items), 4);
+        }
+
     }
 }

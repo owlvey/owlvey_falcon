@@ -15,9 +15,16 @@ namespace Owlvey.Falcon.Components
                 .ForMember(m => m.FeatureAvatar, opt => opt.MapFrom(src => src.Feature.Avatar));
 
 
-            cfg.CreateMap<IndicatorEntity, Models.IndicatorGetListRp>()
+            cfg.CreateMap<IndicatorEntity, Models.IndicatorGetListRp>()                
+                .ForMember(c => c.Source, opt => opt.MapFrom(d=>d.Source.Name));
+
+
+            cfg.CreateMap<IndicatorEntity, Models.IndicatorAvailabilityGetListRp>()
                 .ForMember(c => c.Availability, opt => opt.Ignore())
-                .ForMember(c => c.Source, opt => opt.MapFrom(d=>d.Source.Name));                
+                .ForMember(c => c.Good, opt => opt.Ignore())
+                .ForMember(c => c.Total, opt =>  opt.Ignore())
+                .ForMember(c => c.Source, opt => opt.MapFrom(d => d.Source.Name));
+            
         }
     }
 }

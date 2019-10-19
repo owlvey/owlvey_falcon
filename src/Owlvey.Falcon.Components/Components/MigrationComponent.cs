@@ -448,9 +448,10 @@ namespace Owlvey.Falcon.Components
                     var good = sourceSheet.Cells[row, 4].GetValue<string>();
                     var total = sourceSheet.Cells[row, 5].GetValue<string>();
                     var avatar = sourceSheet.Cells[row, 6].GetValue<string>();
+                    var description = sourceSheet.Cells[row, 7].GetValue<string>();
                     if (product != null && name != null)
                     {
-                        await this._sourceComponent.CreateOrUpdate(customer, product, name, tags, avatar, good, total);
+                        await this._sourceComponent.CreateOrUpdate(customer, product, name, tags, avatar, good, total, description);
                     }
 
                 }

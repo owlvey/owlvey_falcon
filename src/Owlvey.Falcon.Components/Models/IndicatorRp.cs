@@ -29,7 +29,14 @@ namespace Owlvey.Falcon.Models
         public int SourceId { get; set; }
         public int FeatureId { get; set; }
         public string Source { get; set; }
+        
+    }
+
+    public class IndicatorAvailabilityGetListRp : IndicatorGetListRp
+    {
         public decimal Availability { get; set; }
+        public int Total { get; set; }
+        public int Good { get; set; }
     }
 
     public class IndicatorPostRp

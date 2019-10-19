@@ -22,7 +22,7 @@ namespace Owlvey.Falcon.Components
             this._dbContext = dbContext;
             this._dateTimeGateway = dateTimeGateway;
         }        
-        internal async Task<decimal> GetAvailabilityByFeature(FeatureEntity entity, DateTime start, DateTime end)
+        internal decimal GetAvailabilityByFeature(FeatureEntity entity, DateTime start, DateTime end)
         {
             foreach (var indicator in entity.Indicators)
             {

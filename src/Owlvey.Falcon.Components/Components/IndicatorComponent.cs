@@ -103,13 +103,13 @@ namespace Owlvey.Falcon.Components
             return agg.MeasureAvailability();
         }
         
-        public async Task<IEnumerable<IndicatorGetListRp>> GetByFeatureWithAvailability(int featureId, DateTime start, DateTime end)
+        public async Task<IEnumerable<IndicatorAvailabilityGetListRp>> GetByFeatureWithAvailability(int featureId, DateTime start, DateTime end)
         {
             var entities = await this._dbContext.Indicators.Include(c => c.Feature).Include(c => c.Source).Where(c => c.Feature.Id == featureId).ToListAsync();
-            var result = new List<IndicatorGetListRp>();
+            var result = new List<IndicatorAvailabilityGetListRp>();
             foreach (var item in entities)
             {                
-                var tmp = this._mapper.Map<IndicatorGetListRp>(item);
+                var tmp = this._mapper.Map<IndicatorAvailabilityGetListRp>(item);
                 tmp.Availability = await this.GetAvailabilityByIndicator(item, start, end);
                 result.Add(tmp);
             }

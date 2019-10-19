@@ -33,9 +33,9 @@ namespace Owlvey.Falcon.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<FeatureGetListRp>), 200)]
-        public async Task<IActionResult> Get(int productId, DateTime? start, DateTime? end, string filter)
+        public async Task<IActionResult> Get(int productId, DateTime? start, DateTime? end)
         {
-            IEnumerable<FeatureGetListRp> model = null;            
+            object model = null;            
             if (start.HasValue && end.HasValue)
             {
                 model = await this._featureQueryService.GetFeaturesWithAvailability(productId, start.Value, end.Value);
@@ -56,7 +56,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(FeatureGetRp), 200)]
         public async Task<IActionResult> GetFeatureId(int id, DateTime? start, DateTime? end)
         {
-            FeatureGetRp model = null;
+            object model = null;
             if (end.HasValue)
             {
                 model = await this._featureQueryService.GetFeatureByIdWithAvailability(id, start.Value,  end.Value);

@@ -21,6 +21,7 @@ namespace Owlvey.Falcon.Core.Entities
                     ModifiedBy = user,
                     CreatedOn = on,
                     ModifiedOn = on,
+                    Description = name,
                     Product = product
                 };
                 entity.Avatar = "https://d2.alternativeto.net/dist/icons/restpack-html-to-pdf-api_135030.png?width=128&height=128&mode=crop&upscale=false";

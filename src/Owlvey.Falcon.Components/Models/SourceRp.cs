@@ -6,7 +6,8 @@ namespace Owlvey.Falcon.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Tags { get; set; } = "";
-        public string Avatar { get; set; }        
+        public string Avatar { get; set; }
+        public string Description { get; set; }
         public string GoodDefinition { get; set; }
         public string TotalDefinition { get; set; }
     }    
@@ -28,6 +29,7 @@ namespace Owlvey.Falcon.Models
         public string GoodDefinition { get; set; }
         public string TotalDefinition { get; set; }        
         public string Avatar { get; set; }
+        public string Description { get; set; }
     }
 
     public class SourceGetListRp : SourceLitRp
@@ -48,6 +50,7 @@ namespace Owlvey.Falcon.Models
     public class SourcePutRp
     {
         public string Name { get; set; }
+        public string Description { get; set; }
         public string Avatar { get; set; }
         public string GoodDefinition { get; set; }
         public string TotalDefinition { get; set; }

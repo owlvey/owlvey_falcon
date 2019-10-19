@@ -427,6 +427,8 @@ namespace Owlvey.Falcon.Migrations
 
                     b.Property<bool>("Deleted");
 
+                    b.Property<string>("Description");
+
                     b.Property<string>("GoodDefinition")
                         .IsRequired();
 
