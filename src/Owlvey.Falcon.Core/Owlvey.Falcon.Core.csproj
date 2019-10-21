@@ -8,4 +8,7 @@
     <Compile Remove="Entities\SquadProductEntity.cs" />
     <Compile Remove="Factories\SquadProductFactory.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Validators\" />
+  </ItemGroup>
 </Project>
