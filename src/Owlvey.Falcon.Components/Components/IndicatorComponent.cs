@@ -9,7 +9,9 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using Owlvey.Falcon.Core.Aggregates;
+using Owlvey.Falcon.Repositories.Sources;
 using Owlvey.Falcon.Core;
+using Owlvey.Falcon.Core.Validators;
 
 namespace Owlvey.Falcon.Components
 {
@@ -48,7 +50,7 @@ namespace Owlvey.Falcon.Components
         {
             var createdBy = this._identityService.GetIdentity();
             var productEntity = await this._dbContext.Products.Where(c => c.CustomerId == customerId && c.Name == product).SingleAsync();
-            var sourceEntity = await this._dbContext.Sources.Where(c => c.ProductId == productEntity.Id && c.Name == source).SingleAsync();
+            var sourceEntity = NotNullValidator.Validate(await this._dbContext.GetSource(productEntity.Id.Value, source), c=>c.Name, source);
             var featureEntity = await this._dbContext.Features.Where(c => c.ProductId == productEntity.Id && c.Name == feature).SingleAsync();
 
             var sli = await this._dbContext.Indicators.Where(c => 
@@ -100,7 +102,8 @@ namespace Owlvey.Falcon.Components
             var sourceItems = this._dbContext.GetSourceItems(entity.Source.Id.Value, start, end);
             entity.Source.SourceItems = sourceItems;
             var agg = new IndicatorDateAvailabilityAggregate(entity);
-            return agg.MeasureAvailability();
+            var (availability, _ , _ ) = agg.MeasureAvailability();
+            return availability;
         }
         
         public async Task<IEnumerable<IndicatorAvailabilityGetListRp>> GetByFeatureWithAvailability(int featureId, DateTime start, DateTime end)

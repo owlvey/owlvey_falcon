@@ -14,10 +14,9 @@ namespace Owlvey.Falcon.Core.Aggregates
         {            
             this.Indicator = indicator;                        
         }        
-        public decimal MeasureAvailability() {
+        public (decimal availability, int total, int good)  MeasureAvailability() {
             var agg = new SourceAvailabilityAggregate(this.Indicator.Source);
-            var (availability, total, good) = agg.MeasureAvailability();
-            return availability;
+            return agg.MeasureAvailability();            
         }
     }
 }

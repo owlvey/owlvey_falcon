@@ -6,13 +6,13 @@ using Owlvey.Falcon.Core.Values;
 
 namespace Owlvey.Falcon.Core.Aggregates
 {
-    public class SourcePeriodAvailabilityAggregate
+    public class SourceDailyAvailabilityAggregate
     {
         private readonly SourceEntity Source;
         private readonly DateTime Start;
         private readonly DateTime End;        
 
-        public SourcePeriodAvailabilityAggregate(SourceEntity source, DateTime start, DateTime end)
+        public SourceDailyAvailabilityAggregate(SourceEntity source, DateTime start, DateTime end)
         {            
             this.Source = source;
             this.Start = start;

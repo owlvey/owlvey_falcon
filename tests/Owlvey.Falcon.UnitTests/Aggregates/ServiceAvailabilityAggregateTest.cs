@@ -37,7 +37,9 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                  }
             });            
             var result = agg.MeasureAvailability();
-            Assert.Equal(0.8m, result);
+            Assert.Equal(0.8m, result.availability);
+            Assert.Equal(1000, result.total);
+            Assert.Equal(800, result.good);
         }
     }
 }

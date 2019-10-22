@@ -12,13 +12,27 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         public void MeasureFeatureAvailability()
         {
             var agg = new SourceAvailabilityAggregate( new SourceEntity() {
+                 Kind = SourceKindEnum.Interaction,
                  SourceItems = new List<SourceItemEntity>() {
                      new SourceItemEntity(){ Total = 1000, Good = 800 }
                  }
             });
-
             var (a, _, _) = agg.MeasureAvailability();
 
+            Assert.Equal(0.8m, a);
+        }
+
+        [Fact]
+        public void MeasureUptimeAvailability()
+        {
+            var agg = new SourceAvailabilityAggregate(new SourceEntity()
+            {
+                Kind = SourceKindEnum.Uptime,
+                SourceItems = new List<SourceItemEntity>() {
+                     new SourceItemEntity(){ Total = 1000, Good = 800 }
+                }
+            });
+            var (a, _, _) = agg.MeasureAvailability();
             Assert.Equal(0.8m, a);
         }
     }

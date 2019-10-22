@@ -93,15 +93,12 @@ namespace Owlvey.Falcon.Components
 
             var model = this._mapper.Map<FeatureAvailabilityGetRp>(feature);
 
-            model.Availability = agg.MeasureAvailability();
+            (model.Availability, _, _) = agg.MeasureAvailability();
 
             foreach (var indicator in feature.Indicators)
-            {
-                
+            {                
                 var tmp = this._mapper.Map<IndicatorAvailabilityGetListRp>(indicator);
-                tmp.Availability = (new IndicatorDateAvailabilityAggregate(indicator)).MeasureAvailability();
-                tmp.Total = indicator.Source.SourceItems.Sum(c => c.Total);
-                tmp.Good = indicator.Source.SourceItems.Sum(c => c.Good);
+                (tmp.Availability, tmp.Total, tmp.Good) = (new IndicatorDateAvailabilityAggregate(indicator)).MeasureAvailability();                
                 model.Indicators.Add(tmp);
             }
 

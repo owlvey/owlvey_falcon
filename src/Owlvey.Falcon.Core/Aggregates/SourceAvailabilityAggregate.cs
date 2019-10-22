@@ -14,11 +14,18 @@ namespace Owlvey.Falcon.Core.Aggregates
         {            
             this.Source = source;                        
         }        
-        public (decimal availability, int total, int good) MeasureAvailability() {                        
+        public (decimal availability, int total, int good) MeasureAvailability() {          
             var total = this.Source.SourceItems.Sum(c => c.Total);
             var good = this.Source.SourceItems.Sum(c => c.Good);
             var availability = AvailabilityUtils.CalculateAvailability(total, good, 1);
-            return (availability, total, good);
+
+            if (this.Source.Kind == SourceKindEnum.Interaction)
+            {
+                return (availability, total, good);
+            }
+            else {
+                return (availability, 0, 0);
+            }           
         }
     }
 }

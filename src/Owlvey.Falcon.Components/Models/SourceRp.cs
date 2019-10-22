@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Owlvey.Falcon.Core.Entities;
+using System;
 namespace Owlvey.Falcon.Models
 {
     public class SourceLitRp
@@ -8,6 +11,9 @@ namespace Owlvey.Falcon.Models
         public string Tags { get; set; } = "";
         public string Avatar { get; set; }
         public string Description { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public SourceKindEnum Kind { get; set; }
         public string GoodDefinition { get; set; }
         public string TotalDefinition { get; set; }
     }    
@@ -30,6 +36,7 @@ namespace Owlvey.Falcon.Models
         public string TotalDefinition { get; set; }        
         public string Avatar { get; set; }
         public string Description { get; set; }
+        public string kind { get; set; }
     }
 
     public class SourceGetListRp : SourceLitRp
@@ -45,6 +52,7 @@ namespace Owlvey.Falcon.Models
     {
         public int ProductId { get; set; }
         public string Name { get; set; }
+        public SourceKindEnum Kind { get; set; } = SourceKindEnum.Interaction;
     }
 
     public class SourcePutRp

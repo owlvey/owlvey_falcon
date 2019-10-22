@@ -308,7 +308,7 @@ namespace Owlvey.Falcon.Components
 
                 var agg = new FeatureAvailabilityAggregate(feature);
                 var tmp = this._mapper.Map<FeatureGetListRp>(feature);
-                tmp.Availability = agg.MeasureAvailability();
+                (tmp.Availability, _, _) = agg.MeasureAvailability();
                 result.Features.Add(tmp);
 
                 var featureIncidents = incidentsData.Where(c => c.FeatureId == feature.Id)
@@ -347,7 +347,7 @@ namespace Owlvey.Falcon.Components
                 }
                 var agg = new ServiceAvailabilityAggregate(service);
                 var tmp = this._mapper.Map<ServiceGetListRp>(service);
-                tmp.Availability = agg.MeasureAvailability();
+                (tmp.Availability, _, _) = agg.MeasureAvailability();
                 result.Services.Add(tmp);
 
                 result.ServiceMaps[service.Id.Value] = service.FeatureMap.OrderBy(c=>c.Id).Select(c => c.FeatureId).ToList();
@@ -362,7 +362,7 @@ namespace Owlvey.Falcon.Components
             result.SLOFail = sloFails;
             result.SLOProportion = AvailabilityUtils.CalculateFailProportion(product.Services.Count(), sloFails);
             result.SourceStats = new StatsValue(result.Sources.Select(c => c.Availability));
-            result.SourceTotal = result.Sources.Sum(c => c.Total);
+            result.SourceTotal = result.Sources.Where(c=>c.Kind == SourceKindEnum.Interaction).Sum(c => c.Total);
             result.FeaturesStats = new StatsValue(result.Features.Select(c => c.Availability));
             result.FeaturesCoverage = AvailabilityUtils.CalculateProportion(product.Features.Count(),
                 squadsData.Select(c=>c.FeatureId).Distinct().Count());
