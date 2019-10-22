@@ -26,8 +26,8 @@ namespace Owlvey.Falcon.API.Controllers
         public async Task<IActionResult> Get()
         {
             var settings = new {
-                authority = _configuration["Authentication__Authority"],
-                api = _configuration["Settings__Api"],
+                authority = _configuration["Authentication:Authority"],
+                api = _configuration["Settings:Api"],
             };
 
             return this.Ok(settings);
