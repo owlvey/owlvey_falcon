@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Models;
@@ -107,6 +108,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(FeatureGetListRp), 200)]
         [ProducesResponseType(409)]
         [ProducesResponseType(400)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Post([FromBody]FeaturePostRp resource)
         {
             if (!this.ModelState.IsValid)
@@ -127,6 +129,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(409)]
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Put(int id, [FromBody]FeaturePutRp resource)
         {
             if (!this.ModelState.IsValid)
@@ -154,6 +157,7 @@ namespace Owlvey.Falcon.API.Controllers
         /// <returns></returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Delete(int id)
         {
             await this._featureComponent.DeleteFeature(id);           
@@ -187,18 +191,19 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok(result);
         }
         [HttpDelete("{id}/indicators/{sourceId}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> DeleteIndicator(int id, int sourceId)
         {
             await this._indicatorComponent.Delete(id, sourceId);
             return this.Ok();
         }
         #endregion
-
-
+        
         #region Squads
 
         [HttpPut("{id}/squads/{squadId}")]
         [ProducesResponseType(typeof(IEnumerable<SourceGetListRp>), 200)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> PutSquad(int id, int squadId)
         {
             await this._featureComponent.RegisterSquad(new SquadFeaturePostRp()
@@ -210,6 +215,7 @@ namespace Owlvey.Falcon.API.Controllers
 
         [HttpDelete("{id}/squads/{squadId}")]
         [ProducesResponseType(typeof(IEnumerable<SourceGetListRp>), 200)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> DeleteSquad(int id, int squadId)
         {
             await this._featureComponent.UnRegisterSquad(squadId, id);

@@ -17,6 +17,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Owlvey.Falcon.API.Extensions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using IdentityServer4.AccessTokenValidation;
+using GST.Fake.Authentication.JwtBearer.Events;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Owlvey.Falcon.IntegrationTests.Setup
 {
@@ -41,10 +47,42 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
         /// <param name="services">Service Collection</param>
         public override void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().AddApplicationPart(typeof(BaseController).Assembly);
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("admin"));
+            });
+
+            services.AddMvc(options =>
+            {
+                //Authorize Filter
+                var policy = new AuthorizationPolicyBuilder(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+                  .RequireAuthenticatedUser()
+                  .RequireRole("admin", "guest", "integration")
+                  .Build();
+
+                options.Filters.Add(new AuthorizeFilter(policy));
+            });
+
+            services.AddHttpContextAccessor();
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+            }).AddFakeJwtBearer(IdentityServerAuthenticationDefaults.AuthenticationScheme, options =>
+            {
+                options.SaveToken = true;
+                options.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = context =>
+                    {
+                        var identity = (ClaimsIdentity)context.Principal.Identity;
+                        return Task.CompletedTask;
+                    }
+                };
+            });
 
             services.AddApplicationServices(Configuration);
-            
+
             var connectionStringBuilder = new SqliteConnectionStringBuilder()
             {
                 DataSource = ":memory:"
@@ -78,7 +116,8 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
             dbContext.Database.EnsureCreated();
 
             // Setup Default Data
-            app.UseMiddleware<AutoAuthorizeMiddleware>();
+            app.UseAuthentication();
+
             var customer = new Core.Entities.CustomerEntity
             {
                 Id = 9999,
@@ -128,7 +167,8 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
                 }
             };
             customer.Squads = new List<SquadEntity> {
-                SquadEntity.Factory.Create("Default Squad", DateTime.UtcNow, "user", customer)};
+                SquadEntity.Factory.Create("Default Squad", DateTime.UtcNow, "user", customer)
+            };
             
             dbContext.Customers.Add(customer);
 

@@ -15,6 +15,7 @@ namespace Owlvey.Falcon.API.Extensions
     {
         public static void AddAuthority(this IServiceCollection services, IConfiguration configuration, IHostingEnvironment environtment)
         {
+            services.AddHttpContextAccessor();
             services.Configure<AuthorityOptions>(options => {
                 options.Authority = configuration["Authentication:Authority"];
                 options.ApiName = configuration["Authentication:ApiName"];

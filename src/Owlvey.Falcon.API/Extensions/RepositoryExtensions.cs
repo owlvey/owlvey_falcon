@@ -19,7 +19,14 @@ namespace Owlvey.Falcon.IoC
             if (env.Equals("development", StringComparison.InvariantCultureIgnoreCase))
             {
                 services.AddDbContext<FalconDbContext>(options =>
-                    options.UseSqlite(connectionString)
+                    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+                           sqlServerOptionsAction: sqlOptions =>
+                           {
+                               sqlOptions.EnableRetryOnFailure(
+                               maxRetryCount: 3,
+                               maxRetryDelay: TimeSpan.FromSeconds(30),
+                               errorNumbersToAdd: null);
+                           })
                 );
             }
             else

@@ -74,7 +74,8 @@ namespace Owlvey.Falcon.API.Controllers
         /// <param name="resource"></param>
         /// <returns></returns>
         [HttpPost]
-        [ProducesResponseType(typeof(CustomerGetRp), 200)]        
+        [ProducesResponseType(typeof(CustomerGetRp), 200)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Post([FromBody]CustomerPostRp resource)
         {
             if (!this.ModelState.IsValid)
@@ -95,6 +96,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(409)]
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Put(int id, [FromBody]CustomerPutRp resource)
         {
             if (!this.ModelState.IsValid)
@@ -122,6 +124,7 @@ namespace Owlvey.Falcon.API.Controllers
         /// <returns></returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Delete(int id)
         {
             if (!this.ModelState.IsValid)

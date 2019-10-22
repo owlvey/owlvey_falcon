@@ -1,4 +1,5 @@
 using FizzWare.NBuilder;
+using GST.Fake.Authentication.JwtBearer;
 using Newtonsoft.Json;
 using Owlvey.Falcon.IntegrationTests.Setup;
 using Owlvey.Falcon.Models;
@@ -11,12 +12,13 @@ using Xunit;
 
 namespace Owlvey.Falcon.IntegrationTests.AppSetting.Scenarios
 {
-    public class AdminCanCreateSettingScenario : IDisposable
+    public class AdminCanCreateSettingScenario : BaseScenario, IDisposable
     {
         private readonly HttpClient _client;
         public AdminCanCreateSettingScenario(HttpClient client)
         {
-            _client = client;    
+            _client = client;
+            _client.SetFakeBearerToken(this.GetAdminToken());
         }
 
         private AppSettingPostRp representation;

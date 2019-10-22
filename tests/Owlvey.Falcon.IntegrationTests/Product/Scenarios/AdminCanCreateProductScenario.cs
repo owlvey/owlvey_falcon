@@ -1,4 +1,5 @@
 using FizzWare.NBuilder;
+using GST.Fake.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Owlvey.Falcon.IntegrationTests.Constants;
@@ -13,12 +14,13 @@ using Xunit;
 
 namespace Owlvey.Falcon.IntegrationTests.Product.Scenarios
 {
-    public class AdminCanCreateProductScenario : IDisposable
+    public class AdminCanCreateProductScenario : BaseScenario, IDisposable
     {
         private readonly HttpClient _client;
         public AdminCanCreateProductScenario(HttpClient client)
         {
-            _client = client;    
+            _client = client;
+            _client.SetFakeBearerToken(this.GetAdminToken());
         }
 
         private ProductPostRp representation;

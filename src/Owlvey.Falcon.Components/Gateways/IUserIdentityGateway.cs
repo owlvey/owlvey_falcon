@@ -7,5 +7,9 @@ namespace Owlvey.Falcon.Gateways
     public interface IUserIdentityGateway
     {
         string GetIdentity();
+        string GetName();
+        string GetRole();
+        bool IsAdmin();
+        bool IsGuest();
     }
 }
