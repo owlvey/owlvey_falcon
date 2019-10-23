@@ -39,11 +39,17 @@ namespace Owlvey.Falcon.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public virtual void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("admin"));
+            });
+
             services.AddMvc(options =>
             {
                 //Authorize Filter
                 var policy = new AuthorizationPolicyBuilder(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-                  .RequireAuthenticatedUser()                  
+                  .RequireAuthenticatedUser()
+                  .RequireRole("admin", "guest", "integration")
                   .Build();
 
                 options.Filters.Add(new AuthorizeFilter(policy));

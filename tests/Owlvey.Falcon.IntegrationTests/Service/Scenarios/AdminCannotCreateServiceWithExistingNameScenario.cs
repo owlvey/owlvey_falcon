@@ -1,4 +1,5 @@
 using FizzWare.NBuilder;
+using GST.Fake.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Owlvey.Falcon.IntegrationTests.Constants;
@@ -12,12 +13,13 @@ using Xunit;
 
 namespace Owlvey.Falcon.IntegrationTests.Service.Scenarios
 {
-    public class AdminCannotCreateServiceWithExistingNameScenario : IDisposable
+    public class AdminCannotCreateServiceWithExistingNameScenario : BaseScenario, IDisposable
     {
         private readonly HttpClient _client;
         public AdminCannotCreateServiceWithExistingNameScenario(HttpClient client)
         {
             _client = client;
+            _client.SetFakeBearerToken(this.GetAdminToken());
         }
 
         private ServicePostRp representation;

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Core.Values;
 using Owlvey.Falcon.Models;
@@ -40,14 +41,16 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok(model);
         }
 
-        [HttpPut("{id}/features/{featureId}")]        
+        [HttpPut("{id}/features/{featureId}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> GetFeatureComplement(int id, int featureId)
         {
             await this._incidentComponent.RegisterFeature(id, featureId);
             return this.Ok();
         }
 
-        [HttpDelete("{id}/features/{featureId}")]        
+        [HttpDelete("{id}/features/{featureId}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> DeleteFeatureComplement(int id, int featureId)
         {
             await this._incidentComponent.UnRegisterFeature(id, featureId);
@@ -56,6 +59,7 @@ namespace Owlvey.Falcon.API.Controllers
 
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(IEnumerable<IncidentPutRp>), 200)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Put(int id, [FromBody] IncidentPutRp model)
         {
             if (!this.ModelState.IsValid)
@@ -68,6 +72,7 @@ namespace Owlvey.Falcon.API.Controllers
 
         [HttpPost]
         [ProducesResponseType(typeof(IEnumerable<IndicatorGetListRp>), 200)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Post([FromBody]IncidentPostRp model)
         {
             var (result, created) = await this._incidentComponent.Post(model);

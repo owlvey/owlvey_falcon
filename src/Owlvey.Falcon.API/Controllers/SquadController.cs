@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Models;
@@ -86,6 +87,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(409)]
         [ProducesResponseType(400)]
         [ProducesResponseType(400)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Post([FromBody]SquadPostRp resource)
         {
             if (!this.ModelState.IsValid)
@@ -98,7 +100,8 @@ namespace Owlvey.Falcon.API.Controllers
 
 
         [HttpPut("{id}/members/{userId}")]
-        [ProducesResponseType(typeof(object), 200)]                
+        [ProducesResponseType(typeof(object), 200)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> PutMember(int id, int userId)
         {
             await this._squadService.RegisterMember(id, userId);
@@ -107,6 +110,7 @@ namespace Owlvey.Falcon.API.Controllers
 
         [HttpDelete("{id}/members/{userId}")]
         [ProducesResponseType(typeof(object), 200)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> DeleteMember(int id, int userId)
         {
             await this._squadService.UnRegisterMember(id, userId);
@@ -131,6 +135,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(409)]
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Put(int id, [FromBody]SquadPutRp resource)
         {
             if (!this.ModelState.IsValid)
@@ -158,6 +163,7 @@ namespace Owlvey.Falcon.API.Controllers
         /// <returns></returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Delete(int id)
         {
             if (!this.ModelState.IsValid)

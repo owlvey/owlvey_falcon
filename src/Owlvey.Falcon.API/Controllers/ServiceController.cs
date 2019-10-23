@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Models;
@@ -96,6 +97,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(ServiceGetListRp), 200)]
         [ProducesResponseType(409)]
         [ProducesResponseType(400)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Post([FromBody]ServicePostRp resource)
         {
             if (!this.ModelState.IsValid)
@@ -114,6 +116,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(409)]
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Put(int id, [FromBody]ServicePutRp resource)
         {
             if (!this.ModelState.IsValid)
@@ -141,6 +144,7 @@ namespace Owlvey.Falcon.API.Controllers
         /// <returns></returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Delete(int id)
         {
             if (!this.ModelState.IsValid)
@@ -167,6 +171,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(409)]
         [ProducesResponseType(401)]
         [ProducesResponseType(400)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> PutFeature(int? id, int? featureId)
         {       
             if (id.HasValue && featureId.HasValue)
@@ -185,6 +190,7 @@ namespace Owlvey.Falcon.API.Controllers
         }
 
         [HttpDelete("{id}/features/{featureId}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Delete(int? id, int? featureId)
         {
             if (id.HasValue && featureId.HasValue)

@@ -88,6 +88,13 @@ namespace Owlvey.Falcon.Components
             if (entity != null)
             {
                 this._dbContext.Sources.Remove(entity);
+
+                //TO-DO
+                foreach (var indicator in entity.Indicators)
+                {
+                    this._dbContext.Features.Remove(indicator.Feature);
+                }
+
                 await this._dbContext.SaveChangesAsync();
             }            
         }

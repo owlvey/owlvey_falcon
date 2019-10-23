@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Models;
@@ -67,6 +68,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(409)]
         [ProducesResponseType(400)]
         [ProducesResponseType(400)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> PostMember([FromBody]MemberPostRp resource)
         {
             if (!this.ModelState.IsValid)
@@ -97,6 +99,7 @@ namespace Owlvey.Falcon.API.Controllers
         /// <returns></returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> DeleteMember(int id)
         {
             if (!this.ModelState.IsValid)

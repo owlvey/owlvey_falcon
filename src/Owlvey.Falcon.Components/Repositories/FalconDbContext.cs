@@ -100,18 +100,18 @@ namespace Owlvey.Falcon.Repositories
                .HasForeignKey(pt => pt.ServiceId);
 
             modelBuilder.Entity<IndicatorEntity>().HasKey(x => new { x.Id });
+            
+            modelBuilder.Entity<IndicatorEntity>()
+               .HasOne(pt => pt.Source)
+               .WithMany(p => p.Indicators)
+               .OnDelete(DeleteBehavior.Restrict)
+               .HasForeignKey(pt => pt.SourceId);
 
             modelBuilder.Entity<IndicatorEntity>()
                .HasOne(pt => pt.Feature)
                .WithMany(p => p.Indicators)
                .OnDelete(DeleteBehavior.Cascade)
-               .HasForeignKey(pt => pt.FeatureId);
-
-            modelBuilder.Entity<IndicatorEntity>()
-               .HasOne(pt => pt.Source)
-               .WithMany(p => p.Indicators)
-               .OnDelete(DeleteBehavior.Cascade)
-               .HasForeignKey(pt => pt.SourceId);         
+               .HasForeignKey(pt => pt.FeatureId);        
 
             base.OnModelCreating(modelBuilder);
         }

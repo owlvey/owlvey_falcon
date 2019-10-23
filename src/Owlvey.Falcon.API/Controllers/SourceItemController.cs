@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Core.Values;
@@ -23,6 +24,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(409)]
         [ProducesResponseType(401)]
         [ProducesResponseType(400)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Post([FromBody]SourceItemPostRp model)
         {
             if (!this.ModelState.IsValid)
@@ -57,6 +59,7 @@ namespace Owlvey.Falcon.API.Controllers
 
         [HttpDelete("{id}")]
         [ProducesResponseType(typeof(SourceItemGetRp), 200)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> DeleteSourceItem(int id)
         {
             var model = await this._sourceItemComponent.Delete(id);

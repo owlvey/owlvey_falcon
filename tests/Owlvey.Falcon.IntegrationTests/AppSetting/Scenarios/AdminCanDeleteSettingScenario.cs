@@ -1,4 +1,5 @@
 using FizzWare.NBuilder;
+using GST.Fake.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Owlvey.Falcon.IntegrationTests.Setup;
@@ -12,12 +13,13 @@ using Xunit;
 
 namespace Owlvey.Falcon.IntegrationTests.AppSetting.Scenarios
 {
-    public class AdminCanDeleteSettingScenario : IDisposable
+    public class AdminCanDeleteSettingScenario : BaseScenario, IDisposable
     {
         private readonly HttpClient _client;
         public AdminCanDeleteSettingScenario(HttpClient client)
         {
             _client = client;
+            _client.SetFakeBearerToken(this.GetAdminToken());
         }
 
         private AppSettingPostRp representation;

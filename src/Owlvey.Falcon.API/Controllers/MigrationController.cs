@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Models;
 using System;
@@ -40,6 +41,7 @@ namespace Owlvey.Falcon.API.Controllers
 
 
         [HttpPost("{id}/import/metadata/excel")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> PostImportMetadataExcel(int id, FileUploadRp file)
         {
             using (MemoryStream excelStream = new MemoryStream()) {

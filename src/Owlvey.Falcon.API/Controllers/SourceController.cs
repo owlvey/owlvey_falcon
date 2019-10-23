@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Models;
@@ -64,7 +65,8 @@ namespace Owlvey.Falcon.API.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(SourceGetRp), 200)]
         [ProducesResponseType(409)]
-        [ProducesResponseType(400)]        
+        [ProducesResponseType(400)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Post([FromBody]SourcePostRp resource)
         {
             if (!this.ModelState.IsValid)
@@ -77,6 +79,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(SourceGetRp), 200)]
         [ProducesResponseType(409)]
         [ProducesResponseType(400)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Put(int id, [FromBody]SourcePutRp resource)
         {
             if (!this.ModelState.IsValid)
@@ -93,7 +96,8 @@ namespace Owlvey.Falcon.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [ProducesResponseType(typeof(void), 200)]        
+        [ProducesResponseType(typeof(void), 200)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Delete(int id)
         {            
             await this._sourceComponent.Delete(id);            

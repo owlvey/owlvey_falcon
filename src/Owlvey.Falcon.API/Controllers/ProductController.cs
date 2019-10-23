@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Models;
@@ -76,6 +77,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(ProductGetRp), 200)]
         [ProducesResponseType(409)]
         [ProducesResponseType(400)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Post([FromBody]ProductPostRp resource)
         {
             if (!this.ModelState.IsValid)
@@ -94,6 +96,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(409)]
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Put(int id, [FromBody]ProductPutRp resource)
         {
             if (!this.ModelState.IsValid)
@@ -111,6 +114,7 @@ namespace Owlvey.Falcon.API.Controllers
         /// <returns></returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Delete(int id)
         {           
             await this._productService.DeleteProduct(id);
@@ -175,6 +179,7 @@ namespace Owlvey.Falcon.API.Controllers
 
         [HttpPut("{id}/sync/{name}")]
         [ProducesResponseType(typeof(DateTime), 200)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> SetAnchor(int id, string name, [FromBody]AnchorPutRp model)
         {
             await this._productService.PutAnchor(id, name, model);
@@ -184,13 +189,15 @@ namespace Owlvey.Falcon.API.Controllers
 
         [HttpPost("{id}/sync/{name}")]
         [ProducesResponseType(typeof(AnchorRp), 200)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> PostAnchor(int id, string name)
         {
             var result = await this._productService.PostAnchor(id, name);
             return this.Ok(result);
         }
 
-        [HttpDelete("{id}/sync/{name}")]        
+        [HttpDelete("{id}/sync/{name}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Delete(int id, string name)
         {
             await this._productService.DeleteAnchor(id, name);
