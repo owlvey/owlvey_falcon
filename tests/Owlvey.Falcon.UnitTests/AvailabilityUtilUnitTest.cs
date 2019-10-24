@@ -7,7 +7,7 @@ namespace Owlvey.Falcon.UnitTests
     public class AvailabilityUtilUnitTest
     {
         [Fact]
-        public void CreateProductEntitySuccess()
+        public void MeasureImpactSuccess()
         {
             var result = AvailabilityUtils.MeasureImpact(0.90m);
 
@@ -18,6 +18,12 @@ namespace Owlvey.Falcon.UnitTests
             result = AvailabilityUtils.MeasureImpact(0.999m);
             //Assert.Equal<decimal>(90.43821m, result);
             Assert.Equal(950m, result);
+        }
+        [Fact]
+        public void MeasureFailProportion() {
+            var proportion = AvailabilityUtils.CalculateFailProportion(4, 3);
+
+            Assert.Equal(0.25M, proportion);
         }
     }
 }
