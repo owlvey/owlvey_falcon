@@ -16,7 +16,7 @@ namespace Owlvey.Falcon.IoC
 
             var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-            if (env.Equals("development", StringComparison.InvariantCultureIgnoreCase))
+            if (false && env.Equals("development", StringComparison.InvariantCultureIgnoreCase))
             {
                 services.AddDbContext<FalconDbContext>(options =>
                     options.UseSqlite(connectionString)

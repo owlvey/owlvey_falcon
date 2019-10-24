@@ -16,10 +16,9 @@ namespace Owlvey.Falcon.Repositories
             System.Console.WriteLine("environment "  + env);     
 
             dbContext.Database.Migrate();
-            SeedData(dbContext, env);
         }
 
-        private static void SeedData(FalconDbContext dbContext, string env) {
+        public static void SeedData(this FalconDbContext dbContext, string env) {
 
             if (env == "Development" || env.Equals("docker", StringComparison.InvariantCultureIgnoreCase))
             {

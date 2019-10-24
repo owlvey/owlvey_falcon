@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using Owlvey.Falcon.API.Extensions;
 using Owlvey.Falcon.IoC;
 using Owlvey.Falcon.Repositories;
+using Microsoft.AspNetCore.Http;
 
 namespace Owlvey.Falcon.API
 {
@@ -67,7 +68,7 @@ namespace Owlvey.Falcon.API
             ILoggerFactory loggerFactory, IOptions<SwaggerAppOptions> swaggerOptions,
             IConfiguration configuration, FalconDbContext dbContext)
         {
-            
+
             app.UseStaticFiles();
 
             if (env.IsDevelopment() || env.IsDocker())
@@ -85,6 +86,8 @@ namespace Owlvey.Falcon.API
             {
                 dbContext.Migrate(Environment.EnvironmentName);
             }
+
+            dbContext.SeedData(Environment.EnvironmentName);
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
