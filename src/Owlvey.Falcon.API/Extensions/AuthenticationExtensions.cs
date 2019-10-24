@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace Owlvey.Falcon.API.Extensions
     {
         public static void AddAuthority(this IServiceCollection services, IConfiguration configuration, IHostingEnvironment environtment)
         {
+            IdentityModelEventSource.ShowPII = true;
             services.AddHttpContextAccessor();
             services.Configure<AuthorityOptions>(options => {
                 options.Authority = configuration["Authentication:Authority"];
@@ -34,7 +36,7 @@ namespace Owlvey.Falcon.API.Extensions
             {
                 options.Authority = authenticationOptions.Value.Authority;
                 options.RequireHttpsMetadata = false;
-
+                //options.MetadataAddress = authenticationOptions.Value.Authority;                
                 options.ApiName = authenticationOptions.Value.ApiName;
                 options.NameClaimType = authenticationOptions.Value.NameClaimType;
                 options.RoleClaimType = authenticationOptions.Value.RoleClaimType;

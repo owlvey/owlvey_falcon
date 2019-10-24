@@ -37,7 +37,7 @@ namespace Owlvey.Falcon.Components
         {
             var result = new BaseComponentResultRp();
             var modifiedBy = this._identityService.GetIdentity();
-
+            this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
             var customer = await this._dbContext.Customers.SingleAsync(c=>c.Id == id);
 
             if (customer == null)
@@ -45,9 +45,9 @@ namespace Owlvey.Falcon.Components
                 result.AddNotFound($"The Resource {id} doesn't exists.");
                 return result;
             }
-
-            customer.Delete(this._datetimeGateway.GetCurrentDateTime(), modifiedBy);
             
+            customer.Delete(this._datetimeGateway.GetCurrentDateTime(), modifiedBy);
+            this._dbContext.Customers.Update(customer);
             await this._dbContext.SaveChangesAsync();
 
             return result;

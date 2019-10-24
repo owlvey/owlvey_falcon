@@ -81,12 +81,8 @@ namespace Owlvey.Falcon.API
 
             app.UseAuthentication();
 
-            //TODO
-            if (!env.IsDocker())
-            {
-                dbContext.Migrate(Environment.EnvironmentName);
-            }
-
+            dbContext.Migrate(Environment.EnvironmentName);
+            
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
