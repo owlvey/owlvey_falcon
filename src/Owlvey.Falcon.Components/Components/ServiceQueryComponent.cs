@@ -179,7 +179,8 @@ namespace Owlvey.Falcon.Components
                 Start = start,
                 End = end,
                 Name = service.Name,
-                Avatar = service.Avatar
+                Avatar = service.Avatar,
+                SLO = service.Slo
             };
 
             var aggregator = new ServiceDailyAvailabilityAggregate(service, start, end);

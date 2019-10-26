@@ -31,6 +31,8 @@ namespace Owlvey.Falcon.Models
         public DateTime End { get; set; }
         public string Name { get; set; }
         public string Avatar { get; set; }
+
+        public decimal SLO { get; set; }
         public IList<MultiSerieItemGetRp> Series { get; set; } = new List<MultiSerieItemGetRp>();
         
     }
