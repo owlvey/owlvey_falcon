@@ -42,6 +42,7 @@ namespace Owlvey.Falcon.Components
                 .ForMember(c => c.Availability, opt => opt.Ignore())                
                 .ForMember(c => c.Total, opt => opt.Ignore())
                 .ForMember(c => c.Good, opt => opt.Ignore())
+                .ForMember(c => c.Squads, opt => opt.Ignore())
                 .ForMember(c => c.ServiceCount, opt => opt.Ignore())                                
                 .ForMember(c => c.Product, opt => opt.MapFrom(c => c.Product == null ? "" : c.Product.Name));
 

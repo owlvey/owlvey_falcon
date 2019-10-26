@@ -152,13 +152,14 @@ namespace Owlvey.Falcon.Components
                 .Include(c => c.ServiceMaps)
                 .Include(c => c.IncidentMap).ThenInclude(c => c.Incident)
                 .Include(c => c.Indicators).ThenInclude(c => c.Source)
+                .Include(c=> c.Squads)
                 .Where(c => c.Product.Id.Value.Equals(productId)).ToListAsync();
 
             var common = new FeatureCommonComponent(this._dbContext, this._datetimeGateway);
             foreach (var feature in entities)
             {
                 var tmp = this._mapper.Map<FeatureAvailabilityGetListRp>(feature);
-
+                tmp.Squads = feature.Squads.Count();
                 tmp.Availability = common.GetAvailabilityByFeature(feature, start, end);
                 tmp.Total = feature.Indicators.Sum(c => c.Source.SourceItems.Sum(d => d.Total));
                 tmp.Good = feature.Indicators.Sum(c => c.Source.SourceItems.Sum(d => d.Good));

@@ -28,7 +28,7 @@ namespace Owlvey.Falcon.Core.Aggregates
             }
             if (result.Count > 0)
             {
-                return (AvailabilityUtils.CalculateDotAvailability(result), sumTotal, sumGood);
+                return (AvailabilityUtils.CalculateDotAvailability(result, round: 4), sumTotal, sumGood);
             }
             else {
                 return (1, 0, 0);

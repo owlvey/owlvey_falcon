@@ -81,6 +81,7 @@ namespace Owlvey.Falcon.Models
         public decimal Availability { get; set; }
         public int Total { get; set; }
         public int Good { get; set; }
+        public int Squads { get; set; }
     }
 
     public class SequenceFeatureGetListRp : FeatureGetListRp {

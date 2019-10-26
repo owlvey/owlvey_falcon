@@ -48,9 +48,9 @@ namespace Owlvey.Falcon.Core
             }
             return (int)Math.Round(input.Average());
         }
-        public static decimal CalculateDotAvailability(IEnumerable<decimal> availabilities)
+        public static decimal CalculateDotAvailability(IEnumerable<decimal> availabilities, int round = 5)
         {
-            return Math.Round(availabilities.Aggregate((a, x) => a * x),5);            
+            return Math.Round(availabilities.Aggregate((a, x) => a * x), round);            
         }
 
         public static decimal CalculateFailProportion(decimal total, decimal fail, decimal defaultValue = 1) {            
