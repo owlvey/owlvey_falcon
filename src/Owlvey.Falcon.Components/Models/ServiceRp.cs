@@ -31,6 +31,13 @@ namespace Owlvey.Falcon.Models
                 return DateTimeUtils.FormatTimeToInMinutes(this.MTTM);
             }
         }
+
+        public string Group {
+            get {
+                var parts = this.Name.Split(' ');
+                return parts[0];
+            }
+        }
     }
 
     public class ServiceMigrateRp {
