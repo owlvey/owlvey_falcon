@@ -31,6 +31,48 @@ namespace Owlvey.Falcon.Components
             this._cacheComponent = cacheComponent;
         }
 
+        public async Task<IEnumerable<ServiceGetListRp>> GetServicesWithAvailabilityByGroup(int productId, DateTime start, DateTime end, string group)
+        {
+            var entity = await this._dbContext.Products
+              .Include(c => c.Services)
+              .ThenInclude(c => c.FeatureMap)
+              .ThenInclude(c => c.Feature)
+              .ThenInclude(c => c.Indicators)
+              .ThenInclude(c => c.Source)
+              .Where(c => c.Id.Equals(productId))
+              .FirstOrDefaultAsync();
+
+            var targetServices = entity.Services.Where(c => string.Equals(c.Group, group,StringComparison.InvariantCultureIgnoreCase)).ToList();
+
+            var result = new List<ServiceGetListRp>();
+            foreach (var item in targetServices)
+            {
+
+                var tmp = this._mapper.Map<ServiceGetListRp>(item);
+                tmp.Availability = await this.MeasureAvailability(item, start, end);                
+                tmp.BudgetMinutes = AvailabilityUtils.MeasureBudgetInMinutes(tmp.Budget, start, end);
+
+                tmp.Risk = "low";
+
+                if (tmp.Budget > 0)
+                {
+                    tmp.Deploy = "innovate";
+                    if (tmp.BudgetMinutes < tmp.MTTM)
+                    {
+                        tmp.Risk = "high";
+                    }
+                }
+                else
+                {
+                    tmp.Deploy = "improve";
+                    tmp.Risk = "high";
+                }
+                result.Add(tmp);
+            }
+
+            return result;
+        }
+
         public async Task<IEnumerable<ServiceGetListRp>> GetServicesWithAvailability(int productId, DateTime start, DateTime end)
         {
 

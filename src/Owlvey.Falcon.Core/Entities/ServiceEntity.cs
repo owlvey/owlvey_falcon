@@ -45,6 +45,19 @@ namespace Owlvey.Falcon.Core.Entities
             }
         }
 
+        [NotMapped]
+        public string Group { get {
+
+                if (!string.IsNullOrWhiteSpace(this.Name))
+                {
+                    return this.Name.Split(' ').FirstOrDefault();
+                }
+                else {
+                    return this.Name;
+                }
+            }
+        }
+
         public int ProductId { get; set; }
 
         public virtual ProductEntity Product { get; set; }

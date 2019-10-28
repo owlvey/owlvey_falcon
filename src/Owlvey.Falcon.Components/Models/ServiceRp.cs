@@ -18,6 +18,7 @@ namespace Owlvey.Falcon.Models
         public decimal Impact { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
+        public string Group { get; set; }
         
         public int MTTD { get; set; }        
         public int MTTE { get; set; }        

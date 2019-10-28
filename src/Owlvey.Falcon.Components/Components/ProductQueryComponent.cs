@@ -182,7 +182,67 @@ namespace Owlvey.Falcon.Components
             }
             return result;
         }
+        public async Task<MultiSeriesGetRp> GetDailyServiceSeriesByIdAndGroup(int productId, DateTime start, DateTime end, string group)
+        {
+            var product = await this._dbContext.Products
+               .Include(c => c.Services).Where(c => c.Id == productId).SingleAsync();
 
+            product.Services = product.Services.Where(c => String.Equals(c.Group, group, StringComparison.InvariantCultureIgnoreCase)).ToList();
+
+            foreach (var service in product.Services)
+            {
+                var serviceMaps = await this._dbContext.ServiceMaps
+                    .Include(c => c.Feature)
+                    .ThenInclude(c => c.Indicators).Where(c => c.Service.Id == service.Id).ToListAsync();
+                foreach (var map in serviceMaps)
+                {
+                    var entity = await this._dbContext.Features
+                        .Include(c => c.Indicators)
+                        .ThenInclude(c => c.Source)
+                        .SingleAsync(c => c.Id == map.Feature.Id);
+
+                    foreach (var indicator in entity.Indicators)
+                    {
+                        var sourceItems = this._dbContext.GetSourceItems(indicator.SourceId, start, end);
+                        indicator.Source.SourceItems = sourceItems;
+                    }
+                    map.Feature = entity;
+                }
+                service.FeatureMap = serviceMaps;
+
+            }
+
+            var result = new MultiSeriesGetRp
+            {
+                Start = start,
+                End = end,
+                Name = product.Name,
+                Avatar = product.Avatar
+            };
+
+            var aggregator = new ProductAvailabilityAggregate(product, start, end);
+
+            var (_, availability, features) = aggregator.MeasureAvailability();
+
+            result.Series.Add(new MultiSerieItemGetRp()
+            {
+                Name = "Availability",
+                Avatar = product.Avatar,
+                Items = availability.Select(c => this._mapper.Map<SeriesItemGetRp>(c)).ToList()
+            });
+
+            foreach (var indicator in features)
+            {
+                result.Series.Add(new MultiSerieItemGetRp()
+                {
+                    Name = string.Format("Service:{0}", indicator.Item1.Id),
+                    Avatar = indicator.Item1.Avatar,
+                    Items = indicator.Item2.Select(c => this._mapper.Map<SeriesItemGetRp>(c)).ToList()
+                });
+            }
+
+            return result;
+        }
         public async Task<MultiSeriesGetRp> GetDailyServiceSeriesById(int productId, DateTime start, DateTime end)
         {
             var product = await this._dbContext.Products
@@ -251,7 +311,56 @@ namespace Owlvey.Falcon.Components
 
         #region Dashboard
 
-        public async Task<DashboardProductRp> GetProductDashboard(int productId,
+        public async Task<ProductDashboardRp> GetServiceGroupDashboard(int productId,
+            DateTime start, DateTime end)
+        {
+            var result = new ProductDashboardRp();
+
+            var product = await this._dbContext.Products
+                .Include(c => c.Services).ThenInclude(c => c.FeatureMap)
+                .Include(c => c.Features).ThenInclude(c => c.Indicators)
+                .Include(c => c.Sources)
+                .Where(c => c.Id == productId).SingleAsync();
+
+            var sourceItems = this._dbContext.GetSourceItemsByProduct(productId, start, end);
+            int sloFails = 0;
+            var temp = new List<ProductDashboardRp.ServiceGroupRp>();
+
+            foreach (var group in product.Services.GroupBy(c=>c.Group))
+            {
+                var targetGroup = new ProductDashboardRp.ServiceGroupRp
+                {
+                    total = group.Count(),
+                    name = group.Key
+                };
+                foreach (var service in group)
+                {                    
+                    foreach (var map in service.FeatureMap)
+                    {
+                        map.Feature = product.Features.Single(c => c.Id == map.FeatureId);
+                    }
+                    var agg = new ServiceAvailabilityAggregate(service);                    
+                    var (availability, _, _) = agg.MeasureAvailability();
+                    if (availability < service.Slo)
+                    {
+                        targetGroup.fail += 1;
+                        sloFails += 1;
+                    }
+                }
+                temp.Add(targetGroup);                
+            }
+
+            result.groups.Add(new ProductDashboardRp.ServiceGroupRp()
+            {
+                name = "All",
+                total = product.Services.Count(),
+                fail = sloFails
+            });
+            result.groups.AddRange(temp);
+            return result;
+        }
+
+        public async Task<OperationProductDashboardRp> GetProductDashboard(int productId,
             DateTime start, DateTime end)
         {
             var product = await this._dbContext.Products
@@ -272,7 +381,7 @@ namespace Owlvey.Falcon.Components
 
 
             var sourceItems = this._dbContext.GetSourceItemsByProduct(productId, start, end);
-            var result = new DashboardProductRp();
+            var result = new OperationProductDashboardRp();
 
             foreach (var source in product.Sources)
             {

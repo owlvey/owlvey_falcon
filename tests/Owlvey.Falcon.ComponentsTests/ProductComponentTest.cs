@@ -123,5 +123,50 @@ namespace Owlvey.Falcon.ComponentsTests
             await productComponet.PutAnchor(product.Id, "sample", new Models.AnchorPutRp() { Target = DateTime.Now });
 
         }
+
+        #region dashboard
+
+        [Fact]
+        public async Task OperationDashboard()
+        {
+            var container = ComponentTestFactory.BuildContainer();
+            var customerId = await ComponentTestFactory.BuildCustomer(container);
+            var productComponet = container.GetInstance<ProductComponent>();
+            var productQueryComponent = container.GetInstance<ProductQueryComponent>();
+
+            var product = await productComponet.CreateProduct(new Models.ProductPostRp()
+            {
+                CustomerId = customerId,
+                Name = "test"
+            });
+
+            var result = await productQueryComponent.GetProductDashboard(product.Id, OwlveyCalendar.January201903,
+                OwlveyCalendar.EndJuly2019);
+
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task ServiceGroupDashboard()
+        {
+            var container = ComponentTestFactory.BuildContainer();
+            var customerId = await ComponentTestFactory.BuildCustomer(container);
+            var productComponet = container.GetInstance<ProductComponent>();
+            var productQueryComponent = container.GetInstance<ProductQueryComponent>();
+
+            var product = await productComponet.CreateProduct(new Models.ProductPostRp()
+            {
+                CustomerId = customerId,
+                Name = "test"
+            });
+
+            var result = await productQueryComponent.GetServiceGroupDashboard(product.Id, OwlveyCalendar.January201903,
+                OwlveyCalendar.EndJuly2019);
+
+            Assert.NotNull(result); 
+        }
+        #endregion
+
+
     }
 }
