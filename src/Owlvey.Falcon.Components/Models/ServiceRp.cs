@@ -18,7 +18,7 @@ namespace Owlvey.Falcon.Models
         public decimal Impact { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
-        public string Group { get; set; }
+       
         
         public int MTTD { get; set; }        
         public int MTTE { get; set; }        
@@ -30,6 +30,13 @@ namespace Owlvey.Falcon.Models
         public string MTTMS {
             get {
                 return DateTimeUtils.FormatTimeToInMinutes(this.MTTM);
+            }
+        }
+
+        public string Group {
+            get {
+                var parts = this.Name.Split(' ');
+                return parts[0];
             }
         }
     }
