@@ -84,13 +84,17 @@ namespace Owlvey.Falcon.Components
                 {
                     Id = string.Format("service_{0}", service.Id),
                     Avatar = service.Avatar,
-                    Name = service.Name,
+                    Name = string.Format("{0} [ {1} | {2} ]", service.Name,
+                        Math.Round(service.SLO, 2),
+                        Math.Round(service.Availability, 2)),
                     Value = service.Availability,
                     Group = "services",
                     Slo = service.SLO,
                     Importance = AvailabilityUtils.MeasureImpact(service.SLO),
                     Budget = service.Availability - (decimal)service.SLO
                 };
+
+                
                 result.Nodes.Add(snode);
 
                 var features = await this._featureQueryComponent.GetFeaturesByServiceIdWithAvailability(service.Id, start, end);

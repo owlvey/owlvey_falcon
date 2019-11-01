@@ -82,7 +82,9 @@ namespace Owlvey.Falcon.Components
         {            
             var modifiedBy = this._identityService.GetIdentity();
 
-            var feature = await this._dbContext.Features.SingleAsync(c => c.Id == id);
+
+
+            var feature = await this._dbContext.Features.Include(c=>c.Squads).SingleAsync(c => c.Id == id);
 
             if (feature != null)
             {
