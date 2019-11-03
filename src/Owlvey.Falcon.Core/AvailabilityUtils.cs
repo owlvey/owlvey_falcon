@@ -38,6 +38,17 @@ namespace Owlvey.Falcon.Core
 
             return Math.Floor( (minutes * budget) / 100m);
         }
+
+        public static string BudgetToAction(decimal budget) {
+            if (budget > 0)
+            {
+                return "innovate";                
+            }
+            else
+            {
+                return "improve";                
+            }            
+        }
         public static decimal MeasureBudget(decimal avaialbility, decimal slo) {
             return avaialbility - slo;
         }

@@ -80,7 +80,8 @@ namespace Owlvey.Falcon.Components
             await this._dbContext.SaveChangesAsync();
         }
 
-        public async Task<ProductGetListRp> CreateOrUpdate(CustomerEntity customer, string name, string description, string avatar) {
+        public async Task<ProductGetListRp> CreateOrUpdate(CustomerEntity customer, string name, string description, 
+            string avatar, string leaders) {
             var createdBy = this._identityService.GetIdentity();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
             var entity = await this._dbContext.Products.Where(c => c.CustomerId == customer.Id && c.Name == name).SingleOrDefaultAsync();
@@ -88,7 +89,7 @@ namespace Owlvey.Falcon.Components
             {
                 entity = ProductEntity.Factory.Create(name, this._datetimeGateway.GetCurrentDateTime(), createdBy, customer);
             }
-            entity.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, name, description, avatar);
+            entity.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, name, description, avatar, leaders);
             this._dbContext.Products.Update(entity);
             await this._dbContext.SaveChangesAsync();
             return this._mapper.Map<ProductGetListRp>(entity);
@@ -152,7 +153,7 @@ namespace Owlvey.Falcon.Components
                 product.Update(this._datetimeGateway.GetCurrentDateTime(),
                 createdBy, name: model.Name,
                 description: model.Description,
-                avatar: model.Avatar);
+                avatar: model.Avatar, leaders: model.Leaders);
                 this._dbContext.Update(product);
                 await this._dbContext.SaveChangesAsync();
             }

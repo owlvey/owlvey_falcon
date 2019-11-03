@@ -15,9 +15,10 @@ namespace Owlvey.Falcon.Models
 
     public class SquadBaseRp
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public int Id { get; set; }
+        public string Leaders { get; set; }        
         public string CustomerName { get; set; }
         public int CustomerId { get; set; }
         public string Avatar { get; set; }
@@ -29,6 +30,7 @@ namespace Owlvey.Falcon.Models
         public string Name { get; set; }
         public string Description { get; set; }                   
         public string Avatar { get; set; }
+        public string Leaders { get; set; }
     }
 
     public class SquadGetRp : SquadBaseRp {
@@ -63,5 +65,6 @@ namespace Owlvey.Falcon.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public string Avatar { get; set; }
+        public string Leaders { get; set; }
     }
 }

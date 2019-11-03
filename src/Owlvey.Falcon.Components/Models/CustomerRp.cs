@@ -10,6 +10,7 @@ namespace Owlvey.Falcon.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Avatar { get; set; }
+        public string Leaders { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
     }
@@ -23,6 +24,7 @@ namespace Owlvey.Falcon.Models
     {
         public int ProductsCount { get; set; }
         public decimal Availability { get; set; }
+        public List<ProductGetListRp> Products { get; set; }
     }
 
     public class CustomerPostRp {
@@ -36,5 +38,6 @@ namespace Owlvey.Falcon.Models
         public string Name { get; set; }
 
         public string Avatar { get; set; }
+        public string Leaders { get; set; }
     }
 }

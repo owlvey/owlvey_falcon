@@ -9,7 +9,7 @@ using Owlvey.Falcon.Repositories;
 namespace Owlvey.Falcon.Migrations
 {
     [DbContext(typeof(FalconDbContext))]
-    [Migration("20191101152335_InitialCreate")]
+    [Migration("20191103142718_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -98,6 +98,8 @@ namespace Owlvey.Falcon.Migrations
                         .IsRequired();
 
                     b.Property<bool>("Deleted");
+
+                    b.Property<string>("Leaders");
 
                     b.Property<string>("ModifiedBy")
                         .IsRequired();
@@ -325,6 +327,8 @@ namespace Owlvey.Falcon.Migrations
                     b.Property<string>("Description")
                         .IsRequired();
 
+                    b.Property<string>("Leaders");
+
                     b.Property<string>("ModifiedBy")
                         .IsRequired();
 
@@ -358,6 +362,8 @@ namespace Owlvey.Falcon.Migrations
                     b.Property<bool>("Deleted");
 
                     b.Property<string>("Description");
+
+                    b.Property<string>("Leaders");
 
                     b.Property<string>("ModifiedBy")
                         .IsRequired();
@@ -518,6 +524,8 @@ namespace Owlvey.Falcon.Migrations
 
                     b.Property<string>("Description");
 
+                    b.Property<string>("Leaders");
+
                     b.Property<string>("ModifiedBy")
                         .IsRequired();
 
@@ -593,6 +601,8 @@ namespace Owlvey.Falcon.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired();
+
+                    b.Property<string>("SlackMember");
 
                     b.HasKey("Id");
 

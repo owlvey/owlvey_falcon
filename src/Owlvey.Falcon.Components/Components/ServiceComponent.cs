@@ -28,7 +28,7 @@ namespace Owlvey.Falcon.Components
         }
 
         public async Task<ServiceGetListRp> CreateOrUpdate(CustomerEntity customer,
-            string product, string name, string description, string avatar, decimal slo)
+            string product, string name, string description, string avatar, decimal slo, string leaders)
         {
             var createdBy = this._identityService.GetIdentity();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
@@ -40,7 +40,7 @@ namespace Owlvey.Falcon.Components
                 entity = ServiceEntity.Factory.Create(name, this._datetimeGateway.GetCurrentDateTime(), createdBy, productEntity);
             }
 
-            entity.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, name, slo, description, avatar);
+            entity.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, name, slo, description, avatar, leaders);
 
             this._dbContext.Services.Update(entity);
             await this._dbContext.SaveChangesAsync();
@@ -138,7 +138,8 @@ namespace Owlvey.Falcon.Components
                 }
             }
                         
-            service.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, model.Name, model.Slo, model.Description, model.Avatar);
+            service.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, model.Name, model.Slo, model.Description, 
+                model.Avatar, model.Leaders);
 
             this._dbContext.Services.Update(service);
 

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using System.Linq;
+using Owlvey.Falcon.Core.Aggregates;
 
 namespace Owlvey.Falcon.Core.Entities
 {
@@ -34,6 +35,7 @@ namespace Owlvey.Falcon.Core.Entities
         public int ProductId { get; set; }
 
         public int ServiceMapId { get; set; }
+
 
         public virtual ProductEntity Product { get; set; }
 
@@ -102,6 +104,19 @@ namespace Owlvey.Falcon.Core.Entities
         public void RegisterIncident(IncidentMapEntity map) {
             this.IncidentMap.Add(map);
         }
+
+        #region Availability
+
+        [NotMapped]
+        public decimal Availability { get; protected set; }
+
+        public void MeasureAvailability() {
+            var featureAgg = new FeatureAvailabilityAggregate(this);
+            var (availability, _, _) = featureAgg.MeasureAvailability();
+            this.Availability = availability;
+        }
+        #endregion
+
 
     }
 }

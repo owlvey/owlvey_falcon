@@ -40,14 +40,15 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map< SquadGetRp>(entity);
         }
 
-        public async Task<SquadGetRp> CreateOrUpdate(CustomerEntity customer, string name, string description, string avatar) {
+        public async Task<SquadGetRp> CreateOrUpdate(CustomerEntity customer, string name, string description, string avatar
+            , string leaders) {
             var createdBy = this._identityService.GetIdentity();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
             var entity = await this._dbContext.Squads.Where(c => c.CustomerId == customer.Id && c.Name == name).SingleOrDefaultAsync();
             if (entity == null) {
                 entity = SquadEntity.Factory.Create(name, this._datetimeGateway.GetCurrentDateTime(), createdBy, customer);
             }
-            entity.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, name, description, avatar);
+            entity.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, name, description, avatar, leaders);
             this._dbContext.Squads.Update(entity);
             await this._dbContext.SaveChangesAsync();
             return this._mapper.Map<SquadGetRp>(entity);           
@@ -169,7 +170,7 @@ namespace Owlvey.Falcon.Components
                 }
             }
 
-            squad.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, model.Name, model.Description, model.Avatar);
+            squad.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, model.Name, model.Description, model.Avatar, model.Leaders);
 
             this._dbContext.Update(squad);
 

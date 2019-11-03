@@ -53,18 +53,16 @@ namespace Owlvey.Falcon.Components
                 tmp.BudgetMinutes = AvailabilityUtils.MeasureBudgetInMinutes(tmp.Budget, start, end);
 
                 tmp.Risk = "low";
-
+                tmp.Deploy = AvailabilityUtils.BudgetToAction(tmp.Budget);
                 if (tmp.Budget > 0)
-                {
-                    tmp.Deploy = "innovate";
+                {                    
                     if (tmp.BudgetMinutes < tmp.MTTM)
                     {
                         tmp.Risk = "high";
                     }
                 }
                 else
-                {
-                    tmp.Deploy = "improve";
+                {                    
                     tmp.Risk = "high";
                 }
                 result.Add(tmp);

@@ -67,7 +67,10 @@ namespace Owlvey.Falcon.Components
                 return result;
             }
             
-            customer.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, model.Name, model.Avatar);
+            customer.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, 
+                model.Name, 
+                model.Avatar,
+                model.Leaders);
 
             this._dbContext.Update(customer);
 

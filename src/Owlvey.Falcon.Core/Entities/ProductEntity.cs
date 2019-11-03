@@ -14,6 +14,7 @@ namespace Owlvey.Falcon.Core.Entities
         [Required]
         public string Description { get; set; }
 
+        public string Leaders { get; set; }
         public CustomerEntity Customer { get; set; }
 
         public int CustomerId { get; set; }
@@ -34,8 +35,10 @@ namespace Owlvey.Falcon.Core.Entities
             this.Features.Add(entity); 
         }
 
-        public virtual void Update(DateTime on, string modifiedBy, string name, string description, string avatar)
+        public virtual void Update(DateTime on, string modifiedBy, string name, string description, 
+            string avatar, string leaders)
         {
+            this.Leaders = leaders ?? this.Leaders;
             this.Name = name ?? this.Name;
             this.Description = description ?? this.Description;
             this.Avatar = avatar ?? this.Avatar;

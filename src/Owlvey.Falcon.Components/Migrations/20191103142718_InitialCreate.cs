@@ -39,7 +39,8 @@ namespace Owlvey.Falcon.Migrations
                     ModifiedBy = table.Column<string>(nullable: false),
                     Deleted = table.Column<bool>(nullable: false),
                     Name = table.Column<string>(nullable: false),
-                    Avatar = table.Column<string>(nullable: false)
+                    Avatar = table.Column<string>(nullable: false),
+                    Leaders = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -59,7 +60,8 @@ namespace Owlvey.Falcon.Migrations
                     Deleted = table.Column<bool>(nullable: false),
                     Email = table.Column<string>(nullable: false),
                     Name = table.Column<string>(nullable: false),
-                    Avatar = table.Column<string>(nullable: false)
+                    Avatar = table.Column<string>(nullable: false),
+                    SlackMember = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -80,6 +82,7 @@ namespace Owlvey.Falcon.Migrations
                     Name = table.Column<string>(nullable: false),
                     Avatar = table.Column<string>(nullable: false),
                     Description = table.Column<string>(nullable: false),
+                    Leaders = table.Column<string>(nullable: true),
                     CustomerId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -107,6 +110,7 @@ namespace Owlvey.Falcon.Migrations
                     Name = table.Column<string>(nullable: false),
                     Description = table.Column<string>(nullable: true),
                     Avatar = table.Column<string>(nullable: true),
+                    Leaders = table.Column<string>(nullable: true),
                     CustomerId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -223,6 +227,7 @@ namespace Owlvey.Falcon.Migrations
                     Owner = table.Column<string>(nullable: false),
                     Slo = table.Column<decimal>(nullable: false),
                     Avatar = table.Column<string>(nullable: false),
+                    Leaders = table.Column<string>(nullable: true),
                     ProductId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>

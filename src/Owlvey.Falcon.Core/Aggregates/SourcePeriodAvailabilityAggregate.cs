@@ -19,15 +19,15 @@ namespace Owlvey.Falcon.Core.Aggregates
             this.End = end;            
         }
 
-        internal static IEnumerable<AvailabilityValue> GenerateSourceItemDays(SourceItemEntity itemEntity)
+        internal static IEnumerable<DateAvailabilityValue> GenerateSourceItemDays(SourceItemEntity itemEntity)
         {
             var days = (decimal)DateTimeUtils.DaysDiff(itemEntity.End, itemEntity.Start);            
-            List<AvailabilityValue> result = new List<AvailabilityValue>();
+            List<DateAvailabilityValue> result = new List<DateAvailabilityValue>();
 
             var pivot = itemEntity.Start;
             for (int i = 0; i < days; i++)
             {
-                AvailabilityValue value = new AvailabilityValue();
+                DateAvailabilityValue value = new DateAvailabilityValue();
                 value.Availability = itemEntity.Availability;
                 value.Date = pivot.Date;                
                 result.Add(value);

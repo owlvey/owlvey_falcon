@@ -14,10 +14,13 @@ namespace Owlvey.Falcon.Core.Entities
         [Required]
         public string Avatar { get; set; }
 
+        public string Leaders { get; set; }
+
         public virtual ICollection<ProductEntity> Products { get; set; } = new List<ProductEntity>();
         public virtual ICollection<SquadEntity> Squads { get; set; } = new List<SquadEntity>();
 
-        public void Update(DateTime on, string modifiedBy, string name= null, string avatar = null ) {
+        public void Update(DateTime on, string modifiedBy, string name= null, string avatar = null, string leaders= null) {
+            this.Leaders = leaders ?? this.Leaders;
             this.Name = name ?? this.Name;
             this.Avatar = avatar ?? this.Avatar;
             this.ModifiedBy = modifiedBy;

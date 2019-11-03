@@ -27,6 +27,8 @@ namespace Owlvey.Falcon.Core.Entities
         public string Description { get; protected set; }
         public string Avatar { get; protected set; }
 
+        public string Leaders { get; set; }
+
         public virtual ICollection<MemberEntity> Members { get; set; } = new List<MemberEntity>();
         public virtual ICollection<SquadFeatureEntity> FeatureMaps { get; set; } = new List<SquadFeatureEntity>();
                
@@ -34,8 +36,10 @@ namespace Owlvey.Falcon.Core.Entities
         public virtual CustomerEntity Customer { get; set; }
         public int CustomerId { get; set; }
 
-        public void Update(DateTime on, string modifiedBy, string name = null, string description = null, string avatar = null)
-        { 
+        public void Update(DateTime on, string modifiedBy, string name, string description, 
+            string avatar, string leaders)
+        {
+            this.Leaders = leaders ?? this.Leaders;
             this.Name = name ?? this.Name;
             this.Description = description ?? this.Description;
             this.Avatar = avatar ?? this.Avatar;

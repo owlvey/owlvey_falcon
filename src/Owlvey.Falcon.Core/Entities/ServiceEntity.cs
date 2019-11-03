@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using System.Linq;
+using Owlvey.Falcon.Core.Aggregates;
 
 namespace Owlvey.Falcon.Core.Entities
 {
@@ -36,6 +37,8 @@ namespace Owlvey.Falcon.Core.Entities
         [Required]
         public string Avatar { get; set; }
 
+        public string Leaders { get; set; }
+
         [NotMapped]
         public decimal Impact
         {
@@ -58,14 +61,23 @@ namespace Owlvey.Falcon.Core.Entities
             }
         }
 
+        [NotMapped]
+        public decimal FeatureSLO { get {
+                return AvailabilityUtils.CalculateFeatureSlo(this.Slo, this.FeatureMap.Count());
+            } }
+
+        
+
         public int ProductId { get; set; }
 
         public virtual ProductEntity Product { get; set; }
 
         public virtual ICollection<ServiceMapEntity> FeatureMap { get; set; } = new List<ServiceMapEntity>();
 
-        public void Update(DateTime on, string modifiedBy, string name, decimal? slo, string description = null, string avatar = null)
+        public void Update(DateTime on, string modifiedBy, string name, decimal? slo, string description, string avatar,
+            string leaders)
         {
+            this.Leaders = leaders ?? this.Leaders;
             this.Name = name ?? this.Name;
             this.Slo = slo ?? this.Slo;
             this.Description = description ?? this.Description;
@@ -74,6 +86,20 @@ namespace Owlvey.Falcon.Core.Entities
             this.ModifiedOn = on;            
             this.Validate();
         }
+
+
+        #region Availability
+
+        [NotMapped]
+        public decimal Availability { get; protected set; }
+
+        public void MeasureAvailability()
+        {
+            var agg = new ServiceAvailabilityAggregate(this);
+            var (availability, _, _) = agg.MeasureAvailability();
+            this.Availability = availability;            
+        }
+        #endregion
 
     }
 }

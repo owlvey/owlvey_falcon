@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Owlvey.Falcon.Core.Aggregates;
+using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -36,6 +38,20 @@ namespace Owlvey.Falcon.Core.Entities
 
         public string Description { get; set; }
 
+        [NotMapped]
+        public int Good { get {
+                return this.SourceItems.Sum(c=>c.Good);
+            } }
+
+        [NotMapped]
+        public int Total
+        {
+            get
+            {
+                return this.SourceItems.Sum(c => c.Total);
+            }
+        }
+
         public SourceKindEnum Kind { get; set; }
 
         public virtual ProductEntity Product { get; set; }
@@ -60,5 +76,18 @@ namespace Owlvey.Falcon.Core.Entities
             this.Tags = tags ?? this.Tags;
             this.ModifiedBy = modifiedBy;
         }
+
+        #region Availability
+
+        [NotMapped]
+        public decimal Availability { get; protected set; }
+
+        public void MeasureAvailability()
+        {
+            var agg = new SourceAvailabilityAggregate(this);
+            var (ava, _, _) = agg.MeasureAvailability();
+            this.Availability = ava;
+        }
+        #endregion
     }
 }

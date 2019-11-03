@@ -15,6 +15,7 @@ namespace Owlvey.Falcon.Models
         public string Name { get; set; }        
         public string Squad { get; set; }
         public string Avatar { get; set; }
+        public string SlackMember { get; set; }
     }
 
     public class MemberGetRp : MemberBaseRp

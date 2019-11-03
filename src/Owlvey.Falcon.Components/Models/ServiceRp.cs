@@ -12,6 +12,8 @@ namespace Owlvey.Falcon.Models
         public string Name { get; set; }
         public string Avatar { get; set; }
         public string Description { get; set; }
+
+        public string Leaders { get; set; }
         public int Id { get; set; }
         public int ProductId { get; set; }        
         public decimal SLO { get; set; }
@@ -47,6 +49,7 @@ namespace Owlvey.Falcon.Models
         public string Description { get; set; }
         public decimal SLO { get; set; }        
         public string Avatar { get; set; }
+        public string Leaders { get; set; }
     }
 
     public class ServiceGetRp : ServiceBaseRp {
@@ -101,5 +104,7 @@ namespace Owlvey.Falcon.Models
         public decimal? Slo { get; set; }        
         public string Avatar { get; set; }
         public string Description { get; set; }        
+
+        public string Leaders { get; set; }
     }
 }

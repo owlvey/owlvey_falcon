@@ -227,6 +227,20 @@ namespace Owlvey.Falcon.API.Controllers
 
         #region reports
 
+        [HttpGet("{id}/reports/excel")]
+        [ProducesResponseType(typeof(SeriesGetRp), 200)]
+        public async Task<IActionResult> ExportExcel(int id, DateTime? start, DateTime? end)
+        {
+            if (!start.HasValue || !end.HasValue)
+            {
+                return this.BadRequest("start is required");
+            }
+
+            var result = await this._productQueryService.GetProductExportToExcel(id, start.Value, end.Value);
+            string excelName = $"{result.Item1.Customer.Name}-{result.Item1.Name}-excel-{start.Value.ToString("yyyyMMdd")}-{end.Value.ToString("yyyyMMdd")}.xlsx";
+            return File(result.Item2, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);                       
+        }
+
         [HttpGet("{id}/reports/daily/services/series")]
         [ProducesResponseType(typeof(SeriesGetRp), 200)]
         public async Task<IActionResult> ReportSeries(int id, DateTime? start, DateTime? end, string group = null)

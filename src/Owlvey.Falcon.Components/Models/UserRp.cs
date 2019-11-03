@@ -11,6 +11,7 @@ namespace Owlvey.Falcon.Models
         public int Id { get; set; }
         public string Avatar { get; set; }
         public string Name { get; set; }
+        public string SlackMember { get; set; }
     }
 
     public class UserGetRp : UserBaseRp
@@ -38,6 +39,8 @@ namespace Owlvey.Falcon.Models
         public string Avatar { get; set; }
         [Required]
         public string Name { get; set; }
+
+        public string SlackMember { get; set; }
     }
 
 }

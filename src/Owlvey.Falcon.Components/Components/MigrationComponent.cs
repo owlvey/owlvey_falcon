@@ -192,7 +192,8 @@ namespace Owlvey.Falcon.Components
                         Email = item.User.Email,
                         Squad = squad.Name,
                         Avatar = item.User.Avatar,
-                        Name = item.User.Name
+                        Name = item.User.Name,
+                        SlackMember = item.User.SlackMember
                     });
                 }
             }
@@ -347,7 +348,8 @@ namespace Owlvey.Falcon.Components
                 var name = membersSource.Cells[row, 2].GetValue<string>();
                 var squad = membersSource.Cells[row, 3].GetValue<string>();
                 var avatar = membersSource.Cells[row, 4].GetValue<string>();
-                var user = await this._userComponent.CreateOrUpdate(email, name, avatar);
+                var slackmember = membersSource.Cells[row, 5].GetValue<string>();
+                var user = await this._userComponent.CreateOrUpdate(email, name, avatar, slackmember);
                 await this._squadComponent.RegisterMember(customerId, squad, user.Id);
             }
         }
@@ -417,8 +419,9 @@ namespace Owlvey.Falcon.Components
                     var name = squadSheet.Cells[row, 1].GetValue<string>();
                     var description = squadSheet.Cells[row, 2].GetValue<string>();
                     var avatar = squadSheet.Cells[row, 3].GetValue<string>();
+                    var leaders = squadSheet.Cells[row, 4].GetValue<string>();
                     logs.Add(" add update " + name);
-                    await this._squadComponent.CreateOrUpdate(customer, name, description, avatar);
+                    await this._squadComponent.CreateOrUpdate(customer, name, description, avatar, leaders);
                 }
 
                 var memberSheet = package.Workbook.Worksheets["Members"];
@@ -431,9 +434,10 @@ namespace Owlvey.Falcon.Components
                     var name = productSheet.Cells[row, 1].GetValue<string>();
                     var description = productSheet.Cells[row, 2].GetValue<string>();
                     var avatar = productSheet.Cells[row, 3].GetValue<string>();
+                    var leaders = productSheet.Cells[row, 4].GetValue<string>();
                     if (name != null)
                     {
-                        await this._productComponent.CreateOrUpdate(customer, name, description, avatar);
+                        await this._productComponent.CreateOrUpdate(customer, name, description, avatar, leaders);
                     }
                 }
 
@@ -446,9 +450,12 @@ namespace Owlvey.Falcon.Components
                     var description = serviceSheet.Cells[row, 3].GetValue<string>();
                     var slo = serviceSheet.Cells[row, 4].GetValue<decimal>();
                     var avatar = serviceSheet.Cells[row, 5].GetValue<string>();
+                    var leaders = serviceSheet.Cells[row, 6].GetValue<string>();
                     if (product != null && name != null)
                     {
-                        await this._serviceComponent.CreateOrUpdate(customer, product, name, description, avatar, slo);
+                        await this._serviceComponent.CreateOrUpdate(customer, 
+                            product, name, description, 
+                            avatar, slo, leaders);
                     }
                 }
 

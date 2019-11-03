@@ -27,7 +27,7 @@ namespace Owlvey.Falcon.Components
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
 
             var target = await this._dbContext.Users.Where(c => c.Id == id).SingleAsync();
-            target.Update(model.Email, model.Avatar, model.Name);
+            target.Update(model.Email, model.Avatar, model.Name, model.SlackMember);
             this._dbContext.Users.Update(target);
             await this._dbContext.SaveChangesAsync();
 
@@ -42,7 +42,8 @@ namespace Owlvey.Falcon.Components
             }
         }
 
-        public async Task<UserGetListRp> CreateOrUpdate(string email, string name, string avatar) {
+        public async Task<UserGetListRp> CreateOrUpdate(string email, string name, 
+            string avatar, string slackmember) {
             var createdBy = this._identityService.GetIdentity();
             var entity = await this._dbContext.Users.Where(c => c.Email == email).SingleOrDefaultAsync();
             if (entity == null)
@@ -53,7 +54,7 @@ namespace Owlvey.Falcon.Components
                 
             }
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
-            entity.Update(email, name, avatar);
+            entity.Update(email, name, avatar, slackmember );
             await this._dbContext.SaveChangesAsync();
             return this._mapper.Map<UserGetListRp>(entity);
         }

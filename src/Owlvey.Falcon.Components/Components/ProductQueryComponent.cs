@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using Owlvey.Falcon.Core;
 using Owlvey.Falcon.Core.Aggregates;
 using Owlvey.Falcon.Core.Entities;
@@ -9,8 +10,10 @@ using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Repositories;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Owlvey.Falcon.Repositories.Products;
 
 namespace Owlvey.Falcon.Components
 {
@@ -312,6 +315,87 @@ namespace Owlvey.Falcon.Components
 
         #endregion
 
+        #region Reports
+        public async Task<(ProductEntity, MemoryStream)> GetProductExportToExcel(int productId,
+         DateTime start, DateTime end)
+        {
+            var product = await this._dbContext.FullLoadProduct(productId);
+
+            var sourceItems = this._dbContext.GetSourceItemsByProduct(productId, start, end);
+
+            var squadsData = await this._dbContext.SquadFeatures
+                .Include(c => c.Squad)
+                .Where(c => c.Feature.ProductId == productId).ToListAsync();
+
+            var sourceExports = new List<ExportExcelSourceRp>();
+
+            foreach (var source in product.Sources)
+            {
+                source.SourceItems = sourceItems.Where(c => c.SourceId == source.Id).ToList();
+                source.MeasureAvailability();
+                sourceExports.Add(new ExportExcelSourceRp(source));
+            }
+            var featureIds = product.Features.Select(c => c.Id).ToList();
+
+            var featuresExports = new List<ExportExcelFeatureRp>();
+            var featuresDetailExports = new List<ExportExcelFeatureDetailRp>();
+
+            foreach (var feature in product.Features)
+            {
+                foreach (var indicator in feature.Indicators)
+                {
+                    indicator.Source = product.Sources.Single(c => c.Id == indicator.SourceId);                    
+                }
+                foreach (var squadMap in squadsData.Where(c => c.FeatureId == feature.Id).ToList())
+                {
+                    squadMap.Feature = feature;
+                    feature.Squads.Add(squadMap);
+                }
+                feature.MeasureAvailability();
+                featuresExports.Add(new ExportExcelFeatureRp(feature));
+
+                foreach (var indicator in feature.Indicators)
+                {                    
+                    featuresDetailExports.Add(new ExportExcelFeatureDetailRp( indicator));
+                }
+            }
+            
+            var serviceExports = new List<ExportExcelServiceRp>();
+            var serviceDetailExports = new List<ExportExcelServiceDetailRp>();
+            foreach (var service in product.Services)
+            {
+                foreach (var map in service.FeatureMap)
+                {
+                    map.Feature = product.Features.Single(c => c.Id == map.FeatureId);
+                }
+                serviceExports.Add(new ExportExcelServiceRp(service));
+                service.MeasureAvailability();
+                foreach (var featureMap in service.FeatureMap)
+                {                    
+                    serviceDetailExports.Add(new ExportExcelServiceDetailRp(featureMap));
+                }               
+            }
+
+            var stream = new MemoryStream();
+            using (var package = new ExcelPackage(stream))
+            {
+                var servicesSheet = package.Workbook.Worksheets.Add("Services");
+                servicesSheet.Cells.LoadFromCollection(serviceExports, true);
+                var servicesDetailSheet = package.Workbook.Worksheets.Add("ServicesDetail");
+                servicesDetailSheet.Cells.LoadFromCollection(serviceDetailExports, true);
+                var featuresSheet = package.Workbook.Worksheets.Add("Features");
+                featuresSheet.Cells.LoadFromCollection(featuresExports, true);
+                var indicatorsSheet = package.Workbook.Worksheets.Add("Indicators");
+                indicatorsSheet.Cells.LoadFromCollection(featuresDetailExports, true);
+                var sourceSheet = package.Workbook.Worksheets.Add("Sources");
+                sourceSheet.Cells.LoadFromCollection(sourceExports, true);
+                package.Save();
+            }
+
+            stream.Position = 0;
+            return (product, stream);
+        }
+        #endregion
 
         #region Dashboard
 
@@ -320,11 +404,7 @@ namespace Owlvey.Falcon.Components
         {
             var result = new ProductDashboardRp();
 
-            var product = await this._dbContext.Products
-                .Include(c => c.Services).ThenInclude(c => c.FeatureMap)
-                .Include(c => c.Features).ThenInclude(c => c.Indicators)
-                .Include(c => c.Sources)
-                .Where(c => c.Id == productId).SingleAsync();
+            var product = await this._dbContext.FullLoadProduct(productId);
 
             var sourceItems = this._dbContext.GetSourceItemsByProduct(productId, start, end);
             int sloFails = 0;
@@ -367,11 +447,7 @@ namespace Owlvey.Falcon.Components
         public async Task<OperationProductDashboardRp> GetProductDashboard(int productId,
             DateTime start, DateTime end)
         {
-            var product = await this._dbContext.Products
-                .Include(c => c.Services).ThenInclude(c => c.FeatureMap)
-                .Include(c => c.Features).ThenInclude(c => c.Indicators)
-                .Include(c => c.Sources)
-                .Where(c => c.Id == productId).SingleAsync();
+            var product = await this._dbContext.FullLoadProduct(productId);
 
             var featureIds = product.Features.Select(c => c.Id).ToList();
 

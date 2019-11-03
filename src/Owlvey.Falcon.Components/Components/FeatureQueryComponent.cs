@@ -194,14 +194,12 @@ namespace Owlvey.Falcon.Components
 
             var result = new List<SequenceFeatureGetListRp>();                       
             var common = new FeatureCommonComponent(this._dbContext, this._datetimeGateway);
-
-            var featureSlo = AvailabilityUtils.CalculateFeatureSlo(service.Slo, service.FeatureMap.Count()); 
-
+            
             foreach (var map in service.FeatureMap)
             {
                 var feature = map.Feature;
                 var tmp = this._mapper.Map<SequenceFeatureGetListRp>(feature);
-                tmp.FeatureSlo = featureSlo;                
+                tmp.FeatureSlo = service.FeatureSLO;                
                 tmp.Availability = common.GetAvailabilityByFeature(feature, start, end);
                 tmp.Total = feature.Indicators.Sum(c => c.Source.SourceItems.Sum(d => d.Total));
                 tmp.MapId = map.Id.Value;
