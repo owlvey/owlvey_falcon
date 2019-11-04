@@ -54,10 +54,10 @@ steps:
 - script: dotnet publish src/Owlvey.Falcon.API -c Release --no-restore -o ../../artifactory
   displayName: Package Application
 
-- script: |
-    cd src/Owlvey.Falcon.Components
-    dotnet ef migrations script -c FalconDbContext -o ../../artifactory/falcondb.sql --verbose
-    cd  ../../
+- bash: |
+    cd scripts
+    bash generate_sqlserver_migration.bash
+    cd  ..
   displayName: Get Migration Scripts
 
 - task: Docker@2
