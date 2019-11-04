@@ -325,13 +325,13 @@ namespace Owlvey.Falcon.Migrations
                         column: x => x.FeatureId,
                         principalTable: "FeatureEntity",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_SquadFeatureEntity_SquadEntity_SquadId",
                         column: x => x.SquadId,
                         principalTable: "SquadEntity",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
