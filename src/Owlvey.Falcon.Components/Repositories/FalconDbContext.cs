@@ -59,17 +59,19 @@ namespace Owlvey.Falcon.Repositories
 
             modelBuilder.Entity<SquadFeatureEntity>().HasKey(x => new { x.Id });
 
+            
+            modelBuilder.Entity<SquadFeatureEntity>()
+               .HasOne(pt => pt.Squad)
+               .WithMany(p => p.FeatureMaps)
+               .OnDelete(DeleteBehavior.Restrict)
+               .HasForeignKey(pt => pt.SquadId);
+
             modelBuilder.Entity<SquadFeatureEntity>()
                .HasOne(pt => pt.Feature)
                .WithMany(p => p.Squads)
                .OnDelete(DeleteBehavior.Cascade)
                .HasForeignKey(pt => pt.FeatureId);
-
-            modelBuilder.Entity<SquadFeatureEntity>()
-               .HasOne(pt => pt.Squad)
-               .WithMany(p => p.FeatureMaps)
-               .OnDelete(DeleteBehavior.Cascade)
-               .HasForeignKey(pt => pt.SquadId);
+            
 
             modelBuilder.Entity<IncidentMapEntity>().HasKey(x => new { x.Id });
 
