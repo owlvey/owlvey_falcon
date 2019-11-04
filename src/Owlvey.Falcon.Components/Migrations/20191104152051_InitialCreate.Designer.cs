@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Owlvey.Falcon.Repositories;
@@ -9,19 +10,22 @@ using Owlvey.Falcon.Repositories;
 namespace Owlvey.Falcon.Migrations
 {
     [DbContext(typeof(FalconDbContext))]
-    [Migration("20191103142718_InitialCreate")]
+    [Migration("20191104152051_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
+                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128)
+                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.AnchorEntity", b =>
                 {
                     b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("CreatedBy")
                         .IsRequired();
@@ -54,7 +58,8 @@ namespace Owlvey.Falcon.Migrations
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.AppSettingEntity", b =>
                 {
                     b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("CreatedBy")
                         .IsRequired();
@@ -86,7 +91,8 @@ namespace Owlvey.Falcon.Migrations
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.CustomerEntity", b =>
                 {
                     b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Avatar")
                         .IsRequired();
@@ -121,7 +127,8 @@ namespace Owlvey.Falcon.Migrations
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.FeatureEntity", b =>
                 {
                     b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Avatar")
                         .IsRequired();
@@ -160,7 +167,8 @@ namespace Owlvey.Falcon.Migrations
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.IncidentEntity", b =>
                 {
                     b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("Affected");
 
@@ -209,7 +217,8 @@ namespace Owlvey.Falcon.Migrations
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.IncidentMapEntity", b =>
                 {
                     b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("CreatedBy")
                         .IsRequired();
@@ -241,7 +250,8 @@ namespace Owlvey.Falcon.Migrations
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.IndicatorEntity", b =>
                 {
                     b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Avatar");
 
@@ -277,7 +287,8 @@ namespace Owlvey.Falcon.Migrations
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.MemberEntity", b =>
                 {
                     b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("CreatedBy")
                         .IsRequired();
@@ -309,7 +320,8 @@ namespace Owlvey.Falcon.Migrations
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.ProductEntity", b =>
                 {
                     b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Avatar")
                         .IsRequired();
@@ -348,7 +360,8 @@ namespace Owlvey.Falcon.Migrations
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.ServiceEntity", b =>
                 {
                     b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Avatar")
                         .IsRequired();
@@ -391,7 +404,8 @@ namespace Owlvey.Falcon.Migrations
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.ServiceMapEntity", b =>
                 {
                     b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("CreatedBy")
                         .IsRequired();
@@ -423,7 +437,8 @@ namespace Owlvey.Falcon.Migrations
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.SourceEntity", b =>
                 {
                     b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Avatar");
 
@@ -468,7 +483,8 @@ namespace Owlvey.Falcon.Migrations
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.SourceItemEntity", b =>
                 {
                     b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("CreatedBy")
                         .IsRequired();
@@ -508,7 +524,8 @@ namespace Owlvey.Falcon.Migrations
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.SquadEntity", b =>
                 {
                     b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Avatar");
 
@@ -545,7 +562,8 @@ namespace Owlvey.Falcon.Migrations
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.SquadFeatureEntity", b =>
                 {
                     b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("CreatedBy")
                         .IsRequired();
@@ -577,7 +595,8 @@ namespace Owlvey.Falcon.Migrations
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.UserEntity", b =>
                 {
                     b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Avatar")
                         .IsRequired();
