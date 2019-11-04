@@ -338,3 +338,6 @@ BuildReports/
 
 /artifactory
 *.xml
+
+/src/Owlvey.Falcon.Components/Migrations
+
