@@ -747,7 +747,7 @@ namespace Owlvey.Falcon.Migrations
                     b.HasOne("Owlvey.Falcon.Core.Entities.FeatureEntity", "Feature")
                         .WithMany("Squads")
                         .HasForeignKey("FeatureId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Owlvey.Falcon.Core.Entities.SquadEntity", "Squad")
                         .WithMany("FeatureMaps")
