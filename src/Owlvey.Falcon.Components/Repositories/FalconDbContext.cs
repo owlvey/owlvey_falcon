@@ -69,7 +69,7 @@ namespace Owlvey.Falcon.Repositories
             modelBuilder.Entity<SquadFeatureEntity>()
                .HasOne(pt => pt.Feature)
                .WithMany(p => p.Squads)
-               .OnDelete(DeleteBehavior.Restrict)
+               .OnDelete(DeleteBehavior.Cascade)
                .HasForeignKey(pt => pt.FeatureId);
             
 
