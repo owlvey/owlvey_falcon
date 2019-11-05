@@ -11,6 +11,21 @@ namespace Owlvey.Falcon.Models
         public string Product { get; set; }
         public string Squad { get; set; }
         public string Feature { get; set; }
+
+        public class Comparer : IEqualityComparer<SquadFeatureMigrationRp>
+        {
+            public bool Equals(SquadFeatureMigrationRp x, SquadFeatureMigrationRp y)
+            {
+                return String.Equals(x.Product, y.Product, StringComparison.InvariantCultureIgnoreCase)
+                    && String.Equals(x.Feature, y.Feature, StringComparison.InvariantCultureIgnoreCase)
+                    && String.Equals(x.Squad, y.Squad, StringComparison.InvariantCultureIgnoreCase);
+            }
+
+            public int GetHashCode(SquadFeatureMigrationRp obj)
+            {
+                return obj.GetHashCode();
+            }
+        }
     }
 
     public class SquadBaseRp

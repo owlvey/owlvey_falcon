@@ -35,9 +35,82 @@ namespace Owlvey.Falcon.Components
 
         public async Task<UserGetRp> GetUserById(int id)
         {
-            var entity = await this._dbContext.Users.SingleOrDefaultAsync(c => c.Id == id);
-            return this._mapper.Map<UserGetRp>(entity);
+            var customers = await this._dbContext.Customers
+                .Include(c=>c.Products)
+                .ThenInclude(c=>c.Services)                
+                .ToListAsync();            
+
+            var customersSquads = await this._dbContext.Customers
+                .Include(c => c.Products)
+                .ThenInclude(c=>c.Features)
+                .ThenInclude(c=>c.Squads)
+                .ThenInclude(c=>c.Squad)                
+                .ThenInclude(c => c.Members)                
+                .ToListAsync();
+                                   
+            var entity = await this._dbContext.Users                
+                .SingleOrDefaultAsync(c => c.Id == id);
+            if (entity == null) return null;
+            var result = this._mapper.Map<UserGetRp>(entity);
+            
+            foreach (var customer in customers)
+            {
+                foreach (var product in customer.Products)
+                {
+                    if (!string.IsNullOrWhiteSpace(product.Leaders) && product.Leaders.Contains(entity.Email)) {
+                        var temp = this._mapper.Map<ProductGetListRp>(product);                        
+                        result.Products.Add(temp);
+                    }
+                    foreach (var service in product.Services)
+                    {
+                        if (!string.IsNullOrWhiteSpace(service.Leaders) && service.Leaders.Contains(entity.Email))
+                        {
+                            var temp = new Dictionary<string, object>();
+                            temp["customerId"] = customer.Id;
+                            temp["customer"] = customer.Name;
+                            temp["productId"] = product.Id;
+                            temp["product"] = product.Name;
+                            temp["serviceId"] = service.Id;
+                            temp["service"] = service.Name;
+                            temp["slo"] = service.Slo;
+                            result.Services.Add(temp);
+                        }                            
+                    }
+                }
+            }
+
+            foreach (var customer in customersSquads)
+            {
+                foreach (var product in customer.Products)
+                {
+                    foreach (var feature in product.Features)
+                    {
+                        foreach (var squad in feature.Squads)
+                        {
+                            foreach (var member in squad.Squad.Members)
+                            {
+                                if (member.UserId == id) {
+                                    var temp = new Dictionary<string, object>
+                                    {
+                                        ["customerId"] = customer.Id,
+                                        ["customer"] = customer.Name,
+                                        ["productId"] = product.Id,
+                                        ["product"] = product.Name,
+                                        ["featureId"] = feature.Id,
+                                        ["feature"] = feature.Name,
+                                        ["squadId"] = squad.Id,
+                                        ["squad"] = squad.Squad.Name,
+                                    };
+                                    result.Features.Add(temp);
+                                }
+                            }
+                        }                                                
+                    }
+                }
+            }
+            return result;
         }
 
     }
 }
+

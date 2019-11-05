@@ -83,12 +83,16 @@ namespace Owlvey.Falcon.Components
             {
                 foreach (var map in squad.FeatureMaps)
                 {
-                    result.Add(new SquadFeatureMigrationRp()
+                    var temp = new SquadFeatureMigrationRp()
                     {
+                        Product = map.Feature.Product.Name,
                         Squad = squad.Name,
-                        Feature = map.Feature.Name,
-                        Product = map.Feature.Product.Name
-                    });
+                        Feature = map.Feature.Name
+                    };
+
+                    if (!result.Contains( temp , new SquadFeatureMigrationRp.Comparer())) {
+                        result.Add(temp);
+                    }                    
                 }                                           
             }
             return result;

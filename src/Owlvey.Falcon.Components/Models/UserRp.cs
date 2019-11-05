@@ -18,6 +18,10 @@ namespace Owlvey.Falcon.Models
     {        
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
+
+        public List<ProductGetListRp> Products { get; set; } = new List<ProductGetListRp>();
+        public List<Dictionary<string, object>> Services { get; set; } = new List<Dictionary<string, object>>();
+        public List<Dictionary<string, object>> Features { get; set; } = new List<Dictionary<string, object>>();
     }
 
     public class UserGetListRp : UserBaseRp
