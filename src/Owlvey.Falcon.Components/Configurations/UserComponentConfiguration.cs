@@ -11,7 +11,10 @@ namespace Owlvey.Falcon.Components
         public static void ConfigureMappers(IMapperConfigurationExpression cfg)
         {
             cfg.CreateMap<UserEntity, Models.UserGetListRp>();
-            cfg.CreateMap<UserEntity, Models.UserGetRp>();
+            cfg.CreateMap<UserEntity, Models.UserGetRp>()
+                .ForMember(m => m.Products, ope => ope.Ignore())
+                .ForMember(m => m.Services, ope => ope.Ignore())
+                .ForMember(m => m.Features, ope => ope.Ignore());
         }
     }
 }

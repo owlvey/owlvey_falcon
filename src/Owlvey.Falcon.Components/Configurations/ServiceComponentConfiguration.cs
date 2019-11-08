@@ -31,7 +31,9 @@ namespace Owlvey.Falcon.Components
                 .ForMember(m => m.BudgetMinutes, ope => ope.Ignore())
                 .ForMember(m => m.Availability, ope => ope.Ignore());
 
-            cfg.CreateMap<ServiceEntity, Models.ServiceMigrateRp>();
+            cfg.CreateMap<ServiceEntity, Models.ServiceMigrateRp>()
+                    .ForMember(m=>m.Aggregation, ope=>ope.MapFrom(c=>c.Aggregation.ToString())
+                );
         }
     }
 }

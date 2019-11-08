@@ -20,6 +20,7 @@ namespace Owlvey.Falcon.Core.Entities
                     Owner = user,
                     CreatedOn = on,
                     ModifiedOn = on,
+                    Aggregation = ServiceAggregationEnum.Minimun,
                     Product = product                    
                 };                
                 entity.Validate();

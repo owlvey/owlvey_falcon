@@ -28,7 +28,8 @@ namespace Owlvey.Falcon.Components
         }
 
         public async Task<ServiceGetListRp> CreateOrUpdate(CustomerEntity customer,
-            string product, string name, string description, string avatar, decimal slo, string leaders)
+            string product, string name, string description, string avatar, decimal slo, string leaders,
+            string aggregation)
         {
             var createdBy = this._identityService.GetIdentity();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
@@ -40,7 +41,14 @@ namespace Owlvey.Falcon.Components
                 entity = ServiceEntity.Factory.Create(name, this._datetimeGateway.GetCurrentDateTime(), createdBy, productEntity);
             }
 
-            entity.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, name, slo, description, avatar, leaders);
+            ServiceAggregationEnum agg = ServiceAggregationEnum.Minimun;
+            if (!string.IsNullOrWhiteSpace(aggregation))
+            {
+                agg = (ServiceAggregationEnum)Enum.Parse(typeof(ServiceAggregationEnum), aggregation);
+            }
+
+            entity.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, 
+                name, slo, description, avatar, leaders, agg);
 
             this._dbContext.Services.Update(entity);
             await this._dbContext.SaveChangesAsync();
@@ -137,9 +145,14 @@ namespace Owlvey.Falcon.Components
                     return result;
                 }
             }
-                        
+
+            ServiceAggregationEnum agg = ServiceAggregationEnum.Minimun;
+            if (!string.IsNullOrWhiteSpace(model.Aggregation)) {
+                agg = (ServiceAggregationEnum)Enum.Parse(typeof(ServiceAggregationEnum), model.Aggregation);
+            }                        
+
             service.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, model.Name, model.Slo, model.Description, 
-                model.Avatar, model.Leaders);
+                model.Avatar, model.Leaders, agg);
 
             this._dbContext.Services.Update(service);
 

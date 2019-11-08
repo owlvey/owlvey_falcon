@@ -64,6 +64,11 @@ namespace Owlvey.Falcon.Core
             return Math.Round(availabilities.Aggregate((a, x) => a * x), round);            
         }
 
+        public static decimal CalculateMinimumAvailability(IEnumerable<decimal> availabilities, int round = 5)
+        {
+            return Math.Round(availabilities.Min(), round);
+        }
+
         public static decimal CalculateFailProportion(decimal total, decimal fail, decimal defaultValue = 1) {            
             return CalculateProportion(total, total - fail, defaultValue);
         }

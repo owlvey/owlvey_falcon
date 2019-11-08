@@ -52,6 +52,7 @@ namespace Owlvey.Falcon.Core.Entities
             }
         }
 
+        [Required]
         public SourceKindEnum Kind { get; set; }
 
         public virtual ProductEntity Product { get; set; }
@@ -74,7 +75,7 @@ namespace Owlvey.Falcon.Core.Entities
             this.Description = string.IsNullOrWhiteSpace(description) ? this.Description : description;
             this.ModifiedOn = on;
             this.Tags = tags ?? this.Tags;
-            this.ModifiedBy = modifiedBy;
+            this.ModifiedBy = modifiedBy;            
         }
 
         #region Availability

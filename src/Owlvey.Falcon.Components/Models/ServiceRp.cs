@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using Owlvey.Falcon.Core;
 using System.Linq;
+using Newtonsoft.Json;
+using Owlvey.Falcon.Core.Entities;
+using Newtonsoft.Json.Converters;
 
 namespace Owlvey.Falcon.Models
 {
@@ -20,8 +23,10 @@ namespace Owlvey.Falcon.Models
         public decimal Impact { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
-       
-        
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public ServiceAggregationEnum Aggregation { get; set; }
+
         public int MTTD { get; set; }        
         public int MTTE { get; set; }        
         public int MTTF { get; set; }
@@ -50,6 +55,7 @@ namespace Owlvey.Falcon.Models
         public decimal SLO { get; set; }        
         public string Avatar { get; set; }
         public string Leaders { get; set; }
+        public string Aggregation { get; set; }
     }
 
     public class ServiceGetRp : ServiceBaseRp {
@@ -106,5 +112,7 @@ namespace Owlvey.Falcon.Models
         public string Description { get; set; }        
 
         public string Leaders { get; set; }
+
+        public string Aggregation { get; set; }
     }
 }

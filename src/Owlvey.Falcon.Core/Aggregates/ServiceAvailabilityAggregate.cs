@@ -30,7 +30,14 @@ namespace Owlvey.Falcon.Core.Aggregates
             
             if (result.Count > 0)
             {
-                return (AvailabilityUtils.CalculateDotAvailability(result, round: 3), sumTotal, sumGood);
+                if (this.Service.Aggregation == ServiceAggregationEnum.Minimun)
+                {
+                    return (AvailabilityUtils.CalculateMinimumAvailability(result, round: 3), sumTotal, sumGood);
+                }
+                else {
+                    return (AvailabilityUtils.CalculateDotAvailability(result, round: 3), sumTotal, sumGood);
+                }
+                
             }
             else {
                 return (1, 0,0);

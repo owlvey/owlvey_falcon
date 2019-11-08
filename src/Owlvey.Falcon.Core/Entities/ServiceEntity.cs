@@ -35,6 +35,9 @@ namespace Owlvey.Falcon.Core.Entities
         public decimal Slo { get; set; }       
 
         [Required]
+        public ServiceAggregationEnum Aggregation { get; set; }
+
+        [Required]
         public string Avatar { get; set; }
 
         public string Leaders { get; set; }
@@ -75,7 +78,7 @@ namespace Owlvey.Falcon.Core.Entities
         public virtual ICollection<ServiceMapEntity> FeatureMap { get; set; } = new List<ServiceMapEntity>();
 
         public void Update(DateTime on, string modifiedBy, string name, decimal? slo, string description, string avatar,
-            string leaders)
+            string leaders, ServiceAggregationEnum aggregation)
         {
             this.Leaders = leaders ?? this.Leaders;
             this.Name = name ?? this.Name;
@@ -83,6 +86,7 @@ namespace Owlvey.Falcon.Core.Entities
             this.Description = description ?? this.Description;
             this.Avatar = avatar ?? this.Avatar;
             this.ModifiedBy = modifiedBy;
+            this.Aggregation = aggregation;
             this.ModifiedOn = on;            
             this.Validate();
         }

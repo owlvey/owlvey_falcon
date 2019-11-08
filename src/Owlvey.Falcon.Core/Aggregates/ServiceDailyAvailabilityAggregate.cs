@@ -54,7 +54,14 @@ namespace Owlvey.Falcon.Core.Aggregates
 
                 if (sample.Count > 0)
                 {
-                    availability = AvailabilityUtils.CalculateDotAvailability(sample);
+                    if (this.Service.Aggregation == ServiceAggregationEnum.Minimun)
+                    {
+                        availability = AvailabilityUtils.CalculateMinimumAvailability(sample);
+                    }
+                    else {
+                        availability = AvailabilityUtils.CalculateDotAvailability(sample);
+                    }
+                    
                     minimun = sample.Min();
                     maximun = sample.Max();
                     average = sample.Average();
