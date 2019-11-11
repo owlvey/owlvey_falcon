@@ -368,8 +368,9 @@ namespace Owlvey.Falcon.Components
                 {
                     map.Feature = product.Features.Single(c => c.Id == map.FeatureId);
                 }
-                serviceExports.Add(new ExportExcelServiceRp(service));
                 service.MeasureAvailability();
+                serviceExports.Add(new ExportExcelServiceRp(service));
+             
                 foreach (var featureMap in service.FeatureMap)
                 {                    
                     serviceDetailExports.Add(new ExportExcelServiceDetailRp(featureMap));
