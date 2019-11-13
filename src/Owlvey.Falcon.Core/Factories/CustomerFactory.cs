@@ -106,8 +106,7 @@ namespace Owlvey.Falcon.Core.Entities
                     ModifiedBy = user,
                     CreatedOn = on,
                     ModifiedOn = on,                    
-                    Avatar = avatar,
-                    Deleted = false
+                    Avatar = avatar                    
                 };
                 result.Validate();
 

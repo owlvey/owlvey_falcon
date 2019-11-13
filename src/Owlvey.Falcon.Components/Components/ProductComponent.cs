@@ -11,6 +11,8 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Owlvey.Falcon.Repositories.Products;
+using Owlvey.Falcon.Repositories.Features;
+using Owlvey.Falcon.Repositories.Services;
 
 namespace Owlvey.Falcon.Components
 {
@@ -121,14 +123,37 @@ namespace Owlvey.Falcon.Components
             var result = new BaseComponentResultRp();
             var modifiedBy = this._identityService.GetIdentity();
 
-            var product = await this._dbContext.Products.SingleAsync(c => c.Id == id);
+            var product = await this._dbContext.Products
+                .Include(c=>c.Services)
+                .Include(c=>c.Features)
+                .Include(c=>c.Incidents)
+                .Include(c=>c.Sources)
+                .SingleAsync(c => c.Id == id);
+
+            var squads = await this._dbContext.Squads
+                .Include(c=>c.FeatureMaps)
+                .Where(c => c.CustomerId == product.CustomerId).ToListAsync();
+
+            
 
             if (product != null)
             {
-                product.Delete(this._datetimeGateway.GetCurrentDateTime(), modifiedBy);
+
+                foreach (var service in product.Services.Select(c=>c.Id.Value).ToList())
+                {
+                    await this._dbContext.RemoveService(service);                    
+                }
+
+                await this._dbContext.SaveChangesAsync();                
+
+                foreach (var feature in product.Features.Select(c=>c.Id.Value).ToList())
+                {
+                    await this._dbContext.RemoveFeature(feature);                    
+                }
+                
+                await this._dbContext.SaveChangesAsync();                                    
 
                 this._dbContext.Products.Remove(product);
-
                 await this._dbContext.SaveChangesAsync();
             }
             

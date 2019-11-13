@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using Owlvey.Falcon.Repositories.Customers;
+using Owlvey.Falcon.Repositories.Features;
+using Owlvey.Falcon.Repositories.Services;
 
 namespace Owlvey.Falcon.Components
 {
@@ -39,16 +41,31 @@ namespace Owlvey.Falcon.Components
             var modifiedBy = this._identityService.GetIdentity();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
             var customer = await this._dbContext.Customers.SingleAsync(c=>c.Id == id);
+            var services = await this._dbContext.Services.Where(c => c.Product.CustomerId == id).ToListAsync();
+            var features = await this._dbContext.Features.Where(c => c.Product.CustomerId == id).ToListAsync();
 
+                       
             if (customer == null)
             {
                 result.AddNotFound($"The Resource {id} doesn't exists.");
                 return result;
             }
+
+            foreach (var service in services)
+            {
+                await this._dbContext.RemoveService(service.Id.Value);
+            }
+
+            foreach (var feature in features)
+            {
+                await this._dbContext.RemoveFeature(feature.Id.Value);
+            }
+
             
-            customer.Delete(this._datetimeGateway.GetCurrentDateTime(), modifiedBy);
-            this._dbContext.Customers.Update(customer);
+            this._dbContext.Customers.Remove(customer);
+
             await this._dbContext.SaveChangesAsync();
+             
 
             return result;
         }

@@ -10,21 +10,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using Owlvey.Falcon.Repositories.Services;
 
 namespace Owlvey.Falcon.Components
 {
     public class ServiceComponent : BaseComponent
     {
-        private readonly FalconDbContext _dbContext;
-        private readonly CacheComponent _cacheComponent;
+        private readonly FalconDbContext _dbContext;        
 
         public ServiceComponent(FalconDbContext dbContext,
             IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway,
-            IMapper mapper,
-            CacheComponent cacheComponent) : base(dateTimeGateway, mapper, identityService)
+            IMapper mapper) : base(dateTimeGateway, mapper, identityService)
         {
-            this._dbContext = dbContext;
-            this._cacheComponent = cacheComponent;
+            this._dbContext = dbContext;            
         }
 
         public async Task<ServiceGetListRp> CreateOrUpdate(CustomerEntity customer,
@@ -53,9 +51,6 @@ namespace Owlvey.Falcon.Components
             this._dbContext.Services.Update(entity);
             await this._dbContext.SaveChangesAsync();
 
-
-            this._cacheComponent.InvalidateServicesCache(entity.ProductId);
-
             return this._mapper.Map<ServiceGetListRp>(entity);
         }
 
@@ -79,9 +74,6 @@ namespace Owlvey.Falcon.Components
                 await this._dbContext.SaveChangesAsync();
             }
 
-
-            this._cacheComponent.InvalidateServicesCache(entity.ProductId);
-
             return this._mapper.Map<ServiceGetListRp>(entity);
         }
 
@@ -95,21 +87,7 @@ namespace Owlvey.Falcon.Components
             var result = new BaseComponentResultRp();
             var modifiedBy = this._identityService.GetIdentity();
 
-            var service = await this._dbContext.Services.SingleAsync(c => c.Id == id);
-
-            if (service == null)
-            {
-                result.AddNotFound($"The Resource {id} doesn't exists.");
-                return result;
-            }
-
-            service.Delete(this._datetimeGateway.GetCurrentDateTime(), modifiedBy);
-
-            this._dbContext.Services.Remove(service);
-
-            await this._dbContext.SaveChangesAsync();
-
-            this._cacheComponent.InvalidateServicesCache(service.ProductId);
+            await this._dbContext.RemoveService(id);                        
 
             return result;
         }
@@ -156,9 +134,7 @@ namespace Owlvey.Falcon.Components
 
             this._dbContext.Services.Update(service);
 
-            await this._dbContext.SaveChangesAsync();
-
-            this._cacheComponent.InvalidateServicesCache(service.ProductId);
+            await this._dbContext.SaveChangesAsync();            
 
             return result;
         }

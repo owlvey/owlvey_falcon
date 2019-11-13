@@ -5,16 +5,16 @@ using Owlvey.Falcon.Models;
 
 namespace Owlvey.Falcon.Components
 {
-    public class CacheComponent
+    public class CacheComponentA
     {
         public const string ServiceComponentGetServicesAvailability = "ServiceComponentGetServicesAvailability";
         public const string FeatureComponentGetFeaturesAvailability = "FeatureComponentGetFeaturesAvailability";
         private IMemoryCache _cache;
         private static Dictionary<string, List<string>> Dependencies = new Dictionary<string, List<string>>() {
-            { CacheComponent.ServiceComponentGetServicesAvailability , new List<string>() }
+            { CacheComponentA.ServiceComponentGetServicesAvailability , new List<string>() }
         };
 
-        public CacheComponent()
+        public CacheComponentA()
         {
             this._cache = new MemoryCache(new MemoryCacheOptions() {
                  
@@ -41,20 +41,20 @@ namespace Owlvey.Falcon.Components
         #region Services
         public IEnumerable<ServiceGetListRp> GetServicesAvailability(int productId)
         {
-            string name = this.GenerateProductScope(productId, CacheComponent.ServiceComponentGetServicesAvailability);
+            string name = this.GenerateProductScope(productId, CacheComponentA.ServiceComponentGetServicesAvailability);
             return this._cache.Get<IEnumerable<ServiceGetListRp>>(name);
         }
         public void SetServicesAvailability(int productId, IEnumerable<ServiceGetListRp> value)
         {
             this.Invalidate(productId, ServiceComponentGetServicesAvailability);
-            string name = this.GenerateProductScope(productId, CacheComponent.ServiceComponentGetServicesAvailability);
+            string name = this.GenerateProductScope(productId, CacheComponentA.ServiceComponentGetServicesAvailability);
             MemoryCacheEntryOptions options = new MemoryCacheEntryOptions();
             options.SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
             this._cache.Set(name, value, options);
         }
 
         public void InvalidateServicesCache(int productId) {
-            string name = this.GenerateProductScope(productId, CacheComponent.ServiceComponentGetServicesAvailability);
+            string name = this.GenerateProductScope(productId, CacheComponentA.ServiceComponentGetServicesAvailability);
             this.Invalidate(productId, name);
         }
 
@@ -63,13 +63,13 @@ namespace Owlvey.Falcon.Components
         #region Features
         public IEnumerable<ServiceGetListRp> GetFeaturesAvailability(int productId)
         {
-            string name = this.GenerateProductScope(productId, CacheComponent.FeatureComponentGetFeaturesAvailability);
+            string name = this.GenerateProductScope(productId, CacheComponentA.FeatureComponentGetFeaturesAvailability);
             return this._cache.Get<IEnumerable<ServiceGetListRp>>(name);
         }
         public void SetFeaturesAvailability(int productId, IEnumerable<ServiceGetListRp> value)
         {
             this.Invalidate(productId, ServiceComponentGetServicesAvailability);
-            string name = this.GenerateProductScope(productId, CacheComponent.FeatureComponentGetFeaturesAvailability);
+            string name = this.GenerateProductScope(productId, CacheComponentA.FeatureComponentGetFeaturesAvailability);
             MemoryCacheEntryOptions options = new MemoryCacheEntryOptions();
             options.SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
             this._cache.Set(name, value, options);
@@ -77,7 +77,7 @@ namespace Owlvey.Falcon.Components
 
         public void InvalidateFeaturesCache(int productId)
         {
-            string name = this.GenerateProductScope(productId, CacheComponent.FeatureComponentGetFeaturesAvailability);
+            string name = this.GenerateProductScope(productId, CacheComponentA.FeatureComponentGetFeaturesAvailability);
             this.Invalidate(productId, name);
         }
 

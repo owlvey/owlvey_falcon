@@ -86,14 +86,15 @@ namespace Owlvey.Falcon.Components
             var createdBy = this._identityService.GetIdentity();
             var entity = await this._dbContext.Sources.Where(c => c.Id == sourceId).SingleOrDefaultAsync();
             if (entity != null)
-            {
-                this._dbContext.Sources.Remove(entity);
-
-                //TO-DO
+            {                   
                 foreach (var indicator in entity.Indicators)
                 {
-                    this._dbContext.Features.Remove(indicator.Feature);
+                    this._dbContext.Indicators.Remove(indicator);
                 }
+
+                await this._dbContext.SaveChangesAsync();
+
+                this._dbContext.Sources.Remove(entity);
 
                 await this._dbContext.SaveChangesAsync();
             }            

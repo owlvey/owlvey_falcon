@@ -60,7 +60,11 @@ namespace Owlvey.Falcon.ComponentsTests
             var dbcontext = container.GetInstance<FalconDbContext>();
 
 
-            var target = new Core.Entities.CustomerEntity() { Name = "target_test", Avatar = "target" };
+            var target = new Core.Entities.CustomerEntity() { Name = "target_test", Avatar = "target",
+                CreatedBy = "test",
+                ModifiedBy = "test",
+                ModifiedOn = DateTime.Now,
+                CreatedOn = DateTime.Now };
             dbcontext.Customers.Add(target);
             await dbcontext.SaveChangesAsync();
 

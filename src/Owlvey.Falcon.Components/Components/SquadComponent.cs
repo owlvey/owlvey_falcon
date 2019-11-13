@@ -71,9 +71,7 @@ namespace Owlvey.Falcon.Components
             {
                 result.AddNotFound($"The Resource {id} doesn't exists.");
                 return result;
-            }
-
-            squad.Delete(this._datetimeGateway.GetCurrentDateTime(), modifiedBy);
+            }            
 
             this._dbContext.Squads.Remove(squad);
 

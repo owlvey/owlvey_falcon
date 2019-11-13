@@ -14,7 +14,6 @@ namespace Owlvey.Falcon.Repositories
         {
 
             System.Console.WriteLine("environment "  + env);     
-
             dbContext.Database.Migrate();
         }
 

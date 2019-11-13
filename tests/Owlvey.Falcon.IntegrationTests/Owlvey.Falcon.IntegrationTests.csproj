@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Remove="Feature\Scenarios\AdminCanCreateFeatureScenario.cs" />
     <Compile Remove="Product\Scenarios\AdminCanAddAnSquadToProductScenario.cs" />
+    <Compile Remove="Setup\OwlveyInMemoryContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="appsettings.json" />

@@ -12,7 +12,7 @@ namespace Owlvey.Falcon.ComponentsTests
         [Fact]
         public void CacheServicesSuccess() {
             var container = ComponentTestFactory.BuildContainer();
-            var cache = container.GetInstance<CacheComponent>();
+            var cache = container.GetInstance<CacheComponentA>();
             cache.SetServicesAvailability(1, new List<ServiceGetListRp>() { new ServiceGetListRp() });
             var result = cache.GetServicesAvailability(1);
             Assert.NotNull(result);

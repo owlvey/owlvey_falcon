@@ -23,6 +23,7 @@ using IdentityServer4.AccessTokenValidation;
 using GST.Fake.Authentication.JwtBearer.Events;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Owlvey.Falcon.IntegrationTests.Setup
 {
@@ -83,6 +84,8 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
 
             services.AddApplicationServices(Configuration);
 
+
+
             var connectionStringBuilder = new SqliteConnectionStringBuilder()
             {
                 DataSource = ":memory:"
@@ -90,6 +93,9 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
             var connectionString = connectionStringBuilder.ToString();
             var connection = new SqliteConnection(connectionString);
 
+            //var options = new DbContextOptionsBuilder<FalconDbContext>().UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()).Options;
+            /*
+             */
             services
                 .AddEntityFrameworkSqlite()
                 .AddDbContext<FalconDbContext>(options =>

@@ -35,6 +35,26 @@ namespace Owlvey.Falcon.ComponentsTests
         }
 
         [Fact]
+        public async Task MaintenanceCustomerScucess()
+        {
+            var container = ComponentTestFactory.BuildContainer();
+            var customerComponet = container.GetInstance<CustomerComponent>();
+            var customerQueryComponent = container.GetInstance<CustomerQueryComponent>();
+
+            var customer = await customerComponet.CreateCustomer(new Models.CustomerPostRp()
+            {
+                Name = "test"
+            });            
+
+            await customerComponet.DeleteCustomer(customer.Id);
+
+            var result = await customerQueryComponent.GetCustomerById(customer.Id);
+
+            Assert.Null(result);
+
+        }
+
+        [Fact]
         public async Task SimpleCustomerSetupSuccess()
         {
             var container = ComponentTestFactory.BuildContainer();

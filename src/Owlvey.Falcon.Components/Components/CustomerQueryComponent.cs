@@ -32,7 +32,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<CustomerGetRp> GetCustomerById(int id)
         {
-            var entities = await this._dbContext.Customers.Where(c => c.Deleted == false && c.Id.Equals(id)).ToListAsync();
+            var entities = await this._dbContext.Customers.Where(c => c.Id.Equals(id)).ToListAsync();
 
             var entity = entities.FirstOrDefault();            
 
@@ -46,7 +46,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<CustomerGetRp> GetCustomerByName(string name)
         {
-            var entity = await this._dbContext.Customers.SingleAsync(c => c.Deleted == false && c.Name.Equals(name));
+            var entity = await this._dbContext.Customers.SingleAsync(c => c.Name.Equals(name));
             return this._mapper.Map<CustomerGetRp>(entity);
         }
 
@@ -58,7 +58,7 @@ namespace Owlvey.Falcon.Components
         /// <returns></returns>
         public async Task<IEnumerable<CustomerGetListRp>> GetCustomers()
         {
-            var entities = await this._dbContext.Customers.Include(c=>c.Products).Where(c=>c.Deleted==false).ToListAsync();
+            var entities = await this._dbContext.Customers.Include(c=>c.Products).ToListAsync();
 
             var result = this._mapper.Map<IEnumerable<CustomerGetListRp>>(entities);
 
@@ -127,7 +127,45 @@ namespace Owlvey.Falcon.Components
             return result;
         }
 
+        public async Task<CustomerDashboardRp> GetCustomersDashboardProductServices(DateTime? start, DateTime? end)
+        {
+            var result = new CustomerDashboardRp();
+            var customers = await this._dbContext.Customers
+                .Include(c=>c.Products)
+                .ThenInclude(c=>c.Services)
+                .ThenInclude(c=>c.FeatureMap)
+                .ThenInclude(c=>c.Feature)
+                .ThenInclude(c=>c.Indicators)
+                .ThenInclude(c=>c.Source)
+                .ToListAsync();
 
+            var sourceItems = this._dbContext.GetSourceItems(start.Value, end.Value);
 
+            foreach (var customer in customers)
+            {
+                
+                foreach (var product in customer.Products)
+                {
+                    var productResult = new CustomerDashboardRp.CustomerProductRp(product);
+
+                    foreach (var service in product.Services)
+                    {
+                        foreach (var featureMap in service.FeatureMap)
+                        {
+                            foreach (var indicator in featureMap.Feature.Indicators)
+                            {
+                                var target = sourceItems.Where(c => c.SourceId == indicator.SourceId).ToList();
+                                indicator.Source.SourceItems = target;
+                            }                            
+                        }
+                        service.MeasureAvailability();
+                        var serviceResult = new CustomerDashboardRp.CustomerServiceRp(service);
+                        productResult.Services.Add(serviceResult);
+                    }
+                    result.Products.Add(productResult);
+                }
+            }
+            return result;
+        }
     }
 }

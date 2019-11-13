@@ -22,5 +22,15 @@ namespace Owlvey.Falcon.Repositories.Services
 
             return incidents;
         }
+
+        public static async Task RemoveService(this FalconDbContext context, int serviceId) {            
+
+            var service = await context.Services.SingleAsync(c => c.Id == serviceId);
+            
+            context.Services.Remove(service);
+
+            await context.SaveChangesAsync();
+            
+        }
     }
 }

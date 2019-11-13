@@ -7,6 +7,8 @@ using Owlvey.Falcon.Gateways;
 using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Repositories;
 using SimpleInjector;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace Owlvey.Falcon.ComponentsTests
 {
@@ -41,7 +43,14 @@ namespace Owlvey.Falcon.ComponentsTests
             container.RegisterInstance<IMapper>(mapper);
             container.RegisterInstance<IUserIdentityGateway>(BuildIdentityGateway());
             container.RegisterInstance<IDateTimeGateway>(BuildDateTimeGateway());
-            container.RegisterInstance<FalconDbContext>(new FalconDbContextInMemory());
+
+            var context = new FalconDbContextInMemory();
+
+            context.Database.OpenConnection();
+            context.Database.EnsureCreated();
+            //context.Migrate("Development");
+            context.SeedData("Development");            
+            container.RegisterInstance<FalconDbContext>(context);
             return container;
         }
 

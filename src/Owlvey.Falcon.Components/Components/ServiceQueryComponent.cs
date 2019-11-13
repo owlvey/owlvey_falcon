@@ -18,17 +18,14 @@ namespace Owlvey.Falcon.Components
 {
     public class ServiceQueryComponent : BaseComponent
     {
-        private readonly FalconDbContext _dbContext;
-        private readonly CacheComponent _cacheComponent;
+        private readonly FalconDbContext _dbContext;        
 
         public ServiceQueryComponent(FalconDbContext dbContext,
             IDateTimeGateway dateTimeGateway,
             IMapper mapper,
-            IUserIdentityGateway identityService,
-            CacheComponent cacheComponent) : base(dateTimeGateway, mapper, identityService)
+            IUserIdentityGateway identityService) : base(dateTimeGateway, mapper, identityService)
         {
-            this._dbContext = dbContext;
-            this._cacheComponent = cacheComponent;
+            this._dbContext = dbContext;            
         }
 
         public async Task<IEnumerable<ServiceGetListRp>> GetServicesWithAvailabilityByGroup(int productId, DateTime start, DateTime end, string group)
