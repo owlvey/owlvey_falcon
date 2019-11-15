@@ -115,7 +115,7 @@ namespace Owlvey.Falcon.Components
             var entity = await this._dbContext.Sources.SingleOrDefaultAsync(c => c.Id == id);
             var result = this._mapper.Map<SourceGetRp>(entity);
             if (entity!= null) {
-                var (ava, total, good) = await GetAvailabilityBySource(entity, start, end);
+                var (ava, total, good) = GetAvailabilityBySource(entity, start, end);
                 result.Availability = ava;
                 result.Total = total;
                 result.Good = good;
@@ -123,7 +123,7 @@ namespace Owlvey.Falcon.Components
             return result;
         }
 
-        private async Task<(decimal, int, int)> GetAvailabilityBySource(SourceEntity entity, DateTime start, DateTime end) {
+        private (decimal, int, int) GetAvailabilityBySource(SourceEntity entity, DateTime start, DateTime end) {
             var sourceItems = this._dbContext.GetSourceItems(entity.Id.Value, start, end);
             entity.SourceItems = sourceItems;
             var agg = new SourceAvailabilityAggregate(entity);
@@ -137,7 +137,7 @@ namespace Owlvey.Falcon.Components
         }
         public async Task<IEnumerable<SourceGetListRp>> GetByProductIdWithAvailability(int productId, DateTime start, DateTime end)
         {
-            var entities = await this._dbContext.Sources.Where(c => c.Product.Id == productId).ToListAsync();            
+            var entities = await this._dbContext.Sources.Include(c=>c.Indicators).Where(c => c.Product.Id == productId).ToListAsync();            
             var sourceItems = this._dbContext.GetSourceItems(start, end);
 
             var result = new List<SourceGetListRp>();
@@ -148,6 +148,7 @@ namespace Owlvey.Falcon.Components
                 var (ava, total, good)= agg.MeasureAvailability();
 
                 var tmp = this._mapper.Map<SourceGetListRp>(source);
+                tmp.References = source.Indicators.Count();
                 tmp.Availability = ava;
                 tmp.Total = total;
                 tmp.Good = good; 

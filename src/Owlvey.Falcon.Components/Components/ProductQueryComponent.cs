@@ -406,17 +406,24 @@ namespace Owlvey.Falcon.Components
             var result = new ProductDashboardRp();
 
             var product = await this._dbContext.FullLoadProduct(productId);
+            result.FeatureTotal = await this._dbContext.Features.Where(c => c.ProductId == productId).CountAsync();
+            result.FeatureAssigned = product.Services.SelectMany(c => c.FeatureMap.Select(d => d.FeatureId)).Distinct().Count();
+
+            result.SourceTotal = await this._dbContext.Sources.Where(c => c.ProductId == productId).CountAsync();
+            result.SourceAssigned = product.Services.SelectMany(
+                c => c.FeatureMap.SelectMany(d => d.Feature.Indicators).Select(e => e.SourceId)).Distinct().Count();
+
 
             var sourceItems = this._dbContext.GetSourceItemsByProduct(productId, start, end);
             int sloFails = 0;
-            var temp = new List<ProductDashboardRp.ServiceGroupRp>();
-
+            var temp = new List<ProductDashboardRp.ServiceGroupRp>();            
+            
             foreach (var group in product.Services.GroupBy(c=>c.Group))
             {
                 var targetGroup = new ProductDashboardRp.ServiceGroupRp
                 {
-                    total = group.Count(),
-                    name = group.Key
+                    Total = group.Count(),
+                    Name = group.Key
                 };
                 foreach (var service in group)
                 {                    
@@ -428,20 +435,20 @@ namespace Owlvey.Falcon.Components
                     var (availability, _, _) = agg.MeasureAvailability();
                     if (availability < service.Slo)
                     {
-                        targetGroup.fail += 1;
+                        targetGroup.Fail += 1;
                         sloFails += 1;
                     }
                 }
                 temp.Add(targetGroup);                
             }
 
-            result.groups.Add(new ProductDashboardRp.ServiceGroupRp()
+            result.Groups.Add(new ProductDashboardRp.ServiceGroupRp()
             {
-                name = "All",
-                total = product.Services.Count(),
-                fail = sloFails
+                Name = "All",
+                Total = product.Services.Count(),
+                Fail = sloFails
             });
-            result.groups.AddRange(temp);
+            result.Groups.AddRange(temp);
             return result;
         }
 

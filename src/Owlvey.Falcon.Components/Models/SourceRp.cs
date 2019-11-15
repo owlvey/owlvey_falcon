@@ -46,6 +46,7 @@ namespace Owlvey.Falcon.Models
         public decimal Availability { get; set; }
         public int Good { get; set; }
         public int Total { get; set; }
+        public int References { get; set; }
     }
 
     public class SourcePostRp
