@@ -54,7 +54,7 @@ namespace Owlvey.Falcon.Components
                 
             }
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
-            entity.Update(email, name, avatar, slackmember );
+            entity.Update(email, avatar, name, slackmember);
             await this._dbContext.SaveChangesAsync();
             return this._mapper.Map<UserGetListRp>(entity);
         }
