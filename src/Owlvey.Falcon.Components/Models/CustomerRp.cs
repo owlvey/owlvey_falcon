@@ -16,7 +16,9 @@ namespace Owlvey.Falcon.Models
         public string Avatar { get; set; }
         public string Leaders { get; set; }
         public string CreatedBy { get; set; }
-        public DateTime? CreatedOn { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public string ModifiedBy { get; set; }
+        public DateTime ModifiedOn { get; set; }
     }
 
     public class CustomerGetRp : CustomerBaseRp {

@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Owlvey.Falcon.Core;
+using System.Threading;
 
 namespace Owlvey.Falcon.Repositories
 {
@@ -17,6 +18,8 @@ namespace Owlvey.Falcon.Repositories
         {
 
         }
+
+
         
         public DbSet<AppSettingEntity> AppSettings { get; set; }
         public DbSet<SquadEntity> Squads { get; set; }
@@ -116,8 +119,35 @@ namespace Owlvey.Falcon.Repositories
                .HasForeignKey(pt => pt.FeatureId);        
 
             base.OnModelCreating(modelBuilder);
-        }
+        }                       
 
+        
+
+        private void AssignLastModified() {
+            this.ChangeTracker.AutoDetectChangesEnabled = true;
+            var setting = this.AppSettings.SingleOrDefault(c => c.Key == AppSettingEntity.AppLastModifiedVersion);
+            var value = Guid.NewGuid().ToString();
+            if (setting != null)
+            {
+
+                setting.Value = value;
+            }
+            else
+            {
+                setting = AppSettingEntity.Factory.Create("AppLastModifiedVersion", value, true, DateTime.Now, "system");
+                this.AppSettings.Add(setting);
+            }
+        }
+        public override int SaveChanges()
+        {
+            this.AssignLastModified();
+            return base.SaveChanges();
+        }
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {            
+            this.AssignLastModified();
+            return base.SaveChangesAsync(cancellationToken);
+        }
 
         internal ICollection<SourceItemEntity> GetSourceItems(int sourceId,
             DateTime start, DateTime end) {

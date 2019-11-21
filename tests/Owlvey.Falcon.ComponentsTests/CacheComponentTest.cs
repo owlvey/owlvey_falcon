@@ -12,11 +12,32 @@ namespace Owlvey.Falcon.ComponentsTests
         [Fact]
         public void CacheServicesSuccess() {
             var container = ComponentTestFactory.BuildContainer();
-            var cache = container.GetInstance<CacheComponentA>();
-            cache.SetServicesAvailability(1, new List<ServiceGetListRp>() { new ServiceGetListRp() });
-            var result = cache.GetServicesAvailability(1);
-            Assert.NotNull(result);
-            Assert.NotEmpty(result);
+            var cache = container.GetInstance<CacheComponent>();
+            var modified = cache.GetLastModified();
+            Assert.NotNull(modified);
+        }
+
+        [Fact]
+        public async Task LastUpdateVersionSuccess() {
+            var container = ComponentTestFactory.BuildContainer();
+            var cache = container.GetInstance<CacheComponent>();
+
+            var mark = await cache.GetLastModified();
+            var mark2 = await cache.GetLastModified();
+
+            Assert.Equal(mark, mark2);
+
+            var customerComponent = container.GetInstance<CustomerComponent>();
+            await customerComponent.CreateCustomer(new CustomerPostRp()
+            {
+                Name = "test"
+            });
+
+            var mark3 = await cache.GetLastModified();
+
+            Assert.NotEqual(mark, mark3);
+
+
         }
     }
 }

@@ -12,6 +12,8 @@ namespace Owlvey.Falcon.Core.Entities
     public partial class AppSettingEntity : BaseEntity
     {
 
+        public static string AppLastModifiedVersion = "AppLastModifiedVersion";
+
         /// <summary>
         /// Key Setting
         /// </summary>

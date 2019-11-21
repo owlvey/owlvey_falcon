@@ -1,88 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using Owlvey.Falcon.Models;
+using Owlvey.Falcon.Repositories;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Owlvey.Falcon.Core.Entities;
 
 namespace Owlvey.Falcon.Components
 {
-    public class CacheComponentA
+    public class CacheComponent
     {
         public const string ServiceComponentGetServicesAvailability = "ServiceComponentGetServicesAvailability";
         public const string FeatureComponentGetFeaturesAvailability = "FeatureComponentGetFeaturesAvailability";
-        private IMemoryCache _cache;
+        public const string OWLVEY_LAST_MODIFIED = "owlvey_last_modified";
+        private static IMemoryCache _cache = new MemoryCache( new MemoryCacheOptions() { });
+
         private static Dictionary<string, List<string>> Dependencies = new Dictionary<string, List<string>>() {
-            { CacheComponentA.ServiceComponentGetServicesAvailability , new List<string>() }
+            {
+                CacheComponent.ServiceComponentGetServicesAvailability , new List<string>()
+            }
         };
 
-        public CacheComponentA()
+        private FalconDbContext DbContext; 
+
+        public CacheComponent(FalconDbContext dbContext)
         {
-            this._cache = new MemoryCache(new MemoryCacheOptions() {
-                 
-            });
-        }
-        public void Invalidate(int productId, string key)
-        {
-            if (Dependencies.ContainsKey(key))
-            {
-                var dependencies = Dependencies[key];
-                this._cache.Remove(this.GenerateProductScope(productId, key));
-                foreach (var item in dependencies)
-                {
-                    this._cache.Remove(this.GenerateProductScope(productId, item));
-                }
+            this.DbContext = dbContext; 
+        }        
+
+        public async Task<string> GetLastModified() {
+            string result = "nodata";
+            var setting = await this.DbContext.AppSettings.Where(c => c.Key == AppSettingEntity.AppLastModifiedVersion).SingleOrDefaultAsync();
+            if (setting != null) {
+                result = setting.Value;
             }
+            return result;            
         }
-
-        private string GenerateProductScope(int productId, string key)
-        {
-            return string.Format("{0}_{1}", productId, key);
-        }
-
-        #region Services
-        public IEnumerable<ServiceGetListRp> GetServicesAvailability(int productId)
-        {
-            string name = this.GenerateProductScope(productId, CacheComponentA.ServiceComponentGetServicesAvailability);
-            return this._cache.Get<IEnumerable<ServiceGetListRp>>(name);
-        }
-        public void SetServicesAvailability(int productId, IEnumerable<ServiceGetListRp> value)
-        {
-            this.Invalidate(productId, ServiceComponentGetServicesAvailability);
-            string name = this.GenerateProductScope(productId, CacheComponentA.ServiceComponentGetServicesAvailability);
-            MemoryCacheEntryOptions options = new MemoryCacheEntryOptions();
-            options.SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
-            this._cache.Set(name, value, options);
-        }
-
-        public void InvalidateServicesCache(int productId) {
-            string name = this.GenerateProductScope(productId, CacheComponentA.ServiceComponentGetServicesAvailability);
-            this.Invalidate(productId, name);
-        }
-
-        #endregion
-
-        #region Features
-        public IEnumerable<ServiceGetListRp> GetFeaturesAvailability(int productId)
-        {
-            string name = this.GenerateProductScope(productId, CacheComponentA.FeatureComponentGetFeaturesAvailability);
-            return this._cache.Get<IEnumerable<ServiceGetListRp>>(name);
-        }
-        public void SetFeaturesAvailability(int productId, IEnumerable<ServiceGetListRp> value)
-        {
-            this.Invalidate(productId, ServiceComponentGetServicesAvailability);
-            string name = this.GenerateProductScope(productId, CacheComponentA.FeatureComponentGetFeaturesAvailability);
-            MemoryCacheEntryOptions options = new MemoryCacheEntryOptions();
-            options.SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
-            this._cache.Set(name, value, options);
-        }
-
-        public void InvalidateFeaturesCache(int productId)
-        {
-            string name = this.GenerateProductScope(productId, CacheComponentA.FeatureComponentGetFeaturesAvailability);
-            this.Invalidate(productId, name);
-        }
-
-       
-        #endregion
 
     }
 }
