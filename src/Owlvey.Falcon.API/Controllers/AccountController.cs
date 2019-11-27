@@ -16,7 +16,7 @@ namespace Owlvey.Falcon.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("me")]
-        public async Task<IActionResult> Me()
+        public IActionResult Me()
         {
             var name = this.User.FindFirst(c => c.Type == "name").Value;
             var email = this.User.FindFirst(c => c.Type == "email").Value;

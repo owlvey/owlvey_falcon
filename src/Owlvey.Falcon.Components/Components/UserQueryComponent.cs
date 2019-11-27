@@ -35,6 +35,11 @@ namespace Owlvey.Falcon.Components
 
         public async Task<UserGetRp> GetUserById(int id)
         {
+            var entity = await this._dbContext.Users.SingleOrDefaultAsync(c => c.Id == id);
+
+            if (entity == null)
+                return null;
+
             var customers = await this._dbContext.Customers
                 .Include(c=>c.Products)
                 .ThenInclude(c=>c.Services)                
@@ -47,23 +52,21 @@ namespace Owlvey.Falcon.Components
                 .ThenInclude(c=>c.Squad)                
                 .ThenInclude(c => c.Members)                
                 .ToListAsync();
-                                   
-            var entity = await this._dbContext.Users                
-                .SingleOrDefaultAsync(c => c.Id == id);
-            if (entity == null) return null;
+            
             var result = this._mapper.Map<UserGetRp>(entity);
             
             foreach (var customer in customers)
             {
                 foreach (var product in customer.Products)
                 {
-                    if (!string.IsNullOrWhiteSpace(product.Leaders) && product.Leaders.Contains(entity.Email)) {
+                    if ( product.ValidateLeader(entity.Email)) {
                         var temp = this._mapper.Map<ProductGetListRp>(product);                        
                         result.Products.Add(temp);
                     }
+
                     foreach (var service in product.Services)
                     {
-                        if (!string.IsNullOrWhiteSpace(service.Leaders) && service.Leaders.Contains(entity.Email))
+                        if (service.ValidateLeader(entity.Email))
                         {
                             var temp = new Dictionary<string, object>();
                             temp["customerId"] = customer.Id;

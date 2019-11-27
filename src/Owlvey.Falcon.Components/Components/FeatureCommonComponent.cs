@@ -13,14 +13,11 @@ namespace Owlvey.Falcon.Components
 {
     internal class FeatureCommonComponent 
     {
-        private readonly FalconDbContext _dbContext;
-        private readonly IDateTimeGateway _dateTimeGateway;
+        private readonly FalconDbContext _dbContext;        
 
-        public FeatureCommonComponent(FalconDbContext dbContext, 
-            IDateTimeGateway dateTimeGateway) 
+        public FeatureCommonComponent(FalconDbContext dbContext) 
         {
-            this._dbContext = dbContext;
-            this._dateTimeGateway = dateTimeGateway;
+            this._dbContext = dbContext;            
         }        
         internal decimal GetAvailabilityByFeature(FeatureEntity entity, DateTime start, DateTime end)
         {

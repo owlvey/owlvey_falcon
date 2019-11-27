@@ -46,10 +46,6 @@ namespace Owlvey.Falcon.Core.Entities
             this.ModifiedBy = modifiedBy;
             this.ModifiedOn = on;
             this.Validate();
-        }
-
-        public void RemoveMember(int userId) {            
-
-        }
+        }        
     }
 }

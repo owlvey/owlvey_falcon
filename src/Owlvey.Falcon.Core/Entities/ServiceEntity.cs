@@ -105,5 +105,10 @@ namespace Owlvey.Falcon.Core.Entities
         }
         #endregion
 
+
+        public bool ValidateLeader(string email) {
+            return !string.IsNullOrWhiteSpace(this.Leaders) && this.Leaders.Contains(email);
+        }
+
     }
 }

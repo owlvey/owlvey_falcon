@@ -151,7 +151,7 @@ namespace Owlvey.Falcon.Components
                 .Include(c=> c.Squads)
                 .Where(c => c.Product.Id.Value.Equals(productId)).ToListAsync();
 
-            var common = new FeatureCommonComponent(this._dbContext, this._datetimeGateway);
+            var common = new FeatureCommonComponent(this._dbContext);
             foreach (var feature in entities)
             {
                 var tmp = this._mapper.Map<FeatureAvailabilityGetListRp>(feature);
@@ -189,7 +189,7 @@ namespace Owlvey.Falcon.Components
                 .Where(c => c.Id == serviceId).SingleAsync();
 
             var result = new List<SequenceFeatureGetListRp>();                       
-            var common = new FeatureCommonComponent(this._dbContext, this._datetimeGateway);
+            var common = new FeatureCommonComponent(this._dbContext);
             
             foreach (var map in service.FeatureMap)
             {

@@ -12,7 +12,7 @@ namespace Owlvey.Falcon.Core.Entities
     public partial class AppSettingEntity : BaseEntity
     {
 
-        public static string AppLastModifiedVersion = "AppLastModifiedVersion";
+        public readonly static string AppLastModifiedVersion = "AppLastModifiedVersion";
 
         /// <summary>
         /// Key Setting

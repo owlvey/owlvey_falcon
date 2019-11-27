@@ -45,5 +45,10 @@ namespace Owlvey.Falcon.Core.Entities
             this.ModifiedOn = on;
             this.ModifiedBy = modifiedBy;
         }
+
+        public bool ValidateLeader(string email) {
+            return !string.IsNullOrWhiteSpace(this.Leaders) && this.Leaders.Contains(email);
+        }
+
     }
 }

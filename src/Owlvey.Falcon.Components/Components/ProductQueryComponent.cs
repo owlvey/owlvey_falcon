@@ -194,7 +194,8 @@ namespace Owlvey.Falcon.Components
             var product = await this._dbContext.Products
                .Include(c => c.Services).Where(c => c.Id == productId).SingleAsync();
 
-            product.Services = product.Services.Where(c => String.Equals(c.Group, group, StringComparison.InvariantCultureIgnoreCase)).ToList();
+            product.Services = product.Services.Where(c => String.Equals(c.Group, group,
+                StringComparison.InvariantCultureIgnoreCase)).ToList();
 
             foreach (var service in product.Services)
             {
@@ -334,8 +335,7 @@ namespace Owlvey.Falcon.Components
                 source.SourceItems = sourceItems.Where(c => c.SourceId == source.Id).ToList();
                 source.MeasureAvailability();
                 sourceExports.Add(new ExportExcelSourceRp(source));
-            }
-            var featureIds = product.Features.Select(c => c.Id).ToList();
+            }            
 
             var featuresExports = new List<ExportExcelFeatureRp>();
             var featuresDetailExports = new List<ExportExcelFeatureDetailRp>();
@@ -412,9 +412,7 @@ namespace Owlvey.Falcon.Components
             result.SourceTotal = await this._dbContext.Sources.Where(c => c.ProductId == productId).CountAsync();
             result.SourceAssigned = product.Services.SelectMany(
                 c => c.FeatureMap.SelectMany(d => d.Feature.Indicators).Select(e => e.SourceId)).Distinct().Count();
-
-
-            var sourceItems = this._dbContext.GetSourceItemsByProduct(productId, start, end);
+                                    
             int sloFails = 0;
             var temp = new List<ProductDashboardRp.ServiceGroupRp>();            
             
@@ -445,7 +443,7 @@ namespace Owlvey.Falcon.Components
             result.Groups.Add(new ProductDashboardRp.ServiceGroupRp()
             {
                 Name = "All",
-                Total = product.Services.Count(),
+                Total = product.Services.Count,
                 Fail = sloFails
             });
             result.Groups.AddRange(temp);
@@ -456,8 +454,6 @@ namespace Owlvey.Falcon.Components
             DateTime start, DateTime end)
         {
             var product = await this._dbContext.FullLoadProduct(productId);
-
-            var featureIds = product.Features.Select(c => c.Id).ToList();
 
             var squadsData = await this._dbContext.SquadFeatures
                 .Include(c => c.Squad)
@@ -557,11 +553,11 @@ namespace Owlvey.Falcon.Components
 
             result.Services = result.Services.OrderBy(c => c.Availability).ToList();
             result.SLOFail = sloFails;
-            result.SLOProportion = AvailabilityUtils.CalculateFailProportion(product.Services.Count(), sloFails);
+            result.SLOProportion = AvailabilityUtils.CalculateFailProportion(product.Services.Count, sloFails);
             result.SourceStats = new StatsValue(result.Sources.Select(c => c.Availability));
             result.SourceTotal = result.Sources.Where(c=>c.Kind == SourceKindEnum.Interaction).Sum(c => c.Total);
             result.FeaturesStats = new StatsValue(result.Features.Select(c => c.Availability));
-            result.FeaturesCoverage = AvailabilityUtils.CalculateProportion(product.Features.Count(),
+            result.FeaturesCoverage = AvailabilityUtils.CalculateProportion(product.Features.Count,
                 squadsData.Select(c=>c.FeatureId).Distinct().Count());
 
             result.ServicesStats = new StatsValue(result.Services.Select(c => c.Availability));
