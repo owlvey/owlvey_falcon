@@ -1,11 +1,12 @@
 pool:
     vmImage: ubuntu-16.04
 steps:
-- task: UseDotNet@3
+- task: UseDotNet@2
   displayName: 'Use .NET Core sdk'
   inputs:
     packageType: sdk
-    version: 3.1
+    version: 3.x
+    includePreviewVersions: true
     installationPath: $(Agent.ToolsDirectory)/dotnet
 
 - script: dotnet tool install --global dotnet-sonarscanner
@@ -44,7 +45,7 @@ steps:
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/tests/Owlvey.Falcon.UnitTests/coverage.cobertura.xml'
     reportDirectory: '$(System.DefaultWorkingDirectory)/tests/Owlvey.Falcon.UnitTests/coverage'
 
-- task: PublishTestResults@3
+- task: PublishTestResults@2
   displayName: Unit Tests - Publish Test Results
   inputs:
     testRunner: VSTest
@@ -60,7 +61,7 @@ steps:
 - script: dotnet publish src/Owlvey.Falcon.API -c Release --no-restore -o ../../artifactory
   displayName: Package Application
 
-- task: Docker@3
+- task: Docker@2
   displayName: buildAndPush
   inputs:
     containerRegistry: 'Owlvey Docker Connection'
