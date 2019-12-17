@@ -2,6 +2,13 @@ pool:
     vmImage: ubuntu-16.04
 steps:
 - task: UseDotNet@2
+  displayName: 'Use .NET 2 Core sdk'
+  inputs:
+    packageType: sdk
+    version: 2.x
+    installationPath: $(Agent.ToolsDirectory)/dotnet
+
+- task: UseDotNet@2
   displayName: 'Use .NET Core sdk'
   inputs:
     packageType: sdk
@@ -35,6 +42,7 @@ steps:
 
 - script: |
     dotnet test tests/Owlvey.Falcon.UnitTests/Owlvey.Falcon.UnitTests.csproj -c Release --no-build --no-restore  /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura --logger trx;logfilename=result.xml
+    dotnet "tools/ReportGenerator/ReportGenerator.dll" "-reports:tests/Owlvey.Falcon.UnitTests/coverage.cobertura.xml" "-targetdir:tests/Owlvey.Falcon.UnitTests/coverage" "-reporttypes:HTMLInline"
   displayName: Run Unit Tests
 
 - task: PublishCodeCoverageResults@1
