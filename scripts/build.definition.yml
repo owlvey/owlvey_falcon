@@ -17,6 +17,11 @@ steps:
     installationPath: $(Agent.ToolsDirectory)/dotnet
 
 - bash: |
+    pwd
+    ls
+  displayName: list folders
+
+- bash: |
     cd scripts
     bash generate_sqlserver_migration.bash
     cd  ..
@@ -55,7 +60,8 @@ steps:
 
 - script: dotnet publish src/Owlvey.Falcon.API -c Release --no-restore -o ../../artifactory
   displayName: Package Application
- 
+
+
 - task: Docker@2
   displayName: buildAndPushRelational
   inputs:
