@@ -37,6 +37,13 @@ steps:
     cd  ..
   displayName: Get Migration Scripts
 
+- bash: |
+    cd artifactory
+    cp falcondb.sql  /home/vsts/work/artifactory
+    cd  ..
+  displayName: copy scripts
+
+
 - script: dotnet build Owlvey.Falcon.sln -c Release
   displayName: Build Projects
 
