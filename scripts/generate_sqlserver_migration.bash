@@ -23,6 +23,9 @@ cd ./../src/Owlvey.Falcon.Components
 
 pwd
 
+echo migrations 
+dotnet tool install --global dotnet-ef
+
 dotnet ef migrations script -c FalconDbContext -o ../../artifactory/falcondb.sql --verbose
 
 cat  ../../artifactory/falcondb.sql
