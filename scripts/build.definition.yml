@@ -73,7 +73,7 @@ steps:
   inputs:
     containerRegistry: 'Owlvey Docker Connection'
     repository: owlvey/api
-    Dockerfile: artifactory/Dockerfile
+    Dockerfile: /home/vsts/work/artifactory/Dockerfile
     buildContext: artifactory
     tags: |
      $(Build.BuildId)
