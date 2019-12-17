@@ -4,9 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using Owlvey.Falcon.Core;
 using System.Linq;
-using Newtonsoft.Json;
 using Owlvey.Falcon.Core.Entities;
-using Newtonsoft.Json.Converters;
+using System.Text.Json.Serialization;
 
 namespace Owlvey.Falcon.Models
 {
@@ -24,7 +23,7 @@ namespace Owlvey.Falcon.Models
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
 
-        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public ServiceAggregationEnum Aggregation { get; set; }
 
         public int MTTD { get; set; }        

@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Owlvey.Falcon.Core.Entities;
+﻿using Owlvey.Falcon.Core.Entities;
 using System;
+using System.Text.Json.Serialization;
+
 namespace Owlvey.Falcon.Models
 {
     public class SourceLitRp
@@ -12,7 +12,7 @@ namespace Owlvey.Falcon.Models
         public string Avatar { get; set; }
         public string Description { get; set; }
 
-        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public SourceKindEnum Kind { get; set; }
         public string GoodDefinition { get; set; }
         public string TotalDefinition { get; set; }
