@@ -1,4 +1,4 @@
-FROM microsoft/dotnet:3.1.0-aspnetcore-runtime
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
 COPY . /app
 RUN mkdir -p /app/data
 RUN chmod o+x /app/data
