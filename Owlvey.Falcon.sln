@@ -50,6 +50,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "relational", "relational", 
 		infrastructure\relational\Dockerfile = infrastructure\relational\Dockerfile
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "api", "api", "{906B5B66-D0CF-4F16-8B1F-F61E5E88CB75}"
+	ProjectSection(SolutionItems) = preProject
+		infrastructure\api\Dockerfile = infrastructure\api\Dockerfile
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -100,6 +105,7 @@ Global
 		{C551127A-AF16-4B16-8A1D-5188B9FD12AF} = {FAB670B9-6AD8-4FBB-A128-1D98153488B2}
 		{FDFC7D89-D7A7-4013-AE9F-17B11110F154} = {FAB670B9-6AD8-4FBB-A128-1D98153488B2}
 		{ECA720CE-A6D9-4E14-8956-133854A83E14} = {F8C95DC8-B09A-4DAC-AD59-60659AD3304D}
+		{906B5B66-D0CF-4F16-8B1F-F61E5E88CB75} = {F8C95DC8-B09A-4DAC-AD59-60659AD3304D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BD993390-77A7-4442-9BA6-842A755ADD53}
