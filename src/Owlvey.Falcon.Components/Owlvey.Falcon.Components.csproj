@@ -4,10 +4,10 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Owlvey.Falcon</RootNamespace>
+     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles> 
   </PropertyGroup>
 
-
-  <ItemGroup>
+  <ItemGroup> 
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.0"><IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -44,4 +44,6 @@
     <Compile Remove="Components\SquadFeatureComponent.cs" />
     <Compile Remove="Components\SquadFeatureComponent.cs" />
   </ItemGroup>
+
+
 </Project>
