@@ -74,7 +74,7 @@ steps:
     containerRegistry: 'Owlvey Docker Connection'
     repository: owlvey/api
     Dockerfile: /home/vsts/work/artifactory/Dockerfile
-    buildContext: artifactory
+    buildContext: /home/vsts/work/artifactory
     tags: |
      $(Build.BuildId)
      latest
