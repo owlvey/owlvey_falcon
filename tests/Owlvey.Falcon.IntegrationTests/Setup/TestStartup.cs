@@ -24,6 +24,7 @@ using GST.Fake.Authentication.JwtBearer.Events;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace Owlvey.Falcon.IntegrationTests.Setup
 {
@@ -55,6 +56,7 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
 
             services.AddMvc(options =>
             {
+                options.EnableEndpointRouting = false;
                 //Authorize Filter
                 var policy = new AuthorizationPolicyBuilder(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                   .RequireAuthenticatedUser()
@@ -62,7 +64,7 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
                   .Build();
 
                 options.Filters.Add(new AuthorizeFilter(policy));
-            });
+            }).AddApplicationPart(typeof(Startup).Assembly);
 
             services.AddHttpContextAccessor();
             services.AddAuthentication(options =>

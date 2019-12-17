@@ -16,6 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{8D36
 		scripts\integrationtest.bash = scripts\integrationtest.bash
 		scripts\alltest.bash = scripts\alltest.bash
 		scripts\generate_sqlserver_migration.bash = scripts\generate_sqlserver_migration.bash
+		scripts\performance_test.txt = scripts\performance_test.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{09B34A06-A407-451C-8C5F-59E16DBC89BB}"

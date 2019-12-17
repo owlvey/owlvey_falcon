@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
@@ -24,26 +25,32 @@ namespace Owlvey.Falcon.API.Extensions
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc(swaggerOptions.Value.Version, new Info
+                c.SwaggerDoc(swaggerOptions.Value.Version, new OpenApiInfo
                 {
                     Version = swaggerOptions.Value.Version,
                     Title = swaggerOptions.Value.Title,
                     Description = swaggerOptions.Value.Description,
-                    TermsOfService = swaggerOptions.Value.TermsOfService,
-                    Contact = new Contact { Name = swaggerOptions.Value.ContactName, Email = swaggerOptions.Value.ContactEmail }
+                    TermsOfService = new Uri(swaggerOptions.Value.TermsOfService, UriKind.Relative),
+                    //Contact = new Contact { Name = swaggerOptions.Value.ContactName, Email = swaggerOptions.Value.ContactEmail }
                 });
 
-                c.AddSecurityDefinition("oauth2", new OAuth2Scheme
+
+                c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                 {
-                    Type = "oauth2",
-                    Flow = "application",
-                    TokenUrl = $"{authenticationOptions.Value.Authority}/connect/token",
-                    Scopes = new Dictionary<string, string>
+                    Type = SecuritySchemeType.OAuth2,
+                    Flows = new OpenApiOAuthFlows
                     {
-                        { "api.auth", "Identity Operations" },
-                        { "api", "Api Operations" },
+                        Implicit = new OpenApiOAuthFlow
+                        {
+                            TokenUrl = new Uri($"{authenticationOptions.Value.Authority}/connect/token"),
+                            Scopes = new Dictionary<string, string>
+                            {
+                                { "api.auth", "Identity Operations" },
+                                { "api", "Api Operations" },
+                            }
+                        }
                     }
-                });
+                });                
 
                 var basePath = AppContext.BaseDirectory;
                 var xmlPath = Path.Combine(basePath, @"Service.xml");
@@ -53,11 +60,18 @@ namespace Owlvey.Falcon.API.Extensions
                     c.IncludeXmlComments(xmlPath);
                 }
 
-                c.DescribeAllEnumsAsStrings();
-                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
+                c.DescribeAllEnumsAsStrings();                
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
-                    { "oauth2", new string[] { } }
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
+                        },
+                        new[] { "readAccess", "writeAccess" }
+                    }
                 });
+
             });
 
         }

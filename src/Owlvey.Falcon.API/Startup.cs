@@ -12,6 +12,7 @@ using Owlvey.Falcon.API.Extensions;
 using Owlvey.Falcon.IoC;
 using Owlvey.Falcon.Repositories;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Owlvey.Falcon.API
 {
@@ -35,6 +36,7 @@ namespace Owlvey.Falcon.API
         }
 
         public IHostingEnvironment Environment { get; private set;  }
+
         public IConfiguration Configuration { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -47,6 +49,7 @@ namespace Owlvey.Falcon.API
 
             services.AddMvc(options =>
             {
+                options.EnableEndpointRouting = false;
                 //Authorize Filter
                 var policy = new AuthorizationPolicyBuilder(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                   .RequireAuthenticatedUser()
@@ -60,7 +63,10 @@ namespace Owlvey.Falcon.API
             services.AddAuthority(Configuration, Environment);
             services.AddApplicationServices(Configuration);
             services.SetupDataBase(Configuration, Environment.EnvironmentName);
-            services.AddCustomSwagger(Configuration, Environment);            
+            services.AddCustomSwagger(Configuration, Environment);
+
+            
+            
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
