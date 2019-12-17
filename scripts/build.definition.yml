@@ -60,7 +60,9 @@ steps:
     cd artifactory
     cp falcondb.sql  /home/vsts/work/artifactory
     cd  ..
-  displayName: copy scripts
+    cd /home/vsts/work/artifactory
+    ls
+  displayName: copy sql scripts
 
 - task: Docker@2
   displayName: buildAndPush

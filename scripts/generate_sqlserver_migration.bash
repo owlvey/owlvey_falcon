@@ -6,7 +6,7 @@ rm -rf ./../src/Owlvey.Falcon.Components/Migrations
 
 rm ./../src/Owlvey.Falcon.Api/FalconDb.db
 
-dotnet build ./../Owlvey.Falcon.sln -v q
+dotnet build ./../Owlvey.Falcon.sln -v:q
 
 pushd ./../src/Owlvey.Falcon.Components
 
