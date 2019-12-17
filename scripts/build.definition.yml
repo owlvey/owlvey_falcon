@@ -55,17 +55,20 @@ steps:
 
 - script: dotnet publish src/Owlvey.Falcon.API -c Release --no-restore -o ../../artifactory
   displayName: Package Application
-
-- bash: |
-    cd artifactory
-    cp falcondb.sql  /home/vsts/work/artifactory
-    cd  ..
-    cd /home/vsts/work/artifactory
-    ls
-  displayName: copy sql scripts
+ 
+- task: Docker@2
+  displayName: buildAndPushRelational
+  inputs:
+    containerRegistry: 'Owlvey Docker Connection'
+    repository: owlvey/relational
+    Dockerfile: infrastructure/relational/Dockerfile
+    buildContext: infrastructure/relational
+    tags: |
+     $(Build.BuildId)
+     latest
 
 - task: Docker@2
-  displayName: buildAndPush
+  displayName: buildAndPushApi
   inputs:
     containerRegistry: 'Owlvey Docker Connection'
     repository: owlvey/api

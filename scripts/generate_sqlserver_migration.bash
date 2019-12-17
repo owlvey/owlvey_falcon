@@ -16,23 +16,24 @@ dotnet ef migrations add InitialCreate
 
 popd
 
-rm ./../artifactory/falcondb.sql
+rm ./../infrastructure/relational/falcondb.sql
 
 echo build components 
 
 pwd 
 
-cd ./../src/Owlvey.Falcon.Components
+pushd ./../src/Owlvey.Falcon.Components
 
 pwd
 
 echo migrations 
 
-dotnet ef migrations script -c FalconDbContext -o ../../artifactory/falcondb.sql --verbose
+dotnet ef migrations script -c FalconDbContext -o ../../infrastructure/relational/falcondb.sql --verbose
 
-cat  ../../artifactory/falcondb.sql
+cat ../../infrastructure/relational/falcondb.sql
 
-cd  ../../scripts
+popd
+
 
 
 

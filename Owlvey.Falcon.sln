@@ -43,6 +43,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Owlvey.Falcon.ComponentsTes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Owlvey.Falcon.ManualTests", "tests\Owlvey.Falcon.ManualTests\Owlvey.Falcon.ManualTests.csproj", "{FDFC7D89-D7A7-4013-AE9F-17B11110F154}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infrastructure", "infrastructure", "{F8C95DC8-B09A-4DAC-AD59-60659AD3304D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "relational", "relational", "{ECA720CE-A6D9-4E14-8956-133854A83E14}"
+	ProjectSection(SolutionItems) = preProject
+		infrastructure\relational\Dockerfile = infrastructure\relational\Dockerfile
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -92,6 +99,7 @@ Global
 		{ED92038B-805F-4186-93FB-7A4821352428} = {EF44CE22-16DD-4510-A2BB-D12C7734A76B}
 		{C551127A-AF16-4B16-8A1D-5188B9FD12AF} = {FAB670B9-6AD8-4FBB-A128-1D98153488B2}
 		{FDFC7D89-D7A7-4013-AE9F-17B11110F154} = {FAB670B9-6AD8-4FBB-A128-1D98153488B2}
+		{ECA720CE-A6D9-4E14-8956-133854A83E14} = {F8C95DC8-B09A-4DAC-AD59-60659AD3304D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BD993390-77A7-4442-9BA6-842A755ADD53}

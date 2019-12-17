@@ -1,1 +1,9 @@
 ﻿dotnet tool install --global dotnet-trace
+
+
+
+docker run -p 1433:1433 -d owlvey/relational
+
+P@ssw0rd
+
+docker build -t owlvey/relational .
