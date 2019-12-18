@@ -13,6 +13,7 @@ using Owlvey.Falcon.IoC;
 using Owlvey.Falcon.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Logging;
 
 namespace Owlvey.Falcon.API
 {
@@ -42,6 +43,9 @@ namespace Owlvey.Falcon.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public virtual void ConfigureServices(IServiceCollection services)
         {
+
+            IdentityModelEventSource.ShowPII = true;
+
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("admin"));
