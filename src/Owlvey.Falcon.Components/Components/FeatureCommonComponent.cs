@@ -19,11 +19,11 @@ namespace Owlvey.Falcon.Components
         {
             this._dbContext = dbContext;            
         }        
-        internal decimal GetAvailabilityByFeature(FeatureEntity entity, DateTime start, DateTime end)
+        internal async Task<decimal> GetAvailabilityByFeature(FeatureEntity entity, DateTime start, DateTime end)
         {
             foreach (var indicator in entity.Indicators)
             {
-                var sourceItems = this._dbContext.GetSourceItems(indicator.SourceId, start, end);
+                var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, start, end);
                 indicator.Source.SourceItems = sourceItems;
             }
             var agg = new FeatureAvailabilityAggregate(entity);

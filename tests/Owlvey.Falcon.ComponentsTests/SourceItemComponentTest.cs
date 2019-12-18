@@ -24,7 +24,7 @@ namespace Owlvey.Falcon.ComponentsTests
                 Good = 900,
                 Total = 1000
             });
-            var items = itemComponent.GetBySourceIdAndDateRange(source, OwlveyCalendar.StartJanuary2019, OwlveyCalendar.January201908);
+            var items = await itemComponent.GetBySourceIdAndDateRange(source, OwlveyCalendar.StartJanuary2019, OwlveyCalendar.January201908);
             Assert.NotEmpty(items);             
         }
 
@@ -46,7 +46,7 @@ namespace Owlvey.Falcon.ComponentsTests
                 Good = 900,
                 Total = 1000
             });
-            var items = itemComponent.GetBySourceIdAndDateRange(source, OwlveyCalendar.January201908, OwlveyCalendar.January201912);
+            var items = await itemComponent.GetBySourceIdAndDateRange(source, OwlveyCalendar.January201908, OwlveyCalendar.January201912);
             Assert.NotEmpty(items);
         }
 
@@ -110,10 +110,10 @@ namespace Owlvey.Falcon.ComponentsTests
                 End = OwlveyCalendar.January201906
             });
 
-            var result = sourceItemComponent.GetBySourceIdAndDateRange(testSource.Id, OwlveyCalendar.January201903, OwlveyCalendar.January201907);
+            var result = await sourceItemComponent.GetBySourceIdAndDateRange(testSource.Id, OwlveyCalendar.January201903, OwlveyCalendar.January201907);
             Assert.NotEmpty(result);
 
-            result = sourceItemComponent.GetBySourceIdAndDateRange(testSource.Id, OwlveyCalendar.January201905, OwlveyCalendar.January201907);       
+            result = await sourceItemComponent.GetBySourceIdAndDateRange(testSource.Id, OwlveyCalendar.January201905, OwlveyCalendar.January201907);       
             Assert.NotEmpty(result);
 
         }

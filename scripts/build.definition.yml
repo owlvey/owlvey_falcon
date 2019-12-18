@@ -16,19 +16,33 @@ steps:
     includePreviewVersions: true
     installationPath: $(Agent.ToolsDirectory)/dotnet
 
+    
 - bash: |
     pwd
     ls
   displayName: list folders
+
+
+- script: dotnet tool install --global dotnet-sonarscanner
+  displayName: Install sonar tool
+ 
+- script: dotnet restore Owlvey.Falcon.sln --configfile nuget/NuGet.Config
+  displayName: Restore Dependencies
+
+- script: dotnet sonarscanner begin /k:"owlvey_owlvey_falcon"  /o:owlvey /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=a6552b765f058cc5ed69334f1cad1ecd252c59fe
+  displayName: start sonar scan
+
+- script: dotnet build Owlvey.Falcon.sln
+  displayName: Build Projects Debug
+
+- script: dotnet sonarscanner end /d:sonar.login=a6552b765f058cc5ed69334f1cad1ecd252c59fe
+  displayName: end sonar scan
 
 - bash: |
     cd scripts
     bash generate_sqlserver_migration.bash
     cd  ..
   displayName: Get Migration Scripts
-
-
-
 
 - script: dotnet build Owlvey.Falcon.sln -c Release
   displayName: Build Projects

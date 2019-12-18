@@ -72,7 +72,7 @@ namespace Owlvey.Falcon.API.Controllers
         {
             IEnumerable<SourceItemGetListRp> model = new List<SourceItemGetListRp>();
             if (sourceId.HasValue && start.HasValue && end.HasValue) {
-                model = this._sourceItemComponent.GetBySourceIdAndDateRange(sourceId.Value, start.Value, end.Value);
+                model = await this._sourceItemComponent.GetBySourceIdAndDateRange(sourceId.Value, start.Value, end.Value);
             }
             else if (sourceId.HasValue)
             {

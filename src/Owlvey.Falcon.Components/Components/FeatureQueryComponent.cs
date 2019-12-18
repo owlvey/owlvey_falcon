@@ -81,7 +81,7 @@ namespace Owlvey.Falcon.Components
 
             foreach (var indicator in feature.Indicators)
             {
-                var sourceItems = this._dbContext.GetSourceItems(indicator.SourceId, start, end);
+                var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, start, end);
                 indicator.Source.SourceItems = sourceItems;
             }
 
@@ -156,7 +156,7 @@ namespace Owlvey.Falcon.Components
             {
                 var tmp = this._mapper.Map<FeatureAvailabilityGetListRp>(feature);
                 tmp.Squads = feature.Squads.Count();
-                tmp.Availability = common.GetAvailabilityByFeature(feature, start, end);
+                tmp.Availability = await common.GetAvailabilityByFeature(feature, start, end);
                 tmp.Total = feature.Indicators.Sum(c => c.Source.SourceItems.Sum(d => d.Total));
                 tmp.Good = feature.Indicators.Sum(c => c.Source.SourceItems.Sum(d => d.Good));
                 tmp.ServiceCount = feature.ServiceMaps.Count();                
@@ -196,7 +196,7 @@ namespace Owlvey.Falcon.Components
                 var feature = map.Feature;
                 var tmp = this._mapper.Map<SequenceFeatureGetListRp>(feature);
                 tmp.FeatureSlo = service.FeatureSLO;                
-                tmp.Availability = common.GetAvailabilityByFeature(feature, start, end);
+                tmp.Availability = await common.GetAvailabilityByFeature(feature, start, end);
                 tmp.Total = feature.Indicators.Sum(c => c.Source.SourceItems.Sum(d => d.Total));
                 tmp.MapId = map.Id.Value;
                 var incidents = await this._dbContext.GetIncidentsByFeature(feature.Id.Value);
@@ -227,7 +227,7 @@ namespace Owlvey.Falcon.Components
 
             foreach (var indicator in entity.Indicators)
             {
-                var sourceItems = this._dbContext.GetSourceItems(indicator.SourceId, start, end);
+                var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, start, end);
                 indicator.Source.SourceItems = sourceItems;
             }
 

@@ -164,7 +164,7 @@ namespace Owlvey.Falcon.Components
             {
                 foreach (var indicator in feature.Indicators)
                 {
-                    var sourceItems = this._dbContext.GetSourceItems(indicator.SourceId, start, end);
+                    var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, start, end);
                     indicator.Source.SourceItems = sourceItems;
                 }
             }
@@ -211,7 +211,7 @@ namespace Owlvey.Falcon.Components
 
                     foreach (var indicator in entity.Indicators)
                     {
-                        var sourceItems = this._dbContext.GetSourceItems(indicator.SourceId, start, end);
+                        var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, start, end);
                         indicator.Source.SourceItems = sourceItems;
                     }
                     map.Feature = entity;
@@ -270,7 +270,7 @@ namespace Owlvey.Falcon.Components
 
                     foreach (var indicator in entity.Indicators)
                     {
-                        var sourceItems = this._dbContext.GetSourceItems(indicator.SourceId, start, end);
+                        var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, start, end);
                         indicator.Source.SourceItems = sourceItems;
                     }
                     map.Feature = entity;

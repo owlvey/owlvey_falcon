@@ -99,7 +99,7 @@ namespace Owlvey.Falcon.Components
 
         private async Task<decimal> GetAvailabilityByIndicator(IndicatorEntity entity, DateTime start, DateTime end)
         {
-            var sourceItems = this._dbContext.GetSourceItems(entity.Source.Id.Value, start, end);
+            var sourceItems = await this._dbContext.GetSourceItems(entity.Source.Id.Value, start, end);
             entity.Source.SourceItems = sourceItems;
             var agg = new IndicatorDateAvailabilityAggregate(entity);
             var (availability, _ , _ ) = agg.MeasureAvailability();

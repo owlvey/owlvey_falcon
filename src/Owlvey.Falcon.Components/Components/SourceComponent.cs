@@ -115,7 +115,7 @@ namespace Owlvey.Falcon.Components
             var entity = await this._dbContext.Sources.SingleOrDefaultAsync(c => c.Id == id);
             var result = this._mapper.Map<SourceGetRp>(entity);
             if (entity!= null) {
-                var (ava, total, good) = GetAvailabilityBySource(entity, start, end);
+                var (ava, total, good) = await GetAvailabilityBySource(entity, start, end);
                 result.Availability = ava;
                 result.Total = total;
                 result.Good = good;
@@ -123,8 +123,8 @@ namespace Owlvey.Falcon.Components
             return result;
         }
 
-        private (decimal, int, int) GetAvailabilityBySource(SourceEntity entity, DateTime start, DateTime end) {
-            var sourceItems = this._dbContext.GetSourceItems(entity.Id.Value, start, end);
+        private async Task<(decimal, int, int)> GetAvailabilityBySource(SourceEntity entity, DateTime start, DateTime end) {
+            var sourceItems = await this._dbContext.GetSourceItems(entity.Id.Value, start, end);
             entity.SourceItems = sourceItems;
             var agg = new SourceAvailabilityAggregate(entity);
             return agg.MeasureAvailability();
@@ -167,7 +167,7 @@ namespace Owlvey.Falcon.Components
         
         public async Task<SeriesGetRp> GetDailySeriesById(int sourceId, DateTime start, DateTime end) {                                   
             var source = await this._dbContext.Sources.SingleAsync(c => c.Id == sourceId);
-            var sourceItems = this._dbContext.GetSourceItems(sourceId, start, end);
+            var sourceItems = await this._dbContext.GetSourceItems(sourceId, start, end);
             source.SourceItems = sourceItems;
             var result = new SeriesGetRp
             {

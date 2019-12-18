@@ -106,10 +106,10 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<SourceItemGetListRp>>(entity);
         }
 
-        public IEnumerable<SourceItemGetListRp> GetBySourceIdAndDateRange(int sourceId, 
+        public async Task<IEnumerable<SourceItemGetListRp>> GetBySourceIdAndDateRange(int sourceId, 
             DateTime start, DateTime end)
         {
-            var entity = this._dbContext.GetSourceItems(sourceId, start, end);
+            var entity = await this._dbContext.GetSourceItems(sourceId, start, end);
             return this._mapper.Map<IEnumerable<SourceItemGetListRp>>(entity);
         }
     }

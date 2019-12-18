@@ -20,6 +20,7 @@ namespace Owlvey.Falcon.Repositories
         }
 
 
+
         
         public DbSet<AppSettingEntity> AppSettings { get; set; }
         public DbSet<SquadEntity> Squads { get; set; }
@@ -149,18 +150,19 @@ namespace Owlvey.Falcon.Repositories
             return base.SaveChangesAsync(cancellationToken);
         }
 
-        internal ICollection<SourceItemEntity> GetSourceItems(int sourceId,
+        internal async Task<ICollection<SourceItemEntity>> GetSourceItems(int sourceId,
             DateTime start, DateTime end) {
             start = start.Date;
             end = end.Date;
-            List<SourceItemEntity> result = new List<SourceItemEntity>();            
-            var startTask = this.SourcesItems.Where(c => c.SourceId == sourceId && c.Start >= start && c.Start <= end).ToListAsync();
-            var endTask = this.SourcesItems.Where(c => c.SourceId == sourceId && c.End >= start && c.End <= end).ToListAsync();
-            var midTask = this.SourcesItems.Where(c => c.SourceId == sourceId && c.Start >= start && c.End <= end).ToListAsync();
-            var involveTask =  this.SourcesItems.Where(c => c.SourceId == sourceId && start >= c.Start && end <= c.End).ToListAsync();
+            List<SourceItemEntity> result = new List<SourceItemEntity>();
 
-            Task.WaitAll(startTask, endTask, midTask, involveTask);
-            result =  result.Union(startTask.Result.Union(endTask.Result).Union(midTask.Result).Union(involveTask.Result).Distinct(new SourceItemEntityComparer())).ToList();                        
+            var startTask = await this.SourcesItems.Where(c => c.SourceId == sourceId && c.Start >= start && c.Start <= end).ToListAsync();
+            var endTask = await this.SourcesItems.Where(c => c.SourceId == sourceId && c.End >= start && c.End <= end).ToListAsync();
+            var midTask = await this.SourcesItems.Where(c => c.SourceId == sourceId && c.Start >= start && c.End <= end).ToListAsync();
+            var involveTask = await this.SourcesItems.Where(c => c.SourceId == sourceId && start >= c.Start && end <= c.End).ToListAsync();
+
+            // Task.WaitAll(startTask, endTask, midTask, involveTask);
+            result =  result.Union(startTask.Union(endTask).Union(midTask).Union(involveTask).Distinct(new SourceItemEntityComparer())).ToList();                        
             return result;
         }
 
