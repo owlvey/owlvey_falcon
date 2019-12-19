@@ -58,10 +58,10 @@ namespace Owlvey.Falcon.UnitTests.Entities
                  }
             });
 
-            Assert.Equal(featureEntity.MTTD, 10);
-            Assert.Equal(featureEntity.MTTE, 20);
-            Assert.Equal(featureEntity.MTTF, 30);
-            Assert.Equal(featureEntity.MTTM, 60);
+            Assert.Equal(10, featureEntity.MTTD);
+            Assert.Equal(20, featureEntity.MTTE);
+            Assert.Equal(30, featureEntity.MTTF);
+            Assert.Equal(60, featureEntity.MTTM);
 
         }
 

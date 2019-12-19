@@ -53,6 +53,7 @@ namespace Owlvey.Falcon.Models
     {
         public int ProductId { get; set; }
         public string Name { get; set; }
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public SourceKindEnum Kind { get; set; } = SourceKindEnum.Interaction;
     }
 

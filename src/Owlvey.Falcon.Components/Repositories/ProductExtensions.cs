@@ -34,7 +34,6 @@ namespace Owlvey.Falcon.Repositories.Products
                     sli.Source = sources.Where(c => c.Id == sli.SourceId).Single();
                 }                   
             }
-
             return product;
         }
     }
