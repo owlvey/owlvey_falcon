@@ -21,7 +21,7 @@ namespace Owlvey.Falcon.Core.Entities
                     ModifiedOn = on,
                     Product = product,                    
                 };
-                entity.Avatar = "https://www.jam-software.de/img/icons/ShellBrowserComponentsDotNet-Icon-256.png";
+                entity.Avatar = "https://cdn.iconscout.com/icon/premium/png-256-thumb/hexagonal-1-727847.png";
                 entity.Validate();
                 return entity;
             }
