@@ -322,7 +322,7 @@ namespace Owlvey.Falcon.Components
         {
             var product = await this._dbContext.FullLoadProduct(productId);
 
-            var sourceItems = this._dbContext.GetSourceItemsByProduct(productId, start, end);
+            var sourceItems = await this._dbContext.GetSourceItemsByProduct(productId, start, end);
 
             var squadsData = await this._dbContext.SquadFeatures
                 .Include(c => c.Squad)
@@ -464,7 +464,7 @@ namespace Owlvey.Falcon.Components
                 .Where(c => c.Feature.ProductId == productId).ToListAsync();
 
 
-            var sourceItems = this._dbContext.GetSourceItemsByProduct(productId, start, end);
+            var sourceItems = await this._dbContext.GetSourceItemsByProduct(productId, start, end);
             var result = new OperationProductDashboardRp();
 
             foreach (var source in product.Sources)

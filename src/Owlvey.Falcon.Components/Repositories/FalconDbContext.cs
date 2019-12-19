@@ -166,40 +166,36 @@ namespace Owlvey.Falcon.Repositories
             return result;
         }
 
-        internal ICollection<SourceItemEntity> GetSourceItems(DateTime start, DateTime end)
+        internal async Task<ICollection<SourceItemEntity>> GetSourceItems(DateTime start, DateTime end)
         {
             start = start.Date;
             end = end.Date;
             List<SourceItemEntity> result = new List<SourceItemEntity>();
-            var startTask = this.SourcesItems.Where(c => c.Start >= start && c.Start <= end).ToListAsync();
-            var endTask = this.SourcesItems.Where(c =>  c.End >= start && c.End <= end).ToListAsync();
-            var midTask = this.SourcesItems.Where(c =>  c.Start >= start && c.End <= end).ToListAsync();
-            var involveTask = this.SourcesItems.Where(c => start >= c.Start && end <= c.End).ToListAsync();
-
-            Task.WaitAll(startTask, endTask, midTask, involveTask);
-            result = result.Union(startTask.Result.Union(endTask.Result).Union(midTask.Result).Union(involveTask.Result).Distinct(new SourceItemEntityComparer())).ToList();
+            var startTask = await this.SourcesItems.Where(c => c.Start >= start && c.Start <= end).ToListAsync();
+            var endTask = await this.SourcesItems.Where(c =>  c.End >= start && c.End <= end).ToListAsync();
+            var midTask = await this.SourcesItems.Where(c =>  c.Start >= start && c.End <= end).ToListAsync();
+            var involveTask = await this.SourcesItems.Where(c => start >= c.Start && end <= c.End).ToListAsync();                        
+            result = result.Union(startTask.Union(endTask).Union(midTask).Union(involveTask).Distinct(new SourceItemEntityComparer())).ToList();
             return result;
         }
 
 
-        internal ICollection<SourceItemEntity> GetSourceItemsByProduct(IEnumerable<int> productIds, DateTime start, DateTime end)
+        internal async Task<ICollection<SourceItemEntity>> GetSourceItemsByProduct(IEnumerable<int> productIds, DateTime start, DateTime end)
         {
             start = start.Date;
             end = end.Date;
             List<SourceItemEntity> result = new List<SourceItemEntity>();
-            var startTask = this.SourcesItems.Where(c => productIds.Contains(c.Source.ProductId) && c.Start >= start && c.Start <= end).ToListAsync();
-            var endTask = this.SourcesItems.Where(c => productIds.Contains(c.Source.ProductId) && c.End >= start && c.End <= end).ToListAsync();
-            var midTask = this.SourcesItems.Where(c => productIds.Contains(c.Source.ProductId) && c.Start >= start && c.End <= end).ToListAsync();
-            var involveTask = this.SourcesItems.Where(c => productIds.Contains(c.Source.ProductId) && start >= c.Start && end <= c.End).ToListAsync();
-
-            Task.WaitAll(startTask, endTask, midTask, involveTask);
-            result = result.Union(startTask.Result.Union(endTask.Result).Union(midTask.Result).Union(involveTask.Result).Distinct(new SourceItemEntityComparer())).ToList();
+            var startTask = await this.SourcesItems.Where(c => productIds.Contains(c.Source.ProductId) && c.Start >= start && c.Start <= end).ToListAsync();
+            var endTask = await this.SourcesItems.Where(c => productIds.Contains(c.Source.ProductId) && c.End >= start && c.End <= end).ToListAsync();
+            var midTask = await this.SourcesItems.Where(c => productIds.Contains(c.Source.ProductId) && c.Start >= start && c.End <= end).ToListAsync();
+            var involveTask = await this.SourcesItems.Where(c => productIds.Contains(c.Source.ProductId) && start >= c.Start && end <= c.End).ToListAsync();                        
+            result = result.Union(startTask.Union(endTask).Union(midTask).Union(involveTask).Distinct(new SourceItemEntityComparer())).ToList();
             return result;
         }
 
-        internal ICollection<SourceItemEntity> GetSourceItemsByProduct(int productId, DateTime start, DateTime end)
+        internal async Task<ICollection<SourceItemEntity>> GetSourceItemsByProduct(int productId, DateTime start, DateTime end)
         {
-            return this.GetSourceItemsByProduct(new List<int>() { productId }, start, end);
+            return await this.GetSourceItemsByProduct(new List<int>() { productId }, start, end);
         }
 
         internal async Task LoadIndicators(IEnumerable<ServiceMapEntity> serviceMaps) {

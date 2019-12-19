@@ -71,7 +71,7 @@ namespace Owlvey.Falcon.Components
                         
             var productIds = entity.FeatureMaps.Select(c => c.Feature.ProductId).Distinct().ToList();
 
-            var sourceItems = this._dbContext.GetSourceItemsByProduct(productIds, start, end);
+            var sourceItems =await  this._dbContext.GetSourceItemsByProduct(productIds, start, end);
 
             foreach (var service in services)
             {

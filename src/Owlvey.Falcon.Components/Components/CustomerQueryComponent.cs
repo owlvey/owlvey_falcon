@@ -139,7 +139,7 @@ namespace Owlvey.Falcon.Components
                 .ThenInclude(c=>c.Source)
                 .ToListAsync();
 
-            var sourceItems = this._dbContext.GetSourceItems(start.Value, end.Value);
+            var sourceItems = await this._dbContext.GetSourceItems(start.Value, end.Value);
 
             foreach (var customer in customers)
             {

@@ -138,7 +138,7 @@ namespace Owlvey.Falcon.Components
         public async Task<IEnumerable<SourceGetListRp>> GetByProductIdWithAvailability(int productId, DateTime start, DateTime end)
         {
             var entities = await this._dbContext.Sources.Include(c=>c.Indicators).Where(c => c.Product.Id == productId).ToListAsync();            
-            var sourceItems = this._dbContext.GetSourceItems(start, end);
+            var sourceItems = await this._dbContext.GetSourceItems(start, end);
 
             var result = new List<SourceGetListRp>();
             foreach (var source in entities)
