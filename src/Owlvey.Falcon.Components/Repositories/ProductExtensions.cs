@@ -20,9 +20,21 @@ namespace Owlvey.Falcon.Repositories.Products
             var product = await context.Products
             .Include(c => c.Customer)
             .Include(c => c.Services).ThenInclude(c => c.FeatureMap)
-            .Include(c => c.Features).ThenInclude(c => c.Indicators)
-            .Include(c => c.Sources)
+            .Include(c => c.Features).ThenInclude(c => c.Indicators)            
             .Where(c => c.Id == productId).SingleAsync();
+            
+            var sources = await context.Sources.Where(c => c.ProductId == productId).ToListAsync();
+
+            product.Sources = sources;
+
+            foreach (var feature in product.Features)
+            {
+                foreach (var sli in feature.Indicators)
+                {
+                    sli.Source = sources.Where(c => c.Id == sli.SourceId).Single();
+                }                   
+            }
+
             return product;
         }
     }

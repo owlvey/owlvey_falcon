@@ -412,7 +412,16 @@ namespace Owlvey.Falcon.Components
             result.SourceTotal = await this._dbContext.Sources.Where(c => c.ProductId == productId).CountAsync();
             result.SourceAssigned = product.Services.SelectMany(
                 c => c.FeatureMap.SelectMany(d => d.Feature.Indicators).Select(e => e.SourceId)).Distinct().Count();
-                                    
+
+
+            var sourceItems = await this._dbContext.GetSourceItemsByProduct(productId, start, end);
+
+
+            foreach (var item in product.Sources)
+            {
+                item.SourceItems = sourceItems.Where(c => c.SourceId == item.Id).ToList();
+            }
+            
             int sloFails = 0;
             var temp = new List<ProductDashboardRp.ServiceGroupRp>();            
             
