@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Owlvey.Falcon.Repositories.Products;
 
 namespace Owlvey.Falcon.Components
 {
@@ -30,14 +31,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<IEnumerable<ServiceGetListRp>> GetServicesWithAvailabilityByGroup(int productId, DateTime start, DateTime end, string group)
         {
-            var entity = await this._dbContext.Products
-              .Include(c => c.Services)
-              .ThenInclude(c => c.FeatureMap)
-              .ThenInclude(c => c.Feature)
-              .ThenInclude(c => c.Indicators)
-              .ThenInclude(c => c.Source)
-              .Where(c => c.Id.Equals(productId))
-              .FirstOrDefaultAsync();
+            var entity  = await this._dbContext.FullLoadProduct(productId);
 
             var targetServices = entity.Services.Where(c => string.Equals(c.Group, group,StringComparison.InvariantCultureIgnoreCase)).ToList();
 
@@ -70,15 +64,8 @@ namespace Owlvey.Falcon.Components
 
         public async Task<IEnumerable<ServiceGetListRp>> GetServicesWithAvailability(int productId, DateTime start, DateTime end)
         {
+            var entity = await this._dbContext.FullLoadProduct(productId);
 
-            var entity = await this._dbContext.Products
-                .Include(c => c.Services)
-                .ThenInclude(c => c.FeatureMap)
-                .ThenInclude(c => c.Feature)
-                .ThenInclude(c => c.Indicators)
-                .ThenInclude(c => c.Source)
-                .Where(c => c.Id.Equals(productId))
-                .FirstOrDefaultAsync();
 
             var result = new List<ServiceGetListRp>();
             foreach (var item in entity.Services)

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Owlvey.Falcon.Core.Values;
 
 namespace Owlvey.Falcon.Models
-{
+{ 
+
     public class OperationProductDashboardRp
     {
         public long SourceTotal { get; set; }
@@ -23,11 +23,13 @@ namespace Owlvey.Falcon.Models
         public List<SquadGetListRp> Squads { get; set; } = new List<SquadGetListRp>();
 
 
-
-        public Dictionary<int, List<int>> ServiceMaps { get; set; } = new Dictionary<int, List<int>>();
-        public Dictionary<int, List<int>> FeatureMaps { get; set; } = new Dictionary<int, List<int>>();
-        public Dictionary<int, List<int>> SquadMaps { get; set; } = new Dictionary<int, List<int>>();
-
-        public Dictionary<int, object> IncidentInformation { get; set; } = new Dictionary<int, object>();
+        [JsonConverter(typeof(JsonIDictionaryConverter<int, List<int>>))]
+        public IDictionary<int, List<int>> ServiceMaps { get; set; } = new Dictionary<int, List<int>>();
+        [JsonConverter(typeof(JsonIDictionaryConverter<int, List<int>>))]
+        public IDictionary<int, List<int>> FeatureMaps { get; set; } = new Dictionary<int, List<int>>();
+        [JsonConverter(typeof(JsonIDictionaryConverter<int, List<int>>))]
+        public IDictionary<int, List<int>> SquadMaps { get; set; } = new Dictionary<int, List<int>>();
+        [JsonConverter(typeof(JsonIDictionaryConverter<int, object>))]
+        public IDictionary<int, object> IncidentInformation { get; set; } = new Dictionary<int, object>();
     }
 }
