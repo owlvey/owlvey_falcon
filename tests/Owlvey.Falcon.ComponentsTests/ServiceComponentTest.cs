@@ -10,6 +10,25 @@ namespace Owlvey.Falcon.ComponentsTests
     public class ServiceComponentTest
     {
 
+
+        [Fact]
+        public async Task ServiceGraphQuerySuccess() {
+            var container = ComponentTestFactory.BuildContainer();
+            var (customerId, productI, serviceId, featureId, _, _) = await ComponentTestFactory.BuildCustomerWithSquad(container, OwlveyCalendar.StartJanuary2019, OwlveyCalendar.EndJanuary2019);
+
+            var serviceComponent = container.GetInstance<ServiceComponent>();
+            var serviceQueryComponent = container.GetInstance<ServiceQueryComponent>();
+
+
+            var graph = await serviceQueryComponent.GetGraph(serviceId, OwlveyCalendar.StartJanuary2019, OwlveyCalendar.EndJanuary2019);
+
+            Assert.NotNull(graph);
+            Assert.NotEmpty(graph.Nodes);
+            Assert.NotEmpty(graph.Edges);
+
+
+        }
+
         [Fact]
         public async Task ServiceMaintenanceSucces()
         {

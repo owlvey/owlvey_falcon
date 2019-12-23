@@ -166,6 +166,23 @@ namespace Owlvey.Falcon.Repositories
             return result;
         }
 
+        public async Task<ICollection<SourceItemEntity>> GetSourceItems(IEnumerable<int> sources,
+            DateTime start, DateTime end)
+        {
+            start = start.Date;
+            end = end.Date;
+            List<SourceItemEntity> result = new List<SourceItemEntity>();
+
+            var startTask = await this.SourcesItems.Where(c =>  sources.Contains( c.SourceId )  && c.Start >= start && c.Start <= end).ToListAsync();
+            var endTask = await this.SourcesItems.Where(c => sources.Contains( c.SourceId ) && c.End >= start && c.End <= end).ToListAsync();
+            var midTask = await this.SourcesItems.Where(c => sources.Contains( c.SourceId ) && c.Start >= start && c.End <= end).ToListAsync();
+            var involveTask = await this.SourcesItems.Where(c => sources.Contains( c.SourceId ) && start >= c.Start && end <= c.End).ToListAsync();
+
+            // Task.WaitAll(startTask, endTask, midTask, involveTask);
+            result = result.Union(startTask.Union(endTask).Union(midTask).Union(involveTask).Distinct(new SourceItemEntityComparer())).ToList();
+            return result;
+        }
+
         internal async Task<ICollection<SourceItemEntity>> GetSourceItems(DateTime start, DateTime end)
         {
             start = start.Date;

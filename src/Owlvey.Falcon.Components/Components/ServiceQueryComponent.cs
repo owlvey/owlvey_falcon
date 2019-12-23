@@ -230,5 +230,135 @@ namespace Owlvey.Falcon.Components
 
             return result;
         }
+
+        #region Graphs
+
+
+        public async Task<GraphGetRp> GetGraph(int id, DateTime start, DateTime end)
+        {
+
+            GraphGetRp result = new GraphGetRp();
+
+            var rootService =  await this._dbContext.Services
+                .Include(c=>c.FeatureMap)                                
+                .SingleAsync(c => c.Id == id);
+
+            var rootFeatures = rootService.FeatureMap.Select(c => c.FeatureId).Distinct().ToList();
+
+            var extendedServicesIds = await this._dbContext.ServiceMaps
+                .Where(c => rootFeatures.Contains(c.FeatureId))
+                .Select(c => c.ServiceId)
+                .ToListAsync();
+
+            var extendedServices = await this._dbContext.Services
+                .Include(c => c.FeatureMap)                
+                .Where(c => extendedServicesIds.Contains(c.Id.Value))
+                .ToListAsync();
+
+
+            var featuresExtended = extendedServices.SelectMany(c => c.FeatureMap.Select(d => d.FeatureId));
+            var featuresRoot = rootService.FeatureMap.Select(c => c.FeatureId);
+            var featuresIds = featuresExtended.Union(featuresRoot).ToList();
+
+
+            var features = await this._dbContext.Features
+                .Include(c => c.Indicators)
+                .ThenInclude(c => c.Source)
+                .Where( c=> featuresIds.Contains(c.Id.Value))
+                .ToListAsync();
+
+            var sources = features.SelectMany(c => c.Indicators.Select(d => d.SourceId));
+            
+            var sourceItems = await this._dbContext.GetSourceItems(sources, start, end);
+            
+            var services = new List<ServiceEntity>(extendedServices);
+            services.Add(rootService);
+
+
+            foreach (var feature in features)
+            {
+                foreach (var indicator in feature.Indicators)
+                {
+                    indicator.Source.SourceItems = sourceItems.Where(c => c.SourceId == indicator.Source.Id).ToList();
+                }
+            }
+
+            foreach (var service in services)
+            {
+                foreach (var map in service.FeatureMap)
+                {
+                    var temp_feature = features.Where(c => c.Id == map.FeatureId).Single();
+                    map.Feature = temp_feature;
+                    temp_feature.ServiceMaps.Add(new ServiceMapEntity() {
+                         FeatureId = temp_feature.Id.Value,
+                          ServiceId = service.Id.Value,
+                          Feature = temp_feature,
+                          Service = service
+                    });
+                }
+                service.MeasureAvailability();
+            }
+
+
+            var snode = new GraphNode("services", "service", rootService.Id.Value, rootService.Avatar,
+                    string.Format("{0} [ {1} | {2} ]", rootService.Name,
+                    Math.Round(rootService.Slo, 2),
+                    Math.Round(rootService.Availability, 2))
+                    ,rootService.Availability, rootService.Slo);
+            
+            result.Nodes.Add(snode);
+
+            foreach (var map in rootService.FeatureMap)
+            {
+                var feature = map.Feature;
+                var Id = string.Format("feature_{0}", feature.Id);
+                var fnode = result.Nodes.SingleOrDefault(c => c.Id == Id);
+                if (fnode == null)
+                {
+                    fnode = new GraphNode("features", "feature", feature.Id.Value,
+                        feature.Avatar,                        
+                        feature.Name,                        
+                        feature.Availability, 0);
+
+                    result.Nodes.Add(fnode);
+                }
+
+                var fedge = new GraphEdge()
+                {
+                    From = snode.Id,
+                    To = fnode.Id,
+                    Value = fnode.Value - rootService.FeatureSLO,
+                    Tags = new Dictionary<string, object>() {
+                            { "Availability", fnode.Value }
+                        }
+                };
+                result.Edges.Add(fedge);
+
+                foreach (var extended in extendedServices)
+                {
+                    var temporal = extended.FeatureMap.Where(c => c.FeatureId == feature.Id).SingleOrDefault();
+                    if (temporal != null) {
+                        var temp_node = new GraphNode("services",
+                            "service",
+                            extended.Id.Value,
+                            extended.Avatar,
+                        string.Format("{0} [ {1} | {2} ]", rootService.Name,
+                        Math.Round(extended.Slo, 2),
+                        Math.Round(extended.Availability, 2))
+                        , extended.Availability, extended.Slo);
+
+                        if (result.Nodes.Count(c => c.Id == temp_node.Id) == 0)
+                        {
+                            result.Nodes.Add(temp_node);
+                        }                        
+                    }                    
+                }
+            }
+           
+            return result;
+        }
+
+
+        #endregion
     }
 }

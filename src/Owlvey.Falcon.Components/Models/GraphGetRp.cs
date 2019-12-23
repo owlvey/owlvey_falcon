@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Owlvey.Falcon.Core;
 
 namespace Owlvey.Falcon.Models
 {
@@ -24,6 +25,23 @@ namespace Owlvey.Falcon.Models
         public string Group { get; set; }
         public decimal Importance { get; set; }
         public Dictionary<string, object> Tags { get; set; } = new Dictionary<string, object>();
+
+
+        public GraphNode() { }
+
+        public GraphNode(string group, string key, int id, string avatar, string name,
+           decimal value, decimal slo)
+        {
+            this.Id = string.Format("{0}_{1}", key, id);
+            this.Avatar = avatar;
+            this.Name = name;
+            this.Value = value;
+            this.Group = group;
+            this.Slo = slo;
+            this.Importance = AvailabilityUtils.MeasureImpact(slo);
+            this.Budget = value - (decimal)slo;                        
+        }
+
     }
 
     public class GraphEdge {

@@ -39,7 +39,7 @@ namespace Owlvey.Falcon.Core.Entities
 
         public virtual ProductEntity Product { get; set; }
 
-        public virtual IEnumerable<ServiceMapEntity> ServiceMaps { get; set; } = new List<ServiceMapEntity>();
+        public virtual ICollection<ServiceMapEntity> ServiceMaps { get; set; } = new List<ServiceMapEntity>();
 
         public virtual ICollection<IndicatorEntity> Indicators { get; set; } = new List<IndicatorEntity>();
 

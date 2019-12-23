@@ -240,5 +240,26 @@ namespace Owlvey.Falcon.API.Controllers
 
         #endregion
 
+        #region graph
+
+        [HttpGet("{id}/reports/graph")]
+        [ProducesResponseType(typeof(GraphGetRp), 200)]
+        public async Task<IActionResult> GetGraph(int id, DateTime? start, DateTime? end)
+        {
+            if (start.HasValue && end.HasValue)
+            {
+                GraphGetRp result = await this._serviceQueryService.GetGraph(id, start.Value, end.Value);
+                return this.Ok(result);
+            }
+            else
+            {
+                return this.BadRequest();
+            }
+        }
+
+
+        #endregion
+
+
     }
 }
