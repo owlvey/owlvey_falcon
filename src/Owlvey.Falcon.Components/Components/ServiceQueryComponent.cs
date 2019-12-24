@@ -289,12 +289,19 @@ namespace Owlvey.Falcon.Components
                 {
                     var temp_feature = features.Where(c => c.Id == map.FeatureId).Single();
                     map.Feature = temp_feature;
-                    temp_feature.ServiceMaps.Add(new ServiceMapEntity() {
-                         FeatureId = temp_feature.Id.Value,
-                          ServiceId = service.Id.Value,
-                          Feature = temp_feature,
-                          Service = service
-                    });
+
+                    if (temp_feature.ServiceMaps.Where(
+                        c => c.FeatureId == temp_feature.Id.Value &&
+                             c.ServiceId == service.Id.Value
+                        ).Count() == 0) {
+                        temp_feature.ServiceMaps.Add(new ServiceMapEntity()
+                        {
+                            FeatureId = temp_feature.Id.Value,
+                            ServiceId = service.Id.Value,
+                            Feature = temp_feature,
+                            Service = service
+                        });
+                    }                    
                 }
                 service.MeasureAvailability();
             }
@@ -323,26 +330,22 @@ namespace Owlvey.Falcon.Components
                     result.Nodes.Add(fnode);
                 }
 
-                var fedge = new GraphEdge()
-                {
-                    From = snode.Id,
-                    To = fnode.Id,
-                    Value = fnode.Value - rootService.FeatureSLO,
-                    Tags = new Dictionary<string, object>() {
+                var fedge = new GraphEdge(snode.Id, fnode.Id, fnode.Value - rootService.FeatureSLO,
+                        new Dictionary<string, object>() {
                             { "Availability", fnode.Value }
-                        }
-                };
+                        });
+                
                 result.Edges.Add(fedge);
 
                 foreach (var extended in extendedServices)
                 {
                     var temporal = extended.FeatureMap.Where(c => c.FeatureId == feature.Id).SingleOrDefault();
-                    if (temporal != null) {
+                    if (temporal != null && temporal.Feature.ServiceMaps.Count <= 10) {
                         var temp_node = new GraphNode("services",
                             "service",
                             extended.Id.Value,
                             extended.Avatar,
-                        string.Format("{0} [ {1} | {2} ]", rootService.Name,
+                        string.Format("{0} [ {1} | {2} ]", extended.Name,
                         Math.Round(extended.Slo, 2),
                         Math.Round(extended.Availability, 2))
                         , extended.Availability, extended.Slo);
@@ -350,6 +353,15 @@ namespace Owlvey.Falcon.Components
                         if (result.Nodes.Count(c => c.Id == temp_node.Id) == 0)
                         {
                             result.Nodes.Add(temp_node);
+
+                            var tmp_edge = new GraphEdge(
+                                temp_node.Id, 
+                                fnode.Id, 
+                                fnode.Value - extended.FeatureSLO,
+                                new Dictionary<string, object>() {
+                                    { "Availability", fnode.Value }
+                                });
+                            result.Edges.Add(tmp_edge);
                         }                        
                     }                    
                 }

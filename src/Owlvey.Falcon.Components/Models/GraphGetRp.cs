@@ -48,6 +48,14 @@ namespace Owlvey.Falcon.Models
         public string From { get; set; }
         public string To { get; set; }
         public decimal Value { get; set; }
-        public Dictionary<string, object> Tags { get; set; } = new Dictionary<string, object>();
+        public IDictionary<string, object> Tags { get; set; } = new Dictionary<string, object>();
+
+        public GraphEdge() { }
+        public GraphEdge(string from, string to, decimal value, IDictionary<string, object> tags) {
+            this.From = from;
+            this.To = to;
+            this.Value = value;
+            this.Tags = tags;
+        }
     }
 }

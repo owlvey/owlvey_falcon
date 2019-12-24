@@ -164,7 +164,7 @@ namespace Owlvey.Falcon.API.Controllers
         #region Reports
 
         [HttpGet("dashboard/products/services")]
-        [ProducesResponseType(typeof(ProductDashboardRp), 200)]
+        [ProducesResponseType(typeof(CustomerDashboardRp), 200)]
         public async Task<IActionResult> GetDashboardProductServices(DateTime? start, DateTime? end)
         {
             if (start.HasValue && end.HasValue)

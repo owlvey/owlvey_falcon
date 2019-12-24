@@ -93,6 +93,7 @@ namespace Owlvey.Falcon.Components
 
             foreach (var item in squadPonts)
             {
+                
                 var tmp = new FeatureBySquadRp()
                 {
                     Id = item.feature.Id.Value,

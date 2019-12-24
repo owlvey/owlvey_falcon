@@ -50,7 +50,7 @@ namespace Owlvey.Falcon.Models
 
     public class CustomerDashboardRp {
 
-        public List<string> Categories = new List<string>() { "10%", "80%", "85%", "90%", "95%", "96%", "97%", "98%", "99%", "99.9%", "100%" };
+        public List<string> Categories { get; set;  } = new List<string>() { "10%", "80%", "85%", "90%", "95%", "96%", "97%", "98%", "99%", "99.9%", "100%" };
 
 
         public class CustomerProductRp {
