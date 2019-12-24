@@ -281,6 +281,7 @@ namespace Owlvey.Falcon.Components
                 {
                     indicator.Source.SourceItems = sourceItems.Where(c => c.SourceId == indicator.Source.Id).ToList();
                 }
+                feature.MeasureAvailability();
             }
 
             foreach (var service in services)
@@ -307,7 +308,9 @@ namespace Owlvey.Falcon.Components
             }
 
 
-            var snode = new GraphNode("services", "service", rootService.Id.Value, rootService.Avatar,
+            var snode = new GraphNode("services", "service",
+                    rootService.Id.Value,
+                    rootService.Avatar,
                     string.Format("{0} [ {1} | {2} ]", rootService.Name,
                     Math.Round(rootService.Slo, 2),
                     Math.Round(rootService.Availability, 2))
@@ -330,7 +333,8 @@ namespace Owlvey.Falcon.Components
                     result.Nodes.Add(fnode);
                 }
 
-                var fedge = new GraphEdge(snode.Id, fnode.Id, fnode.Value - rootService.FeatureSLO,
+                var fedge = new GraphEdge(snode.Id, fnode.Id,
+                        fnode.Value - rootService.Slo,
                         new Dictionary<string, object>() {
                             { "Availability", fnode.Value }
                         });
@@ -357,7 +361,7 @@ namespace Owlvey.Falcon.Components
                             var tmp_edge = new GraphEdge(
                                 temp_node.Id, 
                                 fnode.Id, 
-                                fnode.Value - extended.FeatureSLO,
+                                fnode.Value - extended.Slo,
                                 new Dictionary<string, object>() {
                                     { "Availability", fnode.Value }
                                 });
