@@ -30,16 +30,16 @@ namespace Owlvey.Falcon.Models
         public GraphNode() { }
 
         public GraphNode(string group, string key, int id, string avatar, string name,
-           decimal value, decimal slo)
+           decimal availability, decimal slo)
         {
             this.Id = string.Format("{0}_{1}", key, id);
             this.Avatar = avatar;
             this.Name = name;
-            this.Value = value;
+            this.Value = availability;
             this.Group = group;
             this.Slo = slo;
             this.Importance = AvailabilityUtils.MeasureImpact(slo);
-            this.Budget = value - (decimal)slo;                        
+            this.Budget = availability - (decimal)slo;                        
         }
 
     }
