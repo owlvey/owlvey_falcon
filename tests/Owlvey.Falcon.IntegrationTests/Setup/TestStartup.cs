@@ -9,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Owlvey.Falcon.API;
-using Owlvey.Falcon.API.Controllers;
 using Owlvey.Falcon.Core.Entities;
 using Owlvey.Falcon.IoC;
 using Owlvey.Falcon.Repositories;
@@ -23,8 +22,8 @@ using IdentityServer4.AccessTokenValidation;
 using GST.Fake.Authentication.JwtBearer.Events;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using System.Reflection;
+using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Gateways;
 
 namespace Owlvey.Falcon.IntegrationTests.Setup
 {
@@ -49,6 +48,7 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
         /// <param name="services">Service Collection</param>
         public override void ConfigureServices(IServiceCollection services)
         {
+
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("admin"));
@@ -116,7 +116,7 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
         /// <param name="configuration">Configuration</param>
         public override void Configure(IApplicationBuilder app, IHostingEnvironment env,
             ILoggerFactory loggerFactory, IOptions<SwaggerAppOptions> swaggerOptions, 
-            IConfiguration configuration, FalconDbContext dbContext)
+            IConfiguration configuration, FalconDbContext dbContext, IDateTimeGateway dateTimeGateway)
         {
             app.UseMvc();
 
@@ -175,12 +175,12 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
                 }
             };
             customer.Squads = new List<SquadEntity> {
-                SquadEntity.Factory.Create("Default Squad", DateTime.UtcNow, "user", customer)
+                SquadEntity.Factory.Create("Default Squad", dateTimeGateway.GetCurrentDateTime(), "user", customer)
             };
             
             dbContext.Customers.Add(customer);
 
-            var user = UserEntity.Factory.Create("test", DateTime.UtcNow, "user@falcon.com");
+            var user = UserEntity.Factory.Create("test", dateTimeGateway.GetCurrentDateTime(), "user@falcon.com");
             user.Id = 9999;
             dbContext.Users.Add(user);
             

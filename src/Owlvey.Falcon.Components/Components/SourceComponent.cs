@@ -46,8 +46,11 @@ namespace Owlvey.Falcon.Components
 
 
         public async Task<SourceGetListRp> CreateOrUpdate(CustomerEntity customer, string product, string name, string tags,
-            string avatar, string good, string total, string description, string kind)
+            string avatar, string good, string total, string description, string kind, string group)
         {
+
+            group = string.IsNullOrWhiteSpace(group)? "Availability" : group;
+
             var createdBy = this._identityService.GetIdentity();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;            
             var entity = await this._dbContext.Sources.Where(c =>c.Product.CustomerId == customer.Id && c.Product.Name == product && c.Name == name).SingleOrDefaultAsync();
@@ -55,7 +58,8 @@ namespace Owlvey.Falcon.Components
             {
                 var productEntity = await this._dbContext.Products.Where(c => c.CustomerId == customer.Id && c.Name == product).SingleAsync();
                 entity = SourceEntity.Factory.Create(productEntity, name, this._datetimeGateway.GetCurrentDateTime(), 
-                    createdBy, (SourceKindEnum)Enum.Parse(typeof(SourceKindEnum), kind));
+                    createdBy, (SourceKindEnum)Enum.Parse(typeof(SourceKindEnum), kind),
+                    (SourceGroupEnum)Enum.Parse(typeof(SourceGroupEnum), group));
             }
             entity.Update(name, avatar, good, total, this._datetimeGateway.GetCurrentDateTime(), createdBy, tags, description);
             this._dbContext.Sources.Update(entity);
@@ -74,7 +78,7 @@ namespace Owlvey.Falcon.Components
                 var product = await this._dbContext.Products.SingleAsync(c => c.Id == model.ProductId);
                 entity = SourceEntity.Factory.Create(product, model.Name, 
                     this._datetimeGateway.GetCurrentDateTime(), createdBy, 
-                    model.Kind);
+                    model.Kind, model.Group);
                 await this._dbContext.AddAsync(entity);
                 await this._dbContext.SaveChangesAsync();
             }

@@ -55,6 +55,9 @@ namespace Owlvey.Falcon.Core.Entities
         [Required]
         public SourceKindEnum Kind { get; set; }
 
+        [Required]
+        public SourceGroupEnum Group { get; set; }
+
         public virtual ProductEntity Product { get; set; }
 
         public int ProductId { get; set; }

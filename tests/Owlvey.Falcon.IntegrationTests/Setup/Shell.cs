@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Owlvey.Falcon.Components;
 using StructureMap;
 using System;
 using System.Collections.Generic;
@@ -42,13 +43,14 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
 
             // add TestServer Client
             var builder = new WebHostBuilder()
-                .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseContentRoot(Directory.GetCurrentDirectory())                
                 .UseStartup<TestStartup>();
 
 
             this.Server = new TestServer(builder);
             var client = this.Server.CreateClient();
 
+            
             services.AddSingleton<HttpClient>(client);
 
             // add StructureMap
@@ -61,6 +63,7 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
                 });
                 config.Populate(services);
             });
+            
         }
 
         public void Dispose()

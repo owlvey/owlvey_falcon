@@ -5,8 +5,7 @@ namespace Owlvey.Falcon.Gateways
     {
         public DateTime GetCurrentDateTime()
         {
-            return DateTime.Now;
-
+            return DateTime.UtcNow;
         }
     }
 }

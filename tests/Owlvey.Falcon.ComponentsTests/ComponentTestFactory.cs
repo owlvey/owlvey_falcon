@@ -9,6 +9,7 @@ using Owlvey.Falcon.Repositories;
 using SimpleInjector;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Owlvey.Falcon.ComponentsTests.Mocks;
 
 namespace Owlvey.Falcon.ComponentsTests
 {
@@ -42,14 +43,14 @@ namespace Owlvey.Falcon.ComponentsTests
             var mapper = BuildMapper();
             container.RegisterInstance<IMapper>(mapper);
             container.RegisterInstance<IUserIdentityGateway>(BuildIdentityGateway());
-            container.RegisterInstance<IDateTimeGateway>(BuildDateTimeGateway());
-
+            container.Register<IDateTimeGateway, MockDateTimeGateway>();            
+            
             var context = new FalconDbContextInMemory();
 
             context.Database.OpenConnection();
             context.Database.EnsureCreated();
             //context.Migrate("Development");
-            context.SeedData("Development");            
+            context.SeedData("Development", new MockDateTimeGateway());            
             container.RegisterInstance<FalconDbContext>(context);
             return container;
         }
@@ -80,9 +81,7 @@ namespace Owlvey.Falcon.ComponentsTests
             return mockIdentity.Object;
         }
 
-        public static IDateTimeGateway BuildDateTimeGateway() {
-            return new DateTimeGateway();
-        }
+        
 
 
         public static async Task<int> BuildCustomer(Container container, string name = "test") {            
@@ -190,7 +189,7 @@ namespace Owlvey.Falcon.ComponentsTests
             var customer = await customerQueryComponent.GetCustomerByName(customerName);
             var productQueryComponent = container.GetInstance<ProductQueryComponent>();
 
-            await productComponent.CreateProduct(new Models.ProductPostRp()
+            await productComponent.CreateProduct(new ProductPostRp()
             {
                 CustomerId = customer.Id,
                 Name = productName

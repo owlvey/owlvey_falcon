@@ -23,11 +23,11 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         }
 
         [Fact]
-        public void MeasureUptimeAvailability()
+        public void MeasurePercentAvailability()
         {
             var agg = new SourceAvailabilityAggregate(new SourceEntity()
             {
-                Kind = SourceKindEnum.Uptime,
+                Kind = SourceKindEnum.Percent,
                 SourceItems = new List<SourceItemEntity>() {
                      new SourceItemEntity(){ Total = 1000, Good = 800 }
                 }

@@ -7,6 +7,6 @@ namespace Owlvey.Falcon.Core.Entities
     public enum SourceKindEnum
     {
         Interaction, 
-        Uptime
+        Percent
     }
 }

@@ -56,16 +56,16 @@ namespace Owlvey.Falcon.Core.Entities
                 defaultSquadFeature = SquadFeatureEntity.Factory.Create(AllBlacksSquad, paymentFeature, on, user);
                 AllBlacksSquad.FeatureMaps.Add(defaultSquadFeature);                
 
-                var defaultSource = SourceEntity.Factory.Create(defaultProduct, "login requests", on, user);
+                var defaultSource = SourceEntity.Factory.Create(defaultProduct, "login requests", on, user, SourceKindEnum.Interaction, SourceGroupEnum.Availability);
                 defaultProduct.Sources.Add(defaultSource);
 
-                var registrationSource = SourceEntity.Factory.Create(defaultProduct, "registration requests", on, user);
+                var registrationSource = SourceEntity.Factory.Create(defaultProduct, "registration requests", on, user, SourceKindEnum.Interaction, SourceGroupEnum.Availability);
                 defaultProduct.Sources.Add(registrationSource);
 
-                var paymentSource = SourceEntity.Factory.Create(defaultProduct, "payment requests", on, user);
+                var paymentSource = SourceEntity.Factory.Create(defaultProduct, "payment requests", on, user, SourceKindEnum.Interaction, SourceGroupEnum.Availability);
                 defaultProduct.Sources.Add(paymentSource);
 
-                var year = DateTime.Now.Year;
+                var year = on.Year;
                 var random = new System.Random();
                 for (int i = 1; i < 13; i++)
                 {

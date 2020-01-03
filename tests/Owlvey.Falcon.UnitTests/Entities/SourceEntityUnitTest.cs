@@ -14,7 +14,8 @@ namespace Owlvey.Falcon.UnitTests.Entities
             var (_, product) = TestDataFactory.BuildCustomerProduct();
             var createdBy = Guid.NewGuid().ToString("n");
             var entity = SourceEntity.Factory.Create(product, "test", 
-                DateTime.UtcNow, createdBy);
+                DateTime.UtcNow, createdBy, SourceKindEnum.Interaction,
+                SourceGroupEnum.Availability);
             
             Assert.Equal(createdBy, entity.CreatedBy);
         }
@@ -28,7 +29,8 @@ namespace Owlvey.Falcon.UnitTests.Entities
             var (_, product) = TestDataFactory.BuildCustomerProduct();
             Assert.Throws<InvalidStateException>(() =>
             {
-                SourceEntity.Factory.Create(product, null, DateTime.UtcNow, createdBy);
+                SourceEntity.Factory.Create(product, null, DateTime.UtcNow, createdBy,
+                    SourceKindEnum.Interaction, SourceGroupEnum.Availability);
             });
         }
     }

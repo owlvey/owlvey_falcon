@@ -39,4 +39,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Owlvey.Falcon.Components\Owlvey.Falcon.Components.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Mocks\" />
+  </ItemGroup>
 </Project>

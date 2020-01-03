@@ -14,6 +14,8 @@ using Owlvey.Falcon.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Logging;
+using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Gateways;
 
 namespace Owlvey.Falcon.API
 {
@@ -76,7 +78,7 @@ namespace Owlvey.Falcon.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public virtual void Configure(IApplicationBuilder app, IHostingEnvironment env,
             ILoggerFactory loggerFactory, IOptions<SwaggerAppOptions> swaggerOptions,
-            IConfiguration configuration, FalconDbContext dbContext)
+            IConfiguration configuration, FalconDbContext dbContext, IDateTimeGateway dateTimeGateway)
         {
 
             app.UseStaticFiles();
@@ -95,7 +97,7 @@ namespace Owlvey.Falcon.API
             if (!env.IsDocker())
             {
                 dbContext.Migrate(Environment.EnvironmentName);
-                dbContext.SeedData(Environment.EnvironmentName);
+                dbContext.SeedData(Environment.EnvironmentName, dateTimeGateway);
             }
 
            
