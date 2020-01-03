@@ -31,7 +31,6 @@
 
   <ItemGroup>
     <Folder Include="Aggregates\" />
-    <Folder Include="BuildReports\" />
     <Folder Include="Values\" />
     <Folder Include="Validators\" />
   </ItemGroup>
