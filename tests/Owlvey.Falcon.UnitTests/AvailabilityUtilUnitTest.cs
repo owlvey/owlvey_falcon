@@ -1,6 +1,7 @@
 ﻿using System;
 using Owlvey.Falcon.Core;
 using Xunit;
+using static Owlvey.Falcon.UnitTests.TestDataFactory;
 
 namespace Owlvey.Falcon.UnitTests
 {
@@ -24,6 +25,17 @@ namespace Owlvey.Falcon.UnitTests
             var proportion = AvailabilityUtils.CalculateFailProportion(4, 3);
 
             Assert.Equal(0.25M, proportion);
+        }
+
+        [Fact]
+        public void PercentToMinutesSuccess() {
+            var (good, total) = AvailabilityUtils.PercentToMinutes(OwlveyCalendar.StartJanuary2019,
+                OwlveyCalendar.EndJanuary2019, 0.94M);
+
+            var target = (decimal)good /  (decimal)(total);
+
+            Assert.Equal(target, 0.94M);
+
         }
     }
 }

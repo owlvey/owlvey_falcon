@@ -107,8 +107,9 @@ namespace Owlvey.Falcon.Core
             return Math.Round((decimal)Math.Pow((double)slo, 1 / (double)items), 4);
         }
 
-        public static (int good, int total) UptimeToMinutes(DateTime start, DateTime end, 
+        public static (int good, int total) PercentToMinutes(DateTime start, DateTime end, 
             decimal availability) {
+                       
 
             if (availability > 1)
             {
@@ -119,9 +120,14 @@ namespace Owlvey.Falcon.Core
             }
 
             var total = end.Subtract(start).TotalMinutes;
-            var good = (decimal)total * availability;
 
-            return ((int)Math.Round(good), (int)Math.Round(total));
+            if (total <= 0.001)
+            {
+                total = 1440;                
+            }
+            var good = (decimal)total * availability;
+            
+            return ((int)Math.Ceiling(good), (int)Math.Ceiling(total));
         }
 
     }

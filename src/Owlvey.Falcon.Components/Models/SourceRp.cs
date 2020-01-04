@@ -14,6 +14,10 @@ namespace Owlvey.Falcon.Models
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public SourceKindEnum Kind { get; set; }
+
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public SourceGroupEnum Group { get; set; }
+
         public string GoodDefinition { get; set; }
         public string TotalDefinition { get; set; }
     }    
@@ -36,7 +40,8 @@ namespace Owlvey.Falcon.Models
         public string TotalDefinition { get; set; }        
         public string Avatar { get; set; }
         public string Description { get; set; }
-        public string kind { get; set; }
+        public string Kind { get; set; }
+        public string Group { get; set; }
     }
 
     public class SourceGetListRp : SourceLitRp
@@ -55,6 +60,9 @@ namespace Owlvey.Falcon.Models
         public string Name { get; set; }
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public SourceKindEnum Kind { get; set; } = SourceKindEnum.Interaction;
+
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public SourceGroupEnum Group { get; set; } = SourceGroupEnum.Availability;
     }
 
     public class SourcePutRp

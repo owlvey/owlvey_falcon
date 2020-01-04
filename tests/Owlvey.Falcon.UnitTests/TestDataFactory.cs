@@ -41,7 +41,8 @@ namespace Owlvey.Falcon.UnitTests
         public static SourceEntity BuildSource(ProductEntity product, string name = "/owlvey", DateTime? on = null, string createdBy = "test") {
 
             on = on ?? DateTime.Now;
-            var entity = SourceEntity.Factory.Create(product, name, on.Value, createdBy);
+            var entity = SourceEntity.Factory.Create(product, name, on.Value, createdBy,
+                 SourceKindEnum.Interaction, SourceGroupEnum.Availability);
             return entity;
         }
 

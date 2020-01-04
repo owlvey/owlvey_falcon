@@ -31,11 +31,14 @@
 
   <ItemGroup>
     <Folder Include="Aggregates\" />
-    <Folder Include="BuildReports\" />
     <Folder Include="Values\" />
     <Folder Include="Validators\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Entities\SquadProductEntityUnitTest.cs" />
+    <Compile Remove="Entities\FeatureEntityUnitTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="BuildReports\coverage.opencover.xml" />
   </ItemGroup>
 </Project>

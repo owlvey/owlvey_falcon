@@ -22,8 +22,8 @@ namespace Owlvey.Falcon.Components
             this._dbContext = dbContext;            
         }
 
-        public async Task<SourceItemGetListRp> Create(SourceItemUptimePostRp model) {
-            var (good, total) = AvailabilityUtils.UptimeToMinutes(model.Start, model.End, model.Uptime);
+        public async Task<SourceItemGetListRp> Create(SourceItemPercentPostRp model) {
+            var (good, total) = AvailabilityUtils.PercentToMinutes(model.Start, model.End, model.Percent);
             return await this.Create(new SourceItemPostRp()
             {
                  SourceId = model.SourceId,

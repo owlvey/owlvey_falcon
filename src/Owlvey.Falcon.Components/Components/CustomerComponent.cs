@@ -15,12 +15,13 @@ namespace Owlvey.Falcon.Components
 {
     public class CustomerComponent : BaseComponent
     {
-        private readonly FalconDbContext _dbContext;        
+        private readonly FalconDbContext _dbContext;
+        
 
         public CustomerComponent(FalconDbContext dbContext,
-            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway, IMapper mapper): base(dateTimeGateway, mapper, identityService)
+            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway, IMapper mapper) : base(dateTimeGateway, mapper, identityService)
         {
-            this._dbContext = dbContext;                        
+            this._dbContext = dbContext;            
         }
 
         public async Task<CustomerGetListRp> CreateCustomer(CustomerPostRp model)
@@ -28,7 +29,9 @@ namespace Owlvey.Falcon.Components
             var createdBy = this._identityService.GetIdentity();
             var entity =  await this._dbContext.GetCustomer(model.Name);
             if (entity == null) {
-                entity = CustomerEntity.Factory.Create(createdBy, DateTime.Now, model.Name);
+                entity = CustomerEntity.Factory.Create(createdBy,
+                    this._datetimeGateway.GetCurrentDateTime()
+                    , model.Name);
                 await this._dbContext.AddAsync(entity);
                 await this._dbContext.SaveChangesAsync();
             }            

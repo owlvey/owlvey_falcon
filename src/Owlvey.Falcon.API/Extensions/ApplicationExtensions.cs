@@ -18,6 +18,8 @@ namespace Owlvey.Falcon.IoC
             // services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             // Components
+
+
             services.AddTransient<AppSettingQueryComponent>();
             services.AddTransient<AppSettingComponent>();
 
