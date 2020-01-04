@@ -544,8 +544,7 @@ namespace Owlvey.Falcon.Components
                 var products = await this._dbContext.Products.Where(c => c.CustomerId == customerId).ToListAsync();
 
                 for (int row = 2; row <= incidentsSheet.Dimension.Rows; row++)
-                {
-                    IncidentMigrationRp a;
+                {                    
                     var product = incidentsSheet.Cells[row, 1].GetValue<string>();
                     var key = incidentsSheet.Cells[row, 2].GetValue<string>();
                     if (!string.IsNullOrWhiteSpace(product) && !string.IsNullOrWhiteSpace(key))
