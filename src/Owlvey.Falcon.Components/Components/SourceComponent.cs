@@ -50,6 +50,7 @@ namespace Owlvey.Falcon.Components
         {
 
             group = string.IsNullOrWhiteSpace(group)? "Availability" : group;
+            kind = kind == "Percent" ? "Proportion" : kind;
 
             var createdBy = this._identityService.GetIdentity();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;            

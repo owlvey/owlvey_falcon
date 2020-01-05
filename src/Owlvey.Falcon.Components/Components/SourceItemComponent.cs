@@ -22,8 +22,8 @@ namespace Owlvey.Falcon.Components
             this._dbContext = dbContext;            
         }
 
-        public async Task<SourceItemGetListRp> Create(SourceItemPercentPostRp model) {
-            var (good, total) = AvailabilityUtils.PercentToMinutes(model.Start, model.End, model.Percent);
+        public async Task<SourceItemGetListRp> Create(SourceItemPropotionPostRp model) {
+            var (good, total) = AvailabilityUtils.ProportionToMinutes(model.Start, model.End, model.Proportion);
             return await this.Create(new SourceItemPostRp()
             {
                  SourceId = model.SourceId,

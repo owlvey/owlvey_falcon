@@ -107,7 +107,7 @@ namespace Owlvey.Falcon.Core
             return Math.Round((decimal)Math.Pow((double)slo, 1 / (double)items), 4);
         }
 
-        public static (int good, int total) PercentToMinutes(DateTime start, DateTime end, 
+        public static (int good, int total) ProportionToMinutes(DateTime start, DateTime end, 
             decimal availability) {
                        
 

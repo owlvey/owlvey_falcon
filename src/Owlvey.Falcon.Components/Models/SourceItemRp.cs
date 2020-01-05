@@ -59,12 +59,12 @@ namespace Owlvey.Falcon.Models
         public DateTime End { get; set; }
     }
 
-    public class SourceItemPercentPostRp
+    public class SourceItemPropotionPostRp
     {
         [Required]
         public int SourceId { get; set; }        
         [Required]
-        public decimal Percent { get; set; }
+        public decimal Proportion { get; set; }
         [Required]
         public DateTime Start { get; set; }
         [Required]

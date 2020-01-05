@@ -28,8 +28,8 @@ namespace Owlvey.Falcon.UnitTests
         }
 
         [Fact]
-        public void PercentToMinutesSuccess() {
-            var (good, total) = AvailabilityUtils.PercentToMinutes(OwlveyCalendar.StartJanuary2019,
+        public void ProportionToMinutesSuccess() {
+            var (good, total) = AvailabilityUtils.ProportionToMinutes(OwlveyCalendar.StartJanuary2019,
                 OwlveyCalendar.EndJanuary2019, 0.94M);
 
             var target = (decimal)good /  (decimal)(total);

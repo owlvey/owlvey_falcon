@@ -62,7 +62,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                     new IndicatorEntity() {
                         Id  = 2,
                         Source = new SourceEntity(){
-                             Kind = SourceKindEnum.Percent,
+                             Kind = SourceKindEnum.Proportion,
                              SourceItems = new List<SourceItemEntity>(){
                                   new SourceItemEntity(){
                                        Good = 90, Total = 100,

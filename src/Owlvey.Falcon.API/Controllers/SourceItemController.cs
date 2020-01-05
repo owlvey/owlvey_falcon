@@ -36,11 +36,11 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Created(Url.RouteUrl("GetBySourceItemId", new { response.Id }), response);
         }
 
-        [HttpPost("percent")]
+        [HttpPost("proportion")]
         [ProducesResponseType(typeof(SourceItemGetRp), 200)]        
-        public async Task<IActionResult> PostPercent([FromBody]SourceItemPercentPostRp model)
+        public async Task<IActionResult> PostProportion([FromBody]SourceItemPropotionPostRp model)
         {
-            Console.WriteLine("aqui " + model.Percent.ToString());
+            Console.WriteLine("aqui " + model.Proportion.ToString());
             if (!this.ModelState.IsValid)
             {
                 return this.BadRequest(this.ModelState);
