@@ -39,7 +39,7 @@ namespace Owlvey.Falcon.API.Controllers
             object model = null;            
             if (start.HasValue && end.HasValue)
             {
-                model = await this._featureQueryService.GetFeaturesWithAvailability(productId, start.Value, end.Value);
+                model = await this._featureQueryService.GetFeaturesWithQuality(productId, start.Value, end.Value);
             }
             else
             {
@@ -54,7 +54,7 @@ namespace Owlvey.Falcon.API.Controllers
         /// <param name="id">id</param>
         /// <returns></returns>
         [HttpGet("{id}", Name = "GetFeatureId")]
-        [ProducesResponseType(typeof(FeatureGetRp), 200)]
+        [ProducesResponseType(typeof(FeatureQualityGetRp), 200)]
         public async Task<IActionResult> GetFeatureId(int id, DateTime? start, DateTime? end)
         {
             object model = null;

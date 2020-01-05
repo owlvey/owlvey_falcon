@@ -41,10 +41,10 @@ namespace Owlvey.Falcon.Components
 
                 var tmp = this._mapper.Map<ServiceGetListRp>(item);
                 tmp.Availability = await this.MeasureAvailability(item, start, end);                
-                tmp.BudgetMinutes = AvailabilityUtils.MeasureBudgetInMinutes(tmp.Budget, start, end);
+                tmp.BudgetMinutes = QualityUtils.MeasureBudgetInMinutes(tmp.Budget, start, end);
 
                 tmp.Risk = "low";
-                tmp.Deploy = AvailabilityUtils.BudgetToAction(tmp.Budget);
+                tmp.Deploy = QualityUtils.BudgetToAction(tmp.Budget);
                 if (tmp.Budget > 0)
                 {                    
                     if (tmp.BudgetMinutes < tmp.MTTM)
@@ -84,7 +84,7 @@ namespace Owlvey.Falcon.Components
                     tmp.MTTF = mttf;
                 }
 
-                tmp.BudgetMinutes = AvailabilityUtils.MeasureBudgetInMinutes(tmp.Budget, start, end);
+                tmp.BudgetMinutes = QualityUtils.MeasureBudgetInMinutes(tmp.Budget, start, end);
 
                 tmp.Risk = "low";
 
@@ -132,9 +132,9 @@ namespace Owlvey.Falcon.Components
             var incidents = await this._dbContext.GetIncidentsByService(id);
 
             var model = this._mapper.Map<ServiceGetRp>(entity);
-            model.MTTD = AvailabilityUtils.MeanTimeInMinutes(incidents.Select(c => c.TTD));
-            model.MTTE = AvailabilityUtils.MeanTimeInMinutes(incidents.Select(c => c.TTE));
-            model.MTTF = AvailabilityUtils.MeanTimeInMinutes(incidents.Select(c => c.TTF));
+            model.MTTD = QualityUtils.MeanTimeInMinutes(incidents.Select(c => c.TTD));
+            model.MTTE = QualityUtils.MeanTimeInMinutes(incidents.Select(c => c.TTE));
+            model.MTTF = QualityUtils.MeanTimeInMinutes(incidents.Select(c => c.TTF));
             model.Availability = await this.MeasureAvailability(entity, start, end);
             return model;
         }

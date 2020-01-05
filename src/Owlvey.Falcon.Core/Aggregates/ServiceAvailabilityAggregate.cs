@@ -22,7 +22,7 @@ namespace Owlvey.Falcon.Core.Aggregates
             foreach (var map in this.Service.FeatureMap)
             {
                 var agg = new FeatureAvailabilityAggregate(map.Feature);
-                var (availability, total, good) = agg.MeasureAvailability();
+                var (availability, total, good, _, _) = agg.MeasureQuality();
                 result.Add(availability);
                 sumTotal += total;
                 sumGood += good; 
@@ -32,10 +32,10 @@ namespace Owlvey.Falcon.Core.Aggregates
             {
                 if (this.Service.Aggregation == ServiceAggregationEnum.Minimun)
                 {
-                    return (AvailabilityUtils.CalculateMinimumAvailability(result, round: 3), sumTotal, sumGood);
+                    return (QualityUtils.CalculateMinimumAvailability(result, round: 3), sumTotal, sumGood);
                 }
                 else {
-                    return (AvailabilityUtils.CalculateDotAvailability(result, round: 3), sumTotal, sumGood);
+                    return (QualityUtils.CalculateDotProportion(result, round: 3), sumTotal, sumGood);
                 }
                 
             }

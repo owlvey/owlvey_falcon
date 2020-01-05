@@ -14,7 +14,7 @@ namespace Owlvey.Falcon.Models
         public decimal SourceCoverage {
             get
             {
-                return AvailabilityUtils.CalculateProportion(this.SourceTotal, this.SourceAssigned);
+                return QualityUtils.CalculateProportion(this.SourceTotal, this.SourceAssigned);
             }
         }
 
@@ -24,7 +24,7 @@ namespace Owlvey.Falcon.Models
         public decimal FeatureCoverage {
             get
             {
-                return AvailabilityUtils.CalculateProportion(this.FeatureTotal, this.FeatureAssigned);
+                return QualityUtils.CalculateProportion(this.FeatureTotal, this.FeatureAssigned);
             }
         }
 
@@ -35,7 +35,7 @@ namespace Owlvey.Falcon.Models
             public decimal Proportion {
                 get
                 {
-                    return AvailabilityUtils.CalculateFailProportion(this.Total, this.Fail);
+                    return QualityUtils.CalculateFailProportion(this.Total, this.Fail);
                 }
             }
             public int Total { get; set; }

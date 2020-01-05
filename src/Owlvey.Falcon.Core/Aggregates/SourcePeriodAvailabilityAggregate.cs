@@ -49,7 +49,7 @@ namespace Owlvey.Falcon.Core.Aggregates
                 if (sample.Count > 0)
                 {
                     decimal availability;
-                    availability = AvailabilityUtils.CalculateAverageAvailability(sample.Select(c => c.Availability));                    
+                    availability = QualityUtils.CalculateAverageAvailability(sample.Select(c => c.Availability));                    
                     result.Add(new DayAvailabilityEntity(pivot, availability, availability, availability, availability));
                 }
                 pivot = pivot.AddDays(1);

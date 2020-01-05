@@ -63,7 +63,7 @@ namespace Owlvey.Falcon.Models
             [JsonIgnore]
             public List<CustomerServiceRp> Services = new List<CustomerServiceRp>();
             public decimal Effectiveness { get {                    
-                    return AvailabilityUtils.CalculateProportion(this.Services.Count, this.Services.Where(c => c.Budget >= 0).Count());                    
+                    return QualityUtils.CalculateProportion(this.Services.Count, this.Services.Where(c => c.Budget >= 0).Count());                    
                 }
             }
 
@@ -139,7 +139,7 @@ namespace Owlvey.Falcon.Models
                 this.Service = service.Name;
                 this.SLO = service.Slo;
                 this.Availability = service.Availability;
-                this.Budget = AvailabilityUtils.MeasureBudget(this.Availability, this.SLO);
+                this.Budget = QualityUtils.MeasureBudget(this.Availability, this.SLO);
             }
         }
 
@@ -150,7 +150,7 @@ namespace Owlvey.Falcon.Models
             get
             {
                 var target = this.Products.SelectMany(c => c.Services);
-                return AvailabilityUtils.CalculateProportion(target.Count(), target.Where(c => c.Budget >= 0).Count());
+                return QualityUtils.CalculateProportion(target.Count(), target.Where(c => c.Budget >= 0).Count());
             }
         }
         public int Total

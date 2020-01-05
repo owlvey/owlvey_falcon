@@ -38,7 +38,7 @@ namespace Owlvey.Falcon.Models
             this.Value = availability;
             this.Group = group;
             this.Slo = slo;
-            this.Importance = AvailabilityUtils.MeasureImpact(slo);
+            this.Importance = QualityUtils.MeasureImpact(slo);
             this.Budget = availability - (decimal)slo;                        
         }
 

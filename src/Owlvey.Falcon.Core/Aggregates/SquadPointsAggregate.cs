@@ -23,15 +23,15 @@ namespace Owlvey.Falcon.Core.Aggregates
             {
                 var agg = new FeatureAvailabilityAggregate(featureMap.Feature);
 
-                var (availability, _, _) = agg.MeasureAvailability();
+                var (quality, _, _, _,_) = agg.MeasureQuality();
 
                 foreach (var serviceMap in featureMap.Feature.ServiceMaps)
                 {
                     var service = serviceMap.Service;
-                    var impact = AvailabilityUtils.MeasureImpact(service.Slo);
-                    var points = AvailabilityUtils.MeasurePoints(service.Slo, availability);
+                    var impact = QualityUtils.MeasureImpact(service.Slo);
+                    var points = QualityUtils.MeasurePoints(service.Slo, quality);
 
-                    result.Add( (service.Product, service, featureMap.Feature, availability, points) );
+                    result.Add( (service.Product, service, featureMap.Feature, quality, points) );
                 }
             }
             return result;

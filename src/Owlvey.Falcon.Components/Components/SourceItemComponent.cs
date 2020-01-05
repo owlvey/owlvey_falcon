@@ -23,7 +23,7 @@ namespace Owlvey.Falcon.Components
         }
 
         public async Task<SourceItemGetListRp> Create(SourceItemPropotionPostRp model) {
-            var (good, total) = AvailabilityUtils.ProportionToMinutes(model.Start, model.End, model.Proportion);
+            var (good, total) = QualityUtils.ProportionToMinutes(model.Start, model.End, model.Proportion);
             return await this.Create(new SourceItemPostRp()
             {
                  SourceId = model.SourceId,

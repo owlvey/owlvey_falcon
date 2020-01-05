@@ -38,11 +38,14 @@ namespace Owlvey.Falcon.Models
         public List<ServiceGetListRp> Services { get; set; } = new List<ServiceGetListRp>();
     }
 
-    public class FeatureAvailabilityGetRp : FeatureBaseRp
+    public class FeatureQualityGetRp : FeatureBaseRp
     {
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public int ProductId { get; set; }
+        public decimal Quality { get; set; }
+
+        public decimal Latency { get; set; }
         public decimal Availability { get; set; }
         public string MTTM { get; set; }
         public string MTTE { get; set; }
@@ -63,6 +66,8 @@ namespace Owlvey.Falcon.Models
         public int IndicatorsCount { get; set; }
         public int ServiceCount { get; set; }
         public decimal Availability { get; set; }
+        public decimal Quality { get; set; }
+        public decimal Latency { get; set; }
         public int MapId { get; set; }
         public string MTTM { get; set; }
         public string MTTE { get; set; }
@@ -79,6 +84,8 @@ namespace Owlvey.Falcon.Models
         public int IndicatorsCount { get; set; }
         public int ServiceCount { get; set; }
         public decimal Availability { get; set; }
+        public decimal Quality { get; set; }
+        public decimal Latency { get; set; }
         public int Total { get; set; }
         public int Good { get; set; }
         public int Squads { get; set; }
@@ -92,7 +99,7 @@ namespace Owlvey.Falcon.Models
         {
             get
             {
-                return this.Availability - this.FeatureSlo;
+                return this.Quality - this.FeatureSlo;
             }
         }
     }

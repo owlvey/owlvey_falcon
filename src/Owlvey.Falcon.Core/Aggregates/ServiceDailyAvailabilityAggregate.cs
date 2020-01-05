@@ -56,10 +56,10 @@ namespace Owlvey.Falcon.Core.Aggregates
                 {
                     if (this.Service.Aggregation == ServiceAggregationEnum.Minimun)
                     {
-                        availability = AvailabilityUtils.CalculateMinimumAvailability(sample);
+                        availability = QualityUtils.CalculateMinimumAvailability(sample);
                     }
                     else {
-                        availability = AvailabilityUtils.CalculateDotAvailability(sample);
+                        availability = QualityUtils.CalculateDotProportion(sample);
                     }
                     
                     minimun = sample.Min();

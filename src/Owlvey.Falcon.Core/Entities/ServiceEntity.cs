@@ -47,7 +47,7 @@ namespace Owlvey.Falcon.Core.Entities
         {
             get
             {
-                return AvailabilityUtils.MeasureImpact(this.Slo);
+                return QualityUtils.MeasureImpact(this.Slo);
             }
         }
 
@@ -66,7 +66,7 @@ namespace Owlvey.Falcon.Core.Entities
 
         [NotMapped]
         public decimal FeatureSLO { get {
-                return AvailabilityUtils.CalculateFeatureSlo(this.Slo, this.FeatureMap.Count());
+                return QualityUtils.CalculateFeatureSlo(this.Slo, this.FeatureMap.Count());
             } }
 
         

@@ -28,11 +28,11 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                         }
                   } }
             });
-            var result = agg.MeasureAvailability();
+            var result = agg.MeasureQuality();
 
             Assert.Equal(1000, result.total);
             Assert.Equal(800, result.good);
-            Assert.Equal(0.8m, result.availability);
+            Assert.Equal(0.8m, result.quality);
             
         }
 
@@ -74,11 +74,11 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                     }
                 }
             });
-            var result = agg.MeasureAvailability();
+            var result = agg.MeasureQuality();
 
             Assert.Equal(1000, result.total);
             Assert.Equal(800, result.good);
-            Assert.Equal(0.72m, result.availability);
+            Assert.Equal(0.72m, result.quality);
 
         }
     }

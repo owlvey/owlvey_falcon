@@ -72,11 +72,11 @@ namespace Owlvey.Falcon.Models
         public decimal Availability { get; set; }
         public decimal Budget { get                 
             {
-                return AvailabilityUtils.MeasureBudget(Availability, SLO);                
+                return QualityUtils.MeasureBudget(Availability, SLO);                
             }
         }
         public string Action { get {
-                return AvailabilityUtils.BudgetToAction(this.Budget);
+                return QualityUtils.BudgetToAction(this.Budget);
             }
         }        
 
@@ -104,13 +104,13 @@ namespace Owlvey.Falcon.Models
         {
             get
             {
-                return AvailabilityUtils.MeasureBudget(this.ServiceAvailability, this.SLO);
+                return QualityUtils.MeasureBudget(this.ServiceAvailability, this.SLO);
             }
         }
         public decimal FeatureSLO { get; set; }        
         public decimal FeatureAvailability { get; set; }
         public decimal FeatureBudget { get {
-                return AvailabilityUtils.MeasureBudget(this.FeatureAvailability, this.FeatureSLO);
+                return QualityUtils.MeasureBudget(this.FeatureAvailability, this.FeatureSLO);
             } }
 
         public ExportExcelServiceDetailRp() { }

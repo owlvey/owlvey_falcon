@@ -112,8 +112,8 @@ namespace Owlvey.Falcon.Core.Entities
 
         public void MeasureAvailability() {
             var featureAgg = new FeatureAvailabilityAggregate(this);
-            var (availability, _, _) = featureAgg.MeasureAvailability();
-            this.Availability = availability;
+            var (quality, _, _, _, _) = featureAgg.MeasureQuality();
+            this.Availability = quality;
         }
         #endregion
 

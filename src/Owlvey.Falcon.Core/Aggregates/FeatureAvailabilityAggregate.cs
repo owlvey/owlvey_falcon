@@ -14,24 +14,36 @@ namespace Owlvey.Falcon.Core.Aggregates
         {            
             this.Feature = feature;                        
         }        
-        public (decimal availability, int total, int good) MeasureAvailability() {
+        public (decimal quality, int total, int good, decimal tavailability, decimal tlatency) MeasureQuality() {
             var result = new List<decimal>();
+            var availability = new List<decimal>();
+            var latency = new List<decimal>();
             int sumTotal = 0;
             int sumGood = 0; 
             foreach (var item in this.Feature.Indicators)
             {
                 var agg = new IndicatorDateAvailabilityAggregate(item);
-                var (availability, total, good) = agg.MeasureAvailability();
-                result.Add(availability);
+                var (proportion, total, good) = agg.MeasureAvailability();
+                result.Add(proportion);
+                if (item.Source.Group == SourceGroupEnum.Availability)
+                {
+                    availability.Add(proportion);
+                }
+                else if (item.Source.Group == SourceGroupEnum.Latency) {
+                    latency.Add(proportion);
+                }
                 sumTotal += total;
                 sumGood += good;
             }
             if (result.Count > 0)
             {
-                return (AvailabilityUtils.CalculateDotAvailability(result, round: 4), sumTotal, sumGood);
+                return (QualityUtils.CalculateDotProportion(result, round: 4), sumTotal, 
+                    sumGood, QualityUtils.CalculateDotProportion(availability, 4),
+                             QualityUtils.CalculateDotProportion(latency, 4)
+                    );
             }
             else {
-                return (1, 0, 0);
+                return (1, 0, 0, 1, 1);
             }            
         }
     }

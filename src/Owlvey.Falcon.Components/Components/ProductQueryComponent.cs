@@ -93,7 +93,7 @@ namespace Owlvey.Falcon.Components
                     Value = service.Availability,
                     Group = "services",
                     Slo = service.SLO,
-                    Importance = AvailabilityUtils.MeasureImpact(service.SLO),
+                    Importance = QualityUtils.MeasureImpact(service.SLO),
                     Budget = service.Availability - (decimal)service.SLO
                 };
 
@@ -114,7 +114,7 @@ namespace Owlvey.Falcon.Components
                             Id = Id,
                             Avatar = feature.Avatar,
                             Name = feature.Name,
-                            Value = feature.Availability,
+                            Value = feature.Quality,
                             Group = "features"
                         };
                         result.Nodes.Add(fnode);
@@ -510,7 +510,7 @@ namespace Owlvey.Falcon.Components
 
                 var agg = new FeatureAvailabilityAggregate(feature);
                 var tmp = this._mapper.Map<FeatureGetListRp>(feature);
-                (tmp.Availability, _, _) = agg.MeasureAvailability();
+                (tmp.Quality, _, _, tmp.Availability, tmp.Latency) = agg.MeasureQuality();
                 result.Features.Add(tmp);
 
                 var featureIncidents = incidentsData.Where(c => c.FeatureId == feature.Id)
@@ -562,11 +562,11 @@ namespace Owlvey.Falcon.Components
 
             result.Services = result.Services.OrderBy(c => c.Availability).ToList();
             result.SLOFail = sloFails;
-            result.SLOProportion = AvailabilityUtils.CalculateFailProportion(product.Services.Count, sloFails);
+            result.SLOProportion = QualityUtils.CalculateFailProportion(product.Services.Count, sloFails);
             result.SourceStats = new StatsValue(result.Sources.Select(c => c.Availability));
             result.SourceTotal = result.Sources.Where(c=>c.Kind == SourceKindEnum.Interaction).Sum(c => c.Total);
-            result.FeaturesStats = new StatsValue(result.Features.Select(c => c.Availability));
-            result.FeaturesCoverage = AvailabilityUtils.CalculateProportion(product.Features.Count,
+            result.FeaturesStats = new StatsValue(result.Features.Select(c => c.Quality));
+            result.FeaturesCoverage = QualityUtils.CalculateProportion(product.Features.Count,
                 squadsData.Select(c=>c.FeatureId).Distinct().Count());
 
             result.ServicesStats = new StatsValue(result.Services.Select(c => c.Availability));

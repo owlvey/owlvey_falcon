@@ -110,7 +110,7 @@ namespace Owlvey.Falcon.Components
                 tmp.Name = item.feature.Name;
                 tmp.SLO = item.service.Slo;
                 tmp.Service = item.service.Name;
-                tmp.Impact = AvailabilityUtils.MeasureImpact(item.service.Slo);
+                tmp.Impact = QualityUtils.MeasureImpact(item.service.Slo);
                 tmp.Points = item.points;
 
                 result.Points += tmp.Points;

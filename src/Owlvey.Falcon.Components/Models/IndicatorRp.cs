@@ -12,6 +12,9 @@ namespace Owlvey.Falcon.Models
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public SourceKindEnum Kind { get; set; }
 
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public SourceGroupEnum Group { get; set; }
+
         public int SourceId { get; set; }
     }
     public class IndicatorMigrateRp {

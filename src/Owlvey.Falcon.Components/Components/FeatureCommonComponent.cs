@@ -19,7 +19,7 @@ namespace Owlvey.Falcon.Components
         {
             this._dbContext = dbContext;            
         }        
-        internal async Task<decimal> GetAvailabilityByFeature(FeatureEntity entity, DateTime start, DateTime end)
+        internal async Task<(decimal queality, decimal availability, decimal latency)> GetAvailabilityByFeature(FeatureEntity entity, DateTime start, DateTime end)
         {
             foreach (var indicator in entity.Indicators)
             {
@@ -27,9 +27,8 @@ namespace Owlvey.Falcon.Components
                 indicator.Source.SourceItems = sourceItems;
             }
             var agg = new FeatureAvailabilityAggregate(entity);
-            var (availability, _, _) = agg.MeasureAvailability();
-            return availability;
-
+            var (quality, _, _, availability, latency) = agg.MeasureQuality();
+            return (quality, availability, latency);
         }
     }
 }

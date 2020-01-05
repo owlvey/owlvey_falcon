@@ -64,7 +64,7 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<FeatureGetListRp>>(entities);
         }
 
-        public async Task<FeatureAvailabilityGetRp> GetFeatureByIdWithAvailability(int id, DateTime start, DateTime end)
+        public async Task<FeatureQualityGetRp> GetFeatureByIdWithAvailability(int id, DateTime start, DateTime end)
         {
             var feature = await this._dbContext.Features
                 .Include(c => c.Squads).ThenInclude(c => c.Squad)
@@ -87,9 +87,9 @@ namespace Owlvey.Falcon.Components
 
             var agg = new FeatureAvailabilityAggregate(feature);
 
-            var model = this._mapper.Map<FeatureAvailabilityGetRp>(feature);
+            var model = this._mapper.Map<FeatureQualityGetRp>(feature);
 
-            (model.Availability, _, _) = agg.MeasureAvailability();
+            (model.Quality, _, _, model.Availability, model.Latency) = agg.MeasureQuality();
 
             foreach (var indicator in feature.Indicators)
             {                
@@ -139,7 +139,7 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<FeatureGetListRp>>(entities);
         }
 
-        public async Task<IEnumerable<FeatureAvailabilityGetListRp>> GetFeaturesWithAvailability(int productId,
+        public async Task<IEnumerable<FeatureAvailabilityGetListRp>> GetFeaturesWithQuality(int productId,
             DateTime start, DateTime end)
         {
             var result = new List<FeatureAvailabilityGetListRp>();
@@ -156,7 +156,7 @@ namespace Owlvey.Falcon.Components
             {
                 var tmp = this._mapper.Map<FeatureAvailabilityGetListRp>(feature);
                 tmp.Squads = feature.Squads.Count();
-                tmp.Availability = await common.GetAvailabilityByFeature(feature, start, end);
+                (tmp.Quality, tmp.Availability, tmp.Latency )= await common.GetAvailabilityByFeature(feature, start, end);
                 tmp.Total = feature.Indicators.Sum(c => c.Source.SourceItems.Sum(d => d.Total));
                 tmp.Good = feature.Indicators.Sum(c => c.Source.SourceItems.Sum(d => d.Good));
                 tmp.ServiceCount = feature.ServiceMaps.Count();                
@@ -196,7 +196,7 @@ namespace Owlvey.Falcon.Components
                 var feature = map.Feature;
                 var tmp = this._mapper.Map<SequenceFeatureGetListRp>(feature);
                 tmp.FeatureSlo = service.FeatureSLO;                
-                tmp.Availability = await common.GetAvailabilityByFeature(feature, start, end);
+                (tmp.Quality, tmp.Availability, tmp.Latency)= await common.GetAvailabilityByFeature(feature, start, end);
                 tmp.Total = feature.Indicators.Sum(c => c.Source.SourceItems.Sum(d => d.Total));
                 tmp.MapId = map.Id.Value;
                 var incidents = await this._dbContext.GetIncidentsByFeature(feature.Id.Value);

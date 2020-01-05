@@ -34,7 +34,7 @@ namespace Owlvey.Falcon.Core.Entities
 
         [NotMapped]
         public decimal Availability { get {
-                return AvailabilityUtils.CalculateAvailability(this.Total, this.Good, 1);                
+                return QualityUtils.CalculateAvailability(this.Total, this.Good, 1);                
             } }
 
         

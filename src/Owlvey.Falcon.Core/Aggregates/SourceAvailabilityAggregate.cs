@@ -17,7 +17,7 @@ namespace Owlvey.Falcon.Core.Aggregates
         public (decimal availability, int total, int good) MeasureAvailability() {          
             var total = this.Source.SourceItems.Sum(c => c.Total);
             var good = this.Source.SourceItems.Sum(c => c.Good);
-            var availability = AvailabilityUtils.CalculateAvailability(total, good, 1);
+            var availability = QualityUtils.CalculateAvailability(total, good, 1);
 
             if (this.Source.Kind == SourceKindEnum.Interaction)
             {

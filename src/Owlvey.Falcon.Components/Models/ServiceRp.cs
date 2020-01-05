@@ -61,7 +61,7 @@ namespace Owlvey.Falcon.Models
         public IEnumerable<FeatureGetListRp> Features { get; set; } = new List<FeatureGetListRp>();
         public decimal Availability { get; set; }        
         public decimal Budget { get {
-                return AvailabilityUtils.MeasureBudget(Availability, SLO);
+                return QualityUtils.MeasureBudget(Availability, SLO);
             } }
         public decimal FeatureSlo {
             get {
@@ -88,7 +88,7 @@ namespace Owlvey.Falcon.Models
         {
             get
             {
-                return AvailabilityUtils.MeasureBudget(Availability, SLO);
+                return QualityUtils.MeasureBudget(Availability, SLO);
             }
         }
         public decimal BudgetMinutes { get; set; }
