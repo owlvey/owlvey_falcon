@@ -19,7 +19,8 @@ namespace Owlvey.Falcon.Core.Entities
         [Required]
         public DateTime? ModifiedOn { get; set; }
         [Required]
-        public string ModifiedBy { get; set;  }        
+        public string ModifiedBy { get; set;  }             
+
        
         public virtual void Validate() {
             var context = new ValidationContext(this, serviceProvider: null, items: null);

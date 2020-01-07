@@ -65,7 +65,26 @@ namespace Owlvey.Falcon.Core.Entities
         public virtual ICollection<IndicatorEntity> Indicators { get; set; } = new List<IndicatorEntity>();
 
         public virtual ICollection<SourceItemEntity> SourceItems { get; set; } = new List<SourceItemEntity>();
-          
+
+
+        public IDictionary<string, decimal> ExportClues() {
+            var result = new Dictionary<string, decimal>();
+
+            foreach (var item in this.SourceItems)
+            {
+                foreach (var clue in item.Clues)
+                {
+                    if (result.ContainsKey(clue.Name))
+                    {
+                        result[clue.Name] += clue.Value;
+                    }
+                    else {
+                        result[clue.Name] = clue.Value;
+                    }
+                }
+            }
+            return result; 
+        }
         public virtual void Update(
             string name, string avatar,
             string goodDefinition, string totalDefinition,            

@@ -49,6 +49,8 @@ namespace Owlvey.Falcon.Repositories
 
         public DbSet<AnchorEntity> Anchors { get; set; } 
 
+        public DbSet<ClueEntity> Clues { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             foreach (IMutableEntityType entity in modelBuilder.Model.GetEntityTypes())

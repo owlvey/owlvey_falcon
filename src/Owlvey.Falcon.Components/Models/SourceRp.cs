@@ -1,5 +1,6 @@
 ﻿using Owlvey.Falcon.Core.Entities;
 using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Owlvey.Falcon.Models
@@ -30,6 +31,7 @@ namespace Owlvey.Falcon.Models
         public int Total { get; set; }
         public int Good { get; set; }
         public int Delta { get { return this.Total - Good; } }
+        public IDictionary<string, decimal> Clues { get; set; } = new Dictionary<string, decimal>();
     }
 
     public class SourceMigrateRp {

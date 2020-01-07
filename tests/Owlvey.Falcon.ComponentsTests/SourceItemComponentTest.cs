@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Owlvey.Falcon.Components;
 using Xunit;
@@ -26,6 +27,59 @@ namespace Owlvey.Falcon.ComponentsTests
             });
             var items = await itemComponent.GetBySourceIdAndDateRange(source, OwlveyCalendar.StartJanuary2019, OwlveyCalendar.January201908);
             Assert.NotEmpty(items);             
+        }
+
+        [Fact]
+        public async Task SourceItemWithClues()
+        {
+            var container = ComponentTestFactory.BuildContainer();
+            var (_, product) = await ComponentTestFactory.BuildCustomerProduct(container);
+            var source = await ComponentTestFactory.BuildSource(container, product: product);
+
+            var sourceComponent = container.GetInstance<SourceComponent>();
+            var itemComponent = container.GetInstance<SourceItemComponent>();
+
+            await itemComponent.Create(new Models.SourceItemPostRp()
+            {
+                SourceId = source,
+                Start = OwlveyCalendar.January201905,
+                End = OwlveyCalendar.January201910,
+                Good = 900,
+                Total = 1000,
+                Clues = new Dictionary<string, decimal>() {
+                    { "test", 0.3M }, { "test_a", 0.7M }
+                }
+            });
+
+            await itemComponent.Create(new Models.SourceItemPostRp()
+            {
+                SourceId = source,
+                Start = OwlveyCalendar.January201905,
+                End = OwlveyCalendar.January201910,
+                Good = 900,
+                Total = 1000,
+                Clues = new Dictionary<string, decimal>() {
+                    { "test", 0.8M }, { "test_a", 0.5M }
+                }
+            });
+
+            var items = await itemComponent.GetBySourceIdAndDateRange(source, OwlveyCalendar.StartJanuary2019, OwlveyCalendar.January201908);
+            Assert.NotEmpty(items);
+
+            foreach (var item in items)
+            {
+                var sourceItem = await itemComponent.GetById(item.Id);
+                Assert.NotEmpty(sourceItem.Clues);
+            }
+
+            var sourceRp = await sourceComponent.GetByIdWithAvailability(source, 
+                OwlveyCalendar.StartJanuary2019, 
+                OwlveyCalendar.January201908);
+
+            Assert.NotEmpty(sourceRp.Clues);
+
+            Assert.Equal(1.1M, sourceRp.Clues["test"]);
+            Assert.Equal(1.2M, sourceRp.Clues["test_a"]);
         }
 
         [Fact]

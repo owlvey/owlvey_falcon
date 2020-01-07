@@ -30,7 +30,8 @@ namespace Owlvey.Falcon.Components
                  Start = model.Start,
                  End = model.End,
                  Good = good,
-                 Total = total
+                 Total = total,
+                 Clues = model.Clues
             });
         }
         public async Task<SourceItemGetListRp> Create(SourceItemPostRp model)
@@ -39,6 +40,12 @@ namespace Owlvey.Falcon.Components
             var createdBy = this._identityService.GetIdentity();
             var source = await this._dbContext.Sources.SingleAsync(c => c.Id == model.SourceId);
             var entity = SourceItemEntity.Factory.Create(source, model.Start, model.End, model.Good, model.Total, this._datetimeGateway.GetCurrentDateTime(), createdBy);
+
+            foreach (var key in model.Clues.Keys)
+            {
+                ClueEntityFactory.Factory.Create(key, model.Clues[key], this._datetimeGateway.GetCurrentDateTime(), createdBy, entity);
+            }
+
             this._dbContext.SourcesItems.Add(entity);
             await this._dbContext.SaveChangesAsync();
             return this._mapper.Map<SourceItemGetListRp>(entity);
@@ -96,14 +103,13 @@ namespace Owlvey.Falcon.Components
             var entity = await this._dbContext.SourcesItems.ToListAsync();
             return this._mapper.Map<IEnumerable<SourceItemGetListRp>>(entity);
         }
-
-      
-    
-        public async Task<IEnumerable<SourceItemGetListRp>> GetById(int id)
+        
+        public async Task<SourceItemGetRp> GetById(int id)
         {
-            var entity = await this._dbContext.SourcesItems.Where(c => c.Id == id).ToListAsync();
-
-            return this._mapper.Map<IEnumerable<SourceItemGetListRp>>(entity);
+            var entity = await this._dbContext.SourcesItems
+                .Include(c => c.Clues)
+                .Where(c => c.Id == id).SingleAsync();
+            return this._mapper.Map<SourceItemGetRp>(entity);
         }
 
         public async Task<IEnumerable<SourceItemGetListRp>> GetBySourceIdAndDateRange(int sourceId, 
@@ -112,5 +118,6 @@ namespace Owlvey.Falcon.Components
             var entity = await this._dbContext.GetSourceItems(sourceId, start, end);
             return this._mapper.Map<IEnumerable<SourceItemGetListRp>>(entity);
         }
+        
     }
 }

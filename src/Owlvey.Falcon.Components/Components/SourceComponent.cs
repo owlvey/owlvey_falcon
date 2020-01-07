@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Owlvey.Falcon.Core.Entities;
@@ -112,7 +113,8 @@ namespace Owlvey.Falcon.Components
 
         public async Task<SourceGetRp> GetById(int id)
         {
-            var entity = await this._dbContext.Sources.SingleOrDefaultAsync(c => c.Id == id);
+            var entity = await this._dbContext.Sources                
+                .SingleOrDefaultAsync(c => c.Id == id);
             return this._mapper.Map<SourceGetRp>(entity);
         }
         public async Task<SourceGetRp> GetByIdWithAvailability(int id, DateTime start, DateTime end)
@@ -120,10 +122,25 @@ namespace Owlvey.Falcon.Components
             var entity = await this._dbContext.Sources.SingleOrDefaultAsync(c => c.Id == id);
             var result = this._mapper.Map<SourceGetRp>(entity);
             if (entity!= null) {
-                var (ava, total, good) = await GetAvailabilityBySource(entity, start, end);
+                var sourceItems = await this._dbContext.GetSourceItems(entity.Id.Value, start, end);
+
+                var ids = sourceItems.Select(c => c.Id).ToList();
+
+                var clues = await this._dbContext.Clues.Where(c => ids.Contains(c.SourceItemId)).ToListAsync();
+
+                foreach (var group in clues.GroupBy(c=>c.SourceItemId))
+                {
+                    var target = sourceItems.Where(c => c.Id == group.Key).Single();
+                    target.Clues = group.ToList();
+                }
+
+                entity.SourceItems = sourceItems;
+                var agg = new SourceAvailabilityAggregate(entity);
+                var (ava, total, good) = agg.MeasureAvailability();                
                 result.Availability = ava;
                 result.Total = total;
                 result.Good = good;
+                result.Clues = entity.ExportClues();
             }            
             return result;
         }

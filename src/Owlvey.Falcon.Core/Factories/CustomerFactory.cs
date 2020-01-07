@@ -9,7 +9,6 @@ namespace Owlvey.Falcon.Core.Entities
 
         public static class Factory{
 
-
             private static void DefaultValues(CustomerEntity result, DateTime on , string user) {
                 var defaultProduct = ProductEntity.Factory.Create("Awesome Product", on, user, result);
                 result.Products.Add(defaultProduct);                

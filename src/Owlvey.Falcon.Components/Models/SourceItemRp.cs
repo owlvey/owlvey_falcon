@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Owlvey.Falcon.Models
@@ -19,6 +21,8 @@ namespace Owlvey.Falcon.Models
         public DateTime? CreatedOn { get; set; }
 
         public decimal Availability { get; set; }
+
+        public IDictionary<string, decimal> Clues { get; set; } = new Dictionary<string, decimal>();
 
     }
 
@@ -57,6 +61,8 @@ namespace Owlvey.Falcon.Models
         public DateTime Start { get; set; }
         [Required]
         public DateTime End { get; set; }
+
+        public IDictionary<string, decimal> Clues { get; set; } = new Dictionary<string, decimal>();
     }
 
     public class SourceItemPropotionPostRp
@@ -69,6 +75,9 @@ namespace Owlvey.Falcon.Models
         public DateTime Start { get; set; }
         [Required]
         public DateTime End { get; set; }
+
+        public IDictionary<string, decimal> Clues { get; set; } = new Dictionary<string, decimal>();
+
     }
 
     public class SourceItemPutRp
