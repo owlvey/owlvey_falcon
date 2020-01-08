@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Owlvey.Falcon.Components
 {
@@ -218,7 +219,7 @@ namespace Owlvey.Falcon.Components
 
             var sources = await this._dbContext.Sources
                 .Include(c => c.Product)
-                .Include(c => c.Indicators)
+                .Include(c => c.Indicators)                
                 .ThenInclude(c => c.Feature)
                 .Where(c => c.Product.CustomerId == customerId)
                 .ToListAsync();
@@ -231,11 +232,13 @@ namespace Owlvey.Falcon.Components
             List<SourceItemMigrationRp> items = new List<SourceItemMigrationRp>();
             if (includeItems)
             {
-                var temp = await this._dbContext.SourcesItems.Include(c => c.Source).Where(c => c.Source.Product.CustomerId == customerId).ToListAsync();
+                var temp = await this._dbContext.SourcesItems
+                    .Include(c => c.Source)
+                    .Include(c=> c.Clues)
+                    .Where(c => c.Source.Product.CustomerId == customerId).ToListAsync();
                 foreach (var item in temp)
                 {
                     var product = customer.Products.Where(c => c.Id == item.Source.ProductId).Single();
-
                     items.Add(new SourceItemMigrationRp()
                     {
                         Product = product.Name,
@@ -243,9 +246,9 @@ namespace Owlvey.Falcon.Components
                         Start = item.Start.ToString("s", System.Globalization.CultureInfo.InvariantCulture),
                         Good = item.Good,
                         Source = item.Source.Name,
-                        Total = item.Total
+                        Total = item.Total,
+                        Clues = JsonConvert.SerializeObject(item.ExportClues())
                     });
-
                 }
             }
 
@@ -519,17 +522,24 @@ namespace Owlvey.Falcon.Components
                     var total = sourceItemsSheet.Cells[row, 4].GetValue<int>();
                     var start = DateTime.Parse(sourceItemsSheet.Cells[row, 5].GetValue<string>());
                     var end = DateTime.Parse(sourceItemsSheet.Cells[row, 6].GetValue<string>());
+                    var clues = sourceItemsSheet.Cells[row, 7].GetValue<string>();
                     if (product != null && source != null)
                     {
-
                         var tmp = sources.Where(c => c.Name == source && c.Product.Name == product).Single();
+
+                        var targetClues = new Dictionary<string, decimal>();
+                        if (!string.IsNullOrWhiteSpace(clues)) {
+                            targetClues = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(clues);
+                        }
+
                         sourceItems.Add((tmp, new SourceItemPostRp()
                         {
                             SourceId = tmp.Id.Value,
                             Start = start,
                             End = end,
                             Good = good,
-                            Total = total
+                            Total = total,
+                            Clues = targetClues
                         }));                        
                     }
                 }

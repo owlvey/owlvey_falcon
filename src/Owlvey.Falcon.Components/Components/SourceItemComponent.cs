@@ -56,7 +56,16 @@ namespace Owlvey.Falcon.Components
             int period = 0;
             foreach (var model in models)
             {
-                var entity = SourceItemEntity.Factory.Create(source, model.Start, model.End, model.Good, model.Total, this._datetimeGateway.GetCurrentDateTime(), createdBy);
+                var entity = SourceItemEntity.Factory.Create(source, model.Start,
+                    model.End, model.Good, model.Total, 
+                    this._datetimeGateway.GetCurrentDateTime(), createdBy);
+
+                foreach (var clue in model.Clues)
+                {
+                    ClueEntityFactory.Factory.Create(clue.Key, clue.Value,
+                        this._datetimeGateway.GetCurrentDateTime(), createdBy, entity);
+                }
+
                 this._dbContext.SourcesItems.Add(entity);
                 if (period > 50) {                    
                     await this._dbContext.SaveChangesAsync();

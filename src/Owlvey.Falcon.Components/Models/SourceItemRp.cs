@@ -33,6 +33,8 @@ namespace Owlvey.Falcon.Models
         public int Total { get; set; }
         public string Start { get; set; }
         public string End { get; set; }
+
+        public string Clues { get; set; }
     }
 
     
