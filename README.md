@@ -12,8 +12,9 @@ owlvey falcon project
 
 ### continuous testing 
 
-- unit test https://owlvey.visualstudio.com/falcon/_build/results?buildId=494&view=ms.vss-test-web.build-test-results-tab
-- unit test coverage https://owlvey.visualstudio.com/falcon/_build/results?buildId=494&view=codecoverage-tab
+- unit test 
+[![Build Status](https://owlvey.visualstudio.com/falcon/_apis/build/status/owlvey.owlvey_falcon?branchName=master)](https://owlvey.visualstudio.com/falcon/_build/latest?definitionId=5&branchName=master)
+
 
 ## Links
 
