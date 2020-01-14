@@ -39,12 +39,7 @@ namespace Owlvey.Falcon.Models
             }
         }
 
-        public string Group {
-            get {
-                var parts = this.Name.Split(' ');
-                return parts[0];
-            }
-        }
+        public string Group { get; set; }
     }
 
     public class ServiceMigrateRp {
@@ -55,6 +50,7 @@ namespace Owlvey.Falcon.Models
         public string Avatar { get; set; }
         public string Leaders { get; set; }
         public string Aggregation { get; set; }
+        public string Group { get; set; }
     }
 
     public class ServiceGetRp : ServiceBaseRp {
@@ -109,9 +105,8 @@ namespace Owlvey.Falcon.Models
         public decimal? Slo { get; set; }        
         public string Avatar { get; set; }
         public string Description { get; set; }        
-
+        public string Group { get; set; }
         public string Leaders { get; set; }
-
         public string Aggregation { get; set; }
     }
 }

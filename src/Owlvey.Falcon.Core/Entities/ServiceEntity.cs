@@ -51,18 +51,8 @@ namespace Owlvey.Falcon.Core.Entities
             }
         }
 
-        [NotMapped]
-        public string Group { get {
-
-                if (!string.IsNullOrWhiteSpace(this.Name))
-                {
-                    return this.Name.Split(' ').FirstOrDefault();
-                }
-                else {
-                    return this.Name;
-                }
-            }
-        }
+        [Required]
+        public string Group { get; set; }
 
         [NotMapped]
         public decimal FeatureSLO { get {
@@ -78,7 +68,7 @@ namespace Owlvey.Falcon.Core.Entities
         public virtual ICollection<ServiceMapEntity> FeatureMap { get; set; } = new List<ServiceMapEntity>();
 
         public void Update(DateTime on, string modifiedBy, string name, decimal? slo, string description, string avatar,
-            string leaders, ServiceAggregationEnum aggregation)
+            string leaders, ServiceAggregationEnum aggregation, string group)
         {
             this.Leaders = leaders ?? this.Leaders;
             this.Name = name ?? this.Name;
@@ -87,7 +77,8 @@ namespace Owlvey.Falcon.Core.Entities
             this.Avatar = avatar ?? this.Avatar;
             this.ModifiedBy = modifiedBy;
             this.Aggregation = aggregation;
-            this.ModifiedOn = on;            
+            this.ModifiedOn = on;
+            this.Group = string.IsNullOrWhiteSpace(group) ? this.Group : group;
             this.Validate();
         }
 

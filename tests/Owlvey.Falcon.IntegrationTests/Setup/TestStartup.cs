@@ -169,6 +169,7 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
                                 CreatedOn = DateTime.UtcNow,
                                 ModifiedBy = "test",
                                 ModifiedOn = DateTime.UtcNow,
+                                Group = "Default"
                             }
                         }
                     }

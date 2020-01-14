@@ -460,11 +460,12 @@ namespace Owlvey.Falcon.Components
                     var avatar = serviceSheet.Cells[row, 5].GetValue<string>();
                     var leaders = serviceSheet.Cells[row, 6].GetValue<string>();
                     var aggregation = serviceSheet.Cells[row, 7].GetValue<string>();
+                    var group = serviceSheet.Cells[row, 8].GetValue<string>();
                     if (product != null && name != null)
                     {
                         await this._serviceComponent.CreateOrUpdate(customer, 
                             product, name, description, 
-                            avatar, slo, leaders, aggregation);
+                            avatar, slo, leaders, aggregation, group);
                     }
                 }
 

@@ -21,7 +21,8 @@ namespace Owlvey.Falcon.Core.Entities
                     CreatedOn = on,
                     ModifiedOn = on,
                     Aggregation = ServiceAggregationEnum.Minimun,
-                    Product = product                    
+                    Product = product,
+                    Group = "Default"
                 };                
                 entity.Validate();
                 return entity;

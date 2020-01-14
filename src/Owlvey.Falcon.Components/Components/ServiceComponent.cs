@@ -27,7 +27,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<ServiceGetListRp> CreateOrUpdate(CustomerEntity customer,
             string product, string name, string description, string avatar, decimal slo, string leaders,
-            string aggregation)
+            string aggregation, string group)
         {
             var createdBy = this._identityService.GetIdentity();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
@@ -46,7 +46,7 @@ namespace Owlvey.Falcon.Components
             }
 
             entity.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, 
-                name, slo, description, avatar, leaders, agg);
+                name, slo, description, avatar, leaders, agg, group);
 
             this._dbContext.Services.Update(entity);
             await this._dbContext.SaveChangesAsync();
@@ -130,7 +130,7 @@ namespace Owlvey.Falcon.Components
             }                        
 
             service.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, model.Name, model.Slo, model.Description, 
-                model.Avatar, model.Leaders, agg);
+                model.Avatar, model.Leaders, agg, model.Group);
 
             this._dbContext.Services.Update(service);
 

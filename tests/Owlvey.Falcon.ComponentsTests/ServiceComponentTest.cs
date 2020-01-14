@@ -51,18 +51,20 @@ namespace Owlvey.Falcon.ComponentsTests
                  Name = "change",
                  Description = "change",
                  Slo = 0.95m,
-                 Avatar = "http://change.org"
+                 Avatar = "http://change.org",
+                 Group = "change group"
             });
 
             var serviceDetail = await serviceQueryComponent.GetServiceById(serviceInstance.Id);
             Assert.NotNull(serviceDetail);
 
             Assert.Equal("change", serviceDetail.Name);
+            Assert.Equal("change group", serviceDetail.Group);
             Assert.Equal("change", serviceDetail.Description);
             Assert.Equal("http://change.org", serviceDetail.Avatar);
-            Assert.Equal(0.95m, serviceDetail.SLO);
-            
+            Assert.Equal(0.95m, serviceDetail.SLO);            
         }
+
 
         [Fact]
         public async Task IndicatorDeleteSuccess()
