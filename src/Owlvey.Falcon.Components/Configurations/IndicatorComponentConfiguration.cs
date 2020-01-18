@@ -22,9 +22,17 @@ namespace Owlvey.Falcon.Components
                 .ForMember(m => m.Group, opt => opt.MapFrom(src => src.Source.Group))
                 .ForMember(c => c.Source, opt => opt.MapFrom(d=>d.Source.Name));
 
+            cfg.CreateMap<IndicatorEntity, Models.IndicatorBaseRp>()
+                .ForMember(m => m.Description, opt => opt.MapFrom(src => src.Source.Description))
+                .ForMember(m => m.Kind, opt => opt.MapFrom(src => src.Source.Kind))
+                .ForMember(m => m.Group, opt => opt.MapFrom(src => src.Source.Group))
+                .ForMember(c => c.Source, opt => opt.MapFrom(d => d.Source.Name));
+
+            
 
             cfg.CreateMap<IndicatorEntity, Models.IndicatorAvailabilityGetListRp>()
-                .ForMember(m => m.Kind, opt => opt.MapFrom(src => src.Source.Kind))
+                .ForMember(m => m.Description, opt => opt.MapFrom(src => src.Source.Description))
+                .ForMember(m => m.Kind, opt => opt.MapFrom(src => src.Source.Kind))                
                 .ForMember(m => m.Group, opt => opt.MapFrom(src => src.Source.Group))
                 .ForMember(c => c.Availability, opt => opt.Ignore())
                 .ForMember(c => c.Good, opt => opt.Ignore())
