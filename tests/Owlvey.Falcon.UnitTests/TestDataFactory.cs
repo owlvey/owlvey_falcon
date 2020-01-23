@@ -7,8 +7,8 @@ namespace Owlvey.Falcon.UnitTests
 {
     public static class TestDataFactory
     {
-        public static CustomerEntity BuildCustomer() {
-            var entity = CustomerEntity.Factory.Create("test", DateTime.Now, "test");
+        public static CustomerEntity BuildCustomer(bool defaultValue = true) {
+            var entity = CustomerEntity.Factory.Create("test", DateTime.Now, "test", defaultValue : defaultValue);
             return entity;
         }
         public static ProductEntity BuildProduct(CustomerEntity entity = null)

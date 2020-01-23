@@ -27,13 +27,13 @@ namespace Owlvey.Falcon.Core.Models.Migrate
             this.Organization = organization;
             this.Product = product;
         }
-        public static IEnumerable<UserModel> Load(IEnumerable<UserEntity> entities)
+        public static IEnumerable<ServiceModel> Load(string organization, string product, IEnumerable<ServiceEntity> entities)
         {
-            var result = new List<UserModel>();
+            var result = new List<ServiceModel>();
             foreach (var item in entities)
             {
-                var model = new UserModel();
-                model.Load(item);
+                var model = new ServiceModel();
+                model.Load(organization, product, item);
                 result.Add(model);
             }
             return result;

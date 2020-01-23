@@ -19,13 +19,13 @@ namespace Owlvey.Falcon.Core.Models.Migrate
             this.Source = source;
             
         }
-        public static IEnumerable<IndicatorModel> Load(string organization, string product, string feature, IEnumerable<SourceEntity> entities)
+        public static IEnumerable<IndicatorModel> Load(string organization, string product, string feature, IEnumerable<IndicatorEntity> entities)
         {
             var result = new List<IndicatorModel>();
             foreach (var item in entities)
             {
                 var model = new IndicatorModel();
-                model.Load(organization, product, feature, item.Name);
+                model.Load(organization, product, feature, item.Source.Name);
                 result.Add(model);
             }
             return result;

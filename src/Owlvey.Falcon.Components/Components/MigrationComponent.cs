@@ -12,6 +12,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Owlvey.Falcon.Core.Aggregates;
 
 namespace Owlvey.Falcon.Components
 {
@@ -612,6 +613,70 @@ namespace Owlvey.Falcon.Components
         }
 
         #endregion
+
+
+        public async Task<MemoryStream> Backup(bool includeData)
+        {        
+            var stream = new MemoryStream();
+            using (var package = new ExcelPackage(stream))
+            {
+                var users = await this._dbContext.Users.ToListAsync();
+                var customers = await this._dbContext.Customers
+                    .Include(c => c.Products).ThenInclude(c=>c.Anchors)
+                    .Include(c => c.Squads).ThenInclude(d => d.Members)
+                    .ToListAsync();
+
+                var services = await this._dbContext.Services.Include(c => c.FeatureMap).ToListAsync();
+                var features = await this._dbContext.Features.Include(c => c.Indicators).ToListAsync();
+                var sources = await this._dbContext.Sources.ToListAsync();
+
+                var sourceItems = new List<SourceItemEntity>();
+                if (includeData)
+                {
+                    sourceItems = await this._dbContext.SourcesItems.ToListAsync();
+                }                    
+
+                var aggregate = new BackupAggregate(users, customers, services, features, sources, sourceItems);
+                var model = aggregate.Execute();
+
+                var customerSheet = package.Workbook.Worksheets.Add("Organizations");
+                customerSheet.Cells.LoadFromCollection(model.Organizations, true);
+
+                var productsSheet = package.Workbook.Worksheets.Add("Products");
+                productsSheet.Cells.LoadFromCollection(model.Products, true);
+
+                var anchorsSheet = package.Workbook.Worksheets.Add("Anchors");
+                anchorsSheet.Cells.LoadFromCollection(model.Anchors, true);
+
+                var squadsSheet = package.Workbook.Worksheets.Add("Squads");
+                squadsSheet.Cells.LoadFromCollection(model.Squads, true);
+
+                var membersSheet = package.Workbook.Worksheets.Add("Members");
+                membersSheet.Cells.LoadFromCollection(model.Members, true);
+
+                var servicesSheet = package.Workbook.Worksheets.Add("Services");
+                servicesSheet.Cells.LoadFromCollection(model.Services, true);
+
+                var serviceMapsSheet = package.Workbook.Worksheets.Add("ServiceMaps");
+                serviceMapsSheet.Cells.LoadFromCollection(model.ServiceMaps, true);
+
+                var featuresSheet = package.Workbook.Worksheets.Add("Features");
+                featuresSheet.Cells.LoadFromCollection(model.Features, true);
+
+                var indicatorsSheet = package.Workbook.Worksheets.Add("Indicators");
+                indicatorsSheet.Cells.LoadFromCollection(model.Indicators, true);
+
+                var sourcesSheet = package.Workbook.Worksheets.Add("Sources");
+                sourcesSheet.Cells.LoadFromCollection(model.Sources, true);
+
+                var sourceItemsSheet = package.Workbook.Worksheets.Add("SourceItems");
+                sourceItemsSheet.Cells.LoadFromCollection(model.SourceItems, true);
+
+                package.Save();
+            }
+            stream.Position = 0;
+            return stream;
+        }
 
 
 

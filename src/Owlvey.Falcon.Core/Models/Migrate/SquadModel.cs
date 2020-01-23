@@ -6,14 +6,12 @@ namespace Owlvey.Falcon.Core.Models.Migrate
 {
     public class SquadModel
     {
-
+        public string Organization { get; set; }
         public string Name { get; set; }
         public string Avatar { get; set; }
         public string Description { get; set; }
         public string Leaders { get; set; }
-        public string Organization { get; set; }
-        
-
+                
         public void Load(string organization, SquadEntity entity)
         {
             this.Name = entity.Name;
@@ -23,13 +21,13 @@ namespace Owlvey.Falcon.Core.Models.Migrate
             this.Organization = organization;
             
         }
-        public static IEnumerable<SquadModel> Load(OrganizationModel organization, IEnumerable<SquadEntity> entities)
+        public static IEnumerable<SquadModel> Load(string organization, IEnumerable<SquadEntity> entities)
         {
             var result = new List<SquadModel>();
             foreach (var item in entities)
             {
                 var model = new SquadModel();                
-                model.Load(organization.Name, item);
+                model.Load(organization, item);
                 result.Add(model);
             }
             return result;

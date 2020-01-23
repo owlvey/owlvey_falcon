@@ -96,7 +96,8 @@ namespace Owlvey.Falcon.Core.Entities
 
             public static CustomerEntity Create(string user, DateTime on, 
                 string name,
-                string avatar = "https://cdn.iconscout.com/icon/free/png-256/avatar-375-456327.png")
+                string avatar = "https://cdn.iconscout.com/icon/free/png-256/avatar-375-456327.png",
+                bool defaultValue = true)
             {
                 var result = new CustomerEntity
                 {
@@ -108,8 +109,9 @@ namespace Owlvey.Falcon.Core.Entities
                     Avatar = avatar                    
                 };
                 result.Validate();
-
-                DefaultValues(result, on, user);
+                if (defaultValue) {
+                    DefaultValues(result, on, user);
+                }                
 
                 return result;
             }

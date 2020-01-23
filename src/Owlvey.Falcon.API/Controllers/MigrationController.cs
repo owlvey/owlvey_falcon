@@ -50,5 +50,25 @@ namespace Owlvey.Falcon.API.Controllers
                 return Ok(logs);                
             }
         }
+
+        [HttpGet("backup/metadata")]        
+        public async Task<IActionResult> PostBackupMetadata()
+        {
+            var stream = await this._migrationComponent.Backup(false);
+
+            string excelName = $"owlvey-metadata-{DateTime.Now.ToString("yyyyMMdd")}.xlsx";
+
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
+        }
+
+        [HttpGet("backup/data")]
+        public async Task<IActionResult> PostBackupData()
+        {
+            var stream = await this._migrationComponent.Backup(true);
+
+            string excelName = $"owlvey-data-{DateTime.Now.ToString("yyyyMMdd")}.xlsx";
+
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
+        }
     }
 }

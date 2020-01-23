@@ -30,7 +30,7 @@
 
 
   <ItemGroup>
-    <Folder Include="Aggregates\" />
+    <Folder Include="Models\Migrate\" />
     <Folder Include="Values\" />
     <Folder Include="Validators\" />
   </ItemGroup>
