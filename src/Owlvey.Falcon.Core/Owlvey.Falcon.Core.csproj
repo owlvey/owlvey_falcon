@@ -11,6 +11,6 @@
   <ItemGroup>
     <Folder Include="Validators\" />
     <Folder Include="Models\" />
-    <Folder Include="Models\Backup\" />
+    <Folder Include="Models\Migrate\" />
   </ItemGroup>
 </Project>
