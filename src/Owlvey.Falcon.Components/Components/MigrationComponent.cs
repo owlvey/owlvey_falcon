@@ -300,7 +300,7 @@ namespace Owlvey.Falcon.Components
             {
                 var squadSheet = package.Workbook.Worksheets.Add("Squads");
                 squadSheet.Cells.LoadFromCollection(squadLites, true);
-
+                
                 var membersSheet = package.Workbook.Worksheets.Add("Members");
                 membersSheet.Cells.LoadFromCollection(memberLites, true);
 

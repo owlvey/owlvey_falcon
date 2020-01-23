@@ -10,5 +10,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Validators\" />
+    <Folder Include="Models\" />
+    <Folder Include="Models\Backup\" />
   </ItemGroup>
 </Project>

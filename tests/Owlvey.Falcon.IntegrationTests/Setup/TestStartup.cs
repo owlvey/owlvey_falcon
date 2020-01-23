@@ -161,8 +161,7 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
                             new Core.Entities.ServiceEntity{
                                  Id = 9999,
                                 Description= "Default Service",
-                                Name = "Default Service",
-                                Owner = "test",
+                                Name = "Default Service",                                
                                 Slo = 99,
                                 Avatar = "default",
                                 CreatedBy = "test",

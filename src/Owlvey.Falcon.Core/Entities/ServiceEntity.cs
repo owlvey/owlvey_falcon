@@ -27,10 +27,7 @@ namespace Owlvey.Falcon.Core.Entities
         public string Name { get; set; }
         
         public string Description { get; set; }
-
-        [Required]
-        public string Owner { get; set; }
-
+                
         [Required]
         public decimal Slo { get; set; }       
 
