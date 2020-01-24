@@ -125,21 +125,53 @@ namespace Owlvey.Falcon.ComponentsTests
             var container = ComponentTestFactory.BuildContainer();
             var customerComponet = container.GetInstance<CustomerComponent>();
             var customerQueryComponet = container.GetInstance<CustomerQueryComponent>();
+            var productQueryComponent = container.GetInstance<ProductQueryComponent>();
+            var squadQueryComponent = container.GetInstance<SquadQueryComponent>();
+            var sourceComponent = container.GetInstance<SourceComponent>();
             var migrationComponent = container.GetInstance<MigrationComponent>();
+            var serviceComponent = container.GetInstance<ServiceQueryComponent>();
+                       
             var result = await customerComponet.CreateCustomer(new Models.CustomerPostRp()
             {
                 Name = "test"
-            });
-
-            await customerComponet.DeleteCustomer(result.Id);
+            });            
 
             var stream = await migrationComponent.Backup(true);
+
+            var customers = await customerQueryComponet.GetCustomers();
+
+            foreach (var item in customers)
+            {
+                await customerComponet.DeleteCustomer(item.Id);
+            }
+
+            customers = await customerQueryComponet.GetCustomers();
+
+            Assert.Empty(customers);
 
             await migrationComponent.Restore(stream);
 
             var customer_target = await customerQueryComponet.GetCustomerByName("test");
 
             Assert.NotNull(customer_target);
+
+            var products = await productQueryComponent.GetProducts(customer_target.Id);                       
+
+            Assert.NotEmpty(products);
+
+            foreach (var item in products)
+            {
+                var sources = await sourceComponent.GetByProductId(item.Id);
+                Assert.NotEmpty(sources);
+            }           
+
+            var squads = await squadQueryComponent.GetSquads(customer_target.Id);
+
+            Assert.NotEmpty(squads);
+
+            var services = await serviceComponent.GetServices(customer_target.Id);
+            Assert.NotEmpty(services);
+
 
         }
 

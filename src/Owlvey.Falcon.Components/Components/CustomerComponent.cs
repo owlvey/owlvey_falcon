@@ -46,7 +46,7 @@ namespace Owlvey.Falcon.Components
             var entity = await this._dbContext.Customers.Where(c => c.Name == name).SingleOrDefaultAsync();
             if (entity == null)
             {
-                entity = CustomerEntity.Factory.Create(name, this._datetimeGateway.GetCurrentDateTime(), createdBy);
+                entity = CustomerEntity.Factory.Create(name, this._datetimeGateway.GetCurrentDateTime(), createdBy, defaultValue: false);
             }
             entity.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, name, avatar, leaders);
             this._dbContext.Customers.Update(entity);

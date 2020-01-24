@@ -809,9 +809,12 @@ namespace Owlvey.Falcon.Components
                     var product = squadFeaturesSheet.Cells[row, 2].GetValue<string>();
                     var feature = squadFeaturesSheet.Cells[row, 3].GetValue<string>();
                     var squad = squadFeaturesSheet.Cells[row, 4].GetValue<string>();
+
+                    var featureId = features.Where(c => c.Name == feature && c.Product.Name == product && c.Product.Customer.Name == organization).Single().Id.Value;
+                    var squadId = squads.Where(c => c.Name == squad && c.Customer.Name == organization).Single().Id.Value;
                     await this._featureComponent.RegisterSquad(new SquadFeaturePostRp() {
-                        FeatureId = features.Where(c => c.Name == feature && c.Product.Name == product && c.Product.Customer.Name == organization).Single().Id.Value,
-                        SquadId = squads.Where(c => c.Name == feature && c.Customer.Name == organization).Single().Id.Value,
+                        FeatureId = featureId,
+                        SquadId = squadId,
                     });
                 }
 
