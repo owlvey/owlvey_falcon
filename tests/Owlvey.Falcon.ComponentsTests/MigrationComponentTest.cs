@@ -120,6 +120,30 @@ namespace Owlvey.Falcon.ComponentsTests
         }
 
         [Fact]
+        public async Task BackupRestore() {
+
+            var container = ComponentTestFactory.BuildContainer();
+            var customerComponet = container.GetInstance<CustomerComponent>();
+            var customerQueryComponet = container.GetInstance<CustomerQueryComponent>();
+            var migrationComponent = container.GetInstance<MigrationComponent>();
+            var result = await customerComponet.CreateCustomer(new Models.CustomerPostRp()
+            {
+                Name = "test"
+            });
+
+            await customerComponet.DeleteCustomer(result.Id);
+
+            var stream = await migrationComponent.Backup(true);
+
+            await migrationComponent.Restore(stream);
+
+            var customer_target = await customerQueryComponet.GetCustomerByName("test");
+
+            Assert.NotNull(customer_target);
+
+        }
+
+        [Fact]
         public async Task ExporImportData()
         {
 

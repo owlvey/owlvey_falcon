@@ -41,6 +41,10 @@ namespace Owlvey.Falcon.Components
             }
             return this._mapper.Map<AnchorRp>(entity);
         }
+
+
+        
+
         public async Task<AnchorRp> CreateOrUpdateAnchor(int productId, string name, DateTime target) {
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
             var createdBy = this._identityService.GetIdentity();
@@ -81,7 +85,7 @@ namespace Owlvey.Falcon.Components
             this._dbContext.Anchors.Update(entity);
             await this._dbContext.SaveChangesAsync();
         }
-
+               
         public async Task<ProductGetListRp> CreateOrUpdate(CustomerEntity customer, string name, string description, 
             string avatar, string leaders) {
             var createdBy = this._identityService.GetIdentity();

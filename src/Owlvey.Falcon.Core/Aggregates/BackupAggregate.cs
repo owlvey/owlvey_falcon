@@ -61,6 +61,10 @@ namespace Owlvey.Falcon.Core.Aggregates
                         {
                             indicator.Source = product.Sources.Where(c => c.Id == indicator.Id).Single();
                         }
+                        foreach (var squad in feature.Squads)
+                        {
+                            squad.Squad = customer.Squads.Single(c => c.Id == squad.SquadId);
+                        }
                     }
                     foreach (var source in product.Sources)
                     {
@@ -99,6 +103,7 @@ namespace Owlvey.Falcon.Core.Aggregates
                     foreach (var feature in product.Features)
                     {
                         result.AddIndicator(customer.Name, product.Name, feature.Name, feature.Indicators);
+                        result.AddSquadFeature(customer.Name, product.Name, feature.Name, feature.Squads);
                     }
                     result.AddSources(customer.Name, product.Name, product.Sources);
                     foreach (var source in product.Sources)

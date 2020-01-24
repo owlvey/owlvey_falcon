@@ -70,5 +70,17 @@ namespace Owlvey.Falcon.API.Controllers
 
             return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
         }
+
+        [HttpPost("restore")]
+        [Authorize(Policy = "RequireAdminRole")]
+        public async Task<IActionResult> POstBackup(FileUploadRp file)
+        {
+            using (MemoryStream excelStream = new MemoryStream())
+            {
+                file.Data.CopyTo(excelStream);
+                var logs = this._migrationComponent.Restore(excelStream);
+                return Ok(logs);
+            }
+        }
     }
 }

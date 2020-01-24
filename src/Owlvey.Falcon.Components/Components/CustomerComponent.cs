@@ -36,7 +36,23 @@ namespace Owlvey.Falcon.Components
                 await this._dbContext.SaveChangesAsync();
             }            
             return this._mapper.Map<CustomerGetListRp>(entity);
-        }        
+        }
+
+        public async Task<CustomerGetRp> CreateOrUpdate(string name,
+            string avatar, string leaders)
+        {
+            var createdBy = this._identityService.GetIdentity();
+            this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
+            var entity = await this._dbContext.Customers.Where(c => c.Name == name).SingleOrDefaultAsync();
+            if (entity == null)
+            {
+                entity = CustomerEntity.Factory.Create(name, this._datetimeGateway.GetCurrentDateTime(), createdBy);
+            }
+            entity.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, name, avatar, leaders);
+            this._dbContext.Customers.Update(entity);
+            await this._dbContext.SaveChangesAsync();
+            return this._mapper.Map<CustomerGetRp>(entity);
+        }
 
         public async Task<BaseComponentResultRp> DeleteCustomer(int id)
         {

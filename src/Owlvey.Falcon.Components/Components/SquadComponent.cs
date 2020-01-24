@@ -38,7 +38,7 @@ namespace Owlvey.Falcon.Components
             await this._dbContext.SaveChangesAsync();            
 
             return this._mapper.Map< SquadGetRp>(entity);
-        }
+        }                       
 
         public async Task<SquadGetRp> CreateOrUpdate(CustomerEntity customer, string name, string description, string avatar
             , string leaders) {

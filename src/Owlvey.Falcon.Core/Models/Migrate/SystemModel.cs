@@ -15,6 +15,7 @@ namespace Owlvey.Falcon.Core.Models.Migrate
         public ICollection<ServiceModel> Services { get; protected set; } = new List<ServiceModel>();
         public ICollection<ServiceMapModel> ServiceMaps { get; protected set; } = new List<ServiceMapModel>();
         public ICollection<FeatureModel> Features { get; protected set; } = new List<FeatureModel>();
+        public ICollection<SquadFeatureModel> SquadFeatures { get; protected set; } = new List<SquadFeatureModel>();
         public ICollection<IndicatorModel> Indicators { get; protected set; } = new List<IndicatorModel>();
         public ICollection<SourceModel> Sources { get; protected set; } = new List<SourceModel>();
         public ICollection<SourceItemModel> SourceItems { get; protected set; } = new List<SourceItemModel>();
@@ -114,6 +115,13 @@ namespace Owlvey.Falcon.Core.Models.Migrate
             foreach (var item in items)
             {
                 this.SourceItems.Add(item);
+            }
+        }
+        public void AddSquadFeature(string organization, string product, string feature, IEnumerable<SquadFeatureEntity> squads) {
+            var items = SquadFeatureModel.Load(organization, product, feature, squads);
+            foreach (var item in items)
+            {
+                this.SquadFeatures.Add(item);
             }
         }
     }
