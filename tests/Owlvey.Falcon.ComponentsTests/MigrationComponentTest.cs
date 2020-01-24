@@ -130,7 +130,11 @@ namespace Owlvey.Falcon.ComponentsTests
             var sourceComponent = container.GetInstance<SourceComponent>();
             var migrationComponent = container.GetInstance<MigrationComponent>();
             var serviceComponent = container.GetInstance<ServiceQueryComponent>();
-                       
+            var featureComponent = container.GetInstance<FeatureQueryComponent>();
+            var sourceItemComponent = container.GetInstance<SourceItemComponent>();
+            
+            
+
             var result = await customerComponet.CreateCustomer(new Models.CustomerPostRp()
             {
                 Name = "test"
@@ -163,8 +167,15 @@ namespace Owlvey.Falcon.ComponentsTests
             {
                 var sources = await sourceComponent.GetByProductId(item.Id);
                 Assert.NotEmpty(sources);
-            }           
 
+                var anchors = await productQueryComponent.GetAnchors(item.Id);
+                Assert.NotEmpty(anchors);
+            }
+
+            var sourceItems = await sourceItemComponent.GetAll();
+            
+            Assert.NotEmpty(sourceItems);
+            
             var squads = await squadQueryComponent.GetSquads(customer_target.Id);
 
             Assert.NotEmpty(squads);
@@ -172,6 +183,8 @@ namespace Owlvey.Falcon.ComponentsTests
             var services = await serviceComponent.GetServices(customer_target.Id);
             Assert.NotEmpty(services);
 
+            var features = await featureComponent.GetFeatures(customer_target.Id);
+            Assert.NotEmpty(features);            
 
         }
 
