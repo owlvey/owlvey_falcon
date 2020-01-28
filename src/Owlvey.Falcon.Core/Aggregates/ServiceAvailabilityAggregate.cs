@@ -34,7 +34,11 @@ namespace Owlvey.Falcon.Core.Aggregates
                 {
                     return (QualityUtils.CalculateMinimumAvailability(result, round: 3), sumTotal, sumGood);
                 }
-                else {
+                else if (this.Service.Aggregation == ServiceAggregationEnum.Average) {
+                    return (QualityUtils.CalculateAverageAvailability(result, round: 3), sumTotal, sumGood);
+                }
+                else
+                {
                     return (QualityUtils.CalculateDotProportion(result, round: 3), sumTotal, sumGood);
                 }
                 
