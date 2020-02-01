@@ -624,6 +624,12 @@ namespace Owlvey.Falcon.Components
 
             var logs = new List<string>();            
 
+            var previous = await this._dbContext.Customers.ToListAsync();
+            foreach (var item in previous)
+            {
+                await this._customerComponent.DeleteCustomer(item.Id.Value);
+            }            
+
             using (var package = new ExcelPackage(input))
             {
 

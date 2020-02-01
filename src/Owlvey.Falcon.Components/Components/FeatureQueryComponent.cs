@@ -172,14 +172,14 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<FeatureGetListRp>>(entities);
         }
 
-        public async Task<IEnumerable<FeatureGetListRp>> GetFeaturesByServiceId(int serviceId)
+        public async Task<ICollection<FeatureGetListRp>> GetFeaturesByServiceId(int serviceId)
         {
             var entities = await this._dbContext.ServiceMaps.Include(c => c.Feature).Where(c => c.Service.Id == serviceId).ToListAsync();
             var features = entities.Select(c => c.Feature).ToList();
-            return this._mapper.Map<IEnumerable<FeatureGetListRp>>(features);
+            return this._mapper.Map<ICollection<FeatureGetListRp>>(features);
         }
 
-        public async Task<IEnumerable<SequenceFeatureGetListRp>> GetFeaturesByServiceIdWithAvailability(int serviceId, DateTime start, DateTime end)
+        public async Task<ICollection<SequenceFeatureGetListRp>> GetFeaturesByServiceIdWithAvailability(int serviceId, DateTime start, DateTime end)
         {
             var service = await this._dbContext.Services
                 .Include(c=> c.FeatureMap)

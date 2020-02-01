@@ -59,7 +59,7 @@ namespace Owlvey.Falcon.Core.Aggregates
                     {
                         foreach (var indicator in feature.Indicators)
                         {
-                            indicator.Source = product.Sources.Where(c => c.Id == indicator.Id).Single();
+                            indicator.Source = product.Sources.Where(c => c.Id == indicator.SourceId).Single();
                         }
                         foreach (var squad in feature.Squads)
                         {

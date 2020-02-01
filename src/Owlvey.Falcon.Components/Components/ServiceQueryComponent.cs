@@ -109,12 +109,16 @@ namespace Owlvey.Falcon.Components
 
         public async Task<ServiceGetRp> GetServiceById(int id)
         {
-            var entity = await this._dbContext.Services.FirstOrDefaultAsync(c => c.Id.Equals(id));
-
+            var entity = await this._dbContext
+                         .Services
+                         .Include(c => c.FeatureMap).ThenInclude(c => c.Feature)                                                  
+                         .FirstOrDefaultAsync(c => c.Id.Equals(id));            
+            
             if (entity == null)
                 return null;
-
-            return this._mapper.Map<ServiceGetRp>(entity);
+            var model = this._mapper.Map<ServiceGetRp>(entity);
+            model.MergeFeaturesFrom(entity.FeatureMap.Select(c=>c.Feature));            
+            return model;
         }
 
         public async Task<ServiceGetRp> GetServiceByIdWithAvailabilities(int id, DateTime start, DateTime end)

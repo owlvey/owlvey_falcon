@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using Owlvey.Falcon.Core.Entities;
 
 namespace Owlvey.Falcon.Models
 {
@@ -10,7 +11,16 @@ namespace Owlvey.Falcon.Models
         public string Name { get; set; }
         public string Avatar { get; set; }
         public string Description { get; set; }
-        public int Id { get; set; }                
+        public int Id { get; set; } 
+        public int ProductId { get; set; }  
+
+        public virtual void Read(FeatureEntity entity){
+            this.Id = entity.Id.Value;
+            this.Name = entity.Name;
+            this.Avatar = entity.Avatar;
+            this.Description = entity.Description; 
+            this.ProductId = entity.ProductId;       
+        }               
     }
 
     public class FeatureMigrateRp  {
@@ -27,7 +37,7 @@ namespace Owlvey.Falcon.Models
     public class FeatureGetRp : FeatureBaseRp {
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
-        public int ProductId { get; set; }        
+              
         public string MTTM { get; set; }
         public string MTTE { get; set; }
         public string MTTD { get; set; }
@@ -41,8 +51,7 @@ namespace Owlvey.Falcon.Models
     public class FeatureQualityGetRp : FeatureBaseRp
     {
         public string CreatedBy { get; set; }
-        public DateTime? CreatedOn { get; set; }
-        public int ProductId { get; set; }
+        public DateTime? CreatedOn { get; set; }        
         public decimal Quality { get; set; }
 
         public decimal Latency { get; set; }
@@ -60,8 +69,7 @@ namespace Owlvey.Falcon.Models
     public class FeatureGetListRp : FeatureBaseRp
     {
         public string CreatedBy { get; set; }
-        public DateTime? CreatedOn { get; set; }
-        public int ProductId { get; set; }
+        public DateTime? CreatedOn { get; set; }        
         public string Product { get; set; }
         public int IndicatorsCount { get; set; }
         public int ServiceCount { get; set; }
@@ -73,13 +81,17 @@ namespace Owlvey.Falcon.Models
         public string MTTE { get; set; }
         public string MTTD { get; set; }
         public string MTTF { get; set; }
+
+        public override void Read(FeatureEntity Entity){
+            base.Read(Entity); 
+
+        }
     }
 
     public class FeatureAvailabilityGetListRp : FeatureBaseRp
     {
         public string CreatedBy { get; set; }
-        public DateTime? CreatedOn { get; set; }
-        public int ProductId { get; set; }
+        public DateTime? CreatedOn { get; set; }        
         public string Product { get; set; }
         public int IndicatorsCount { get; set; }
         public int ServiceCount { get; set; }
@@ -110,7 +122,6 @@ namespace Owlvey.Falcon.Models
     {
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
-        public int ProductId { get; set; }
         public int ServiceId { get; set; }
         public string Service { get; set; }
         public string ServiceAvatar { get; set; }

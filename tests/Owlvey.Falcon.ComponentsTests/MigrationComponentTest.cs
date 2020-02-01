@@ -121,6 +121,8 @@ namespace Owlvey.Falcon.ComponentsTests
 
         [Fact]
         public async Task BackupRestore() {
+            
+            #region   Components
 
             var container = ComponentTestFactory.BuildContainer();
             var customerComponet = container.GetInstance<CustomerComponent>();
@@ -132,8 +134,8 @@ namespace Owlvey.Falcon.ComponentsTests
             var serviceComponent = container.GetInstance<ServiceQueryComponent>();
             var featureComponent = container.GetInstance<FeatureQueryComponent>();
             var sourceItemComponent = container.GetInstance<SourceItemComponent>();
-            
-            
+
+            #endregion
 
             var result = await customerComponet.CreateCustomer(new Models.CustomerPostRp()
             {
@@ -183,8 +185,15 @@ namespace Owlvey.Falcon.ComponentsTests
             var services = await serviceComponent.GetServices(customer_target.Id);
             Assert.NotEmpty(services);
 
+            foreach (var item in services)
+            {
+                var service_detail = await serviceComponent.GetServiceById(item.Id);                
+                Assert.NotEmpty(service_detail.Features);
+            }
+            
             var features = await featureComponent.GetFeatures(customer_target.Id);
-            Assert.NotEmpty(features);            
+            Assert.NotEmpty(features);      
+            
 
         }
 

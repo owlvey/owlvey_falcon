@@ -8,6 +8,7 @@ using Owlvey.Falcon.Models;
 
 namespace Owlvey.Falcon.API.Controllers
 {
+    /// 
     [Route("accounts")]
     public class AccountController : BaseController
     {

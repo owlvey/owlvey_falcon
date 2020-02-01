@@ -23,7 +23,7 @@ namespace Owlvey.Falcon.Components
 
 
             cfg.CreateMap<ServiceEntity, Models.ServiceGetRp>()
-                .ForMember(m=>m.Features, ope=> ope.Ignore())
+                .ForMember(m => m.Features, ope=> ope.Ignore())
                 .ForMember(m => m.MTTD, ope => ope.Ignore())
                 .ForMember(m => m.MTTE, ope => ope.Ignore())
                 .ForMember(m => m.MTTF, ope => ope.Ignore())

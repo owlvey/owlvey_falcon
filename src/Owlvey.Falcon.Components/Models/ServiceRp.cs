@@ -68,6 +68,17 @@ namespace Owlvey.Falcon.Models
             }            
         }
         public decimal BudgetMinutes { get; set; }
+
+        internal void MergeFeaturesFrom(IEnumerable<FeatureEntity> features){
+            var result = new List<FeatureGetListRp>(this.Features);
+            foreach (var item in features)
+            {
+                var temporal = new FeatureGetListRp(); 
+                temporal.Read(item); 
+                result.Add(temporal);                 
+            }
+            this.Features = result;            
+        }
     }
 
     public class ServiceGetListRp : ServiceBaseRp
