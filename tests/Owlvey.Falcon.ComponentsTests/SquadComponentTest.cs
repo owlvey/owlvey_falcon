@@ -100,7 +100,7 @@ namespace Owlvey.Falcon.ComponentsTests
                 OwlveyCalendar.January201903, 
                 OwlveyCalendar.January201905);
 
-            Assert.Equal(-113.81m, points.Points); 
+            Assert.Equal(-114.17m, points.Points); 
         }
 
         [Fact]

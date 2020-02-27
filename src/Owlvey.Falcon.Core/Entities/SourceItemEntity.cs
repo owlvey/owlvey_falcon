@@ -28,9 +28,8 @@ namespace Owlvey.Falcon.Core.Entities
         public int Total { get; set; }
 
         [Required]
-        public DateTime Start { get; set; }
-        [Required]
-        public DateTime End { get; set; }
+        public DateTime Target { get; set; }
+        
 
         public virtual ICollection<ClueEntity> Clues { get; set; } = new List<ClueEntity>();
 
@@ -49,17 +48,11 @@ namespace Owlvey.Falcon.Core.Entities
                 return QualityUtils.CalculateAvailability(this.Total, this.Good, 1);                
             } }
 
-        
-    
-
-        public void Update(int total, int good, DateTime start, DateTime end)
+        public void Update(int total, int good, DateTime target)
         {
             this.Total = total;
-            this.Good = good;
-            this.Start = start;
-            this.End = end;
+            this.Good = good;            
+            this.Target = target;
         }
-
-
     }
 }

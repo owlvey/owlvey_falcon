@@ -129,7 +129,7 @@ namespace Owlvey.Falcon.Components
         public async Task<SeriesGetRp> GetDailySeriesById(int indicatorId, DateTime start, DateTime end)
         {
             var indicator = await this._dbContext.Indicators.Include(c=>c.Source).SingleAsync(c => c.Id == indicatorId);
-            var sourceItems = await this._dbContext.SourcesItems.Where(c => c.SourceId == indicator.Source.Id && c.Start >= start && c.End <= end).ToListAsync();
+            var sourceItems = await this._dbContext.GetSourceItems(indicator.Source.Id.Value, start , end);
 
             indicator.Source.SourceItems = sourceItems;
             

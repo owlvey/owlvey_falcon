@@ -30,11 +30,15 @@ namespace Owlvey.Falcon.API.Controllers
             if (!this.ModelState.IsValid)
             {
                 return this.BadRequest(this.ModelState);
-            }
-            var response = await this._sourceItemComponent.Create(model);                        
+            }            
+            var response = await this._sourceItemComponent.Create(model);
 
-            return this.Created(Url.RouteUrl("GetBySourceItemId", new { response.Id }), response);
+            //TODO fix 
+            // return this.Created(Url.RouteUrl("GetBySourceItemId", new { response.Id }), response);
+            return this.Ok();
         }
+
+        
 
         [HttpPost("proportion")]
         [ProducesResponseType(typeof(SourceItemGetRp), 200)]        
@@ -45,9 +49,12 @@ namespace Owlvey.Falcon.API.Controllers
             {
                 return this.BadRequest(this.ModelState);
             }
-            var response = await this._sourceItemComponent.Create(model);            
+            var response = await this._sourceItemComponent.Create(model);
 
-            return this.Created(Url.RouteUrl("GetBySourceItemId", new { response.Id }), response);
+            //TODO fix
+
+            // return this.Created(Url.RouteUrl("GetBySourceItemId", new { response.Id }), response);
+            return this.Ok(); 
         }
 
         [HttpGet("{id}", Name = "GetBySourceItemId")]

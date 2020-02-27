@@ -21,8 +21,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                              SourceItems = new List<SourceItemEntity>(){
                                   new SourceItemEntity(){
                                        Good = 800, Total = 1000,
-                                       Start = OwlveyCalendar.January201903,
-                                       End = OwlveyCalendar.January201905
+                                       Target = OwlveyCalendar.January201903                                       
                                   }
                              }
                         }
@@ -53,8 +52,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                              SourceItems = new List<SourceItemEntity>(){
                                   new SourceItemEntity(){
                                        Good = 800, Total = 1000,
-                                       Start = OwlveyCalendar.January201903,
-                                       End = OwlveyCalendar.January201905
+                                       Target = OwlveyCalendar.January201903                                       
                                   }
                              }
                         }
@@ -66,8 +64,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                              SourceItems = new List<SourceItemEntity>(){
                                   new SourceItemEntity(){
                                        Good = 90, Total = 100,
-                                       Start = OwlveyCalendar.January201903,
-                                       End = OwlveyCalendar.January201905
+                                       Target = OwlveyCalendar.January201903                                       
                                   }
                              }
                         }

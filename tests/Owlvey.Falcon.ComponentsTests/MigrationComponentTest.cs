@@ -225,7 +225,8 @@ namespace Owlvey.Falcon.ComponentsTests
                     var sourceItems = await sourceItemComponent.GetBySource(source.Id);
                     foreach (var sour in sourceItems)
                     {                        
-                        await sourceItemComponent.Update(sour.Id, sour.Total, sour.Good, OwlveyCalendar.January201903, OwlveyCalendar.January201905);
+                        await sourceItemComponent.Update(sour.Id, sour.Total, sour.Good,
+                            OwlveyCalendar.January201903);
                     }
                 }
             }
@@ -247,8 +248,7 @@ namespace Owlvey.Falcon.ComponentsTests
                     var sourceItems = await sourceItemComponent.GetBySource(source.Id);
                     foreach (var sour in sourceItems)
                     {
-                        Assert.Equal(OwlveyCalendar.January201903, sour.Start);
-                        Assert.Equal(OwlveyCalendar.January201905, sour.End);                        
+                        Assert.Equal(OwlveyCalendar.January201903, sour.Target);                        
                     }
                 }
             }

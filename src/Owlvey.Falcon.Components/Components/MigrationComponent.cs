@@ -246,8 +246,7 @@ namespace Owlvey.Falcon.Components
                     items.Add(new SourceItemMigrationRp()
                     {
                         Product = product.Name,
-                        End = item.End.ToString("s", System.Globalization.CultureInfo.InvariantCulture),
-                        Start = item.Start.ToString("s", System.Globalization.CultureInfo.InvariantCulture),
+                        Target = item.Target.ToString("s", System.Globalization.CultureInfo.InvariantCulture),                        
                         Good = item.Good,
                         Source = item.Source.Name,
                         Total = item.Total,
@@ -525,9 +524,8 @@ namespace Owlvey.Falcon.Components
                     var source = sourceItemsSheet.Cells[row, 2].GetValue<string>();
                     var good = sourceItemsSheet.Cells[row, 3].GetValue<int>();
                     var total = sourceItemsSheet.Cells[row, 4].GetValue<int>();
-                    var start = DateTime.Parse(sourceItemsSheet.Cells[row, 5].GetValue<string>());
-                    var end = DateTime.Parse(sourceItemsSheet.Cells[row, 6].GetValue<string>());
-                    var clues = sourceItemsSheet.Cells[row, 7].GetValue<string>();
+                    var target = DateTime.Parse(sourceItemsSheet.Cells[row, 5].GetValue<string>());                    
+                    var clues = sourceItemsSheet.Cells[row, 6].GetValue<string>();
                     if (product != null && source != null)
                     {
                         var tmp = sources.Where(c => c.Name == source && c.Product.Name == product).Single();
@@ -540,8 +538,8 @@ namespace Owlvey.Falcon.Components
                         sourceItems.Add((tmp, new SourceItemPostRp()
                         {
                             SourceId = tmp.Id.Value,
-                            Start = start,
-                            End = end,
+                            Start = target,
+                            End = target,
                             Good = good,
                             Total = total,
                             Clues = targetClues
@@ -836,15 +834,15 @@ namespace Owlvey.Falcon.Components
                     var source = sourceItemsSheet.Cells[row, 3].GetValue<string>();
                     var good = sourceItemsSheet.Cells[row, 4].GetValue<int>();
                     var total = sourceItemsSheet.Cells[row, 5].GetValue<int>();
-                    var start = DateTime.Parse(sourceItemsSheet.Cells[row, 6].GetValue<string>());
-                    var end = DateTime.Parse(sourceItemsSheet.Cells[row, 7].GetValue<string>());
+                    var target = DateTime.Parse(sourceItemsSheet.Cells[row, 6].GetValue<string>());
+                    
 
                     var sourceTarget = sources.Single(c => c.Name == source && c.Product.Name == product && c.Product.Customer.Name == organization);
                     sourceItems.Add((sourceTarget, new SourceItemPostRp()
                     {
                         SourceId = sourceTarget.Id.Value,
-                        Start = start,
-                        End = end,
+                        Start = target,
+                        End = target,
                         Good = good,
                         Total = total,
                         Clues = new Dictionary<string, decimal>()

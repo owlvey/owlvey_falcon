@@ -68,14 +68,19 @@ namespace Owlvey.Falcon.Core.Entities
                 var random = new System.Random();
                 for (int i = 1; i < 13; i++)
                 {
-                    var defaultSourceItem = SourceItemEntity.Factory.Create(defaultSource, new DateTime(year, i, 1), new DateTime(year, i, 27), random.Next(800, 1000), 1000, on, user);
-                    defaultSource.SourceItems.Add(defaultSourceItem);
 
-                    var registrationSourceItem = SourceItemEntity.Factory.Create(registrationSource, new DateTime(year, i, 1), new DateTime(year, i, 27), random.Next(800, 1000), 1000, on, user);
-                    registrationSource.SourceItems.Add(registrationSourceItem);
+                    for (int j = 1; j < 28; j++)
+                    {
+                        var defaultSourceItem = SourceItemEntity.Factory.Create(defaultSource, new DateTime(year, i, j), random.Next(800, 1000), 1000, on, user);
+                        defaultSource.SourceItems.Add(defaultSourceItem);
 
-                    var paymentSourceItem = SourceItemEntity.Factory.Create(paymentSource, new DateTime(year, i, 1), new DateTime(year, i, 27), random.Next(800, 1000), 1000, on, user);
-                    paymentSource.SourceItems.Add(paymentSourceItem);
+                        var registrationSourceItem = SourceItemEntity.Factory.Create(registrationSource, new DateTime(year, i, j), random.Next(800, 1000), 1000, on, user);
+                        registrationSource.SourceItems.Add(registrationSourceItem);
+
+                        var paymentSourceItem = SourceItemEntity.Factory.Create(paymentSource, new DateTime(year, i, j), random.Next(800, 1000), 1000, on, user);
+                        paymentSource.SourceItems.Add(paymentSourceItem);
+
+                    }                    
                 }
 
                 var defaultIndicator = IndicatorEntity.Factory.Create(defaultFeature, defaultSource, on, user);

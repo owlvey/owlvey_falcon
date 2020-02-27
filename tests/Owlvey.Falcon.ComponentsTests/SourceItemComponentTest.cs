@@ -78,8 +78,8 @@ namespace Owlvey.Falcon.ComponentsTests
 
             Assert.NotEmpty(sourceRp.Clues);
 
-            Assert.Equal(1.1M, sourceRp.Clues["test"]);
-            Assert.Equal(1.2M, sourceRp.Clues["test_a"]);
+            Assert.Equal(4.4M, sourceRp.Clues["test"]);
+            Assert.Equal(4.8M, sourceRp.Clues["test_a"]);
         }
 
         [Fact]

@@ -22,7 +22,7 @@ namespace Owlvey.Falcon.Components
             this._dbContext = dbContext;            
         }
 
-        public async Task<SourceItemGetListRp> Create(SourceItemPropotionPostRp model) {
+        public async Task<IEnumerable<SourceItemGetListRp>> Create(SourceItemPropotionPostRp model) {
             var (good, total) = QualityUtils.ProportionToMinutes(model.Start, model.End, model.Proportion);
             return await this.Create(new SourceItemPostRp()
             {
@@ -34,21 +34,28 @@ namespace Owlvey.Falcon.Components
                  Clues = model.Clues
             });
         }
-        public async Task<SourceItemGetListRp> Create(SourceItemPostRp model)
+        public async Task<IEnumerable<SourceItemGetListRp>> Create(SourceItemPostRp model)
         {
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
             var source = await this._dbContext.Sources.SingleAsync(c => c.Id == model.SourceId);
-            var entity = SourceItemEntity.Factory.Create(source, model.Start, model.End, model.Good, model.Total, this._datetimeGateway.GetCurrentDateTime(), createdBy);
+            var range = SourceItemEntity.Factory.CreateFromRange(source, model.Start, model.End, model.Good, model.Total, this._datetimeGateway.GetCurrentDateTime(), createdBy);
 
             foreach (var key in model.Clues.Keys)
             {
-                ClueEntityFactory.Factory.Create(key, model.Clues[key], this._datetimeGateway.GetCurrentDateTime(), createdBy, entity);
+                foreach (var item in range)
+                {
+                    ClueEntityFactory.Factory.Create(key, model.Clues[key], this._datetimeGateway.GetCurrentDateTime(), createdBy, item);
+                }                
             }
 
-            this._dbContext.SourcesItems.Add(entity);
+            foreach (var item in range)
+            {
+                this._dbContext.SourcesItems.Add(item);
+            }
+
             await this._dbContext.SaveChangesAsync();
-            return this._mapper.Map<SourceItemGetListRp>(entity);
+            return this._mapper.Map<IEnumerable<SourceItemGetListRp>>(range);
         }
         public async Task BulkInsert(SourceEntity source, IEnumerable<SourceItemPostRp> models) {
 
@@ -56,17 +63,24 @@ namespace Owlvey.Falcon.Components
             int period = 0;
             foreach (var model in models)
             {
-                var entity = SourceItemEntity.Factory.Create(source, model.Start,
+                var range = SourceItemEntity.Factory.CreateFromRange(source, model.Start,
                     model.End, model.Good, model.Total, 
                     this._datetimeGateway.GetCurrentDateTime(), createdBy);
 
                 foreach (var clue in model.Clues)
                 {
-                    ClueEntityFactory.Factory.Create(clue.Key, clue.Value,
-                        this._datetimeGateway.GetCurrentDateTime(), createdBy, entity);
+                    foreach (var item in range)
+                    {
+                        ClueEntityFactory.Factory.Create(clue.Key, clue.Value,
+                        this._datetimeGateway.GetCurrentDateTime(), createdBy, item);
+                    }                    
                 }
 
-                this._dbContext.SourcesItems.Add(entity);
+                foreach (var item in range)
+                {
+                    this._dbContext.SourcesItems.Add(item);
+                }
+                
                 if (period > 50) {                    
                     await this._dbContext.SaveChangesAsync();
                     period = 0;
@@ -76,11 +90,11 @@ namespace Owlvey.Falcon.Components
         }
 
         public async Task<SourceItemGetListRp> Update(int sourceItemId,
-            int total, int good, DateTime start, DateTime end ) {
+            int total, int good, DateTime target) {
 
             var entity = await this._dbContext.SourcesItems.Where(c => c.Id == sourceItemId).SingleAsync();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
-            entity.Update(total, good, start, end);
+            entity.Update(total, good, target);
             this._dbContext.SourcesItems.Update(entity);
             await this._dbContext.SaveChangesAsync();
 
@@ -102,7 +116,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<IEnumerable<SourceItemGetListRp>> GetBySource(int sourceId)
         {
-            var entity = await this._dbContext.SourcesItems.Where(c => c.SourceId == sourceId).OrderBy(c=>c.Start).ToListAsync();
+            var entity = await this._dbContext.SourcesItems.Where(c => c.SourceId == sourceId).OrderBy(c=>c.Target).ToListAsync();
 
             return this._mapper.Map<IEnumerable<SourceItemGetListRp>>(entity);
         }

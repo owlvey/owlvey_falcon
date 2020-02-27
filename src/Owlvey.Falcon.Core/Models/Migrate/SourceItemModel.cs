@@ -12,8 +12,7 @@ namespace Owlvey.Falcon.Core.Models.Migrate
         public string Source { get; set; }
         public int Good { get; set; }
         public int Total { get; set; }        
-        public string Start { get; set; }
-        public string End { get; set; }
+        public string Target { get; set; }        
 
         public void Load(string organization, string product, string source, SourceItemEntity entity)
         {
@@ -22,8 +21,7 @@ namespace Owlvey.Falcon.Core.Models.Migrate
             this.Source = source;
             this.Good = entity.Good;
             this.Total = entity.Total;
-            this.End = entity.End.ToString("s", System.Globalization.CultureInfo.InvariantCulture);
-            this.Start = entity.Start.ToString("s", System.Globalization.CultureInfo.InvariantCulture);
+            this.Target = entity.Target.ToString("s", System.Globalization.CultureInfo.InvariantCulture);            
         }
         public static IEnumerable<SourceItemModel> Load(string organization, string product, string source, IEnumerable<SourceItemEntity> entities)
         {

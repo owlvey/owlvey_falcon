@@ -59,8 +59,7 @@ namespace Owlvey.Falcon.Repositories
             }
 
             // Customer Name Unique
-            modelBuilder.Entity<SourceItemEntity>().HasIndex(p => p.Start);
-            modelBuilder.Entity<SourceItemEntity>().HasIndex(p => p.End);
+            modelBuilder.Entity<SourceItemEntity>().HasIndex(p => p.Target);            
             modelBuilder.Entity<CustomerEntity>().HasIndex(c => c.Name).IsUnique();
 
             modelBuilder.Entity<SquadFeatureEntity>().HasKey(x => new { x.Id });
@@ -157,14 +156,7 @@ namespace Owlvey.Falcon.Repositories
             start = start.Date;
             end = end.Date;
             List<SourceItemEntity> result = new List<SourceItemEntity>();
-
-            var startTask = await this.SourcesItems.Where(c => c.SourceId == sourceId && c.Start >= start && c.Start <= end).ToListAsync();
-            var endTask = await this.SourcesItems.Where(c => c.SourceId == sourceId && c.End >= start && c.End <= end).ToListAsync();
-            var midTask = await this.SourcesItems.Where(c => c.SourceId == sourceId && c.Start >= start && c.End <= end).ToListAsync();
-            var involveTask = await this.SourcesItems.Where(c => c.SourceId == sourceId && start >= c.Start && end <= c.End).ToListAsync();
-
-            // Task.WaitAll(startTask, endTask, midTask, involveTask);
-            result =  result.Union(startTask.Union(endTask).Union(midTask).Union(involveTask).Distinct(new SourceItemEntityComparer())).ToList();                        
+            result = await this.SourcesItems.Where(c => c.SourceId == sourceId && c.Target >= start && c.Target <= end).ToListAsync();                        
             return result;
         }
 
@@ -174,14 +166,7 @@ namespace Owlvey.Falcon.Repositories
             start = start.Date;
             end = end.Date;
             List<SourceItemEntity> result = new List<SourceItemEntity>();
-
-            var startTask = await this.SourcesItems.Where(c =>  sources.Contains( c.SourceId )  && c.Start >= start && c.Start <= end).ToListAsync();
-            var endTask = await this.SourcesItems.Where(c => sources.Contains( c.SourceId ) && c.End >= start && c.End <= end).ToListAsync();
-            var midTask = await this.SourcesItems.Where(c => sources.Contains( c.SourceId ) && c.Start >= start && c.End <= end).ToListAsync();
-            var involveTask = await this.SourcesItems.Where(c => sources.Contains( c.SourceId ) && start >= c.Start && end <= c.End).ToListAsync();
-
-            // Task.WaitAll(startTask, endTask, midTask, involveTask);
-            result = result.Union(startTask.Union(endTask).Union(midTask).Union(involveTask).Distinct(new SourceItemEntityComparer())).ToList();
+            result = await this.SourcesItems.Where(c => sources.Contains(c.SourceId) && c.Target >= start && c.Target <= end).ToListAsync();            
             return result;
         }
 
@@ -190,11 +175,7 @@ namespace Owlvey.Falcon.Repositories
             start = start.Date;
             end = end.Date;
             List<SourceItemEntity> result = new List<SourceItemEntity>();
-            var startTask = await this.SourcesItems.Where(c => c.Start >= start && c.Start <= end).ToListAsync();
-            var endTask = await this.SourcesItems.Where(c =>  c.End >= start && c.End <= end).ToListAsync();
-            var midTask = await this.SourcesItems.Where(c =>  c.Start >= start && c.End <= end).ToListAsync();
-            var involveTask = await this.SourcesItems.Where(c => start >= c.Start && end <= c.End).ToListAsync();                        
-            result = result.Union(startTask.Union(endTask).Union(midTask).Union(involveTask).Distinct(new SourceItemEntityComparer())).ToList();
+            result = await this.SourcesItems.Where(c=>c.Target >= start && c.Target <= end).ToListAsync();
             return result;
         }
 
@@ -204,11 +185,7 @@ namespace Owlvey.Falcon.Repositories
             start = start.Date;
             end = end.Date;
             List<SourceItemEntity> result = new List<SourceItemEntity>();
-            var startTask = await this.SourcesItems.Where(c => productIds.Contains(c.Source.ProductId) && c.Start >= start && c.Start <= end).ToListAsync();
-            var endTask = await this.SourcesItems.Where(c => productIds.Contains(c.Source.ProductId) && c.End >= start && c.End <= end).ToListAsync();
-            var midTask = await this.SourcesItems.Where(c => productIds.Contains(c.Source.ProductId) && c.Start >= start && c.End <= end).ToListAsync();
-            var involveTask = await this.SourcesItems.Where(c => productIds.Contains(c.Source.ProductId) && start >= c.Start && end <= c.End).ToListAsync();                        
-            result = result.Union(startTask.Union(endTask).Union(midTask).Union(involveTask).Distinct(new SourceItemEntityComparer())).ToList();
+            result = await this.SourcesItems.Where(c => productIds.Contains(c.Source.ProductId) && c.Target >= start && c.Target <= end).ToListAsync();
             return result;
         }
 
