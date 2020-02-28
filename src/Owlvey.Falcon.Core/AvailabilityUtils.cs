@@ -118,6 +118,28 @@ namespace Owlvey.Falcon.Core
             return Math.Round((decimal)Math.Pow((double)slo, 1 / (double)items), 4);
         }
 
+        public static (int good, int total) ProportionToNumbers(decimal availability) {
+            if (availability >= 1) {
+                return (1, 1);
+            }
+            if (availability <= 0) {
+                return (0, 0);
+            }
+            int total = 1;
+            decimal good = availability;
+
+            while (good % 1 != 0) {
+                total *= 10;
+                good *= 10;
+            }
+
+            if (total < 100) {
+                good *= 10;
+                total *= 10;
+            }
+            return ((int)good, total); 
+        }
+
         public static (int good, int total) ProportionToMinutes(DateTime start, DateTime end, 
             decimal availability) {
                        

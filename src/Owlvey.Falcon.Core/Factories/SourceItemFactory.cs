@@ -23,15 +23,27 @@ namespace Owlvey.Falcon.Core.Entities
 
                 var days = (decimal)DateTimeUtils.DaysDiff(end, start);
 
-                var target_good = (int)Math.Ceiling(good / days);
-                var target_total = (int)Math.Ceiling(total / days);
-
-                for (int i = 0; i < days; i++)
+                if (source.Kind == SourceKindEnum.Proportion)
                 {
-                    var target = start.AddDays(i);
-                    var entity = SourceItemEntity.Factory.Create(source, target, target_good, target_total, on, createdBy);
-                    result.Add(entity);
+                    for (int i = 0; i < days; i++)
+                    {
+                        var target = start.AddDays(i);
+                        var entity = SourceItemEntity.Factory.Create(source, target, good, total, on, createdBy);
+                        result.Add(entity);
+                    }
                 }
+                else {
+                    var target_good = (int)Math.Ceiling(good / days);
+                    var target_total = (int)Math.Ceiling(total / days);
+
+                    for (int i = 0; i < days; i++)
+                    {
+                        var target = start.AddDays(i);
+                        var entity = SourceItemEntity.Factory.Create(source, target, target_good, target_total, on, createdBy);
+                        result.Add(entity);
+                    }
+                }
+                
                 return result;
 
             }

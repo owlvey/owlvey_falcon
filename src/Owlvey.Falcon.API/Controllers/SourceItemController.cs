@@ -8,7 +8,7 @@ using Owlvey.Falcon.Core.Values;
 using Owlvey.Falcon.Models;
 
 namespace Owlvey.Falcon.API.Controllers
-{
+{    
     [Route("sourceItems")]
     public class SourceItemController: BaseController
     {
@@ -18,9 +18,9 @@ namespace Owlvey.Falcon.API.Controllers
         {
             this._sourceItemComponent = sourceItemComponent;
         }
-
+        
         [HttpPost]
-        [ProducesResponseType(typeof(SourceItemGetRp), 200)]
+        [ProducesResponseType(typeof(void), 200)]
         [ProducesResponseType(409)]
         [ProducesResponseType(401)]
         [ProducesResponseType(400)]
@@ -31,11 +31,8 @@ namespace Owlvey.Falcon.API.Controllers
             {
                 return this.BadRequest(this.ModelState);
             }            
-            var response = await this._sourceItemComponent.Create(model);
-
-            //TODO fix 
-            // return this.Created(Url.RouteUrl("GetBySourceItemId", new { response.Id }), response);
-            return this.Ok();
+            await this._sourceItemComponent.Create(model);            
+            return this.Ok(new { });
         }
 
         
@@ -54,7 +51,7 @@ namespace Owlvey.Falcon.API.Controllers
             //TODO fix
 
             // return this.Created(Url.RouteUrl("GetBySourceItemId", new { response.Id }), response);
-            return this.Ok(); 
+            return this.Ok(new { }); 
         }
 
         [HttpGet("{id}", Name = "GetBySourceItemId")]

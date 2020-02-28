@@ -65,6 +65,13 @@ namespace Owlvey.Falcon.API
                 options.Filters.Add(new AuthorizeFilter(policy));
             });
 
+            services.AddApiVersioning(options => {
+                    options.ReportApiVersions = true;
+                    options.AssumeDefaultVersionWhenUnspecified = true;
+                    options.DefaultApiVersion = new ApiVersion(1, 0);
+                }                
+            );
+             
             services.AddCors();
             services.AddAuthority(Configuration, Environment);
             services.AddApplicationServices(Configuration);
