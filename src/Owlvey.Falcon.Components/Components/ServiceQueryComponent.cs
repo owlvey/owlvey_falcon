@@ -31,6 +31,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<IEnumerable<ServiceGetListRp>> GetServicesWithAvailabilityByGroup(int productId, DateTime start, DateTime end, string group)
         {
+            var (bs, be, ps, pe) = DateTimeUtils.CalculateBeforePreviousDates(start, end);
             var entity  = await this._dbContext.FullLoadProduct(productId);
 
             var targetServices = entity.Services.Where(c => string.Equals(c.Group, group,StringComparison.InvariantCultureIgnoreCase)).ToList();
@@ -41,69 +42,72 @@ namespace Owlvey.Falcon.Components
 
                 var tmp = this._mapper.Map<ServiceGetListRp>(item);
                 tmp.Availability = await this.MeasureAvailability(item, start, end);                
-                tmp.BudgetMinutes = QualityUtils.MeasureBudgetInMinutes(tmp.Budget, start, end);
-
-                tmp.Risk = "low";
-                tmp.Deploy = QualityUtils.BudgetToAction(tmp.Budget);
-                if (tmp.Budget > 0)
-                {                    
-                    if (tmp.BudgetMinutes < tmp.MTTM)
-                    {
-                        tmp.Risk = "high";
-                    }
-                }
-                else
-                {                    
-                    tmp.Risk = "high";
-                }
+                tmp.Deploy = QualityUtils.BudgetToAction(tmp.Budget);                
                 result.Add(tmp);
             }
 
+            entity.ClearSourceItems();
+
+            foreach (var item in targetServices)
+            {
+                var tmp = result.Where(c => c.Id == item.Id).SingleOrDefault();
+                if (tmp != null) {
+                    tmp.Previous = await this.MeasureAvailability(item, ps, pe);
+                }                
+            }
             return result;
         }
 
         public async Task<IEnumerable<ServiceGetListRp>> GetServicesWithAvailability(int productId, DateTime start, DateTime end)
-        {
-            var entity = await this._dbContext.FullLoadProduct(productId);
+        {            
 
+            var (bs, be, ps, pe) = DateTimeUtils.CalculateBeforePreviousDates(start, end); 
+
+            var entity = await this._dbContext.FullLoadProduct(productId);
+            var sourceItems = await this._dbContext.GetSourceItemsByProduct(productId, start, end);
+            foreach (var service in entity.Services)
+            {
+                foreach (var map in service.FeatureMap)
+                {
+                    foreach (var indicator in map.Feature.Indicators)
+                    {                        
+                        indicator.Source.SourceItems = sourceItems.Where(c=>c.SourceId == indicator.SourceId).ToList();
+                    }
+                }
+            }            
 
             var result = new List<ServiceGetListRp>();
             foreach (var item in entity.Services)
             {
-
                 var tmp = this._mapper.Map<ServiceGetListRp>(item);
-                tmp.Availability = await this.MeasureAvailability(item, start, end);
-                var incidents = await this._dbContext.GetIncidentsByService(item.Id.Value);
-
-                if (incidents.Count() > 0)
-                {
-                    var agg = new IncidentMetricAggregate(incidents);
-                    var (mttd, mtte, mttf, mttm) = agg.Metrics();
-                    tmp.MTTD = mttd;
-                    tmp.MTTE = mtte;
-                    tmp.MTTF = mttf;
-                }
-
-                tmp.BudgetMinutes = QualityUtils.MeasureBudgetInMinutes(tmp.Budget, start, end);
-
-                tmp.Risk = "low";
-
-                if (tmp.Budget > 0)
-                {
-                    tmp.Deploy = "innovate";
-                    if (tmp.BudgetMinutes < tmp.MTTM)
-                    {
-                        tmp.Risk = "high";
-                    }
-                }
-                else
-                {
-                    tmp.Deploy = "improve";
-                    tmp.Risk = "high";
-                }
+                var agg = new ServiceAvailabilityAggregate(item);
+                var (availability, _, _) = agg.MeasureAvailability();
+                tmp.Availability = availability;
+                tmp.Deploy = QualityUtils.BudgetToAction(tmp.Budget); 
                 result.Add(tmp);
             }
-
+            entity.ClearSourceItems();
+            
+            sourceItems = await this._dbContext.GetSourceItemsByProduct(productId, ps, pe);
+            foreach (var service in entity.Services)
+            {
+                foreach (var map in service.FeatureMap)
+                {
+                    foreach (var indicator in map.Feature.Indicators)
+                    {
+                        indicator.Source.SourceItems = sourceItems.Where(c => c.SourceId == indicator.SourceId).ToList();
+                    }
+                }
+            }
+            foreach (var item in entity.Services)
+            {
+                var tmp = result.Where(c => c.Id == item.Id).SingleOrDefault();
+                if (tmp != null) {
+                    var agg = new ServiceAvailabilityAggregate(item);
+                    var (availability, _, _) = agg.MeasureAvailability();
+                    tmp.Previous = availability;
+                }                
+            }
             return result;
         }
 

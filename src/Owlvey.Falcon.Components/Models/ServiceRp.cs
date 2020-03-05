@@ -85,8 +85,10 @@ namespace Owlvey.Falcon.Models
     {
         public int FeaturesCount { get; set; }
         public decimal Availability { get; set; }
-        public string Deploy { get; set; }
-        public string Risk { get; set; }
+
+        public decimal Previous { get; set; }
+
+        public string Deploy { get; set; }        
         public decimal FeatureSlo { get {
                 if (this.FeaturesCount == 0) return this.SLO;
                 return Math.Round((decimal)Math.Pow((double)this.SLO, 1 / (double)this.FeaturesCount), 4);                
@@ -97,8 +99,7 @@ namespace Owlvey.Falcon.Models
             {
                 return QualityUtils.MeasureBudget(Availability, SLO);
             }
-        }
-        public decimal BudgetMinutes { get; set; }
+        }        
     }
 
     public class ServicePostRp {

@@ -39,5 +39,23 @@ namespace Owlvey.Falcon.Core
             TimeSpan span = end.AddDays(1).Subtract(start);
             return Math.Abs((int)span.TotalDays);
         }
+
+        public static (DateTime beforeStart, DateTime beforeEnd, 
+            DateTime previousStart, DateTime previousEnd) CalculateBeforePreviousDates(DateTime? start, DateTime? end) {
+
+            if (!start.HasValue || !end.HasValue) {
+                throw new ApplicationException("start or end dates are null");
+            }
+
+            var days = -1 * DaysDiff(end.Value, start.Value);
+
+            DateTime previousEnd = start.Value.Date.AddSeconds(-1);
+            DateTime previousStart = start.Value.AddDays(days).Date;
+
+            DateTime beforeEnd = previousStart.Date.AddSeconds(-1);
+            DateTime beforeStart = previousStart.AddDays(days).Date;
+
+            return (beforeStart, beforeEnd, previousStart, previousEnd);
+        }
     }
 }

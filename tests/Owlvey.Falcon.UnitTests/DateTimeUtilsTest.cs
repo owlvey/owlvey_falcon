@@ -1,6 +1,7 @@
 ﻿using System;
 using Owlvey.Falcon.Core;
 using Xunit;
+using static Owlvey.Falcon.UnitTests.TestDataFactory;
 
 namespace Owlvey.Falcon.UnitTests
 {
@@ -27,6 +28,25 @@ namespace Owlvey.Falcon.UnitTests
             result = DateTimeUtils.FormatTimeToInMinutes(11581);
             Assert.Equal("01w 1d 01h 01m", result);
 
+        }
+
+        [Fact]
+        public void CalculateBeforePreviousDatesTest() {
+            var start = OwlveyCalendar.January201903;
+            var end = OwlveyCalendar.January201910;
+
+            var diff = DateTimeUtils.DaysDiff(end, start); 
+
+            var (bs, be, ps, pe) = DateTimeUtils.CalculateBeforePreviousDates(start, end);
+
+            Assert.Equal(new DateTime(2018, 12, 26), ps);
+            Assert.Equal(new DateTime(2019, 1, 2, 23,59,59), pe);
+
+            Assert.Equal(diff, DateTimeUtils.DaysDiff(pe, ps));
+
+            Assert.Equal(new DateTime(2018, 12, 18), bs);
+            Assert.Equal(new DateTime(2018, 12, 25, 23, 59, 59), be);
+            Assert.Equal(diff, DateTimeUtils.DaysDiff(be, bs));
         }
     }
 }

@@ -50,5 +50,22 @@ namespace Owlvey.Falcon.Core.Entities
             return !string.IsNullOrWhiteSpace(this.Leaders) && this.Leaders.Contains(email);
         }
 
+        public void ClearSourceItems() {
+            foreach (var service in this.Services)
+            {
+                foreach (var map in service.FeatureMap)
+                {
+                    foreach (var indicator in map.Feature.Indicators)
+                    {
+                        indicator.Source.SourceItems = new List<SourceItemEntity>();
+                    }
+                }
+            }
+
+            foreach (var item in this.Sources)
+            {
+                item.SourceItems = new List<SourceItemEntity>();
+            }
+        }
     }
 }

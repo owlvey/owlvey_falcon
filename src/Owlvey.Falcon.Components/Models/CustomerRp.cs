@@ -62,10 +62,15 @@ namespace Owlvey.Falcon.Models
 
             [JsonIgnore]
             public List<CustomerServiceRp> Services = new List<CustomerServiceRp>();
+
             public decimal Effectiveness { get {                    
+                    
                     return QualityUtils.CalculateProportion(this.Services.Count, this.Services.Where(c => c.Budget >= 0).Count());                    
                 }
             }
+
+            public decimal Previous { get; set; }
+            public decimal Before { get; set; }
 
             public int Total {
                 get {

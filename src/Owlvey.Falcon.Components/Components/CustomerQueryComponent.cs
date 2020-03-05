@@ -14,6 +14,7 @@ using Owlvey.Falcon.Core.Entities;
 using System.IO;
 using OfficeOpenXml;
 using System.Data;
+using Owlvey.Falcon.Core;
 
 namespace Owlvey.Falcon.Components
 {
@@ -127,23 +128,22 @@ namespace Owlvey.Falcon.Components
             return result;
         }
 
-        public async Task<CustomerDashboardRp> GetCustomersDashboardProductServices(DateTime? start, DateTime? end)
+        private async Task<CustomerDashboardRp> InternalGetDashboardCustomersProductServices(DateTime? start, DateTime? end)
         {
             var result = new CustomerDashboardRp();
             var customers = await this._dbContext.Customers
-                .Include(c=>c.Products)
-                .ThenInclude(c=>c.Services)
-                .ThenInclude(c=>c.FeatureMap)
-                .ThenInclude(c=>c.Feature)
-                .ThenInclude(c=>c.Indicators)
-                .ThenInclude(c=>c.Source)
+                .Include(c => c.Products)
+                .ThenInclude(c => c.Services)
+                .ThenInclude(c => c.FeatureMap)
+                .ThenInclude(c => c.Feature)
+                .ThenInclude(c => c.Indicators)
+                .ThenInclude(c => c.Source)
                 .ToListAsync();
 
             var sourceItems = await this._dbContext.GetSourceItems(start.Value, end.Value);
 
             foreach (var customer in customers)
             {
-                
                 foreach (var product in customer.Products)
                 {
                     var productResult = new CustomerDashboardRp.CustomerProductRp(product);
@@ -156,13 +156,38 @@ namespace Owlvey.Falcon.Components
                             {
                                 var target = sourceItems.Where(c => c.SourceId == indicator.SourceId).ToList();
                                 indicator.Source.SourceItems = target;
-                            }                            
+                            }
                         }
                         service.MeasureAvailability();
                         var serviceResult = new CustomerDashboardRp.CustomerServiceRp(service);
                         productResult.Services.Add(serviceResult);
                     }
                     result.Products.Add(productResult);
+                }
+            }
+            return result;
+        }
+        public async Task<CustomerDashboardRp> GetCustomersDashboardProductServices(DateTime? start, DateTime? end)
+        {
+            var result = new CustomerDashboardRp();
+
+            result = await this.InternalGetDashboardCustomersProductServices(start, end);
+
+            var (bs, be, ps, pe) = DateTimeUtils.CalculateBeforePreviousDates(start, end);
+
+            var before = await this.InternalGetDashboardCustomersProductServices(bs, be);
+            var previous = await this.InternalGetDashboardCustomersProductServices(ps, pe);
+
+            foreach (var product in result.Products)
+            {
+                var target_product = previous.Products.Where(c => c.ProductId == product.ProductId).SingleOrDefault();
+                if (target_product != null) {
+                    product.Previous = target_product.Effectiveness;
+                }
+                var target_before = before.Products.Where(c => c.ProductId == product.ProductId).SingleOrDefault();
+                if (target_before != null)
+                {
+                    product.Before = target_before.Effectiveness;
                 }
             }
             return result;
