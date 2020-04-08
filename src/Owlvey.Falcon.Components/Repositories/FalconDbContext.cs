@@ -66,7 +66,13 @@ namespace Owlvey.Falcon.Repositories
             modelBuilder.Entity<SquadFeatureEntity>().HasKey(x => new { x.Id });
 
             modelBuilder.Entity<ProductEntity>().HasIndex(c => new { c.CustomerId, c.Name }).IsUnique();
-            
+
+            modelBuilder.Entity<ServiceEntity>().HasIndex(c => new { c.ProductId, c.Name }).IsUnique();
+            modelBuilder.Entity<FeatureEntity>().HasIndex(c => new { c.ProductId, c.Name }).IsUnique();
+            modelBuilder.Entity<SourceEntity>().HasIndex(c => new { c.ProductId, c.Name }).IsUnique();
+            modelBuilder.Entity<SquadEntity>().HasIndex(c => new { c.CustomerId, c.Name }).IsUnique();
+
+
             modelBuilder.Entity<SquadFeatureEntity>()
                .HasOne(pt => pt.Squad)
                .WithMany(p => p.FeatureMaps)

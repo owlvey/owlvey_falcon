@@ -58,7 +58,7 @@ CREATE TABLE [ProductEntity] (
     [CreatedBy] nvarchar(max) NOT NULL,
     [ModifiedOn] datetime2 NOT NULL,
     [ModifiedBy] nvarchar(max) NOT NULL,
-    [Name] nvarchar(max) NOT NULL,
+    [Name] nvarchar(450) NOT NULL,
     [Avatar] nvarchar(max) NOT NULL,
     [Description] nvarchar(max) NOT NULL,
     [Leaders] nvarchar(max) NULL,
@@ -75,7 +75,7 @@ CREATE TABLE [SquadEntity] (
     [CreatedBy] nvarchar(max) NOT NULL,
     [ModifiedOn] datetime2 NOT NULL,
     [ModifiedBy] nvarchar(max) NOT NULL,
-    [Name] nvarchar(max) NOT NULL,
+    [Name] nvarchar(450) NOT NULL,
     [Description] nvarchar(max) NULL,
     [Avatar] nvarchar(max) NULL,
     [Leaders] nvarchar(max) NULL,
@@ -107,7 +107,7 @@ CREATE TABLE [FeatureEntity] (
     [CreatedBy] nvarchar(max) NOT NULL,
     [ModifiedOn] datetime2 NOT NULL,
     [ModifiedBy] nvarchar(max) NOT NULL,
-    [Name] nvarchar(max) NOT NULL,
+    [Name] nvarchar(450) NOT NULL,
     [Description] nvarchar(max) NOT NULL,
     [Avatar] nvarchar(max) NOT NULL,
     [ProductId] int NOT NULL,
@@ -146,13 +146,13 @@ CREATE TABLE [ServiceEntity] (
     [CreatedBy] nvarchar(max) NOT NULL,
     [ModifiedOn] datetime2 NOT NULL,
     [ModifiedBy] nvarchar(max) NOT NULL,
-    [Name] nvarchar(max) NOT NULL,
+    [Name] nvarchar(450) NOT NULL,
     [Description] nvarchar(max) NULL,
-    [Owner] nvarchar(max) NOT NULL,
     [Slo] decimal(18,2) NOT NULL,
     [Aggregation] int NOT NULL,
     [Avatar] nvarchar(max) NOT NULL,
     [Leaders] nvarchar(max) NULL,
+    [Group] nvarchar(max) NOT NULL,
     [ProductId] int NOT NULL,
     CONSTRAINT [PK_ServiceEntity] PRIMARY KEY ([Id]),
     CONSTRAINT [FK_ServiceEntity_ProductEntity_ProductId] FOREIGN KEY ([ProductId]) REFERENCES [ProductEntity] ([Id]) ON DELETE CASCADE
@@ -166,13 +166,14 @@ CREATE TABLE [SourceEntity] (
     [CreatedBy] nvarchar(max) NOT NULL,
     [ModifiedOn] datetime2 NOT NULL,
     [ModifiedBy] nvarchar(max) NOT NULL,
-    [Name] nvarchar(max) NOT NULL,
+    [Name] nvarchar(450) NOT NULL,
     [Tags] nvarchar(max) NULL,
     [GoodDefinition] nvarchar(max) NOT NULL,
     [TotalDefinition] nvarchar(max) NOT NULL,
     [Avatar] nvarchar(max) NULL,
     [Description] nvarchar(max) NULL,
     [Kind] int NOT NULL,
+    [Group] int NOT NULL,
     [ProductId] int NOT NULL,
     CONSTRAINT [PK_SourceEntity] PRIMARY KEY ([Id]),
     CONSTRAINT [FK_SourceEntity_ProductEntity_ProductId] FOREIGN KEY ([ProductId]) REFERENCES [ProductEntity] ([Id]) ON DELETE CASCADE
@@ -266,10 +267,24 @@ CREATE TABLE [SourceItemEntity] (
     [SourceId] int NOT NULL,
     [Good] int NOT NULL,
     [Total] int NOT NULL,
-    [Start] datetime2 NOT NULL,
-    [End] datetime2 NOT NULL,
+    [Target] datetime2 NOT NULL,
     CONSTRAINT [PK_SourceItemEntity] PRIMARY KEY ([Id]),
     CONSTRAINT [FK_SourceItemEntity_SourceEntity_SourceId] FOREIGN KEY ([SourceId]) REFERENCES [SourceEntity] ([Id]) ON DELETE CASCADE
+);
+
+GO
+
+CREATE TABLE [ClueEntity] (
+    [Id] int NOT NULL IDENTITY,
+    [CreatedOn] datetime2 NOT NULL,
+    [CreatedBy] nvarchar(max) NOT NULL,
+    [ModifiedOn] datetime2 NOT NULL,
+    [ModifiedBy] nvarchar(max) NOT NULL,
+    [SourceItemId] int NOT NULL,
+    [Name] nvarchar(max) NOT NULL,
+    [Value] decimal(18,2) NOT NULL,
+    CONSTRAINT [PK_ClueEntity] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_ClueEntity_SourceItemEntity_SourceItemId] FOREIGN KEY ([SourceItemId]) REFERENCES [SourceItemEntity] ([Id]) ON DELETE CASCADE
 );
 
 GO
@@ -278,11 +293,15 @@ CREATE INDEX [IX_AnchorEntity_ProductId] ON [AnchorEntity] ([ProductId]);
 
 GO
 
+CREATE INDEX [IX_ClueEntity_SourceItemId] ON [ClueEntity] ([SourceItemId]);
+
+GO
+
 CREATE UNIQUE INDEX [IX_CustomerEntity_Name] ON [CustomerEntity] ([Name]);
 
 GO
 
-CREATE INDEX [IX_FeatureEntity_ProductId] ON [FeatureEntity] ([ProductId]);
+CREATE UNIQUE INDEX [IX_FeatureEntity_ProductId_Name] ON [FeatureEntity] ([ProductId], [Name]);
 
 GO
 
@@ -314,11 +333,11 @@ CREATE INDEX [IX_MemberEntity_UserId] ON [MemberEntity] ([UserId]);
 
 GO
 
-CREATE INDEX [IX_ProductEntity_CustomerId] ON [ProductEntity] ([CustomerId]);
+CREATE UNIQUE INDEX [IX_ProductEntity_CustomerId_Name] ON [ProductEntity] ([CustomerId], [Name]);
 
 GO
 
-CREATE INDEX [IX_ServiceEntity_ProductId] ON [ServiceEntity] ([ProductId]);
+CREATE UNIQUE INDEX [IX_ServiceEntity_ProductId_Name] ON [ServiceEntity] ([ProductId], [Name]);
 
 GO
 
@@ -330,11 +349,7 @@ CREATE INDEX [IX_ServiceMapEntity_ServiceId] ON [ServiceMapEntity] ([ServiceId])
 
 GO
 
-CREATE INDEX [IX_SourceEntity_ProductId] ON [SourceEntity] ([ProductId]);
-
-GO
-
-CREATE INDEX [IX_SourceItemEntity_End] ON [SourceItemEntity] ([End]);
+CREATE UNIQUE INDEX [IX_SourceEntity_ProductId_Name] ON [SourceEntity] ([ProductId], [Name]);
 
 GO
 
@@ -342,11 +357,11 @@ CREATE INDEX [IX_SourceItemEntity_SourceId] ON [SourceItemEntity] ([SourceId]);
 
 GO
 
-CREATE INDEX [IX_SourceItemEntity_Start] ON [SourceItemEntity] ([Start]);
+CREATE INDEX [IX_SourceItemEntity_Target] ON [SourceItemEntity] ([Target]);
 
 GO
 
-CREATE INDEX [IX_SquadEntity_CustomerId] ON [SquadEntity] ([CustomerId]);
+CREATE UNIQUE INDEX [IX_SquadEntity_CustomerId_Name] ON [SquadEntity] ([CustomerId], [Name]);
 
 GO
 
@@ -359,7 +374,7 @@ CREATE INDEX [IX_SquadFeatureEntity_SquadId] ON [SquadFeatureEntity] ([SquadId])
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20191217175143_InitialCreate', N'3.1.0');
+VALUES (N'20200408202624_InitialCreate', N'3.1.0');
 
 GO
 
