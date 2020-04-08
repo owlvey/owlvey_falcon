@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Logging;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Gateways;
+using System.Text.Json.Serialization;
 
 namespace Owlvey.Falcon.API
 {
@@ -64,6 +65,10 @@ namespace Owlvey.Falcon.API
 
                 options.Filters.Add(new AuthorizeFilter(policy));
             });
+            services.AddControllersWithViews().AddJsonOptions(
+                options => options.JsonSerializerOptions.Converters.Add(
+                        new JsonStringEnumConverter()
+                    ));
 
             services.AddApiVersioning(options => {
                     options.ReportApiVersions = true;
@@ -112,9 +117,11 @@ namespace Owlvey.Falcon.API
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
+                
                 c.DocumentTitle = swaggerOptions.Value.Title;
                 c.RoutePrefix = string.Empty;
                 c.SwaggerEndpoint($"{swaggerOptions.Value.Endpoint}", swaggerOptions.Value.Title);
+                
             });
 
             if (!env.IsDocker() && !env.IsDevelopment())
