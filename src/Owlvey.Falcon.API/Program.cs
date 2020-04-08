@@ -11,6 +11,8 @@ using Microsoft.Extensions.Logging;
 using Serilog.Events;
 using Serilog.Extensions.Logging;
 using Serilog.Formatting.Compact;
+using Serilog.Enrichers;
+using System.Threading;
 
 namespace Owlvey.Falcon.API
 {
@@ -19,27 +21,19 @@ namespace Owlvey.Falcon.API
         static readonly LoggerProviderCollection Providers = new LoggerProviderCollection();
         public static int Main(string[] args)
         {
-            
+            var configuration = new ConfigurationBuilder()
+                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                    .AddEnvironmentVariables()
+                    .AddCommandLine(args)                    
+                    .Build();
+
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .Enrich.FromLogContext()
-                .WriteTo.Console()
-                .WriteTo.File(new RenderedCompactJsonFormatter(), 
-                         "./logs/log.log", shared: false,
-                        fileSizeLimitBytes: 1_000_000,
-                        rollOnFileSizeLimit: true,
-                        rollingInterval: RollingInterval.Hour,
-                        flushToDiskInterval: TimeSpan.FromSeconds(10))               
+                .ReadFrom.Configuration(configuration)
                 .CreateLogger();
 
             try
-            {
-                Log.Information("Starting web host");
-                var configuration = new ConfigurationBuilder()
-                    .AddCommandLine(args)
-                    .Build();
-                BuildWebHost(args, configuration).Run();
+            {                
+                Log.Information("Starting web host at " + DateTime.Now.ToLongTimeString() );                
                 return 0;
             }
             catch (Exception ex)
