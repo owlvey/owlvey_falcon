@@ -55,6 +55,35 @@ namespace Owlvey.Falcon.ComponentsTests
             Assert.NotEmpty(products);
 
         }
+
+
+        [Fact]
+        public async Task ProductIdempotenceSuccess()
+        {
+            var container = ComponentTestFactory.BuildContainer();
+
+            var customerId = await ComponentTestFactory.BuildCustomer(container);
+            var productComponet = container.GetInstance<ProductComponent>();
+            var productQueryComponent = container.GetInstance<ProductQueryComponent>();
+
+            await productComponet.CreateProduct(new Models.ProductPostRp()
+            {
+                CustomerId = customerId,
+                Name = "test"
+            });
+
+            await productComponet.CreateProduct(new Models.ProductPostRp()
+            {
+                CustomerId = customerId,
+                Name = "test"
+            });
+
+            var products = await productQueryComponent.GetProducts(customerId);
+            Assert.NotEmpty(products);
+            Assert.Equal(2, products.Count());
+        }
+
+
         [Fact]
         public async Task ProductDeleteSuccess()
         {

@@ -7,7 +7,7 @@ namespace Owlvey.Falcon.Core.Entities
 {
     public partial class ProductEntity : BaseEntity
     {
-        [Required]
+        [Required]        
         public string Name { get; set; }
         [Required]
         public string Avatar { get; set; }

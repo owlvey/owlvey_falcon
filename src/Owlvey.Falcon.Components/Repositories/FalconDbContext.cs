@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Owlvey.Falcon.Core;
 using System.Threading;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 
 namespace Owlvey.Falcon.Repositories
 {
@@ -64,6 +65,7 @@ namespace Owlvey.Falcon.Repositories
 
             modelBuilder.Entity<SquadFeatureEntity>().HasKey(x => new { x.Id });
 
+            modelBuilder.Entity<ProductEntity>().HasIndex(c => new { c.Id, c.Name }).IsUnique();
             
             modelBuilder.Entity<SquadFeatureEntity>()
                .HasOne(pt => pt.Squad)
