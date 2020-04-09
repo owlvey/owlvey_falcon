@@ -114,6 +114,10 @@ namespace Owlvey.Falcon.Repositories
                .OnDelete(DeleteBehavior.Cascade)
                .HasForeignKey(pt => pt.ServiceId);
 
+            modelBuilder.Entity<ServiceMapEntity>().HasKey(c => new {
+                c.ServiceId, c.FeatureId
+            });
+
             modelBuilder.Entity<IndicatorEntity>().HasKey(x => new { x.Id });
             
             modelBuilder.Entity<IndicatorEntity>()
