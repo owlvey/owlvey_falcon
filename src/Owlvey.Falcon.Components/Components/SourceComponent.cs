@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using Owlvey.Falcon.Core.Aggregates;
 using Owlvey.Falcon.Core;
 using Owlvey.Falcon.Repositories.Sources;
+using Polly;
 
 namespace Owlvey.Falcon.Components
 {
@@ -75,18 +76,28 @@ namespace Owlvey.Falcon.Components
         {            
             var createdBy = this._identityService.GetIdentity();
 
-            var entity = await this._dbContext.GetSource(model.ProductId, model.Name);
+            var retryPolicy = Policy.Handle<DbUpdateException>()
+                .WaitAndRetryAsync(this._configuration.DefaultRetryAttempts,
+                i => this._configuration.DefaultPauseBetweenFails);
 
-            if (entity == null) {
-                var product = await this._dbContext.Products.SingleAsync(c => c.Id == model.ProductId);
-                entity = SourceEntity.Factory.Create(product, model.Name, 
-                    this._datetimeGateway.GetCurrentDateTime(), createdBy, 
-                    model.Kind, model.Group);
-                await this._dbContext.AddAsync(entity);
-                await this._dbContext.SaveChangesAsync();
-            }
+            return await retryPolicy.ExecuteAsync(async () =>
+            {
+                var entity = await this._dbContext.GetSource(model.ProductId, model.Name);
 
-            return this._mapper.Map<SourceGetListRp>(entity);
+                if (entity == null)
+                {
+                    var product = await this._dbContext.Products.SingleAsync(c => c.Id == model.ProductId);
+                    entity = SourceEntity.Factory.Create(product, model.Name,
+                        this._datetimeGateway.GetCurrentDateTime(), createdBy,
+                        model.Kind, model.Group);
+                    await this._dbContext.AddAsync(entity);
+                    await this._dbContext.SaveChangesAsync();
+                }
+
+                return this._mapper.Map<SourceGetListRp>(entity);
+            });
+
+
         }
 
         public async Task Delete(int sourceId) {

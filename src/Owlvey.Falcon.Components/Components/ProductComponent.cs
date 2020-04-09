@@ -13,6 +13,7 @@ using AutoMapper;
 using Owlvey.Falcon.Repositories.Products;
 using Owlvey.Falcon.Repositories.Features;
 using Owlvey.Falcon.Repositories.Services;
+using Polly;
 
 namespace Owlvey.Falcon.Components
 {
@@ -102,17 +103,25 @@ namespace Owlvey.Falcon.Components
         public async Task<ProductGetListRp> CreateProduct(ProductPostRp model)
         {            
             var createdBy = this._identityService.GetIdentity();
-            var entity = await this._dbContext.GetProduct(model.CustomerId, model.Name);
-            if (entity == null) {
-                var customer = await this._dbContext.Customers.SingleAsync(c => c.Id == model.CustomerId);
-                entity = ProductEntity.Factory.Create(model.Name,
-                    this._datetimeGateway.GetCurrentDateTime(),
-                    createdBy, customer);
-                this._dbContext.Products.Add(entity);
-                await this._dbContext.SaveChangesAsync();
-            }
 
-            return this._mapper.Map<ProductGetListRp>(entity);
+            var retryPolicy = Policy.Handle<DbUpdateException>()
+                .WaitAndRetryAsync(this._configuration.DefaultRetryAttempts,
+                i => this._configuration.DefaultPauseBetweenFails);
+
+            return await retryPolicy.ExecuteAsync(async () =>
+            {
+                var entity = await this._dbContext.GetProduct(model.CustomerId, model.Name);
+                if (entity == null)
+                {
+                    var customer = await this._dbContext.Customers.SingleAsync(c => c.Id == model.CustomerId);
+                    entity = ProductEntity.Factory.Create(model.Name,
+                        this._datetimeGateway.GetCurrentDateTime(),
+                        createdBy, customer);
+                    this._dbContext.Products.Add(entity);
+                    await this._dbContext.SaveChangesAsync();
+                }
+                return this._mapper.Map<ProductGetListRp>(entity);
+            });
         }
 
         /// <summary>
