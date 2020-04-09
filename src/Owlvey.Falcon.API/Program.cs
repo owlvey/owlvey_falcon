@@ -33,7 +33,8 @@ namespace Owlvey.Falcon.API
 
             try
             {                
-                Log.Information("Starting web host at " + DateTime.Now.ToLongTimeString() );                
+                Log.Information("Starting web host at " + DateTime.Now.ToLongTimeString() );                                    
+                BuildWebHost(args, configuration).Run();
                 return 0;
             }
             catch (Exception ex)
