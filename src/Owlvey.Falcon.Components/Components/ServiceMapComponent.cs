@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.Core.Entities;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Polly;
 //
 namespace Owlvey.Falcon.Components
 {
@@ -43,28 +44,28 @@ namespace Owlvey.Falcon.Components
             });           
         }
 
-        public async Task<BaseComponentResultRp> CreateServiceMap(ServiceMapPostRp model)
-        {
-            var result = new BaseComponentResultRp();
+        public async Task<ServiceMapEntity> CreateServiceMap(ServiceMapPostRp model)
+        {            
             var createdBy = this._identityService.GetIdentity();
-            
-            var previous = await this._dbContext.ServiceMaps.Where(c => c.ServiceId == model.ServiceId && c.FeatureId == model.FeatureId).SingleOrDefaultAsync();
 
-            if (previous != null) {
-                return result;
-            }
+            var retryPolicy = Policy.Handle<DbUpdateException>()
+                .WaitAndRetryAsync(this._configuration.DefaultRetryAttempts,
+                i => this._configuration.DefaultPauseBetweenFails);
 
-            var service = await this._dbContext.Services.SingleAsync(c => c.Id == model.ServiceId);
-            var feature = await this._dbContext.Features.SingleAsync(c => c.Id == model.FeatureId);
+            return await retryPolicy.ExecuteAsync(async () =>
+            {
+                var entity = await this._dbContext.ServiceMaps.Where(c => c.ServiceId == model.ServiceId && c.FeatureId == model.FeatureId).SingleOrDefaultAsync();
 
-            var entity = ServiceMapEntity.Factory.Create(service, feature, this._datetimeGateway.GetCurrentDateTime(), createdBy);
-
-            await this._dbContext.AddAsync(entity);
-            await this._dbContext.SaveChangesAsync();
-
-            result.AddResult("Id", entity.Id);
-
-            return result;
+                if (entity == null)
+                {
+                    var service = await this._dbContext.Services.SingleAsync(c => c.Id == model.ServiceId);
+                    var feature = await this._dbContext.Features.SingleAsync(c => c.Id == model.FeatureId);
+                    entity = ServiceMapEntity.Factory.Create(service, feature, this._datetimeGateway.GetCurrentDateTime(), createdBy);
+                    await this._dbContext.AddAsync(entity);
+                    await this._dbContext.SaveChangesAsync();
+                }
+                return entity;
+            });
         }
         public async Task<IEnumerable<ServiceGetListRp>> GetServiceMaps(int serviceId)
         {
