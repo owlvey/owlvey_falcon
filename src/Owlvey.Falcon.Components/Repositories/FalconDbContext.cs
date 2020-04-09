@@ -87,7 +87,7 @@ namespace Owlvey.Falcon.Repositories
             
 
             modelBuilder.Entity<IncidentMapEntity>().HasKey(x => new { x.Id });
-
+            
             modelBuilder.Entity<IncidentMapEntity>()
                .HasOne(pt => pt.Feature)
                .WithMany(p => p.IncidentMap)
@@ -119,7 +119,9 @@ namespace Owlvey.Falcon.Repositories
             });
 
             modelBuilder.Entity<IndicatorEntity>().HasKey(x => new { x.Id });
-            
+
+            modelBuilder.Entity<IndicatorEntity>().HasIndex(x => new { x.FeatureId, x.SourceId }).IsUnique();
+
             modelBuilder.Entity<IndicatorEntity>()
                .HasOne(pt => pt.Source)
                .WithMany(p => p.Indicators)
