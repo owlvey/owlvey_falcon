@@ -66,11 +66,9 @@ namespace Owlvey.Falcon.Components
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
 
-            var maxRetryAttempts = this._configuration.DefaultRetryAttempts;
-            var pauseBetweenFailures = this._configuration.DefaultPauseBetweenFails;
-
             var retryPolicy = Policy.Handle<DbUpdateException>()
-                .WaitAndRetryAsync(maxRetryAttempts, i => pauseBetweenFailures);
+                .WaitAndRetryAsync(this._configuration.DefaultRetryAttempts,
+                i => this._configuration.DefaultPauseBetweenFails);
 
             return await retryPolicy.ExecuteAsync(async () =>
             {

@@ -12,6 +12,7 @@ using Owlvey.Falcon.Core.Aggregates;
 using Owlvey.Falcon.Repositories.Sources;
 using Owlvey.Falcon.Core;
 using Owlvey.Falcon.Core.Validators;
+using Polly;
 
 namespace Owlvey.Falcon.Components
 {
@@ -67,15 +68,25 @@ namespace Owlvey.Falcon.Components
 
         public async Task<IndicatorGetListRp> Create(int featureId, int sourceId) {
             var createdBy = this._identityService.GetIdentity();
-            var sli = await this._dbContext.Indicators.Where(c => c.FeatureId == featureId && c.SourceId == sourceId).SingleOrDefaultAsync();
-            if (sli == null) {
-                var feature = await this._dbContext.Features.Where(c => c.Id == featureId).SingleAsync();
-                var source = await this._dbContext.Sources.Where(c => c.Id == sourceId).SingleAsync();
-                sli = IndicatorEntity.Factory.Create(feature, source, this._datetimeGateway.GetCurrentDateTime(), createdBy);
-                this._dbContext.Indicators.Add(sli);
-                await this._dbContext.SaveChangesAsync();
-            }
-            return this._mapper.Map<IndicatorGetListRp>(sli);
+            var updatedOn = this._datetimeGateway.GetCurrentDateTime();
+
+            var retryPolicy = Policy.Handle<DbUpdateException>()
+                .WaitAndRetryAsync(this._configuration.DefaultRetryAttempts,
+                i => this._configuration.DefaultPauseBetweenFails);
+
+            return await retryPolicy.ExecuteAsync(async () =>
+            {
+                var sli = await this._dbContext.Indicators.Where(c => c.FeatureId == featureId && c.SourceId == sourceId).SingleOrDefaultAsync();
+                if (sli == null)
+                {
+                    var feature = await this._dbContext.Features.Where(c => c.Id == featureId).SingleAsync();
+                    var source = await this._dbContext.Sources.Where(c => c.Id == sourceId).SingleAsync();
+                    sli = IndicatorEntity.Factory.Create(feature, source, updatedOn, createdBy);
+                    this._dbContext.Indicators.Add(sli);
+                    await this._dbContext.SaveChangesAsync();
+                }
+                return this._mapper.Map<IndicatorGetListRp>(sli);
+            });
         }     
 
 
