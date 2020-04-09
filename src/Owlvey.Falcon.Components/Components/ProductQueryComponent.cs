@@ -25,7 +25,7 @@ namespace Owlvey.Falcon.Components
 
         public ProductQueryComponent(FalconDbContext dbContext, IDateTimeGateway dateTimeGateway,
             FeatureQueryComponent featureQueryComponent, ServiceQueryComponent serviceQueryComponent,
-            IMapper mapper, IUserIdentityGateway identityService) : base(dateTimeGateway, mapper, identityService)
+            IMapper mapper, IUserIdentityGateway identityService, ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityService, configuration)
         {
             this._featureQueryComponent = featureQueryComponent;
             this._serviceQueryComponent = serviceQueryComponent;

@@ -18,8 +18,8 @@ namespace Owlvey.Falcon.Components
         private readonly FalconDbContext _dbContext;
 
         public IncidentComponent(FalconDbContext dbContext, IMapper mapper,
-            IDateTimeGateway dateTimeGateway, IUserIdentityGateway identityService) : base(dateTimeGateway, mapper, identityService)
-
+            IDateTimeGateway dateTimeGateway, IUserIdentityGateway identityService,
+            ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityService, configuration)
         {
             this._dbContext = dbContext;                       
         }

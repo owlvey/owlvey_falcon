@@ -19,7 +19,8 @@ namespace Owlvey.Falcon.Components
         
 
         public CustomerComponent(FalconDbContext dbContext,
-            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway, IMapper mapper) : base(dateTimeGateway, mapper, identityService)
+            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway, IMapper mapper,
+            ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityService, configuration)
         {
             this._dbContext = dbContext;            
         }

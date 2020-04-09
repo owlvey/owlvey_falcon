@@ -24,7 +24,8 @@ namespace Owlvey.Falcon.Components
         private readonly SquadQueryComponent _squadQueryComponent;
         public CustomerQueryComponent(FalconDbContext dbContext, IMapper mapper,
             IDateTimeGateway dateTimeGateway, IUserIdentityGateway identityService,
-            SquadQueryComponent squadQueryComponent) : base(dateTimeGateway, mapper, identityService)
+            SquadQueryComponent squadQueryComponent,
+            ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityService, configuration)
         {
             this._squadQueryComponent = squadQueryComponent;
             this._dbContext = dbContext;

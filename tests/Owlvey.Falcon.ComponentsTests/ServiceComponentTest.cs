@@ -29,6 +29,31 @@ namespace Owlvey.Falcon.ComponentsTests
 
         }
 
+
+
+        [Fact]
+        public async Task ServiceIdempotenceSucces()
+        {
+            var container = ComponentTestFactory.BuildContainer();
+
+            var (customerId, productId) = await ComponentTestFactory.BuildCustomerProduct(container);
+
+            var serviceComponent = container.GetInstance<ServiceComponent>();
+            var serviceQueryComponent = container.GetInstance<ServiceQueryComponent>();
+
+            var serviceInstance = await serviceComponent.CreateService(new Models.ServicePostRp()
+            {
+                Name = "test",
+                ProductId = productId,
+            });
+
+            serviceInstance = await serviceComponent.CreateService(new Models.ServicePostRp()
+            {
+                Name = "test",
+                ProductId = productId,
+            });
+        }
+
         [Fact]
         public async Task ServiceMaintenanceSucces()
         {

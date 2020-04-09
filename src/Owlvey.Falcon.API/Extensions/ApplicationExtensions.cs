@@ -57,6 +57,7 @@ namespace Owlvey.Falcon.IoC
 
             services.AddTransient<CacheComponent>();
 
+            services.AddTransient<ConfigurationComponent>(); 
             // Gateways
             services.AddTransient<IDateTimeGateway, DateTimeGateway>();
 

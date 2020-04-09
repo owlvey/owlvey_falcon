@@ -11,18 +11,20 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Owlvey.Falcon.Repositories.Services;
+using Polly;
 
 namespace Owlvey.Falcon.Components
 {
     public class ServiceComponent : BaseComponent
     {
-        private readonly FalconDbContext _dbContext;        
+        private readonly FalconDbContext _dbContext;    
 
         public ServiceComponent(FalconDbContext dbContext,
             IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway,
-            IMapper mapper) : base(dateTimeGateway, mapper, identityService)
+            IMapper mapper, ConfigurationComponent configuration) : base(dateTimeGateway, mapper, 
+                identityService, configuration)
         {
-            this._dbContext = dbContext;            
+            this._dbContext = dbContext;                        
         }
 
         public async Task<ServiceGetListRp> CreateOrUpdate(CustomerEntity customer,
@@ -64,17 +66,26 @@ namespace Owlvey.Falcon.Components
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
 
-            var entity = await this._dbContext.Services.Where(c => c.ProductId == model.ProductId && c.Name == model.Name).SingleOrDefaultAsync();
-            if (entity == null)
+            var maxRetryAttempts = this._configuration.DefaultRetryAttempts;
+            var pauseBetweenFailures = this._configuration.DefaultPauseBetweenFails;
+
+            var retryPolicy = Policy.Handle<DbUpdateException>()
+                .WaitAndRetryAsync(maxRetryAttempts, i => pauseBetweenFailures);
+
+            return await retryPolicy.ExecuteAsync(async () =>
             {
                 var product = await this._dbContext.Products.Where(c => c.Id == model.ProductId).SingleAsync();
-                entity = ServiceEntity.Factory.Create(model.Name, this._datetimeGateway.GetCurrentDateTime(),
-                    createdBy, product);
-                this._dbContext.Services.Add(entity);
-                await this._dbContext.SaveChangesAsync();
-            }
-
-            return this._mapper.Map<ServiceGetListRp>(entity);
+                var entity = await this._dbContext.Services.Where(c => c.ProductId == model.ProductId && c.Name == model.Name).SingleOrDefaultAsync();                
+                if (entity == null)
+                {
+                    entity = ServiceEntity.Factory.Create(model.Name, this._datetimeGateway.GetCurrentDateTime(),
+                        createdBy, product);
+                    this._dbContext.Services.Add(entity);
+                    await this._dbContext.SaveChangesAsyncRetry<DbUpdateException>();
+                }                                
+                return this._mapper.Map<ServiceGetListRp>(entity);
+            });
+                        
         }
 
         /// <summary>

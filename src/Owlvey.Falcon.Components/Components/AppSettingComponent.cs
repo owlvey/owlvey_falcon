@@ -20,7 +20,7 @@ namespace Owlvey.Falcon.Components
         public AppSettingComponent(FalconDbContext dbContext,
             IUserIdentityGateway identityService,
             IDateTimeGateway dateTimeGateway,
-            IMapper mapper): base(dateTimeGateway, mapper, identityService)
+            IMapper mapper, ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityService, configuration)
         {
             this._dbContext = dbContext;            
         }

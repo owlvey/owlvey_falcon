@@ -51,7 +51,8 @@ namespace Owlvey.Falcon.Components
             IUserIdentityGateway identityService,
             IDateTimeGateway dateTimeGateway, IMapper mapper,
             FeatureQueryComponent featureQueryComponent,
-            SquadComponent squadComponent, SquadQueryComponent squadQueryComponent) : base(dateTimeGateway, mapper, identityService)
+            SquadComponent squadComponent, SquadQueryComponent squadQueryComponent,
+            ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityService, configuration)
         {
             this._customerComponent = customerComponent;
             this._sourceComponent = sourceComponent;

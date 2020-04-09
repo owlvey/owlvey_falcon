@@ -20,7 +20,8 @@ namespace Owlvey.Falcon.Components
     {
         private readonly FalconDbContext _dbContext;
         public FeatureQueryComponent(FalconDbContext dbContext, IDateTimeGateway dateTimeGateway,
-            IMapper mapper, IUserIdentityGateway userIdentityGateway ) : base(dateTimeGateway, mapper, userIdentityGateway)
+            IMapper mapper, IUserIdentityGateway userIdentityGateway,
+            ConfigurationComponent configuration) : base(dateTimeGateway, mapper, userIdentityGateway, configuration)
         {
             this._dbContext = dbContext;            
         }
