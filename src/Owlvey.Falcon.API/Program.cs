@@ -17,8 +17,7 @@ using System.Threading;
 namespace Owlvey.Falcon.API
 {
     public class Program
-    {
-        static readonly LoggerProviderCollection Providers = new LoggerProviderCollection();
+    {        
         public static int Main(string[] args)
         {
             var configuration = new ConfigurationBuilder()
@@ -48,11 +47,12 @@ namespace Owlvey.Falcon.API
             }            
         }
 
-        public static IWebHost BuildWebHost(string[] args, IConfiguration configuration) =>
-            WebHost.CreateDefaultBuilder(args)
-            .UseSerilog(providers: Program.Providers)
+        public static IWebHost BuildWebHost(string[] args,
+            IConfiguration configuration) =>
+            WebHost.CreateDefaultBuilder(args)            
             .UseConfiguration(configuration)
-            .UseStartup<Startup>()            
+            .UseStartup<Startup>()
+            .UseSerilog()
             .Build();        
     }
 }
