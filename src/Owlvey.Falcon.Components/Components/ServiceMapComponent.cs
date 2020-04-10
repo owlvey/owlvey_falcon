@@ -44,7 +44,7 @@ namespace Owlvey.Falcon.Components
             });           
         }
 
-        public async Task<ServiceMapEntity> CreateServiceMap(ServiceMapPostRp model)
+        public async Task CreateServiceMap(ServiceMapPostRp model)
         {            
             var createdBy = this._identityService.GetIdentity();
 
@@ -52,7 +52,7 @@ namespace Owlvey.Falcon.Components
                 .WaitAndRetryAsync(this._configuration.DefaultRetryAttempts,
                 i => this._configuration.DefaultPauseBetweenFails);
 
-            return await retryPolicy.ExecuteAsync(async () =>
+            await retryPolicy.ExecuteAsync(async () =>
             {
                 var entity = await this._dbContext.ServiceMaps.Where(c => c.ServiceId == model.ServiceId && c.FeatureId == model.FeatureId).SingleOrDefaultAsync();
 
@@ -63,8 +63,7 @@ namespace Owlvey.Falcon.Components
                     entity = ServiceMapEntity.Factory.Create(service, feature, this._datetimeGateway.GetCurrentDateTime(), createdBy);
                     await this._dbContext.AddAsync(entity);
                     await this._dbContext.SaveChangesAsync();
-                }
-                return entity;
+                }                
             });
         }
         public async Task<IEnumerable<ServiceGetListRp>> GetServiceMaps(int serviceId)

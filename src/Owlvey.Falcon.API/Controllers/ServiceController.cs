@@ -182,12 +182,12 @@ namespace Owlvey.Falcon.API.Controllers
         {       
             if (id.HasValue && featureId.HasValue)
             {
-                var result = await this._serviceMapComponent.CreateServiceMap(new ServiceMapPostRp()
+                await this._serviceMapComponent.CreateServiceMap(new ServiceMapPostRp()
                 {
                     FeatureId = featureId,
                     ServiceId = id
                 });
-                return this.Ok(result);
+                return this.Ok();
             }
             else
             {
