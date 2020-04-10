@@ -70,17 +70,19 @@ namespace Owlvey.Falcon.Components
             var createdBy = this._identityService.GetIdentity();
             var updatedOn = this._datetimeGateway.GetCurrentDateTime();
 
+            var feature = await this._dbContext.Features.Where(c => c.Id == featureId).SingleAsync();
+            var source = await this._dbContext.Sources.Where(c => c.Id == sourceId).SingleAsync();
+
             var retryPolicy = Policy.Handle<DbUpdateException>()
                 .WaitAndRetryAsync(this._configuration.DefaultRetryAttempts,
                 i => this._configuration.DefaultPauseBetweenFails);
 
             return await retryPolicy.ExecuteAsync(async () =>
             {
-                var sli = await this._dbContext.Indicators.Where(c => c.FeatureId == featureId && c.SourceId == sourceId).SingleOrDefaultAsync();
+                var sli = await this._dbContext.Indicators.Where(c => 
+                            c.FeatureId == featureId && c.SourceId == sourceId).SingleOrDefaultAsync();
                 if (sli == null)
-                {
-                    var feature = await this._dbContext.Features.Where(c => c.Id == featureId).SingleAsync();
-                    var source = await this._dbContext.Sources.Where(c => c.Id == sourceId).SingleAsync();
+                {                    
                     sli = IndicatorEntity.Factory.Create(feature, source, updatedOn, createdBy);
                     this._dbContext.Indicators.Add(sli);
                     await this._dbContext.SaveChangesAsync();

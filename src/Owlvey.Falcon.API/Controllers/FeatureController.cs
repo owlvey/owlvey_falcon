@@ -169,7 +169,7 @@ namespace Owlvey.Falcon.API.Controllers
 
         [HttpPut("{id}/indicators/{sourceId}")]
         [ProducesResponseType(typeof(void), 200)]
-        public async Task<IActionResult> GetIndicators(int id, int sourceId)
+        public async Task<IActionResult> PutIndicator(int id, int sourceId)
         {
             await this._indicatorComponent.Create(id, sourceId);            
             return this.Ok();

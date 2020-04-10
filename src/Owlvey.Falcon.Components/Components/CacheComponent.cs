@@ -31,12 +31,31 @@ namespace Owlvey.Falcon.Components
         }        
 
         public async Task<string> GetLastModified() {
-            string result = "nodata";
-            var setting = await this.DbContext.AppSettings.Where(c => c.Key == AppSettingEntity.AppLastModifiedVersion).SingleOrDefaultAsync();
-            if (setting != null) {
-                result = setting.Value;
-            }
-            return result;            
+
+            var customer = await this.DbContext.Customers.OrderByDescending(c => c.ModifiedOn ).FirstOrDefaultAsync();
+            var product = await this.DbContext.Products.OrderByDescending(c => c.ModifiedOn).FirstOrDefaultAsync();
+            var service = await this.DbContext.Services.OrderByDescending(c => c.ModifiedOn).FirstOrDefaultAsync(); 
+            var serviceMap = await this.DbContext.ServiceMaps.OrderByDescending(c => c.ModifiedOn).FirstOrDefaultAsync();
+            var feature = await this.DbContext.Features.OrderByDescending(c => c.ModifiedOn).FirstOrDefaultAsync();
+            var indicator = await this.DbContext.Indicators.OrderByDescending(c => c.ModifiedOn).FirstOrDefaultAsync();
+            var source = await this.DbContext.Sources.OrderByDescending(c => c.ModifiedOn).FirstOrDefaultAsync();
+            var sourceItem = await this.DbContext.SourcesItems.OrderByDescending(c => c.ModifiedOn).FirstOrDefaultAsync();
+            var squad = await this.DbContext.Squads.OrderByDescending(c => c.ModifiedOn).FirstOrDefaultAsync();
+            var squadFeature = await this.DbContext.SquadFeatures.OrderByDescending(c => c.ModifiedOn).FirstOrDefaultAsync();
+
+            var dates = new List<DateTime?>();            
+            dates.Add(customer?.ModifiedOn ?? DateTime.MinValue);
+            dates.Add(product?.ModifiedOn ?? DateTime.MinValue);
+            dates.Add(service?.ModifiedOn ?? DateTime.MinValue);
+            dates.Add(serviceMap?.ModifiedOn ?? DateTime.MinValue);
+            dates.Add(feature?.ModifiedOn ?? DateTime.MinValue);
+            dates.Add(indicator?.ModifiedOn ?? DateTime.MinValue);
+            dates.Add(source?.ModifiedOn ?? DateTime.MinValue);
+            dates.Add(sourceItem?.ModifiedOn ?? DateTime.MinValue);
+            dates.Add(squad?.ModifiedOn ?? DateTime.MinValue);
+            dates.Add(squadFeature?.ModifiedOn ?? DateTime.MinValue);
+
+            return dates.Max().GetValueOrDefault().ToUniversalTime().ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'");
         }
 
     }

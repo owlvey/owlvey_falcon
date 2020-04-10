@@ -136,32 +136,13 @@ namespace Owlvey.Falcon.Repositories
 
             base.OnModelCreating(modelBuilder);
         }                       
-
         
-
-        private void AssignLastModified() {
-            this.ChangeTracker.AutoDetectChangesEnabled = true;
-            var setting = this.AppSettings.SingleOrDefault(c => c.Key == AppSettingEntity.AppLastModifiedVersion);
-            var value = Guid.NewGuid().ToString();
-            if (setting != null)
-            {
-
-                setting.Value = value;
-            }
-            else
-            {
-                setting = AppSettingEntity.Factory.Create("AppLastModifiedVersion", value, true, DateTime.Now, "system");
-                this.AppSettings.Add(setting);
-            }
-        }
         public override int SaveChanges()
-        {
-            this.AssignLastModified();
+        {            
             return base.SaveChanges();
         }
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {            
-            this.AssignLastModified();
+        {   
             return base.SaveChangesAsync(cancellationToken);
         }
 

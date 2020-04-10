@@ -60,8 +60,10 @@ namespace Owlvey.Falcon.Components
         {
             
             var createdBy = this._identityService.GetIdentity();
+            var on = this._datetimeGateway.GetCurrentDateTime();
             var source = await this._dbContext.Sources.SingleAsync(c => c.Id == model.SourceId);
-            var range = SourceItemEntity.Factory.CreateFromRange(source, model.Start, model.End, model.Good, model.Total, this._datetimeGateway.GetCurrentDateTime(), createdBy);
+
+            var range = SourceItemEntity.Factory.CreateFromRange(source, model.Start, model.End, model.Good, model.Total, on, createdBy);
 
             foreach (var key in model.Clues.Keys)
             {

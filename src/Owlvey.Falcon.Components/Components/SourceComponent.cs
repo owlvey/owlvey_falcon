@@ -73,8 +73,10 @@ namespace Owlvey.Falcon.Components
 
 
         public async Task<SourceGetListRp> Create(SourcePostRp model)
-        {            
+        {   
             var createdBy = this._identityService.GetIdentity();
+
+            var product = await this._dbContext.Products.SingleAsync(c => c.Id == model.ProductId);
 
             var retryPolicy = Policy.Handle<DbUpdateException>()
                 .WaitAndRetryAsync(this._configuration.DefaultRetryAttempts,
@@ -85,8 +87,7 @@ namespace Owlvey.Falcon.Components
                 var entity = await this._dbContext.GetSource(model.ProductId, model.Name);
 
                 if (entity == null)
-                {
-                    var product = await this._dbContext.Products.SingleAsync(c => c.Id == model.ProductId);
+                {                    
                     entity = SourceEntity.Factory.Create(product, model.Name,
                         this._datetimeGateway.GetCurrentDateTime(), createdBy,
                         model.Kind, model.Group);
