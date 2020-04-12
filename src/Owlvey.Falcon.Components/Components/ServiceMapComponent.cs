@@ -53,8 +53,9 @@ namespace Owlvey.Falcon.Components
                 i => this._configuration.DefaultPauseBetweenFails);
 
             await retryPolicy.ExecuteAsync(async () =>
-            {
-                var entity = await this._dbContext.ServiceMaps.Where(c => c.ServiceId == model.ServiceId && c.FeatureId == model.FeatureId).SingleOrDefaultAsync();
+            {                
+                var entity = await this._dbContext.ServiceMaps.SingleOrDefaultAsync(c => c.ServiceId == model.ServiceId &&
+                            c.FeatureId == model.FeatureId);
 
                 if (entity == null)
                 {

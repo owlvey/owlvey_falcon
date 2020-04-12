@@ -115,9 +115,7 @@ namespace Owlvey.Falcon.Repositories
                .HasForeignKey(pt => pt.ServiceId);
 
 
-            modelBuilder.Entity<ServiceMapEntity>().HasIndex(c => new {
-                c.ServiceId, c.FeatureId
-            });
+            modelBuilder.Entity<ServiceMapEntity>().HasIndex(c => new { c.ServiceId, c.FeatureId }).IsUnique();
 
             modelBuilder.Entity<IndicatorEntity>().HasKey(x => new { x.Id });
 
