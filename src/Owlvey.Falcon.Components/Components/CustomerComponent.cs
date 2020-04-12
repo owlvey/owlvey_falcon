@@ -10,6 +10,7 @@ using AutoMapper;
 using Owlvey.Falcon.Repositories.Customers;
 using Owlvey.Falcon.Repositories.Features;
 using Owlvey.Falcon.Repositories.Services;
+using Polly;
 
 namespace Owlvey.Falcon.Components
 {
@@ -28,15 +29,25 @@ namespace Owlvey.Falcon.Components
         public async Task<CustomerGetListRp> CreateCustomer(CustomerPostRp model)
         {            
             var createdBy = this._identityService.GetIdentity();
-            var entity =  await this._dbContext.GetCustomer(model.Name);
-            if (entity == null) {
-                entity = CustomerEntity.Factory.Create(createdBy,
-                    this._datetimeGateway.GetCurrentDateTime()
-                    , model.Name);
-                await this._dbContext.AddAsync(entity);
-                await this._dbContext.SaveChangesAsync();
-            }            
-            return this._mapper.Map<CustomerGetListRp>(entity);
+
+            var retryPolicy = Policy.Handle<DbUpdateException>()
+                .WaitAndRetryAsync(this._configuration.DefaultRetryAttempts,
+                i => this._configuration.DefaultPauseBetweenFails);
+
+            return await retryPolicy.ExecuteAsync(async () =>
+            {
+                var entity = await this._dbContext.GetCustomer(model.Name);
+
+                if (entity == null)
+                {
+                    entity = CustomerEntity.Factory.Create(createdBy,
+                        this._datetimeGateway.GetCurrentDateTime()
+                        , model.Name);
+                    await this._dbContext.AddAsync(entity);
+                    await this._dbContext.SaveChangesAsync();
+                }
+                return this._mapper.Map<CustomerGetListRp>(entity);
+            });            
         }
 
         public async Task<CustomerGetRp> CreateOrUpdate(string name,
