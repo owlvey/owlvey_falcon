@@ -61,6 +61,14 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(ServiceGetRp), 200)]
         public async Task<IActionResult> GetById(int id, DateTime? start, DateTime? end)
         {
+
+            if (!start.HasValue) {
+                return this.BadRequest(new { message = "start is required" });
+            }
+            if (!end.HasValue)
+            {
+                return this.BadRequest(new { message = "end is required" });
+            }
             ServiceGetRp model = null;
             if (end.HasValue)
             {
