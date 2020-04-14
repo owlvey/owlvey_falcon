@@ -9,6 +9,8 @@ RUN apt-get install apt-transport-https
 RUN apt-get update
 RUN apt-get install dotnet-sdk-3.1 --assume-yes
 RUN dotnet tool install --global dotnet-trace 
-ENV	PATH="$PATH:$HOME/.dotnet/tools/"
+ENV PATH="${PATH}:~/.dotnet/tools"
 EXPOSE 80/tcp
 ENTRYPOINT ["dotnet", "Owlvey.Falcon.API.dll"]
+
+
