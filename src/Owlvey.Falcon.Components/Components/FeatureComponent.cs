@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using Polly;
 
 namespace Owlvey.Falcon.Components
 {
@@ -57,15 +58,24 @@ namespace Owlvey.Falcon.Components
             var result = new BaseComponentResultRp();
             var createdBy = this._identityService.GetIdentity();
 
-            var entity = await this._dbContext.Features.Where(c => c.ProductId == model.ProductId && c.Name == model.Name).SingleOrDefaultAsync();
-            if (entity == null) {
-                var product = await this._dbContext.Products.SingleAsync(c => c.Id == model.ProductId);
-                entity = FeatureEntity.Factory.Create(model.Name, this._datetimeGateway.GetCurrentDateTime(), createdBy, product);
-                this._dbContext.Add(entity);
-                await this._dbContext.SaveChangesAsync();
-            }            
+            var retryPolicy = Policy.Handle<DbUpdateException>()
+                .WaitAndRetryAsync(this._configuration.DefaultRetryAttempts,
+                i => this._configuration.DefaultPauseBetweenFails);
 
-            return this._mapper.Map<FeatureGetListRp>(entity);
+            return await retryPolicy.ExecuteAsync(async () =>
+            {
+                var entity = await this._dbContext.Features.Where(c => c.ProductId == model.ProductId && c.Name == model.Name).SingleOrDefaultAsync();
+                if (entity == null)
+                {
+                    var product = await this._dbContext.Products.SingleAsync(c => c.Id == model.ProductId);
+                    entity = FeatureEntity.Factory.Create(model.Name, this._datetimeGateway.GetCurrentDateTime(), createdBy, product);
+                    await this._dbContext.AddAsync(entity);
+                    await this._dbContext.SaveChangesAsync();
+                }
+
+                return this._mapper.Map<FeatureGetListRp>(entity);
+            });
+            
         }
 
         /// <summary>

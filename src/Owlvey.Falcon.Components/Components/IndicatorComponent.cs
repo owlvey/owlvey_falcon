@@ -84,7 +84,7 @@ namespace Owlvey.Falcon.Components
                 if (sli == null)
                 {                    
                     sli = IndicatorEntity.Factory.Create(feature, source, updatedOn, createdBy);
-                    this._dbContext.Indicators.Add(sli);
+                    await this._dbContext.Indicators.AddAsync(sli);
                     await this._dbContext.SaveChangesAsync();
                 }
                 return this._mapper.Map<IndicatorGetListRp>(sli);
