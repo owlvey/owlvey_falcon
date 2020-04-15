@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Models;
@@ -73,12 +74,13 @@ namespace Owlvey.Falcon.API.Controllers
 
         [HttpPost("restore")]
         [Authorize(Policy = "RequireAdminRole")]
-        public async Task<IActionResult> POstBackup(FileUploadRp file)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> PostBackupAsync([FromForm(Name = "data")] IFormFile file)
         {
             using (MemoryStream excelStream = new MemoryStream())
             {
-                file.Data.CopyTo(excelStream);
-                var logs = this._migrationComponent.Restore(excelStream);
+                file.CopyTo(excelStream);
+                var logs = await this._migrationComponent.Restore(excelStream);
                 return Ok(logs);
             }
         }

@@ -17,6 +17,7 @@ using Microsoft.IdentityModel.Logging;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Gateways;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace Owlvey.Falcon.API
 {
@@ -76,15 +77,22 @@ namespace Owlvey.Falcon.API
                     options.DefaultApiVersion = new ApiVersion(1, 0);
                 }                
             );
-             
+
+            services.Configure<FormOptions>(options =>
+            {
+                // Set the limit to 256 MB
+                options.MultipartBodyLengthLimit = 268435456;
+            });
+
             services.AddCors();
             services.AddAuthority(Configuration, Environment);
             services.AddApplicationServices(Configuration);
             services.SetupDataBase(Configuration, Environment.EnvironmentName);
             services.AddCustomSwagger(Configuration, Environment);
 
-            
-            
+
+           
+
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
