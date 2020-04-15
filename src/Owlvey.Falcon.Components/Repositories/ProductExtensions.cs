@@ -17,12 +17,25 @@ namespace Owlvey.Falcon.Repositories.Products
         public static async Task<ProductEntity> FullLoadProduct(this FalconDbContext context,
             int productId)
         {
-            var product = await context.Products
-            .Include(c => c.Customer)
-            .Include(c => c.Services).ThenInclude(c => c.FeatureMap)
-            .Include(c => c.Features).ThenInclude(c => c.Indicators)            
+            var product = await context.Products.Include(c => c.Customer)            
             .Where(c => c.Id == productId).SingleAsync();
-            
+
+            product.Services = await context.Services
+                .Include(c => c.FeatureMap)
+                .Where(c => c.ProductId == productId).ToListAsync();
+
+            product.Features = await context.Features
+                .Include(c => c.Indicators)
+                .Where(c => c.ProductId == productId).ToListAsync();
+
+            foreach (var item in product.Services)
+            {
+                foreach (var map in item.FeatureMap)
+                {
+                    map.Feature = product.Features.Single(c => c.Id == map.Id);
+                }
+            }
+
             var sources = await context.Sources.Where(c => c.ProductId == productId).ToListAsync();
 
             product.Sources = sources;
