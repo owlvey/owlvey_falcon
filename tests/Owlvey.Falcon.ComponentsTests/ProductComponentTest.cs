@@ -133,6 +133,25 @@ namespace Owlvey.Falcon.ComponentsTests
         }
 
         [Fact]
+        public async Task GetProductExportToExcel() {
+            var container = ComponentTestFactory.BuildContainer();
+            var customerId = await ComponentTestFactory.BuildCustomer(container);
+            var productComponet = container.GetInstance<ProductComponent>();
+            var productQueryComponent = container.GetInstance<ProductQueryComponent>();
+
+            var product = await productComponet.CreateProduct(new Models.ProductPostRp()
+            {
+                CustomerId = customerId,
+                Name = "test"
+            });
+
+            var result = await productQueryComponent.GetProductExportToExcel(product.Id, OwlveyCalendar.StartJanuary2017,
+                OwlveyCalendar.EndJanuary2019);
+
+            Assert.NotNull(result.Item1);
+        }
+
+        [Fact]
         public async Task AnchorMaintenanceSuccess()
         {
             var container = ComponentTestFactory.BuildContainer();

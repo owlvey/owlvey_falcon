@@ -32,7 +32,7 @@ namespace Owlvey.Falcon.Repositories.Products
             {
                 foreach (var map in item.FeatureMap)
                 {
-                    map.Feature = product.Features.Single(c => c.Id == map.Id);
+                    map.Feature = product.Features.Single(c => c.Id == map.FeatureId);
                 }
             }
 
