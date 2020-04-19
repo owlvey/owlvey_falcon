@@ -11,6 +11,40 @@ namespace Owlvey.Falcon.Repositories.Services
     public static class ServicesExtensions
     {
 
+        public static async Task<ICollection<ServiceEntity>> GetServiceByProduct(this FalconDbContext context, int productId) {
+            var services = await context.Services
+                .Include(c => c.FeatureMap)
+                .Where(c => c.ProductId == productId).ToListAsync();
+
+            var featuresIds = services.SelectMany(c=> c.FeatureMap).Select(c=>c.FeatureId).ToList();
+
+            var features = await context.Features
+                .Include(c => c.Indicators)
+                .Where(c => featuresIds.Contains(c.Id.Value)).ToListAsync();
+
+            var sourceIds = features.SelectMany(c => c.Indicators).Select(c => c.SourceId).ToList();
+
+            var sources = await context.Sources.Where(c => sourceIds.Contains(c.Id.Value)).ToListAsync();
+
+            foreach (var feature in features)
+            {
+                foreach (var indicator in feature.Indicators)
+                {
+                    indicator.Source = sources.Single(c => c.Id == indicator.SourceId);
+                }
+            }
+
+            foreach (var service in services)
+            {
+                foreach (var map in service.FeatureMap)
+                {
+                    map.Feature = features.Single(c => c.Id == map.FeatureId);
+                }
+            }
+            return services;
+        }
+
+
         public static async Task<ServiceEntity> GetService(this FalconDbContext context, int serviceId) {
             var service = await context.Services
                 .Include(c => c.FeatureMap)                

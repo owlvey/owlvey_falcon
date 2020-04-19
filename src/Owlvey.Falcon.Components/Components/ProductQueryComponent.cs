@@ -14,6 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Owlvey.Falcon.Repositories.Products;
+using Owlvey.Falcon.Repositories.Services;
 
 namespace Owlvey.Falcon.Components
 {
@@ -253,31 +254,22 @@ namespace Owlvey.Falcon.Components
         }
         public async Task<MultiSeriesGetRp> GetDailyServiceSeriesById(int productId, DateTime start, DateTime end)
         {
-            var product = await this._dbContext.Products
-                .Include(c => c.Services).Where(c => c.Id == productId).SingleAsync();
+            var product = await this._dbContext.Products.Where(c => c.Id == productId).SingleAsync();
+
+            product.Services = await this._dbContext.GetServiceByProduct(productId);
+
+            var sourceItems = await this._dbContext.GetSourceItemsByProduct(productId, start, end);
 
             foreach (var service in product.Services)
             {
-                var serviceMaps = await this._dbContext.ServiceMaps
-                    .Include(c => c.Feature)
-                    .ThenInclude(c => c.Indicators).Where(c => c.Service.Id == service.Id).ToListAsync();
-                foreach (var map in serviceMaps)
+                foreach (var map in service.FeatureMap)
                 {
-                    var entity = await this._dbContext.Features
-                        .Include(c => c.Indicators)
-                        .ThenInclude(c => c.Source)
-                        .SingleAsync(c => c.Id == map.Feature.Id);
-
-                    foreach (var indicator in entity.Indicators)
+                    foreach (var indicator in map.Feature.Indicators)
                     {
-                        var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, start, end);
-                        indicator.Source.SourceItems = sourceItems;
+                        indicator.Source.SourceItems = sourceItems.Where(c => c.SourceId == indicator.SourceId).ToList();
                     }
-                    map.Feature = entity;
                 }
-                service.FeatureMap = serviceMaps;
-
-            }
+            }            
 
             var result = new MultiSeriesGetRp
             {
