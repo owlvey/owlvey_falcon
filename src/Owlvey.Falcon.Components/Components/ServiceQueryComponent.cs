@@ -113,10 +113,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<ServiceGetRp> GetServiceById(int id)
         {
-            var entity = await this._dbContext
-                         .Services
-                         .Include(c => c.FeatureMap).ThenInclude(c => c.Feature)                                                  
-                         .FirstOrDefaultAsync(c => c.Id.Equals(id));            
+            var entity = await this._dbContext.GetService(id);            
             
             if (entity == null)
                 return null;
@@ -127,11 +124,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<ServiceGetRp> GetServiceByIdWithAvailabilities(int id, DateTime start, DateTime end)
         {
-            var entity = await this._dbContext.Services.Include(c => c.FeatureMap)
-                .ThenInclude(c => c.Feature)
-                .ThenInclude(c => c.Indicators)
-                .ThenInclude(c => c.Source)
-                .Where(c => c.Id == id).FirstOrDefaultAsync();
+            var entity = await this._dbContext.GetService(id);
 
             if (entity == null)
                 return null;

@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Owlvey.Falcon.Repositories.Services;
 
 namespace Owlvey.Falcon.Components
 {
@@ -182,13 +183,8 @@ namespace Owlvey.Falcon.Components
 
         public async Task<ICollection<SequenceFeatureGetListRp>> GetFeaturesByServiceIdWithAvailability(int serviceId, DateTime start, DateTime end)
         {
-            var service = await this._dbContext.Services
-                .Include(c=> c.FeatureMap)
-                .ThenInclude(c => c.Feature)
-                .ThenInclude(c => c.Indicators)
-                .ThenInclude(c => c.Source)
-                .Where(c => c.Id == serviceId).SingleAsync();
-
+            var service = await this._dbContext.GetService(serviceId);
+            
             var result = new List<SequenceFeatureGetListRp>();                       
             var common = new FeatureCommonComponent(this._dbContext);
             
@@ -224,7 +220,9 @@ namespace Owlvey.Falcon.Components
 
         public async Task<MultiSeriesGetRp> GetDailySeriesById(int featureId, DateTime start, DateTime end)
         {
-            var entity = await this._dbContext.Features.Include(c => c.Indicators).ThenInclude(c => c.Source).SingleAsync(c => c.Id == featureId);
+            var entity = await this._dbContext.Features.Include(c => c.Indicators)
+                .ThenInclude(c => c.Source)
+                .SingleAsync(c => c.Id == featureId);
 
             foreach (var indicator in entity.Indicators)
             {
