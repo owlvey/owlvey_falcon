@@ -16,13 +16,13 @@ namespace Owlvey.Falcon.Repositories.Services
                 .Include(c => c.FeatureMap)
                 .Where(c => c.ProductId == productId).ToListAsync();
 
-            var featuresIds = services.SelectMany(c=> c.FeatureMap).Select(c=>c.FeatureId).ToList();
+            var featuresIds = services.SelectMany(c=> c.FeatureMap).Select(c=>c.FeatureId).Distinct().ToList();
 
             var features = await context.Features
                 .Include(c => c.Indicators)
                 .Where(c => featuresIds.Contains(c.Id.Value)).ToListAsync();
 
-            var sourceIds = features.SelectMany(c => c.Indicators).Select(c => c.SourceId).ToList();
+            var sourceIds = features.SelectMany(c => c.Indicators).Select(c => c.SourceId).Distinct().ToList();
 
             var sources = await context.Sources.Where(c => sourceIds.Contains(c.Id.Value)).ToListAsync();
 
@@ -54,13 +54,13 @@ namespace Owlvey.Falcon.Repositories.Services
                 return null;
             }
 
-            var featuresIds = service.FeatureMap.Select(c => c.FeatureId).ToList();
+            var featuresIds = service.FeatureMap.Select(c => c.FeatureId).Distinct().ToList();
 
             var features = await context.Features
                 .Include(c=>c.Indicators)
                 .Where(c => featuresIds.Contains(c.Id.Value)).ToListAsync();
 
-            var sourceIds = features.SelectMany(c => c.Indicators).Select(c => c.SourceId).ToList();
+            var sourceIds = features.SelectMany(c => c.Indicators).Select(c => c.SourceId).Distinct().ToList();
 
             var sources = await context.Sources.Where(c => sourceIds.Contains(c.Id.Value)).ToListAsync();
 

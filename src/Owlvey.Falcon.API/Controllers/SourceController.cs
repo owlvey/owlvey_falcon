@@ -24,7 +24,7 @@ namespace Owlvey.Falcon.API.Controllers
         {
             IEnumerable<SourceGetListRp> model = new List<SourceGetListRp>();
 
-            if (productId.HasValue && end.HasValue)
+            if (productId.HasValue && end.HasValue && start.HasValue)
             {
                 model = await this._sourceComponent.GetByProductIdWithAvailability(productId.Value, start.Value, end.Value);
             }
