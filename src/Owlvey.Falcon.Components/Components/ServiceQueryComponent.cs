@@ -127,15 +127,9 @@ namespace Owlvey.Falcon.Components
             var entity = await this._dbContext.GetService(id);
 
             if (entity == null)
-                return null;
-
-            var featuresIds = entity.FeatureMap.Select(c => c.FeatureId).Distinct().ToList();
-            var incidents = await this._dbContext.GetIncidentsByService(id);
-
-            var model = this._mapper.Map<ServiceGetRp>(entity);
-            model.MTTD = QualityUtils.MeanTimeInMinutes(incidents.Select(c => c.TTD));
-            model.MTTE = QualityUtils.MeanTimeInMinutes(incidents.Select(c => c.TTE));
-            model.MTTF = QualityUtils.MeanTimeInMinutes(incidents.Select(c => c.TTF));
+                return null;                        
+            
+            var model = this._mapper.Map<ServiceGetRp>(entity);            
             model.Availability = await this.MeasureAvailability(entity, start, end);
             return model;
         }
@@ -176,26 +170,21 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<FeatureGetListRp>>(rest);
         }
 
-
-
-
-
-
         public async Task<MultiSeriesGetRp> GetDailySeriesById(int serviceId, DateTime start, DateTime end)
         {
-            var service = await this._dbContext.Services
-                .Include(c=>c.FeatureMap)
-                .ThenInclude(c=>c.Feature)
-                .ThenInclude(c=>c.Indicators)
-                .ThenInclude(c=>c.Source)
-                .Where(c => c.Id == serviceId).SingleAsync();            
+            var service = await this._dbContext.GetService(serviceId);
+
+            var sourceIds = service.FeatureMap.SelectMany(c => c.Feature.Indicators)
+                .Select(c => c.SourceId).Distinct();
+
+
+            var sourceItems = await this._dbContext.GetSourceItems(sourceIds, start, end);
 
             foreach (var map in service.FeatureMap)
             {
                 foreach (var indicator in map.Feature.Indicators)
-                {
-                    var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, start, end);
-                    indicator.Source.SourceItems = sourceItems;
+                {                    
+                    indicator.Source.SourceItems = sourceItems.Where(c=>c.SourceId == indicator.SourceId).ToList();
                 }                
             }            
 
