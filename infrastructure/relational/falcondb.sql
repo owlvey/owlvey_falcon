@@ -148,7 +148,7 @@ CREATE TABLE [ServiceEntity] (
     [ModifiedBy] nvarchar(max) NOT NULL,
     [Name] nvarchar(450) NOT NULL,
     [Description] nvarchar(max) NULL,
-    [Slo] decimal(18,2) NOT NULL,
+    [Slo] decimal(2,5) NOT NULL,
     [Aggregation] int NOT NULL,
     [Avatar] nvarchar(max) NOT NULL,
     [Leaders] nvarchar(max) NULL,
@@ -317,11 +317,11 @@ CREATE INDEX [IX_IncidentMapEntity_IncidentId] ON [IncidentMapEntity] ([Incident
 
 GO
 
-CREATE INDEX [IX_IndicatorEntity_FeatureId] ON [IndicatorEntity] ([FeatureId]);
+CREATE INDEX [IX_IndicatorEntity_SourceId] ON [IndicatorEntity] ([SourceId]);
 
 GO
 
-CREATE INDEX [IX_IndicatorEntity_SourceId] ON [IndicatorEntity] ([SourceId]);
+CREATE UNIQUE INDEX [IX_IndicatorEntity_FeatureId_SourceId] ON [IndicatorEntity] ([FeatureId], [SourceId]);
 
 GO
 
@@ -345,7 +345,7 @@ CREATE INDEX [IX_ServiceMapEntity_FeatureId] ON [ServiceMapEntity] ([FeatureId])
 
 GO
 
-CREATE INDEX [IX_ServiceMapEntity_ServiceId] ON [ServiceMapEntity] ([ServiceId]);
+CREATE UNIQUE INDEX [IX_ServiceMapEntity_ServiceId_FeatureId] ON [ServiceMapEntity] ([ServiceId], [FeatureId]);
 
 GO
 
@@ -374,7 +374,7 @@ CREATE INDEX [IX_SquadFeatureEntity_SquadId] ON [SquadFeatureEntity] ([SquadId])
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20200408202624_InitialCreate', N'3.1.0');
+VALUES (N'20200422005756_InitialCreate', N'3.1.0');
 
 GO
 

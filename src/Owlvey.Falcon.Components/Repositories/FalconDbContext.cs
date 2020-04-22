@@ -68,7 +68,7 @@ namespace Owlvey.Falcon.Repositories
             modelBuilder.Entity<ProductEntity>().HasIndex(c => new { c.CustomerId, c.Name }).IsUnique();
 
             modelBuilder.Entity<ServiceEntity>()
-                .Property(c => c.Slo).HasColumnType("decimal(2,5)");
+                .Property(c => c.Slo).HasColumnType("decimal(5,3)");
 
             modelBuilder.Entity<ServiceEntity>()                
                 .HasIndex(c => new { c.ProductId, c.Name }).IsUnique();
