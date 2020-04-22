@@ -7,6 +7,7 @@ RUN wget https://packages.microsoft.com/config/ubuntu/19.10/packages-microsoft-p
 RUN dpkg -i packages-microsoft-prod.deb
 RUN apt-get install apt-transport-https
 RUN apt-get update
+RUN apt-get install vim --assume-yes
 RUN apt-get install dotnet-sdk-3.1 --assume-yes
 RUN dotnet tool install --global dotnet-trace 
 ENV PATH="${PATH}:~/.dotnet/tools"
