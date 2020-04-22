@@ -153,12 +153,19 @@ namespace Owlvey.Falcon.Components
                 .Include(c=> c.Squads)
                 .Where(c => c.Product.Id.Value.Equals(productId)).ToListAsync();
 
-            var common = new FeatureCommonComponent(this._dbContext);
+            var sources = entities.SelectMany(c => c.Indicators).Select(c => c.SourceId).Distinct().ToList();
+            var sourceItems = await this._dbContext.GetSourceItems(sources, start, end);
+
             foreach (var feature in entities)
             {
+                foreach (var indicator in feature.Indicators)
+                {                    
+                    indicator.Source.SourceItems = sourceItems.Where(c=>c.SourceId == indicator.SourceId).ToList();
+                }
                 var tmp = this._mapper.Map<FeatureAvailabilityGetListRp>(feature);
-                tmp.Squads = feature.Squads.Count();
-                (tmp.Quality, tmp.Availability, tmp.Latency )= await common.GetAvailabilityByFeature(feature, start, end);
+                var agg = new FeatureAvailabilityAggregate(feature);                
+                (tmp.Quality, _, _, tmp.Availability, tmp.Latency) = agg.MeasureQuality();                                
+                tmp.Squads = feature.Squads.Count();                
                 tmp.Total = feature.Indicators.Sum(c => c.Source.SourceItems.Sum(d => d.Total));
                 tmp.Good = feature.Indicators.Sum(c => c.Source.SourceItems.Sum(d => d.Good));
                 tmp.ServiceCount = feature.ServiceMaps.Count();                
@@ -185,26 +192,26 @@ namespace Owlvey.Falcon.Components
         {
             var service = await this._dbContext.GetService(serviceId);
             
-            var result = new List<SequenceFeatureGetListRp>();                       
-            var common = new FeatureCommonComponent(this._dbContext);
-            
-            foreach (var map in service.FeatureMap)
+            var result = new List<SequenceFeatureGetListRp>();                                   
+
+            var sources = service.FeatureMap.SelectMany(c => c.Feature.Indicators).Select(c => c.SourceId).Distinct().ToList();
+            var sourceItems = await this._dbContext.GetSourceItems(sources, start, end);
+
+            foreach (var map in service.FeatureMap)            
             {
                 var feature = map.Feature;
-                var tmp = this._mapper.Map<SequenceFeatureGetListRp>(feature);
-                tmp.FeatureSlo = service.FeatureSLO;                
-                (tmp.Quality, tmp.Availability, tmp.Latency)= await common.GetAvailabilityByFeature(feature, start, end);
-                tmp.Total = feature.Indicators.Sum(c => c.Source.SourceItems.Sum(d => d.Total));
-                tmp.MapId = map.Id.Value;
-                var incidents = await this._dbContext.GetIncidentsByFeature(feature.Id.Value);
-                if (incidents.Count() > 0)
-                {
-                    var (mttd, mtte, mttf, mttm) = (new IncidentMetricAggregate(incidents)).Metrics();
-                    tmp.MTTD = DateTimeUtils.FormatTimeToInMinutes(mttd);
-                    tmp.MTTE = DateTimeUtils.FormatTimeToInMinutes(mtte);
-                    tmp.MTTF = DateTimeUtils.FormatTimeToInMinutes(mttf);
-                    tmp.MTTM = DateTimeUtils.FormatTimeToInMinutes(mttm);
+
+                foreach (var indicator in feature.Indicators)
+                {                    
+                    indicator.Source.SourceItems = sourceItems.Where(c=>c.SourceId == indicator.SourceId).ToList();
                 }
+
+                var tmp = this._mapper.Map<SequenceFeatureGetListRp>(feature);
+                tmp.FeatureSlo = service.FeatureSLO;
+                var agg = new FeatureAvailabilityAggregate(feature);
+                (tmp.Quality, _, _, tmp.Availability, tmp.Latency) = agg.MeasureQuality();                
+                tmp.Total = feature.Indicators.Sum(c => c.Source.SourceItems.Sum(d => d.Total));
+                tmp.MapId = map.Id.Value;                
                 result.Add(tmp);
             }
 

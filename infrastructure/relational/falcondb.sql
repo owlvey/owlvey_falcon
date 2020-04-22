@@ -148,7 +148,7 @@ CREATE TABLE [ServiceEntity] (
     [ModifiedBy] nvarchar(max) NOT NULL,
     [Name] nvarchar(450) NOT NULL,
     [Description] nvarchar(max) NULL,
-    [Slo] decimal(2,5) NOT NULL,
+    [Slo] decimal(5,3) NOT NULL,
     [Aggregation] int NOT NULL,
     [Avatar] nvarchar(max) NOT NULL,
     [Leaders] nvarchar(max) NULL,
@@ -374,7 +374,7 @@ CREATE INDEX [IX_SquadFeatureEntity_SquadId] ON [SquadFeatureEntity] ([SquadId])
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20200422005756_InitialCreate', N'3.1.0');
+VALUES (N'20200422010214_InitialCreate', N'3.1.0');
 
 GO
 

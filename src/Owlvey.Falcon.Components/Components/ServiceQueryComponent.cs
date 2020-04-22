@@ -135,12 +135,14 @@ namespace Owlvey.Falcon.Components
         }
         private async Task<decimal> MeasureAvailability(ServiceEntity entity, DateTime start, DateTime end)
         {
+            var sources = entity.FeatureMap.SelectMany(c => c.Feature.Indicators).Select(c => c.SourceId).Distinct().ToList();
+            var sourceItems = await this._dbContext.GetSourceItems(sources, start, end);
+
             foreach (var map in entity.FeatureMap)
             {
                 foreach (var indicator in map.Feature.Indicators)
-                {
-                    var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, start, end);
-                    indicator.Source.SourceItems = sourceItems;
+                {                    
+                    indicator.Source.SourceItems = sourceItems.Where(c=>c.SourceId == indicator.SourceId).ToList();
                 }
             }
             var agg = new ServiceAvailabilityAggregate(entity);
