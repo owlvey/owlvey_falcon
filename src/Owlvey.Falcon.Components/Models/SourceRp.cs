@@ -31,7 +31,9 @@ namespace Owlvey.Falcon.Models
         public int Total { get; set; }
         public int Good { get; set; }
         public int Delta { get { return this.Total - Good; } }
-        public IDictionary<string, decimal> Clues { get; set; } = new Dictionary<string, decimal>();
+
+        public Dictionary<string, int> Features  { get; set; } = new Dictionary<string, int>();
+        public Dictionary<string, decimal> Clues { get; set; } = new Dictionary<string, decimal>();
     }
 
     public class SourceMigrateRp {

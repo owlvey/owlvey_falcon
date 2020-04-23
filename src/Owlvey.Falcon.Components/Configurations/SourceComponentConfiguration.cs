@@ -21,6 +21,7 @@ namespace Owlvey.Falcon.Components
                 .ForMember(c => c.Good, opt => opt.Ignore())
                 .ForMember(c => c.Delta, opt => opt.Ignore())
                 .ForMember(c => c.Clues, opt => opt.Ignore())
+                .ForMember(c => c.Features, opt => opt.Ignore())
                 .ForMember(c => c.Availability, opt => opt.Ignore());  
             cfg.CreateMap<SourceEntity, Models.SourceLitRp>();
             cfg.CreateMap<SourceEntity, Models.SourceMigrateRp>();

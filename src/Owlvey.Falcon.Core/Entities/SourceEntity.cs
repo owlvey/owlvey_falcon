@@ -67,7 +67,7 @@ namespace Owlvey.Falcon.Core.Entities
         public virtual ICollection<SourceItemEntity> SourceItems { get; set; } = new List<SourceItemEntity>();
 
 
-        public IDictionary<string, decimal> ExportClues() {
+        public Dictionary<string, decimal> ExportClues() {
             var result = new Dictionary<string, decimal>();
 
             foreach (var item in this.SourceItems)

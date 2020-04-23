@@ -132,7 +132,13 @@ namespace Owlvey.Falcon.Components
         }
         public async Task<SourceGetRp> GetByIdWithAvailability(int id, DateTime start, DateTime end)
         {
-            var entity = await this._dbContext.Sources.SingleOrDefaultAsync(c => c.Id == id);
+            var entity = await this._dbContext.Sources
+                .Include(c=>c.Indicators)
+                .ThenInclude(c=>c.Feature)
+                .SingleOrDefaultAsync(c => c.Id == id);
+
+            
+
             var result = this._mapper.Map<SourceGetRp>(entity);
             if (entity!= null) {
                 var sourceItems = await this._dbContext.GetSourceItems(entity.Id.Value, start, end);
@@ -154,6 +160,7 @@ namespace Owlvey.Falcon.Components
                 result.Total = total;
                 result.Good = good;
                 result.Clues = entity.ExportClues();
+                result.Features = entity.Indicators.ToDictionary(d => d.Feature.Name, c => c.Feature.Id.Value);
             }            
             return result;
         }

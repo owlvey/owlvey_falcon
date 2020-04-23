@@ -53,8 +53,7 @@ namespace Owlvey.Falcon.API.Controllers
             }
             else {
                 model = await this._sourceComponent.GetById(id);
-            }
-            //GetByIdWithAvailability
+            }            
 
             if (model == null)
                 return this.NotFound($"The Resource {id} doesn't exists.");
