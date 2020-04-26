@@ -83,13 +83,20 @@ namespace Owlvey.Falcon.Core.Entities
         #region Availability
 
         [NotMapped]
+        public decimal Quality { get; protected set; }
+        [NotMapped] 
         public decimal Availability { get; protected set; }
 
-        public void MeasureAvailability()
+        [NotMapped]
+        public decimal Latency { get; protected set; }
+
+        public void MeasureQuality()
         {
-            var agg = new ServiceAvailabilityAggregate(this);
-            var (availability, _, _) = agg.MeasureAvailability();
-            this.Availability = availability;            
+            var agg = new ServiceQualityAggregate(this);
+            var measure = agg.MeasureQuality();
+            this.Quality = measure.Quality;
+            this.Availability = measure.Availability;
+            this.Latency = measure.Latency;            
         }
         #endregion
 

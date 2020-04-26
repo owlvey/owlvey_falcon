@@ -1,20 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 namespace Owlvey.Falcon.Core
 {
     public class QualityUtils
     {        
-        public static decimal CalculateAverageAvailability(IEnumerable<decimal> availabilities) {
-            if (availabilities.Count() > 0)
-            {
-                return Math.Round(availabilities.Average(c => c), 5);
-            }
-            else {
-                return 1;
-            }            
-        }
-
         // https://www.thoughtco.com/exponential-decay-definition-2312215
         public static decimal MeasureImpact(decimal SLO) {
             if (SLO < 1) {
@@ -58,18 +49,17 @@ namespace Owlvey.Falcon.Core
                 return 0;
             }
             return (int)Math.Round(input.Average());
-        }
-        public static decimal CalculateDotProportion(IEnumerable<decimal> proportions, int round = 5, decimal defaultValue = 1)
+        }        
+
+        public static decimal CalculateMinimumAvailability(IEnumerable<decimal> availabilities, int round = 5, decimal defaultValue = 1)
         {
-            if (proportions == null || proportions.Count() == 0) {
+            if (availabilities.Count() == 0)
+            {
                 return defaultValue;
             }
-            return Math.Round(proportions.Aggregate((a, x) => a * x), round);            
-        }
-
-        public static decimal CalculateMinimumAvailability(IEnumerable<decimal> availabilities, int round = 5)
-        {
-            return Math.Round(availabilities.Min(), round);
+            else {
+                return Math.Round(availabilities.Min(), round);
+            }            
         }
 
         public static decimal CalculateAverageAvailability(IEnumerable<decimal> availabilities, int round = 5)

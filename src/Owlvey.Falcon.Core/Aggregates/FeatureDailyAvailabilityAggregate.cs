@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Owlvey.Falcon.Core.Entities;
+using Owlvey.Falcon.Core.Values;
 
 namespace Owlvey.Falcon.Core.Aggregates
 {
@@ -19,8 +20,8 @@ namespace Owlvey.Falcon.Core.Aggregates
             this.Feature = entity;            
         }
 
-        private IEnumerable<(IndicatorEntity indicator, IEnumerable<DayAvailabilityEntity> availabities)> GenerateDaily() {
-            var result = new List<(IndicatorEntity, IEnumerable<DayAvailabilityEntity>)>();
+        private IEnumerable<(IndicatorEntity indicator, IEnumerable<DayPointValue> availabities)> GenerateDaily() {
+            var result = new List<(IndicatorEntity, IEnumerable<DayPointValue>)>();
             foreach (var item in this.Feature.Indicators)
             {
                 var agg = new IndicatorAvailabilityAggregator(item, this.Start, this.End);
@@ -31,11 +32,11 @@ namespace Owlvey.Falcon.Core.Aggregates
         }
 
         public (FeatureEntity,
-            IEnumerable<DayAvailabilityEntity>,
-            IEnumerable<(IndicatorEntity, IEnumerable<DayAvailabilityEntity>)>) MeasureAvailability()
+            IEnumerable<DayPointValue>,
+            IEnumerable<(IndicatorEntity, IEnumerable<DayPointValue>)>) MeasureAvailability()
         {
 
-            List<DayAvailabilityEntity> result = new List<DayAvailabilityEntity>();
+            List<DayPointValue> result = new List<DayPointValue>();
 
             var indicators = this.GenerateDaily();
 
@@ -47,18 +48,10 @@ namespace Owlvey.Falcon.Core.Aggregates
 
             for (int i = 0; i < days; i++)
             {
-                var sample = data.Where(c => DateTimeUtils.CompareDates(c.Date, pivot)).Select(c=>c.Availability).ToList();
-                decimal availability = 1;
-                decimal minimun = 1;
-                decimal maximun = 1;
-                decimal average = 1;
+                var sample = data.Where(c => DateTimeUtils.CompareDates(c.Date, pivot)).ToList();                
                 if (sample.Count != 0)
-                { 
-                    availability = QualityUtils.CalculateDotProportion(sample);
-                    minimun = sample.Min();
-                    maximun = sample.Max();
-                    average = sample.Average();
-                    result.Add(new DayAvailabilityEntity(pivot, availability, minimun, maximun, average));
+                {                     
+                    result.Add(new DayPointValue(pivot, sample));
                 }
                 pivot = pivot.AddDays(1);
             }

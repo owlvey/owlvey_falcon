@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Owlvey.Falcon.Core.Entities;
 using System.Linq;
+using Owlvey.Falcon.Core.Values;
 
 namespace Owlvey.Falcon.Core.Aggregates
 {
@@ -19,8 +20,8 @@ namespace Owlvey.Falcon.Core.Aggregates
             this.Start = Start;
             this.End = End;
         }
-        private IEnumerable<(FeatureEntity feature, IEnumerable<DayAvailabilityEntity> availabilities)> GenerateFeatureAvailabilities() {
-            var result = new List<(FeatureEntity, IEnumerable<DayAvailabilityEntity>)>();
+        private IEnumerable<(FeatureEntity feature, IEnumerable<DayPointValue> availabilities)> GenerateFeatureAvailabilities() {
+            var result = new List<(FeatureEntity, IEnumerable<DayPointValue>)>();
             foreach (var item in this.Service.FeatureMap.Select(c=>c.Feature))
             {
                 var agg = new FeatureDailyAvailabilityAggregate(item, this.Start, this.End);
@@ -30,10 +31,10 @@ namespace Owlvey.Falcon.Core.Aggregates
             return result;
         }
         public (ServiceEntity service,
-            IEnumerable<DayAvailabilityEntity> availabilities,
-            IEnumerable<(FeatureEntity, IEnumerable<DayAvailabilityEntity>)>) MeasureAvailability()
+            IEnumerable<DayPointValue> availabilities,
+            IEnumerable<(FeatureEntity, IEnumerable<DayPointValue>)>) MeasureAvailability()
         {
-            List<DayAvailabilityEntity> result = new List<DayAvailabilityEntity>();
+            List<DayPointValue> result = new List<DayPointValue>();
 
             var indicators = this.GenerateFeatureAvailabilities();
 
@@ -45,35 +46,12 @@ namespace Owlvey.Falcon.Core.Aggregates
 
             for (int i = 0; i < days; i++)
             {
-                var sample = data.Where(c => DateTimeUtils.CompareDates(c.Date, pivot)).Select(c => c.Availability).ToList();
-
-                decimal availability = 1;
-                decimal minimun = 1;
-                decimal maximun = 1;
-                decimal average = 1;
+                var sample = data.Where(c => DateTimeUtils.CompareDates(c.Date, pivot)).ToList();
 
                 if (sample.Count > 0)
-                {
-                    if (this.Service.Aggregation == ServiceAggregationEnum.Minimun)
-                    {
-                        availability = QualityUtils.CalculateMinimumAvailability(sample);
-                    }
-                    else if (this.Service.Aggregation == ServiceAggregationEnum.Average)
-                    {
-                        availability = QualityUtils.CalculateAverageAvailability(sample);                        
-                    }
-                    else {
-                        availability = QualityUtils.CalculateDotProportion(sample);
-                    }
-                    
-                    minimun = sample.Min();
-                    maximun = sample.Max();
-                    average = sample.Average();
-                }
-
-                
-
-                result.Add(new DayAvailabilityEntity(pivot, availability, minimun, maximun, average));
+                {                    
+                    result.Add(new DayPointValue(pivot, sample));
+                }               
 
                 pivot = pivot.AddDays(1);
             }

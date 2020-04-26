@@ -3,6 +3,8 @@ using Owlvey.Falcon.Core.Entities;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 
 namespace Owlvey.Falcon.Repositories.Products
 {
@@ -14,6 +16,40 @@ namespace Owlvey.Falcon.Repositories.Products
             return await context.Products.SingleOrDefaultAsync(c => c.CustomerId == customerId && c.Name == name);
         }
 
+        public static async Task<ProductEntity> FullLoadProductWithGroupAndSourceItems(this FalconDbContext context, int productId, string group, DateTime start, DateTime end)
+        {
+            var product = await FullLoadProduct(context, productId);
+            product.Services = product.Services.Where(c => c.Group == group).ToList();
+            var sources = product.Services.SelectMany(c => c.FeatureMap).SelectMany(c => c.Feature.Indicators).Select(c => c.SourceId).Distinct().ToList();
+            var sourceItems = await context.GetSourceItems(sources,  start, end);
+            foreach (var service in product.Services)
+            {
+                foreach (var map in service.FeatureMap)
+                {
+                    foreach (var indicator in map.Feature.Indicators)
+                    {
+                        indicator.Source.SourceItems = sourceItems.Where(c => c.SourceId == indicator.SourceId).ToList();
+                    }
+                }
+            }
+            return product;
+        }
+
+        public static async Task<ProductEntity> FullLoadProductWithSourceItems(this FalconDbContext context, int productId, DateTime start, DateTime end) {
+            var product = await FullLoadProduct(context, productId);
+            var sourceItems = await context.GetSourceItemsByProduct(productId, start, end);
+            foreach (var service in product.Services)
+            {
+                foreach (var map in service.FeatureMap)
+                {
+                    foreach (var indicator in map.Feature.Indicators)
+                    {
+                        indicator.Source.SourceItems = sourceItems.Where(c => c.SourceId == indicator.SourceId).ToList();
+                    }
+                }
+            }
+            return product;
+        }
         public static async Task<ProductEntity> FullLoadProduct(this FalconDbContext context,
             int productId)
         {

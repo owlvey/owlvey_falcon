@@ -14,17 +14,33 @@ namespace Owlvey.Falcon.Core.Aggregates
         {            
             this.Source = source;                        
         }        
-        public (decimal availability, int total, int good) MeasureAvailability() {          
-            var total = this.Source.SourceItems.Sum(c => c.Total);
-            var good = this.Source.SourceItems.Sum(c => c.Good);
-            var availability = QualityUtils.CalculateAvailability(total, good, 1);
+        public ProportionMeasureValue MeasureAvailability(DateTime? start = null, DateTime? end = null) {
 
+            int total;
+            int good;
+            IEnumerable<SourceItemEntity> data; 
+            if (start.HasValue && end.HasValue)
+            {
+                data = this.Source.SourceItems.Where(c => c.Target >= start && c.Target <= end);                
+            }
+            else
+            {
+                data = this.Source.SourceItems;
+            }
+
+            if (data.Count() == 0) {
+                return new ProportionMeasureValue(1, false);
+            }
+
+            total = data.Sum(c => c.Total);
+            good = data.Sum(c => c.Good);
+            var availability = QualityUtils.CalculateAvailability(total, good, 1);
             if (this.Source.Kind == SourceKindEnum.Interaction)
             {
-                return (availability, total, good);
+                return new ProportionMeasureValue(availability, total, good);
             }
             else {
-                return (availability, 0, 0);
+                return new ProportionMeasureValue(availability);
             }           
         }
     }

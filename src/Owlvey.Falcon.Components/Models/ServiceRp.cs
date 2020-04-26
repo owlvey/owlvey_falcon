@@ -54,8 +54,12 @@ namespace Owlvey.Falcon.Models
     }
 
     public class ServiceGetRp : ServiceBaseRp {
-        public IEnumerable<FeatureGetListRp> Features { get; set; } = new List<FeatureGetListRp>();
-        public decimal Availability { get; set; }        
+        public List<FeatureGetListRp> Features { get; set; } = new List<FeatureGetListRp>();
+        public decimal Availability { get; set; }  
+        
+        public decimal PreviousAvailability { get; set; }
+
+        public decimal PreviousAvailabilityII { get; set; }
         public decimal Budget { get {
                 return QualityUtils.MeasureBudget(Availability, SLO);
             } }
@@ -84,10 +88,11 @@ namespace Owlvey.Falcon.Models
     public class ServiceGetListRp : ServiceBaseRp
     {
         public int FeaturesCount { get; set; }
+        public decimal Quality { get; set; }
         public decimal Availability { get; set; }
-
+        public decimal Latency { get; set; }
         public decimal Previous { get; set; }
-
+                
         public string Deploy { get; set; }        
         public decimal FeatureSlo { get {
                 if (this.FeaturesCount == 0) return this.SLO;
@@ -97,7 +102,7 @@ namespace Owlvey.Falcon.Models
         {
             get
             {
-                return QualityUtils.MeasureBudget(Availability, SLO);
+                return QualityUtils.MeasureBudget(Quality, SLO);
             }
         }        
     }

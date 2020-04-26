@@ -23,6 +23,9 @@ namespace Owlvey.Falcon.Core
         {
             return AbsoluteStart(dateTime).AddDays(1).AddTicks(-1);
         }
+        public static (DateTime, DateTime) ToDate(DateTime start, DateTime end) {
+            return (AbsoluteStart(start), AbsoluteEnd(end));
+        }
         public static DateTime DatetimeToMidDate(DateTime target) {
             return target.Date.AddHours(12);
         }
@@ -39,6 +42,8 @@ namespace Owlvey.Falcon.Core
             TimeSpan span = end.AddDays(1).Subtract(start);
             return Math.Abs((int)span.TotalDays);
         }
+
+        
 
         public static (DateTime beforeStart, DateTime beforeEnd, 
             DateTime previousStart, DateTime previousEnd) CalculateBeforePreviousDates(DateTime? start, DateTime? end) {

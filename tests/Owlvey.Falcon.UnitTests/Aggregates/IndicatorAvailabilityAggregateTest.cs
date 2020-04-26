@@ -41,7 +41,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var (_, availabilities) = aggregate.MeasureAvailability();
 
             Assert.Equal(31, availabilities.Count());
-            Assert.Equal(0.75962m, availabilities.First().Availability);
+            Assert.Equal(0.75m, availabilities.First().Minimun);
         }
 
         [Fact]
@@ -69,8 +69,8 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var (_, availabilities) = aggregate.MeasureAvailability();
 
             Assert.Equal(2, availabilities.Count());
-            Assert.Equal(0.75m, availabilities.ElementAt(0).Availability);
-            Assert.Equal(0.75m, availabilities.ElementAt(1).Availability);            
+            Assert.Equal(0.75m, availabilities.ElementAt(0).Minimun);
+            Assert.Equal(0.75m, availabilities.ElementAt(1).Minimun);            
         }
 
         [Fact]

@@ -2,6 +2,7 @@
 using Owlvey.Falcon.Core.Entities;
 using System.Linq;
 using System.Collections.Generic;
+using Owlvey.Falcon.Core.Values;
 
 namespace Owlvey.Falcon.Core.Aggregates
 {
@@ -19,7 +20,7 @@ namespace Owlvey.Falcon.Core.Aggregates
             this.End = end;            
         }
 
-        public (IndicatorEntity, IEnumerable<DayAvailabilityEntity>) MeasureAvailability() {
+        public (IndicatorEntity, IEnumerable<DayPointValue>) MeasureAvailability() {
             var sourceAggregator = new SourceDailyAvailabilityAggregate(this.Indicator.Source, this.Start, this.End);
             var (source, items) = sourceAggregator.MeasureAvailability();
             return (this.Indicator, items);

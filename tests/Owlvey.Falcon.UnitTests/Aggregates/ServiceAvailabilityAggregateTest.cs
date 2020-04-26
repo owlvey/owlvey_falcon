@@ -12,7 +12,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         [Fact]
         public void AvailabilityAggregateSuccess() {
 
-            var agg = new ServiceAvailabilityAggregate(new ServiceEntity()
+            var agg = new ServiceQualityAggregate(new ServiceEntity()
             {
                  FeatureMap = new List<ServiceMapEntity>() {
                      new ServiceMapEntity(){
@@ -35,10 +35,8 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                      }
                  }
             });            
-            var result = agg.MeasureAvailability();
-            Assert.Equal(0.8m, result.availability);
-            Assert.Equal(1000, result.total);
-            Assert.Equal(800, result.good);
+            var result = agg.MeasureQuality();
+            Assert.Equal(0.8m, result.Quality);            
         }
     }
 }

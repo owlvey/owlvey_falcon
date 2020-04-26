@@ -43,9 +43,9 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var result = aggregate.MeasureAvailability();
 
             Assert.Equal(3, result.Item2.Count());
-            Assert.Equal(0.79940M, result.Item2.ElementAt(0).Availability);
-            Assert.Equal(0.79940M, result.Item2.ElementAt(1).Availability);
-            Assert.Equal(0.79940M, result.Item2.ElementAt(2).Availability);            
+            Assert.Equal(0.79940M, result.Item2.ElementAt(0).Minimun);
+            Assert.Equal(0.79940M, result.Item2.ElementAt(1).Minimun);
+            Assert.Equal(0.79940M, result.Item2.ElementAt(2).Minimun);            
         }
 
         [Fact]
@@ -71,9 +71,9 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var result = aggregate.MeasureAvailability();
 
             Assert.Equal(3, result.Item2.Count());            
-            Assert.Equal(0.90210M, result.Item2.ElementAt(0).Availability);
-            Assert.Equal(0.90210M, result.Item2.ElementAt(1).Availability);
-            Assert.Equal(0.90210M, result.Item2.ElementAt(2).Availability);
+            Assert.Equal(0.90210M, result.Item2.ElementAt(0).Minimun);
+            Assert.Equal(0.90210M, result.Item2.ElementAt(1).Minimun);
+            Assert.Equal(0.90210M, result.Item2.ElementAt(2).Minimun);
         }
 
         [Fact]
@@ -99,7 +99,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var result = aggregate.MeasureAvailability();
 
             Assert.Equal(5, result.Item2.Count());
-            Assert.Equal(0.90210M, result.Item2.First().Availability);
+            Assert.Equal(0.90210M, result.Item2.First().Minimun);
         }
              
 
@@ -136,7 +136,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var (_, availabilities) = aggregate.MeasureAvailability();
 
             Assert.Equal(31, availabilities.Count());
-            Assert.Equal(0.76923m, availabilities.First().Availability);
+            Assert.Equal(0.76923m, availabilities.First().Minimun);
         }
 
         [Fact]
@@ -168,8 +168,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             {
                 Assert.NotEqual(-1, item.Minimun);
                 Assert.NotEqual(-1, item.Maximun);
-                Assert.NotEqual(-1, item.Average);
-                Assert.NotEqual(-1, item.Availability);                
+                Assert.NotEqual(-1, item.Average);                
             }            
         }
     }

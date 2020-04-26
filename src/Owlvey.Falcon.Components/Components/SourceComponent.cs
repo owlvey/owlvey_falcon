@@ -155,22 +155,15 @@ namespace Owlvey.Falcon.Components
 
                 entity.SourceItems = sourceItems;
                 var agg = new SourceAvailabilityAggregate(entity);
-                var (ava, total, good) = agg.MeasureAvailability();                
-                result.Availability = ava;
-                result.Total = total;
-                result.Good = good;
+                var measure = agg.MeasureAvailability();                
+                result.Availability = measure.Proportion;
+                result.Total = measure.Total;
+                result.Good = measure.Good;
                 result.Clues = entity.ExportClues();
                 result.Features = entity.Indicators.ToDictionary(d => d.Feature.Name, c => c.Feature.Id.Value);
             }            
             return result;
-        }
-
-        private async Task<(decimal, int, int)> GetAvailabilityBySource(SourceEntity entity, DateTime start, DateTime end) {
-            var sourceItems = await this._dbContext.GetSourceItems(entity.Id.Value, start, end);
-            entity.SourceItems = sourceItems;
-            var agg = new SourceAvailabilityAggregate(entity);
-            return agg.MeasureAvailability();
-        }
+        }        
 
         public async Task<IEnumerable<SourceGetListRp>> GetByProductId(int productId)
         {
@@ -189,13 +182,13 @@ namespace Owlvey.Falcon.Components
             {                
                 source.SourceItems = sourceItems.Where(c => c.SourceId == source.Id).ToList();
                 var agg = new SourceAvailabilityAggregate(source);
-                var (ava, total, good)= agg.MeasureAvailability();
+                var proportion= agg.MeasureAvailability();
 
                 var tmp = this._mapper.Map<SourceGetListRp>(source);
                 tmp.References = source.Indicators.Count();
-                tmp.Availability = ava;
-                tmp.Total = total;
-                tmp.Good = good; 
+                tmp.Availability = proportion.Proportion;
+                tmp.Total = proportion.Total;
+                tmp.Good = proportion.Good; 
                 result.Add(tmp);
             }
             return result.OrderBy(c=>c.Availability).ToList();
@@ -222,13 +215,8 @@ namespace Owlvey.Falcon.Components
             };
 
             var aggregator = new SourceDailyAvailabilityAggregate(source, start, end);
-            var (_, items) = aggregator.MeasureAvailability();                        
-
-            foreach (var item in items)
-            {
-                result.Items.Add(this._mapper.Map<SeriesItemGetRp>(item));                
-            }            
-            
+            var (_, items) = aggregator.MeasureAvailability();
+            result.Items = SeriesItemGetRp.Convert(items);
             return result;
         }
     }

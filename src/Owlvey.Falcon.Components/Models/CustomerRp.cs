@@ -143,7 +143,7 @@ namespace Owlvey.Falcon.Models
                 this.ServiceId = service.Id.Value;
                 this.Service = service.Name;
                 this.SLO = service.Slo;
-                this.Availability = service.Availability;
+                this.Availability = service.Quality;
                 this.Budget = QualityUtils.MeasureBudget(this.Availability, this.SLO);
             }
         }

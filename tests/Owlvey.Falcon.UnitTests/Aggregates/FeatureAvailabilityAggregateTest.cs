@@ -28,10 +28,8 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                   } }
             });
             var result = agg.MeasureQuality();
-
-            Assert.Equal(1000, result.total);
-            Assert.Equal(800, result.good);
-            Assert.Equal(0.8m, result.quality);
+            
+            Assert.Equal(0.8m, result.Quality);
             
         }
 
@@ -72,10 +70,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                 }
             });
             var result = agg.MeasureQuality();
-
-            Assert.Equal(1000, result.total);
-            Assert.Equal(800, result.good);
-            Assert.Equal(0.72m, result.quality);
+            Assert.Equal(0.8m, result.Quality);
 
         }
     }

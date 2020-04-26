@@ -256,11 +256,12 @@ namespace Owlvey.Falcon.API.Controllers
             MultiSeriesGetRp result;
             if (string.IsNullOrWhiteSpace(group))
             {
-                result = await this._productQueryService.GetDailyServiceSeriesById(id, start.Value, end.Value);
+                result = await this._productQueryService.GetDailyServiceSeriesById(id, 
+                    start.Value, end.Value);
             }
             else {
-                result = await this._productQueryService.GetDailyServiceSeriesByIdAndGroup(id, start.Value,
-                    end.Value, group);
+                result = await this._productQueryService.GetDailyServiceSeriesByIdAndGroup(id, 
+                    start.Value, end.Value, group);
             }            
 
             return this.Ok(result);

@@ -108,8 +108,7 @@ namespace Owlvey.Falcon.Core.Entities
         public void MeasureAvailability()
         {
             var agg = new SourceAvailabilityAggregate(this);
-            var (ava, _, _) = agg.MeasureAvailability();
-            this.Availability = ava;
+            this.Availability = agg.MeasureAvailability().Proportion;             
         }
         #endregion
     }

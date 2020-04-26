@@ -17,9 +17,9 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                      new SourceItemEntity(){ Total = 1000, Good = 800 }
                  }
             });
-            var (a, _, _) = agg.MeasureAvailability();
+            var proportion = agg.MeasureAvailability();
 
-            Assert.Equal(0.8m, a);
+            Assert.Equal(0.8m, proportion.Proportion);
         }
 
         [Fact]
@@ -32,8 +32,8 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                      new SourceItemEntity(){ Total = 1000, Good = 800 }
                 }
             });
-            var (a, _, _) = agg.MeasureAvailability();
-            Assert.Equal(0.8m, a);
+            var a = agg.MeasureAvailability();
+            Assert.Equal(0.8m, a.Proportion);
         }
     }
 }

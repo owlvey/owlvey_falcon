@@ -116,8 +116,7 @@ namespace Owlvey.Falcon.Components
             var sourceItems = await this._dbContext.GetSourceItems(entity.Source.Id.Value, start, end);
             entity.Source.SourceItems = sourceItems;
             var agg = new IndicatorDateAvailabilityAggregate(entity);
-            var (availability, _ , _ ) = agg.MeasureAvailability();
-            return availability;
+            return agg.MeasureAvailability().Proportion;            
         }
         
         public async Task<IEnumerable<IndicatorAvailabilityGetListRp>> GetByFeatureWithAvailability(int featureId, DateTime start, DateTime end)
@@ -160,12 +159,7 @@ namespace Owlvey.Falcon.Components
             var aggregator = new IndicatorAvailabilityAggregator(indicator, start, end);
 
             var (_, items) = aggregator.MeasureAvailability();
-            
-            foreach (var item in items)
-            {
-                result.Items.Add(this._mapper.Map<SeriesItemGetRp>(item));
-            }            
-
+            result.Items = SeriesItemGetRp.Convert(items);    
             return result;
         }
         #endregion

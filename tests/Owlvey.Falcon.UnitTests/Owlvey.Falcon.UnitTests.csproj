@@ -31,7 +31,6 @@
 
   <ItemGroup>
     <Folder Include="Models\Migrate\" />
-    <Folder Include="Values\" />
     <Folder Include="Validators\" />
   </ItemGroup>
   <ItemGroup>

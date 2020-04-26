@@ -87,7 +87,7 @@ namespace Owlvey.Falcon.Models
             this.Group = service.Group;
             this.Name = service.Name;
             this.SLO = service.Slo;
-            this.Availability = service.Availability;
+            this.Availability = service.Quality;
             this.Description = service.Description;         
         }
 
@@ -124,7 +124,7 @@ namespace Owlvey.Falcon.Models
             this.Feature = feature.Name;
             this.SLO = service.Slo;
             this.FeatureSLO = service.FeatureSLO;
-            this.ServiceAvailability = service.Availability;
+            this.ServiceAvailability = service.Quality;
             this.FeatureAvailability = feature.Availability;
         }
     }

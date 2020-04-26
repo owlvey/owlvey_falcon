@@ -18,31 +18,20 @@ namespace Owlvey.Falcon.Core.Aggregates
             this.Start = start;
             this.End = end;            
         }
+                
 
-        internal static IEnumerable<DateAvailabilityValue> GenerateSourceItemDays(SourceItemEntity itemEntity)
-        {            
-            List<DateAvailabilityValue> result = new List<DateAvailabilityValue>();
-            DateAvailabilityValue value = new DateAvailabilityValue();
-            value.Availability = itemEntity.Availability;
-            value.Date = itemEntity.Target;
-            result.Add(value);
-            return result;
-        }                 
-
-        public (SourceEntity, IEnumerable<DayAvailabilityEntity>) MeasureAvailability()
+        public (SourceEntity, IEnumerable<DayPointValue>) MeasureAvailability()
         {
-            var data = this.Source.SourceItems.SelectMany(c => GenerateSourceItemDays(c)).ToList();
-            List<DayAvailabilityEntity> result = new List<DayAvailabilityEntity>();
+            var data = this.Source.SourceItems.ToList();
+            List<DayPointValue> result = new List<DayPointValue>();
             var days = DateTimeUtils.DaysDiff(End, Start);            
             var pivot = this.Start;
             for (int i = 0; i < days; i++)
             {
-                var sample = data.Where(c => DateTimeUtils.CompareDates(c.Date, pivot)).ToList();                
+                var sample = data.Where(c => DateTimeUtils.CompareDates(c.Target, pivot)).ToList();                
                 if (sample.Count > 0)
-                {
-                    decimal availability;
-                    availability = QualityUtils.CalculateAverageAvailability(sample.Select(c => c.Availability));                    
-                    result.Add(new DayAvailabilityEntity(pivot, availability, availability, availability, availability));
+                {                    
+                    result.Add(new DayPointValue(pivot, sample));
                 }
                 pivot = pivot.AddDays(1);
             }           

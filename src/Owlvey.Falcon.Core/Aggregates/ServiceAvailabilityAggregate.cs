@@ -6,45 +6,47 @@ using System.Linq;
 
 namespace Owlvey.Falcon.Core.Aggregates
 {
-    public class ServiceAvailabilityAggregate
+    public class ServiceQualityAggregate
     {
         private readonly ServiceEntity Service;                
 
-        public ServiceAvailabilityAggregate(ServiceEntity service)
+        public ServiceQualityAggregate(ServiceEntity service)
         {            
             this.Service = service;                        
-        }        
-        public (decimal availability, int total, int good) MeasureAvailability() {
+        }
+        public QualityMeasureValue MeasureQuality(DateTime? start = null, DateTime? end = null)
+        {
             var result = new List<decimal>();
-            int sumTotal = 0;
-            int sumGood = 0;
+            var resultAvailability = new List<decimal>();
+            var resultLatency = new List<decimal>();             
 
             foreach (var map in this.Service.FeatureMap)
             {
                 var agg = new FeatureAvailabilityAggregate(map.Feature);
-                var (availability, total, good, _, _) = agg.MeasureQuality();
-                result.Add(availability);
-                sumTotal += total;
-                sumGood += good; 
+                QualityMeasureValue measure;
+                if (start.HasValue && end.HasValue)
+                {
+                    measure = agg.MeasureQuality(start, end);                    
+                }
+                else {
+                    measure = agg.MeasureQuality();
+                }
+                if (measure.HasData) {
+                    result.Add(measure.Quality);
+                    resultAvailability.Add(measure.Availability);
+                    resultLatency.Add(measure.Latency);
+                }                
             }
             
             if (result.Count > 0)
-            {
-                if (this.Service.Aggregation == ServiceAggregationEnum.Minimun)
-                {
-                    return (QualityUtils.CalculateMinimumAvailability(result, round: 3), sumTotal, sumGood);
-                }
-                else if (this.Service.Aggregation == ServiceAggregationEnum.Average) {
-                    return (QualityUtils.CalculateAverageAvailability(result, round: 3), sumTotal, sumGood);
-                }
-                else
-                {
-                    return (QualityUtils.CalculateDotProportion(result, round: 3), sumTotal, sumGood);
-                }
-                
+            {    
+                return new QualityMeasureValue(
+                    QualityUtils.CalculateMinimumAvailability(result, round: 3),
+                    QualityUtils.CalculateMinimumAvailability(resultAvailability, round: 3),
+                    QualityUtils.CalculateMinimumAvailability(resultLatency, round: 3));
             }
             else {
-                return (1, 0,0);
+                return new QualityMeasureValue(1, 1, 1, false);
             }            
         }
     }

@@ -11,8 +11,7 @@ namespace Owlvey.Falcon.Components
         public static void ConfigureMappers(IMapperConfigurationExpression cfg)
         {
             cfg.CreateMap<ServiceEntity, Models.ServiceGetListRp>()
-                .ForMember(c=>c.FeaturesCount,opt=> opt.MapFrom(d=>d.FeatureMap.Count))
-                .ForMember(m => m.Availability, ope => ope.Ignore())                
+                .ForMember(c=>c.FeaturesCount,opt=> opt.MapFrom(d=>d.FeatureMap.Count))                
                 .ForMember(m => m.Deploy, ope => ope.Ignore())
                 .ForMember(m => m.MTTD, ope => ope.Ignore())
                 .ForMember(m => m.MTTE, ope => ope.Ignore())
@@ -28,6 +27,8 @@ namespace Owlvey.Falcon.Components
                 .ForMember(m => m.MTTF, ope => ope.Ignore())
                 .ForMember(m => m.MTTM, ope => ope.Ignore())
                 .ForMember(m => m.BudgetMinutes, ope => ope.Ignore())
+                .ForMember(m => m.PreviousAvailability, ope => ope.Ignore())
+                .ForMember(m => m.PreviousAvailabilityII, ope => ope.Ignore())
                 .ForMember(m => m.Availability, ope => ope.Ignore());
 
             cfg.CreateMap<ServiceEntity, Models.ServiceMigrateRp>()
