@@ -6,15 +6,15 @@ using System.Linq;
 
 namespace Owlvey.Falcon.Core.Aggregates
 {
-    public class IndicatorDateAvailabilityAggregate
+    public class IndicatorQualityAggregate
     {
         private readonly IndicatorEntity Indicator;                
 
-        public IndicatorDateAvailabilityAggregate(IndicatorEntity indicator)
+        public IndicatorQualityAggregate(IndicatorEntity indicator)
         {            
             this.Indicator = indicator;                        
         }        
-        public ProportionMeasureValue  MeasureAvailability(DateTime? start = null, DateTime? end = null) {
+        public QualityMeasureValue MeasureAvailability(DateTime? start = null, DateTime? end = null) {
 
             if (start.HasValue && end.HasValue)
             {

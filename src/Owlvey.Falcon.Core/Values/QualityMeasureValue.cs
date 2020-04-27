@@ -18,5 +18,9 @@ namespace Owlvey.Falcon.Core.Values
             this.Latency = latency;
             this.HasData= hasdata;
         }
+        public QualityMeasureValue(decimal quality, bool hasdata = true) : this(quality, quality, quality, hasdata)
+        {
+            
+        }
     }
 }

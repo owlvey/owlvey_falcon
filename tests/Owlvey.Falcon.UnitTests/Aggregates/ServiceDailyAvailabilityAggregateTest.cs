@@ -4,6 +4,7 @@ using Owlvey.Falcon.Core.Entities;
 using Xunit;
 using static Owlvey.Falcon.UnitTests.TestDataFactory;
 using System.Linq;
+using Owlvey.Falcon.Core.Values;
 
 namespace Owlvey.Falcon.UnitTests.Aggregates
 {
@@ -36,10 +37,10 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             feature.Indicators.Add(indicator);
             feature.Indicators.Add(indicatorA);
 
-            var service_aggregate = new ServiceDailyAvailabilityAggregate(service,
-                OwlveyCalendar.StartJanuary2019, OwlveyCalendar.EndJanuary2019);
+            var service_aggregate = new ServiceDailyAggregate(service,
+                new DatePeriodValue(OwlveyCalendar.StartJanuary2019, OwlveyCalendar.EndJanuary2019));
 
-            var (_, service_availabilities, _) = service_aggregate.MeasureAvailability();
+            var (service_availabilities, _) = service_aggregate.MeasureQuality();
 
             Assert.Equal(2, service_availabilities.Count());
 

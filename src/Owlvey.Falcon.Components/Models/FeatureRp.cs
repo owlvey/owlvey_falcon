@@ -77,11 +77,7 @@ namespace Owlvey.Falcon.Models
         public decimal Quality { get; set; }
         public decimal Latency { get; set; }
         public int MapId { get; set; }
-        public string MTTM { get; set; }
-        public string MTTE { get; set; }
-        public string MTTD { get; set; }
-        public string MTTF { get; set; }
-
+        
         public override void Read(FeatureEntity Entity){
             base.Read(Entity); 
 
@@ -103,17 +99,8 @@ namespace Owlvey.Falcon.Models
         public int Squads { get; set; }
     }
 
-    public class SequenceFeatureGetListRp : FeatureGetListRp {
-        public decimal FeatureSlo { get; set; }
-        public int Sequence { get; set; }
-        public int Total { get; set; }
-        public decimal Budget
-        {
-            get
-            {
-                return this.Quality - this.FeatureSlo;
-            }
-        }
+    public class SequenceFeatureGetListRp : FeatureGetListRp {        
+        public int Sequence { get; set; }                
     }
 
 

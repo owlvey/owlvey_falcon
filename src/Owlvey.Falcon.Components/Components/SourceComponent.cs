@@ -13,6 +13,7 @@ using Owlvey.Falcon.Core.Aggregates;
 using Owlvey.Falcon.Core;
 using Owlvey.Falcon.Repositories.Sources;
 using Polly;
+using Owlvey.Falcon.Core.Values;
 
 namespace Owlvey.Falcon.Components
 {
@@ -156,9 +157,9 @@ namespace Owlvey.Falcon.Components
                 entity.SourceItems = sourceItems;
                 var agg = new SourceAvailabilityAggregate(entity);
                 var measure = agg.MeasureAvailability();                
-                result.Availability = measure.Proportion;
-                result.Total = measure.Total;
-                result.Good = measure.Good;
+                result.Availability = measure.Quality;
+                result.Total = entity.SourceItems.Sum(c=>c.Total);
+                result.Good = entity.SourceItems.Sum(c => c.Good);
                 result.Clues = entity.ExportClues();
                 result.Features = entity.Indicators.ToDictionary(d => d.Feature.Name, c => c.Feature.Id.Value);
             }            
@@ -186,9 +187,9 @@ namespace Owlvey.Falcon.Components
 
                 var tmp = this._mapper.Map<SourceGetListRp>(source);
                 tmp.References = source.Indicators.Count();
-                tmp.Availability = proportion.Proportion;
-                tmp.Total = proportion.Total;
-                tmp.Good = proportion.Good; 
+                tmp.Availability = proportion.Quality;
+                tmp.Total = source.Total;
+                tmp.Good = source.Good; 
                 result.Add(tmp);
             }
             return result.OrderBy(c=>c.Availability).ToList();
@@ -202,21 +203,22 @@ namespace Owlvey.Falcon.Components
         }
 
         
-        public async Task<SeriesGetRp> GetDailySeriesById(int sourceId, DateTime start, DateTime end) {                                   
+        public async Task<SeriesGetRp> GetDailySeriesById(int sourceId,
+            DatePeriodValue period) {                                   
             var source = await this._dbContext.Sources.SingleAsync(c => c.Id == sourceId);
-            var sourceItems = await this._dbContext.GetSourceItems(sourceId, start, end);
+            var sourceItems = await this._dbContext.GetSourceItems(sourceId, period.Start, period.End);
             source.SourceItems = sourceItems;
+
             var result = new SeriesGetRp
             {
-                Start = start,
-                End = end,
+                Start = period.Start,
+                End = period.End,
                 Name = source.Name,
                 Avatar = source.Avatar
             };
-
-            var aggregator = new SourceDailyAvailabilityAggregate(source, start, end);
-            var (_, items) = aggregator.MeasureAvailability();
-            result.Items = SeriesItemGetRp.Convert(items);
+            var aggregator = new SourceDailyAvailabilityAggregate(source, period);
+            var items = aggregator.MeasureAvailability();
+            result.Items = items.Select(c=> new SeriesItemGetRp(c.Date, c.Measure.Quality)).ToList();
             return result;
         }
     }

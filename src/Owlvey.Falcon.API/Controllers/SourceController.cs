@@ -117,7 +117,7 @@ namespace Owlvey.Falcon.API.Controllers
             {
                 return this.BadRequest("end is required");
             }
-            var result = await this._sourceComponent.GetDailySeriesById(id, start.Value, end.Value);
+            var result = await this._sourceComponent.GetDailySeriesById(id, new Core.Values.DatePeriodValue( start.Value, end.Value));
             return this.Ok(result);
         }
         #endregion

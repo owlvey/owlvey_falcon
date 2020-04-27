@@ -6,6 +6,7 @@ using Xunit;
 using System.Linq;
 using TDF = Owlvey.Falcon.UnitTests.TestDataFactory;
 using static Owlvey.Falcon.UnitTests.TestDataFactory;
+using Owlvey.Falcon.Core.Values;
 
 namespace Owlvey.Falcon.UnitTests.Aggregates
 {
@@ -43,9 +44,10 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             feature.Indicators.Add(indicatorA);
 
             var aggregate = new FeatureDailyAvailabilityAggregate(feature,                
-                OwlveyCalendar.StartJanuary2019, OwlveyCalendar.EndJanuary2019);
+                new Core.Values.DatePeriodValue(
+                OwlveyCalendar.StartJanuary2019, OwlveyCalendar.EndJanuary2019));
 
-            var (_, features_availabilities, _) = aggregate.MeasureAvailability();
+            var (features_availabilities, _) = aggregate.MeasureAvailability();
 
             Assert.Equal(31, features_availabilities.Count());
         }
@@ -56,11 +58,12 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         {
             var (_, product, _, feature) = TestDataFactory.BuildCustomerProductServiceFeature();
             
-            var aggregate = new FeatureDailyAvailabilityAggregate(feature,  OwlveyCalendar.StartJanuary2017, OwlveyCalendar.EndJanuary2017);
+            var aggregate = new FeatureDailyAvailabilityAggregate(feature, 
+                new DatePeriodValue( OwlveyCalendar.StartJanuary2017, OwlveyCalendar.EndJanuary2017));
 
-            var (_, features_availabilities, _) = aggregate.MeasureAvailability();
+            var (features_availabilities, _) = aggregate.MeasureAvailability();
 
-            Assert.Equal(0, features_availabilities.Count());
+            Assert.Empty(features_availabilities);
         }
     }
 }

@@ -9,34 +9,28 @@ namespace Owlvey.Falcon.Core.Aggregates
     public class SourceDailyAvailabilityAggregate
     {
         private readonly SourceEntity Source;
-        private readonly DateTime Start;
-        private readonly DateTime End;        
+        private readonly DatePeriodValue Period;
 
-        public SourceDailyAvailabilityAggregate(SourceEntity source, DateTime start, DateTime end)
+        public SourceDailyAvailabilityAggregate(SourceEntity source, DatePeriodValue period)
         {            
             this.Source = source;
-            this.Start = start;
-            this.End = end;            
+            this.Period = period;
         }
                 
 
-        public (SourceEntity, IEnumerable<DayPointValue>) MeasureAvailability()
-        {
-            var data = this.Source.SourceItems.ToList();
-            List<DayPointValue> result = new List<DayPointValue>();
-            var days = DateTimeUtils.DaysDiff(End, Start);            
-            var pivot = this.Start;
-            for (int i = 0; i < days; i++)
-            {
-                var sample = data.Where(c => DateTimeUtils.CompareDates(c.Target, pivot)).ToList();                
-                if (sample.Count > 0)
-                {                    
-                    result.Add(new DayPointValue(pivot, sample));
-                }
-                pivot = pivot.AddDays(1);
-            }           
+        public IEnumerable<DayMeasureValue> MeasureAvailability()
+        {            
+            var result = new List<DayMeasureValue>();
 
-            return (this.Source, result);
+            foreach (var item in this.Period.GetDatesIntervals())
+            {
+                var agg = new SourceAvailabilityAggregate(this.Source);
+                var measure = agg.MeasureAvailability(item.start, item.end);
+                if (measure.HasData) {
+                    result.Add(new DayMeasureValue(item.start, new QualityMeasureValue(measure.Quality) ));
+                }    
+            }
+            return result;
         }
     }
 }

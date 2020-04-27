@@ -37,15 +37,16 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             }                                   
 
             var aggregate = new SourceDailyAvailabilityAggregate(source,
+                new Core.Values.DatePeriodValue(
                 OwlveyCalendar.January201906,
-                OwlveyCalendar.January201920);
+                OwlveyCalendar.January201920));
 
             var result = aggregate.MeasureAvailability();
 
-            Assert.Equal(3, result.Item2.Count());
-            Assert.Equal(0.79940M, result.Item2.ElementAt(0).Minimun);
-            Assert.Equal(0.79940M, result.Item2.ElementAt(1).Minimun);
-            Assert.Equal(0.79940M, result.Item2.ElementAt(2).Minimun);            
+            Assert.Equal(3, result.Count());
+            Assert.Equal(0.79940M, result.ElementAt(0).Measure.Quality);
+            Assert.Equal(0.79940M, result.ElementAt(1).Measure.Quality);
+            Assert.Equal(0.79940M, result.ElementAt(2).Measure.Quality);            
         }
 
         [Fact]
@@ -65,15 +66,16 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
 
             
             var aggregate = new SourceDailyAvailabilityAggregate(source,
+                new Core.Values.DatePeriodValue(
                 OwlveyCalendar.January201905,
-                OwlveyCalendar.January201910);
+                OwlveyCalendar.January201910));
 
             var result = aggregate.MeasureAvailability();
 
-            Assert.Equal(3, result.Item2.Count());            
-            Assert.Equal(0.90210M, result.Item2.ElementAt(0).Minimun);
-            Assert.Equal(0.90210M, result.Item2.ElementAt(1).Minimun);
-            Assert.Equal(0.90210M, result.Item2.ElementAt(2).Minimun);
+            Assert.Equal(3, result.Count());            
+            Assert.Equal(0.90210M, result.ElementAt(0).Measure.Quality);
+            Assert.Equal(0.90210M, result.ElementAt(1).Measure.Quality);
+            Assert.Equal(0.90210M, result.ElementAt(2).Measure.Quality);
         }
 
         [Fact]
@@ -93,13 +95,14 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             }            
 
             var aggregate = new SourceDailyAvailabilityAggregate(source,
+                new Core.Values.DatePeriodValue(
                 OwlveyCalendar.January201910,
-                OwlveyCalendar.January201920);
+                OwlveyCalendar.January201920));
 
             var result = aggregate.MeasureAvailability();
 
-            Assert.Equal(5, result.Item2.Count());
-            Assert.Equal(0.90210M, result.Item2.First().Minimun);
+            Assert.Equal(5, result.Count());
+            Assert.Equal(0.90210M, result.First().Measure.Quality);
         }
              
 
@@ -130,13 +133,14 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             }            
 
             var aggregate = new SourceDailyAvailabilityAggregate(source,                
+                new Core.Values.DatePeriodValue(
                 OwlveyCalendar.StartJanuary2019,
-                OwlveyCalendar.EndJanuary2019);
+                OwlveyCalendar.EndJanuary2019));
 
-            var (_, availabilities) = aggregate.MeasureAvailability();
+            var availabilities = aggregate.MeasureAvailability();
 
             Assert.Equal(31, availabilities.Count());
-            Assert.Equal(0.76923m, availabilities.First().Minimun);
+            Assert.Equal(0.76923m, availabilities.First().Measure.Quality);
         }
 
         [Fact]
@@ -158,17 +162,16 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             }            
 
             var aggregate = new SourceDailyAvailabilityAggregate(source,
+                new Core.Values.DatePeriodValue(
                 OwlveyCalendar.StartJuly2019,
-                OwlveyCalendar.EndJuly2019);
+                OwlveyCalendar.EndJuly2019));
 
-            var (_, availabilities) = aggregate.MeasureAvailability();
+            var availabilities = aggregate.MeasureAvailability();
             
             Assert.Equal(31, availabilities.Count());
             foreach (var item in availabilities)
             {
-                Assert.NotEqual(-1, item.Minimun);
-                Assert.NotEqual(-1, item.Maximun);
-                Assert.NotEqual(-1, item.Average);                
+                Assert.NotEqual(-1, item.Measure.Quality);                          
             }            
         }
     }

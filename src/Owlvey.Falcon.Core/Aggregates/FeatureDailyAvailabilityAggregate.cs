@@ -8,55 +8,45 @@ namespace Owlvey.Falcon.Core.Aggregates
 {
     public class FeatureDailyAvailabilityAggregate
     {
-        private DateTime Start;
-        private DateTime End; 
+        
+        private DatePeriodValue Period; 
         public FeatureEntity Feature { get; protected set; }        
-        public FeatureDailyAvailabilityAggregate(FeatureEntity entity,            
-            DateTime start,
-            DateTime end)
+        public FeatureDailyAvailabilityAggregate(FeatureEntity entity,
+            DatePeriodValue period)
         {
-            this.Start = start;
-            this.End = end; 
+            this.Period = period;
             this.Feature = entity;            
         }
 
-        private IEnumerable<(IndicatorEntity indicator, IEnumerable<DayPointValue> availabities)> GenerateDaily() {
-            var result = new List<(IndicatorEntity, IEnumerable<DayPointValue>)>();
-            foreach (var item in this.Feature.Indicators)
-            {
-                var agg = new IndicatorAvailabilityAggregator(item, this.Start, this.End);
-                var temp = agg.MeasureAvailability();
-                result.Add(temp);
-            }
-            return result;
-        }
 
-        public (FeatureEntity,
-            IEnumerable<DayPointValue>,
-            IEnumerable<(IndicatorEntity, IEnumerable<DayPointValue>)>) MeasureAvailability()
+        public (IEnumerable<DayMeasureValue>,
+            IEnumerable<(IndicatorEntity, IEnumerable<DayMeasureValue>)>) MeasureAvailability()
         {
 
-            List<DayPointValue> result = new List<DayPointValue>();
+            var featureResult = new List<DayMeasureValue>();
 
-            var indicators = this.GenerateDaily();
-
-            var data = indicators.SelectMany(c => c.availabities).ToList();
-
-            var days = DateTimeUtils.DaysDiff(this.End, this.Start);
-
-            var pivot = this.Start; 
-
-            for (int i = 0; i < days; i++)
+            foreach (var item in this.Period.GetDatesIntervals())
             {
-                var sample = data.Where(c => DateTimeUtils.CompareDates(c.Date, pivot)).ToList();                
-                if (sample.Count != 0)
-                {                     
-                    result.Add(new DayPointValue(pivot, sample));
-                }
-                pivot = pivot.AddDays(1);
+                var agg = new Core.Aggregates.FeatureAvailabilityAggregate(this.Feature);
+                var measure = agg.MeasureQuality(item.start, item.end);
+                if (measure.HasData) featureResult.Add(new DayMeasureValue(item.start, measure)); 
             }
 
-            return (this.Feature, result, indicators);
+            var indicatorResult = new List<(IndicatorEntity, IEnumerable<DayMeasureValue>)>();
+            foreach (var indicator in this.Feature.Indicators)
+            {
+                var temporal = new List<DayMeasureValue>();
+                foreach (var (start, end) in this.Period.GetDatesIntervals())
+                {
+                    var agg = new SourceAvailabilityAggregate(indicator.Source);
+                    var measure = agg.MeasureAvailability(start, end);
+                    if (measure.HasData) 
+                        temporal.Add(new DayMeasureValue(start, new QualityMeasureValue(measure.Quality)));
+                }
+                indicatorResult.Add( (indicator, temporal ));
+            }
+
+            return (featureResult, indicatorResult);
 
         }
     }

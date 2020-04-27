@@ -153,44 +153,6 @@ namespace Owlvey.Falcon.Components
         #region Daily Reports
 
 
-        public async Task<MultiSeriesGetRp> GetDailyFeaturesSeriesById(int productId, DateTime start, DateTime end) {
-
-            var product = await this._dbContext.Products
-                .Include(c => c.Features)
-                .ThenInclude(c=>c.Indicators)
-                .ThenInclude(c=>c.Source)
-                .Where(c => c.Id == productId).SingleAsync();
-
-            foreach (var feature in product.Features)
-            {
-                foreach (var indicator in feature.Indicators)
-                {
-                    var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, start, end);
-                    indicator.Source.SourceItems = sourceItems;
-                }
-            }
-            var result = new MultiSeriesGetRp
-            {
-                Start = start,
-                End = end,
-                Name = product.Name,
-                Avatar = product.Avatar
-            };
-
-            foreach (var feature in product.Features)
-            {
-                var aggregate = new FeatureDailyAvailabilityAggregate(feature, start, end);
-                var (_, series, _) = aggregate.MeasureAvailability();                
-                result.Series.Add(new MultiSerieItemGetRp()
-                {
-                    Name = string.Format("Feature:{0}", feature.Id),
-                    Avatar = feature.Avatar,
-                    Items  = SeriesItemGetRp.Convert(series)
-                });
-            }
-            return result;
-        }
-
         private MultiSeriesGetRp InternalGetDailyServiceSeries(ProductEntity product, DateTime start, DateTime end) {            
 
             var result = new MultiSeriesGetRp
@@ -417,9 +379,9 @@ namespace Owlvey.Falcon.Components
                 result.Sources.Add(new SourceGetListRp()
                 {
                     Id = source.Id.Value,
-                    Availability = measure.Proportion,
-                    Total = measure.Total,
-                    Good = measure.Good,
+                    Availability = measure.Quality,
+                    Total = source.Total,
+                    Good = source.Good,
                     Avatar = source.Avatar,
                     CreatedBy = source.CreatedBy,
                     CreatedOn = source.CreatedOn.Value,

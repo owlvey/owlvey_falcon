@@ -50,6 +50,7 @@ namespace Owlvey.Falcon.Models
 
         public SeriesItemGetRp(DayPointValue value) : this(value.Date, value.Minimun, value.Maximun, value.Average) { 
         }
+        
 
         public static List<SeriesItemGetRp> Convert(IEnumerable<DayPointValue> points)
         {
@@ -59,7 +60,7 @@ namespace Owlvey.Falcon.Models
                 result.Add(new SeriesItemGetRp(item));                
             }
             return result;
-        }
+        }        
     }
 
     public class MultiSerieItemGetRp {

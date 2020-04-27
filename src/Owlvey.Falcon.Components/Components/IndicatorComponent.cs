@@ -115,8 +115,8 @@ namespace Owlvey.Falcon.Components
         {
             var sourceItems = await this._dbContext.GetSourceItems(entity.Source.Id.Value, start, end);
             entity.Source.SourceItems = sourceItems;
-            var agg = new IndicatorDateAvailabilityAggregate(entity);
-            return agg.MeasureAvailability().Proportion;            
+            var agg = new IndicatorQualityAggregate(entity);
+            return agg.MeasureAvailability().Quality;            
         }
         
         public async Task<IEnumerable<IndicatorAvailabilityGetListRp>> GetByFeatureWithAvailability(int featureId, DateTime start, DateTime end)
@@ -137,31 +137,6 @@ namespace Owlvey.Falcon.Components
             var entity = await this._dbContext.Indicators.Include(c=>c.Feature).Include(c=> c.Source).SingleOrDefaultAsync(c => c.Id == id);
 
             return this._mapper.Map<IndicatorGetRp>(entity);
-        }
-        #region reports
-        public async Task<SeriesGetRp> GetDailySeriesById(int indicatorId, DateTime start, DateTime end)
-        {
-            var indicator = await this._dbContext.Indicators.Include(c=>c.Source).SingleAsync(c => c.Id == indicatorId);
-            var sourceItems = await this._dbContext.GetSourceItems(indicator.Source.Id.Value, start , end);
-
-            indicator.Source.SourceItems = sourceItems;
-            
-            var result = new SeriesGetRp
-            {
-                Start = start,
-                End = end,
-                Avatar = indicator.Avatar,
-                Name = String.Format($"{indicator.Feature.Name}-{indicator.Source.Name}")
-            };
-
-            //TODO: refactoring
-
-            var aggregator = new IndicatorAvailabilityAggregator(indicator, start, end);
-
-            var (_, items) = aggregator.MeasureAvailability();
-            result.Items = SeriesItemGetRp.Convert(items);    
-            return result;
-        }
-        #endregion
+        }  
     }
 }

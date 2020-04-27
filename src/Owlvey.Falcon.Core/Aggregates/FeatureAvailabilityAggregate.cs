@@ -22,9 +22,9 @@ namespace Owlvey.Falcon.Core.Aggregates
             var latency = new List<decimal>();
             foreach (var item in this.Feature.Indicators)
             {
-                var agg = new IndicatorDateAvailabilityAggregate(item);
+                var agg = new IndicatorQualityAggregate(item);
 
-                ProportionMeasureValue proportion ;                
+                QualityMeasureValue proportion;                
                 if (start.HasValue && end.HasValue) {
                     proportion = agg.MeasureAvailability(start, end);
                 }
@@ -33,23 +33,23 @@ namespace Owlvey.Falcon.Core.Aggregates
                 }
 
                 if (proportion.HasData) {
-                    result.Add(proportion.Proportion);
+                    result.Add(proportion.Quality);
                     if (item.Source.Group == SourceGroupEnum.Availability)
                     {
-                        availability.Add(proportion.Proportion);
+                        availability.Add(proportion.Quality);
                     }
                     else if (item.Source.Group == SourceGroupEnum.Latency)
                     {
-                        latency.Add(proportion.Proportion);
+                        latency.Add(proportion.Quality);
                     }
                 }                
             }
             if (result.Count > 0)
             {                
                 return new QualityMeasureValue(
-                    QualityUtils.CalculateMinimumAvailability(result, round: 4),
-                    QualityUtils.CalculateMinimumAvailability(availability, 4),
-                    QualityUtils.CalculateMinimumAvailability(latency, 4), true);
+                    QualityUtils.CalculateMinimumAvailability(result, round: 3),
+                    QualityUtils.CalculateMinimumAvailability(availability, 3),
+                    QualityUtils.CalculateMinimumAvailability(latency, 3), true);
             }
             else {
                 return new QualityMeasureValue(1, 1, 1, false);

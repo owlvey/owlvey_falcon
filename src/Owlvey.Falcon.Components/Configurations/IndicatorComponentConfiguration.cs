@@ -34,9 +34,7 @@ namespace Owlvey.Falcon.Components
                 .ForMember(m => m.Description, opt => opt.MapFrom(src => src.Source.Description))
                 .ForMember(m => m.Kind, opt => opt.MapFrom(src => src.Source.Kind))                
                 .ForMember(m => m.Group, opt => opt.MapFrom(src => src.Source.Group))
-                .ForMember(c => c.Availability, opt => opt.Ignore())
-                .ForMember(c => c.Good, opt => opt.Ignore())
-                .ForMember(c => c.Total, opt =>  opt.Ignore())
+                .ForMember(c => c.Availability, opt => opt.Ignore())                
                 .ForMember(c => c.Source, opt => opt.MapFrom(d => d.Source.Name));
             
         }

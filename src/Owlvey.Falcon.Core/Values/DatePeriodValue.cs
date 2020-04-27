@@ -35,5 +35,9 @@ namespace Owlvey.Falcon.Core.Values
             }
             return result;
         }
+        public (DatePeriodValue before, DatePeriodValue previous) CalculateBeforePreviousDates() {
+            var (bs, be, ps, pe) = DateTimeUtils.CalculateBeforePreviousDates(this.Start, this.End);
+            return (new DatePeriodValue(bs, be), new DatePeriodValue(ps, pe));
+        }
     }
 }

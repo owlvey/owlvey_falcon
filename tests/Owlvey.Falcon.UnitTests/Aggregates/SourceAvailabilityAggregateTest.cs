@@ -19,7 +19,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             });
             var proportion = agg.MeasureAvailability();
 
-            Assert.Equal(0.8m, proportion.Proportion);
+            Assert.Equal(0.8m, proportion.Quality);
         }
 
         [Fact]
@@ -33,7 +33,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                 }
             });
             var a = agg.MeasureAvailability();
-            Assert.Equal(0.8m, a.Proportion);
+            Assert.Equal(0.8m, a.Quality);
         }
     }
 }

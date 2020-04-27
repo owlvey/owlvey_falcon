@@ -124,12 +124,6 @@ namespace Owlvey.Falcon.ComponentsTests
                 OwlveyCalendar.January201910);
 
             Assert.NotEmpty(result.Series);
-
-            var resultFeatures = await productQueryComponent.GetDailyFeaturesSeriesById(product.Id, OwlveyCalendar.StartJanuary2019,
-                OwlveyCalendar.January201910);
-
-            Assert.NotEmpty(resultFeatures.Series);
-            
         }
 
         [Fact]

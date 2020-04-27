@@ -34,14 +34,15 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             
             source.SourceItems.Add(sourceItemB);
 
-            var aggregate = new IndicatorAvailabilityAggregator(indicator,                
+            var aggregate = new SourceDailyAvailabilityAggregate(indicator.Source,                
+                new Core.Values.DatePeriodValue(
                 OwlveyCalendar.StartJanuary2019,
-                OwlveyCalendar.EndJanuary2019);
+                OwlveyCalendar.EndJanuary2019));
 
-            var (_, availabilities) = aggregate.MeasureAvailability();
+            var availabilities = aggregate.MeasureAvailability();
 
             Assert.Equal(31, availabilities.Count());
-            Assert.Equal(0.75m, availabilities.First().Minimun);
+            Assert.Equal(0.75061m, availabilities.First().Measure.Quality);
         }
 
         [Fact]
@@ -62,15 +63,16 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             source.SourceItems.Add(sourceItemA);
             source.SourceItems.Add(sourceItemB);
 
-            var aggregate = new IndicatorAvailabilityAggregator(indicator,                
+            var aggregate = new SourceDailyAvailabilityAggregate(indicator.Source,                
+                new Core.Values.DatePeriodValue(
                 OwlveyCalendar.StartJanuary2019,
-                OwlveyCalendar.EndJanuary2019);
+                OwlveyCalendar.EndJanuary2019));
 
-            var (_, availabilities) = aggregate.MeasureAvailability();
+            var availabilities = aggregate.MeasureAvailability();
 
             Assert.Equal(2, availabilities.Count());
-            Assert.Equal(0.75m, availabilities.ElementAt(0).Minimun);
-            Assert.Equal(0.75m, availabilities.ElementAt(1).Minimun);            
+            Assert.Equal(0.75m, availabilities.ElementAt(0).Measure.Quality);
+            Assert.Equal(0.75m, availabilities.ElementAt(1).Measure.Quality);            
         }
 
         [Fact]
@@ -80,12 +82,13 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
 
             var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, "test");
             
-            var aggregate = new IndicatorAvailabilityAggregator(
-                indicator,                
+            var aggregate = new SourceDailyAvailabilityAggregate(
+                indicator.Source,                
+                new Core.Values.DatePeriodValue(
                 OwlveyCalendar.StartJanuary2019,
-                OwlveyCalendar.EndJanuary2019);
+                OwlveyCalendar.EndJanuary2019));
 
-            var (_, availabilities) = aggregate.MeasureAvailability();
+            var availabilities = aggregate.MeasureAvailability();
             Assert.Empty(availabilities);            
         }
        

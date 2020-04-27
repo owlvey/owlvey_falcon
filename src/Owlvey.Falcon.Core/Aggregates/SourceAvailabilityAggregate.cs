@@ -14,7 +14,7 @@ namespace Owlvey.Falcon.Core.Aggregates
         {            
             this.Source = source;                        
         }        
-        public ProportionMeasureValue MeasureAvailability(DateTime? start = null, DateTime? end = null) {
+        public QualityMeasureValue MeasureAvailability(DateTime? start = null, DateTime? end = null) {
 
             int total;
             int good;
@@ -29,19 +29,13 @@ namespace Owlvey.Falcon.Core.Aggregates
             }
 
             if (data.Count() == 0) {
-                return new ProportionMeasureValue(1, false);
+                return new QualityMeasureValue(1, false);
             }
 
             total = data.Sum(c => c.Total);
             good = data.Sum(c => c.Good);
             var availability = QualityUtils.CalculateAvailability(total, good, 1);
-            if (this.Source.Kind == SourceKindEnum.Interaction)
-            {
-                return new ProportionMeasureValue(availability, total, good);
-            }
-            else {
-                return new ProportionMeasureValue(availability);
-            }           
+            return new QualityMeasureValue(availability);            
         }
     }
 }

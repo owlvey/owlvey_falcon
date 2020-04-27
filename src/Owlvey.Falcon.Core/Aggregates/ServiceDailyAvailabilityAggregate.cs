@@ -6,58 +6,49 @@ using Owlvey.Falcon.Core.Values;
 
 namespace Owlvey.Falcon.Core.Aggregates
 {
-    public class ServiceDailyAvailabilityAggregate
+    public class ServiceDailyAggregate
     {
         public ServiceEntity Service { get; protected set; }
+                
+        private readonly DatePeriodValue Period;
+        public ServiceDailyAggregate(ServiceEntity entity, DatePeriodValue period)
+        {
+            this.Service = entity;
+            this.Period = period;
+        }
         
-        private readonly DateTime Start;
-        private readonly DateTime End;
-        public ServiceDailyAvailabilityAggregate(ServiceEntity entity,            
-            DateTime Start,
-            DateTime End)
+        public (
+            IEnumerable<DayMeasureValue> serviceDaily,
+            IEnumerable<(FeatureEntity, IEnumerable<DayMeasureValue>)> featuresDaily) MeasureQuality()
         {
-            this.Service = entity;            
-            this.Start = Start;
-            this.End = End;
-        }
-        private IEnumerable<(FeatureEntity feature, IEnumerable<DayPointValue> availabilities)> GenerateFeatureAvailabilities() {
-            var result = new List<(FeatureEntity, IEnumerable<DayPointValue>)>();
-            foreach (var item in this.Service.FeatureMap.Select(c=>c.Feature))
+
+            List<DayMeasureValue> serviceResult = new List<DayMeasureValue>();
+
+            foreach (var item in this.Period.GetDatesIntervals())
             {
-                var agg = new FeatureDailyAvailabilityAggregate(item, this.Start, this.End);
-                var (feature, availability, indicators) = agg.MeasureAvailability();
-                result.Add((feature, availability));
-            }
-            return result;
-        }
-        public (ServiceEntity service,
-            IEnumerable<DayPointValue> availabilities,
-            IEnumerable<(FeatureEntity, IEnumerable<DayPointValue>)>) MeasureAvailability()
-        {
-            List<DayPointValue> result = new List<DayPointValue>();
-
-            var indicators = this.GenerateFeatureAvailabilities();
-
-            var data = indicators.SelectMany(c => c.availabilities).ToList();
-
-            var days = DateTimeUtils.DaysDiff(this.End , this.Start);
-
-            var pivot = this.Start;
-
-            for (int i = 0; i < days; i++)
-            {
-                var sample = data.Where(c => DateTimeUtils.CompareDates(c.Date, pivot)).ToList();
-
-                if (sample.Count > 0)
-                {                    
-                    result.Add(new DayPointValue(pivot, sample));
-                }               
-
-                pivot = pivot.AddDays(1);
+                var agg = new ServiceQualityAggregate(this.Service);
+                var measure = agg.MeasureQuality(item.start, item.end);
+                if (measure.HasData) {
+                    serviceResult.Add(new DayMeasureValue(item.start, measure));
+                }                
             }
 
-            return (this.Service, result, indicators);
-            
+            var featuresResult = new List<(FeatureEntity, IEnumerable<DayMeasureValue>)>();
+
+            foreach (var map in this.Service.FeatureMap)
+            {
+                List<DayMeasureValue> temp = new List<DayMeasureValue>();
+                foreach (var item in this.Period.GetDatesIntervals())
+                {
+                    var agg = new FeatureAvailabilityAggregate(map.Feature);
+                    var measure = agg.MeasureQuality(item.start, item.end);
+                    if (measure.HasData) {
+                        temp.Add(new DayMeasureValue(item.start, measure));
+                    }                    
+                }
+                featuresResult.Add( (map.Feature, temp) );
+            }
+            return (serviceResult, featuresResult);            
         }
     }
 }
