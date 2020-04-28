@@ -168,9 +168,10 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(GraphGetRp), 200)]
         public async Task<IActionResult> GetGraph(int id, DateTime? start, DateTime? end)
         {
-            if (start.HasValue && end.HasValue)
+            DatePeriodValue period = new DatePeriodValue(start.Value, end.Value);
+            if (period.IsValid())
             {
-                GraphGetRp result = await this._productQueryService.GetGraph(id, start.Value, end.Value);
+                GraphGetRp result = await this._productQueryService.GetGraph(id, period);
                 return this.Ok(result);
             }
             else

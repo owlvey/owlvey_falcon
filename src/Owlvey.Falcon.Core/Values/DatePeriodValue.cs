@@ -9,11 +9,18 @@ namespace Owlvey.Falcon.Core.Values
     {
         public DateTime Start { get; protected set; }
         public DateTime End { get; protected set; }
-        public DatePeriodValue(DateTime start, DateTime end) {
-            (this.Start, this.End) = DateTimeUtils.ToDate(start, end);
+        public DatePeriodValue(DateTime? start, DateTime? end) {
+            if (!start.HasValue && !end.HasValue) {
+                throw new ApplicationException("dates must have value");
+            }
+            (this.Start, this.End) = DateTimeUtils.ToDate(start.Value, end.Value);
             this.Days = this.End.Add(TimeSpan.FromTicks(1)).Subtract(this.Start).Days;
         }
         public int Days { get; protected set; }
+
+        public bool IsValid() {
+            return End >= Start;
+        }
 
         public IEnumerable<DateTime> GetDates() {
             var result = new List<DateTime>();

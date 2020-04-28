@@ -59,17 +59,14 @@ namespace Owlvey.Falcon.Components
         }
 
 
-        public async Task<GraphGetRp> GetGraph(int id, DateTime start, DateTime end)
+        public async Task<GraphGetRp> GetGraph(int productId, DatePeriodValue period)
         {
 
             GraphGetRp result = new GraphGetRp();
-
-            var product = await this.GetProductById(id);
+            var product = await this._dbContext.FullLoadProductWithSourceItems(productId, period.Start, period.End);
             result.Name = product.Name;
-            result.Id = product.Id;
+            result.Id = product.Id.Value;
             result.Avatar = product.Avatar;
-
-            var services = await this._serviceQueryComponent.GetServicesWithAvailability(id, start, end);
 
             /*
             var node = new GraphNode
@@ -82,40 +79,38 @@ namespace Owlvey.Falcon.Components
             };
             result.Nodes.Add(node);
             */
-            foreach (var service in services)
+            foreach (var service in product.Services)
             {
+                var measure = service.MeasureQuality();
                 var snode = new GraphNode
                 {
                     Id = string.Format("service_{0}", service.Id),
                     Avatar = service.Avatar,
                     Name = string.Format("{0} [ {1} | {2} ]", service.Name,
-                        Math.Round(service.SLO, 2),
-                        Math.Round(service.Quality, 2)),
-                    Value = service.Quality,
+                        Math.Round(service.Slo, 2),
+                        Math.Round(measure.Quality, 2)),
+                    Value = measure.Quality,
                     Group = "services",
-                    Slo = service.SLO,
-                    Importance = QualityUtils.MeasureImpact(service.SLO),
-                    Budget = service.Quality - (decimal)service.SLO
+                    Slo = service.Slo,
+                    Importance = QualityUtils.MeasureImpact(service.Slo),
+                    Budget = QualityUtils.MeasureBudget(measure.Quality, service.Slo)
                 };
-
                 
-                result.Nodes.Add(snode);
+                result.Nodes.Add(snode);                
 
-                var features = await this._featureQueryComponent.GetFeaturesByServiceIdWithAvailability(service.Id, start, end);
-                               
-
-                foreach (var feature in features)
+                foreach (var map in service.FeatureMap)
                 {
-                    var Id = string.Format("feature_{0}", feature.Id);
+                    var featureMeasure = map.Feature.MeasureQuality();
+                    var Id = string.Format("feature_{0}", map.Feature.Id);
                     var fnode = result.Nodes.SingleOrDefault(c => c.Id == Id);
                     if (fnode == null)
                     {
                         fnode = new GraphNode
                         {
                             Id = Id,
-                            Avatar = feature.Avatar,
-                            Name = feature.Name,
-                            Value = feature.Quality,
+                            Avatar = map.Feature.Avatar,
+                            Name = map.Feature.Name,
+                            Value = featureMeasure.Quality,
                             Group = "features"
                         };
                         result.Nodes.Add(fnode);
@@ -124,7 +119,7 @@ namespace Owlvey.Falcon.Components
                     {
                         From = snode.Id,
                         To = fnode.Id,
-                        Value =  fnode.Value - service.FeatureSlo,
+                        Value =  fnode.Value - service.Slo,
                         Tags = new Dictionary<string, object>() {
                             { "Availability", fnode.Value }
                         }
