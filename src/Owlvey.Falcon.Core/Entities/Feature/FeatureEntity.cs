@@ -104,18 +104,5 @@ namespace Owlvey.Falcon.Core.Entities
         public void RegisterIncident(IncidentMapEntity map) {
             this.IncidentMap.Add(map);
         }
-
-        #region Availability
-
-        [NotMapped]
-        public decimal Availability { get; protected set; }
-
-        public void MeasureAvailability() {
-            var featureAgg = new FeatureAvailabilityAggregate(this);            
-            this.Availability = featureAgg.MeasureQuality().Quality;
-        }
-        #endregion
-
-
     }
 }

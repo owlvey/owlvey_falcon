@@ -17,7 +17,10 @@ namespace Owlvey.Falcon.Components
                 .ForMember(m => m.MTTE, ope => ope.Ignore())
                 .ForMember(m => m.MTTF, ope => ope.Ignore())
                 .ForMember(m => m.Previous, ope => ope.Ignore())
-                .ForMember(m => m.MTTM, ope => ope.Ignore());
+                .ForMember(m => m.MTTM, ope => ope.Ignore())
+                .ForMember(m => m.Quality, ope => ope.Ignore())
+                .ForMember(m => m.Availability, ope => ope.Ignore())
+                .ForMember(m => m.Latency, ope => ope.Ignore());
 
 
             cfg.CreateMap<ServiceEntity, Models.ServiceGetRp>()
@@ -27,9 +30,11 @@ namespace Owlvey.Falcon.Components
                 .ForMember(m => m.MTTF, ope => ope.Ignore())
                 .ForMember(m => m.MTTM, ope => ope.Ignore())
                 .ForMember(m => m.BudgetMinutes, ope => ope.Ignore())
-                .ForMember(m => m.PreviousAvailability, ope => ope.Ignore())
-                .ForMember(m => m.PreviousAvailabilityII, ope => ope.Ignore())
-                .ForMember(m => m.Availability, ope => ope.Ignore());
+                .ForMember(m => m.PreviousQuality, ope => ope.Ignore())
+                .ForMember(m => m.PreviousQualityII, ope => ope.Ignore())
+                .ForMember(m => m.Quality, ope => ope.Ignore())
+                .ForMember(m => m.Availability, ope => ope.Ignore())
+                .ForMember(m => m.Latency, ope => ope.Ignore());
 
             cfg.CreateMap<ServiceEntity, Models.ServiceMigrateRp>()
                     .ForMember(m=>m.Aggregation, ope=>ope.MapFrom(c=>c.Aggregation.ToString())

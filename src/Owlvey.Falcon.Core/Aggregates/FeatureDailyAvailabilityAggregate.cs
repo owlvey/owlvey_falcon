@@ -25,23 +25,22 @@ namespace Owlvey.Falcon.Core.Aggregates
 
             var featureResult = new List<DayMeasureValue>();
 
-            foreach (var item in this.Period.GetDatesIntervals())
-            {
-                var agg = new Core.Aggregates.FeatureAvailabilityAggregate(this.Feature);
-                var measure = agg.MeasureQuality(item.start, item.end);
-                if (measure.HasData) featureResult.Add(new DayMeasureValue(item.start, measure)); 
+            foreach (var item in this.Period.GetDatesPeriods())
+            {                
+                var measure = this.Feature.MeasureQuality(item);
+                if (measure.HasData) 
+                    featureResult.Add(new DayMeasureValue(item.Start, measure)); 
             }
 
             var indicatorResult = new List<(IndicatorEntity, IEnumerable<DayMeasureValue>)>();
             foreach (var indicator in this.Feature.Indicators)
             {
                 var temporal = new List<DayMeasureValue>();
-                foreach (var (start, end) in this.Period.GetDatesIntervals())
-                {
-                    var agg = new SourceAvailabilityAggregate(indicator.Source);
-                    var measure = agg.MeasureAvailability(start, end);
+                foreach (var period in this.Period.GetDatesPeriods())
+                {                    
+                    var measure = indicator.Source.MeasureQuality(period);
                     if (measure.HasData) 
-                        temporal.Add(new DayMeasureValue(start, new QualityMeasureValue(measure.Quality)));
+                        temporal.Add(new DayMeasureValue(period.Start, new QualityMeasureValue(measure.Quality)));
                 }
                 indicatorResult.Add( (indicator, temporal ));
             }

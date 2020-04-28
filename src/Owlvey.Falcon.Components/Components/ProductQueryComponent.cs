@@ -144,10 +144,65 @@ namespace Owlvey.Falcon.Components
             var entities = await this._dbContext.Products.Where(c => c.Customer.Id == customerId).ToListAsync();
             return this._mapper.Map<IEnumerable<ProductGetListRp>>(entities);
         }
-        public async Task<IEnumerable<ProductGetListRp>> GetProductsWithServices(int customerId)
+        public async Task<IEnumerable<ProductGetListRp>> GetProductsWithInformation(int customerId)
         {
-            var entities = await this._dbContext.Products.Include(c => c.Services).Where(c => c.Customer.Id == customerId).ToListAsync();
-            return this._mapper.Map<IEnumerable<ProductGetListRp>>(entities);
+            var products = await this._dbContext.Products.Where(c => c.CustomerId == customerId).ToListAsync(); 
+
+            var services = await  this._dbContext.Services
+                .Include(c=>c.FeatureMap)
+                .Where(c => c.Product.CustomerId == customerId).ToListAsync();
+
+            var features = await  this._dbContext.Features
+                .Include(c=>c.Indicators)                
+                .Include(c=>c.Squads)
+                .Where(c => c.Product.CustomerId == customerId).ToListAsync();
+
+            var squads = await this._dbContext.Squads
+                .Include(c=>c.FeatureMaps)
+                .Where(c => c.CustomerId == customerId).ToListAsync();
+            
+            var sources = this._dbContext.Sources.Where(c => c.Product.CustomerId == customerId).ToList();
+
+            foreach (var squad in squads.SelectMany(c=>c.FeatureMaps))
+            {
+                squad.Feature = features.Single(c => c.Id == squad.FeatureId);                
+            }
+
+            foreach (var item in products)
+            {
+                item.Services = services.Where(c => c.ProductId == item.Id).ToList();
+                item.Features = features.Where(c => c.ProductId == item.Id).ToList();
+                item.Sources = sources.Where(c => c.ProductId == item.Id).ToList();
+
+                foreach (var service in item.Services)
+                {
+                    foreach (var map in service.FeatureMap)
+                    {
+                        map.Feature = features.Single(c => c.Id == map.FeatureId);
+                        foreach (var indicator in map.Feature.Indicators)
+                        {
+                            indicator.Source = sources.Single(c => c.Id == indicator.SourceId);
+                        }
+                        foreach (var target in map.Feature.Squads.ToList())
+                        {
+                            target.Squad = squads.Single(c => c.Id == target.SquadId);
+                        }
+                    }
+                }                
+
+            }
+
+            List<ProductGetListRp> models = new List<ProductGetListRp>();
+
+            foreach (var item in products)
+            {
+                var tmp  = this._mapper.Map<ProductGetListRp>(item);
+                var agg = new FeatureOwnershipAggregate(squads, item.Features);
+                tmp.Ownership = agg.Measure().assigned;
+                models.Add(tmp);
+            }
+
+            return models;
         }
 
         #region Daily Reports
@@ -198,15 +253,15 @@ namespace Owlvey.Falcon.Components
             return result;
 
         }
-        public async Task<MultiSeriesGetRp> GetDailyServiceSeriesByIdAndGroup(int productId, DateTime start, DateTime end, string group)
+        public async Task<MultiSeriesGetRp> GetDailyServiceSeriesByIdAndGroup(int productId, DatePeriodValue period, string group)
         {
-            var product = await this._dbContext.FullLoadProductWithGroupAndSourceItems(productId, group, start, end);
-            return this.InternalGetDailyServiceSeries(product, start, end);
+            var product = await this._dbContext.FullLoadProductWithGroupAndSourceItems(productId, group, period.Start, period.End);
+            return this.InternalGetDailyServiceSeries(product, period.Start, period.End);
         }
-        public async Task<MultiSeriesGetRp> GetDailyServiceSeriesById(int productId, DateTime start, DateTime end)
+        public async Task<MultiSeriesGetRp> GetDailyServiceSeriesById(int productId, DatePeriodValue period)
         {
-            var product = await this._dbContext.FullLoadProductWithSourceItems(productId, start, end);
-            return this.InternalGetDailyServiceSeries(product, start, end);
+            var product = await this._dbContext.FullLoadProductWithSourceItems(productId, period.Start, period.End);
+            return this.InternalGetDailyServiceSeries(product, period.Start, period.End);
         }
 
         #endregion
@@ -227,8 +282,7 @@ namespace Owlvey.Falcon.Components
 
             foreach (var source in product.Sources)
             {
-                source.SourceItems = sourceItems.Where(c => c.SourceId == source.Id).ToList();
-                source.MeasureAvailability();
+                source.SourceItems = sourceItems.Where(c => c.SourceId == source.Id).ToList();                
                 sourceExports.Add(new ExportExcelSourceRp(source));
             }            
 
@@ -246,7 +300,7 @@ namespace Owlvey.Falcon.Components
                     squadMap.Feature = feature;
                     feature.Squads.Add(squadMap);
                 }
-                feature.MeasureAvailability();
+                feature.MeasureQuality();
                 featuresExports.Add(new ExportExcelFeatureRp(feature));
 
                 foreach (var indicator in feature.Indicators)
@@ -301,16 +355,13 @@ namespace Owlvey.Falcon.Components
             var result = new ProductDashboardRp();
 
             var product = await this._dbContext.FullLoadProduct(productId);
-            result.FeatureTotal = await this._dbContext.Features.Where(c => c.ProductId == productId).CountAsync();
-            result.FeatureAssigned = product.Services.SelectMany(c => c.FeatureMap.Select(d => d.FeatureId)).Distinct().Count();
 
-            result.SourceTotal = await this._dbContext.Sources.Where(c => c.ProductId == productId).CountAsync();
-            result.SourceAssigned = product.Services.SelectMany(
-                c => c.FeatureMap.SelectMany(d => d.Feature.Indicators).Select(e => e.SourceId)).Distinct().Count();
+            
+            (_, result.FeatureTotal, result.FeatureAssigned) = product.MeasureCoverage();
 
+            (_, result.SourceTotal, result.SourceAssigned) = product.MeasureUtilization();
 
             var sourceItems = await this._dbContext.GetSourceItemsByProduct(productId, start, end);
-
 
             foreach (var item in product.Sources)
             {
@@ -333,9 +384,9 @@ namespace Owlvey.Falcon.Components
                     {
                         map.Feature = product.Features.Single(c => c.Id == map.FeatureId);
                     }
-                    service.MeasureQuality();
+                    var measure = service.MeasureQuality();
                     
-                    if (service.Quality < service.Slo)
+                    if (measure.Quality < service.Slo)
                     {
                         targetGroup.Fail += 1;
                         sloFails += 1;
@@ -373,9 +424,8 @@ namespace Owlvey.Falcon.Components
 
             foreach (var source in product.Sources)
             {
-                source.SourceItems = sourceItems.Where(c => c.SourceId == source.Id).ToList();
-                var agg = new SourceAvailabilityAggregate(source);
-                var measure = agg.MeasureAvailability();
+                source.SourceItems = sourceItems.Where(c => c.SourceId == source.Id).ToList();                
+                var measure = source.MeasureQuality();
                 result.Sources.Add(new SourceGetListRp()
                 {
                     Id = source.Id.Value,
@@ -402,13 +452,10 @@ namespace Owlvey.Falcon.Components
                     squadMap.Feature = feature;
                     feature.Squads.Add(squadMap);
                 }
-
-                var agg = new FeatureAvailabilityAggregate(feature);
+                                
                 var tmp = this._mapper.Map<FeatureGetListRp>(feature);
-                var measure = agg.MeasureQuality();
-                tmp.Quality = measure.Quality;
-                tmp.Availability = measure.Availability;
-                tmp.Latency = measure.Latency;
+                var measure = feature.MeasureQuality();
+                tmp.LoadQuality(measure);
                 result.Features.Add(tmp);
 
                 var featureIncidents = incidentsData.Where(c => c.FeatureId == feature.Id)
@@ -446,9 +493,9 @@ namespace Owlvey.Falcon.Components
                     map.Feature = product.Features.Single(c => c.Id == map.FeatureId);
                 }                
                 
-                service.MeasureQuality();
+                var measure = service.MeasureQuality();
 
-                if (service.Quality < service.Slo)
+                if (measure.Quality < service.Slo)
                 {
                     sloFails += 1;
                 }

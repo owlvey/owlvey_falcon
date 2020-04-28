@@ -87,24 +87,19 @@ namespace Owlvey.Falcon.Components
                 var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, start, end);
                 indicator.Source.SourceItems = sourceItems;
             }
-
-            var agg = new FeatureAvailabilityAggregate(feature);
-
+                        
             var model = this._mapper.Map<FeatureQualityGetRp>(feature);
-            var measure = agg.MeasureQuality();
-            model.Quality = measure.Quality;
-            model.Availability = measure.Availability;
-            model.Latency = measure.Latency;            
-
+            var measure = feature.MeasureQuality();
+            model.LoadQuality(measure);
             foreach (var indicator in feature.Indicators)
             {                
                 var tmp = this._mapper.Map<IndicatorAvailabilityGetListRp>(indicator);
-                var proportion = (new IndicatorQualityAggregate(indicator)).MeasureAvailability();
-                tmp.Availability = proportion.Quality;                
+                var proportion = indicator.Source.MeasureQuality();
+                tmp.Quality = proportion.Quality;                
                 model.Indicators.Add(tmp);
             }
 
-            model.Indicators = model.Indicators.OrderByDescending(c => c.Availability).ToList();
+            model.Indicators = model.Indicators.OrderByDescending(c => c.Quality).ToList();
 
             foreach (var map in feature.ServiceMaps)
             {
@@ -166,9 +161,8 @@ namespace Owlvey.Falcon.Components
                 {                    
                     indicator.Source.SourceItems = sourceItems.Where(c=>c.SourceId == indicator.SourceId).ToList();
                 }
-                var tmp = this._mapper.Map<FeatureAvailabilityGetListRp>(feature);
-                var agg = new FeatureAvailabilityAggregate(feature);
-                var measure = agg.MeasureQuality();                
+                var tmp = this._mapper.Map<FeatureAvailabilityGetListRp>(feature);                
+                var measure = feature.MeasureQuality();                
                 tmp.Quality = measure.Quality;
                 tmp.Availability = measure.Availability;
                 tmp.Latency = measure.Latency;
@@ -213,9 +207,8 @@ namespace Owlvey.Falcon.Components
                     indicator.Source.SourceItems = sourceItems.Where(c=>c.SourceId == indicator.SourceId).ToList();
                 }
 
-                var tmp = this._mapper.Map<SequenceFeatureGetListRp>(feature);                
-                var agg = new FeatureAvailabilityAggregate(feature);
-                var measure = agg.MeasureQuality();
+                var tmp = this._mapper.Map<SequenceFeatureGetListRp>(feature);                                
+                var measure = feature.MeasureQuality();
                 tmp.Quality = measure.Quality;
                 tmp.Availability = measure.Availability;
                 tmp.Latency = measure.Latency;                

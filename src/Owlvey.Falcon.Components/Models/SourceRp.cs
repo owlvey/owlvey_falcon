@@ -27,7 +27,7 @@ namespace Owlvey.Falcon.Models
     {
         public string CreatedBy { get; set; }
         public DateTime CreatedOn { get; set; }
-        public decimal Availability { get; set; }
+        public decimal Quality { get; set; }
         public int Total { get; set; }
         public int Good { get; set; }
         public int Delta { get { return this.Total - Good; } }

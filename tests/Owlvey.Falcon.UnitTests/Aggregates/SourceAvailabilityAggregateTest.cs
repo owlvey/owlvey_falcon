@@ -11,13 +11,14 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         [Fact]
         public void MeasureFeatureAvailability()
         {
-            var agg = new SourceAvailabilityAggregate( new SourceEntity() {
-                 Kind = SourceKindEnum.Interaction,
-                 SourceItems = new List<SourceItemEntity>() {
+            var entity = new SourceEntity()
+            {
+                Kind = SourceKindEnum.Interaction,
+                SourceItems = new List<SourceItemEntity>() {
                      new SourceItemEntity(){ Total = 1000, Good = 800 }
                  }
-            });
-            var proportion = agg.MeasureAvailability();
+            };            
+            var proportion = entity.MeasureQuality();
 
             Assert.Equal(0.8m, proportion.Quality);
         }
@@ -25,14 +26,15 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         [Fact]
         public void MeasureProportionAvailability()
         {
-            var agg = new SourceAvailabilityAggregate(new SourceEntity()
+            var entity = new SourceEntity()
             {
                 Kind = SourceKindEnum.Proportion,
                 SourceItems = new List<SourceItemEntity>() {
                      new SourceItemEntity(){ Total = 1000, Good = 800 }
                 }
-            });
-            var a = agg.MeasureAvailability();
+            };
+            
+            var a = entity.MeasureQuality();
             Assert.Equal(0.8m, a.Quality);
         }
     }

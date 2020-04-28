@@ -108,7 +108,7 @@ namespace Owlvey.Falcon.Components
                             Id = feature_id,
                             Avatar = feature.Avatar,
                             Name = feature.Name,
-                            Value = feature.Availability,
+                            Value = feature.Quality,
                             Group = string.Format("features_{0}", feature.Product),                            
                         };
                         result.Nodes.Add(fnode);

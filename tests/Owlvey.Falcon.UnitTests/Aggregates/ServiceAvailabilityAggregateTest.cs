@@ -12,9 +12,10 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         [Fact]
         public void AvailabilityAggregateSuccess() {
 
-            var agg = new ServiceQualityAggregate(new ServiceEntity()
+
+            var entity = new ServiceEntity()
             {
-                 FeatureMap = new List<ServiceMapEntity>() {
+                FeatureMap = new List<ServiceMapEntity>() {
                      new ServiceMapEntity(){
                           Feature = new Core.Entities.FeatureEntity()
                             {
@@ -26,7 +27,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                                                 SourceItems = new List<SourceItemEntity>(){
                                                     new SourceItemEntity(){
                                                         Good = 800, Total = 1000,
-                                                        Target = OwlveyCalendar.January201903                                                        
+                                                        Target = OwlveyCalendar.January201903
                                                     }
                                                 }
                                         }
@@ -34,8 +35,9 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                             }
                      }
                  }
-            });            
-            var result = agg.MeasureQuality();
+            };
+            
+            var result = entity.MeasureQuality();
             Assert.Equal(0.8m, result.Quality);            
         }
     }

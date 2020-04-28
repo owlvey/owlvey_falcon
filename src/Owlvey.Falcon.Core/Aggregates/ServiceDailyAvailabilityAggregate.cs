@@ -24,12 +24,11 @@ namespace Owlvey.Falcon.Core.Aggregates
 
             List<DayMeasureValue> serviceResult = new List<DayMeasureValue>();
 
-            foreach (var item in this.Period.GetDatesIntervals())
-            {
-                var agg = new ServiceQualityAggregate(this.Service);
-                var measure = agg.MeasureQuality(item.start, item.end);
+            foreach (var period in this.Period.GetDatesPeriods())
+            {                
+                var measure = this.Service.MeasureQuality(period);
                 if (measure.HasData) {
-                    serviceResult.Add(new DayMeasureValue(item.start, measure));
+                    serviceResult.Add(new DayMeasureValue(period.Start, measure));
                 }                
             }
 
@@ -38,12 +37,11 @@ namespace Owlvey.Falcon.Core.Aggregates
             foreach (var map in this.Service.FeatureMap)
             {
                 List<DayMeasureValue> temp = new List<DayMeasureValue>();
-                foreach (var item in this.Period.GetDatesIntervals())
-                {
-                    var agg = new FeatureAvailabilityAggregate(map.Feature);
-                    var measure = agg.MeasureQuality(item.start, item.end);
+                foreach (var item in this.Period.GetDatesPeriods())
+                {                    
+                    var measure = map.Feature.MeasureQuality(item);
                     if (measure.HasData) {
-                        temp.Add(new DayMeasureValue(item.start, measure));
+                        temp.Add(new DayMeasureValue(item.Start, measure));
                     }                    
                 }
                 featuresResult.Add( (map.Feature, temp) );

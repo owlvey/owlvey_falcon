@@ -99,17 +99,5 @@ namespace Owlvey.Falcon.Core.Entities
             this.Tags = tags ?? this.Tags;
             this.ModifiedBy = modifiedBy;            
         }
-
-        #region Availability
-
-        [NotMapped]
-        public decimal Availability { get; protected set; }
-
-        public void MeasureAvailability()
-        {
-            var agg = new SourceAvailabilityAggregate(this);
-            this.Availability = agg.MeasureAvailability().Quality;             
-        }
-        #endregion
     }
 }

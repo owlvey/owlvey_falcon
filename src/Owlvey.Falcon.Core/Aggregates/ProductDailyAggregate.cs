@@ -24,16 +24,15 @@ namespace Owlvey.Falcon.Core.Aggregates
                 return result;
             }            
             
-            foreach (var item in this.Period.GetDatesIntervals())
+            foreach (var period in this.Period.GetDatesPeriods())
             {
                 var quality = 0;
                 var availability = 0;
                 var latency = 0;
                 bool hasData = false;
                 foreach (var service in this.Product.Services)
-                {
-                    var agg = new ServiceQualityAggregate(service);
-                    var measure = agg.MeasureQuality(item.start, item.end);
+                {                    
+                    var measure = service.MeasureQuality(period);
                     if (measure.HasData) {
                         if (measure.Quality >= service.Slo) quality += 1;
                         if (measure.Availability >= service.Slo) availability += 1;
@@ -42,7 +41,7 @@ namespace Owlvey.Falcon.Core.Aggregates
                     }                    
                 }
                 if (hasData) {
-                    result.Add(new DayMeasureValue(item.start,
+                    result.Add(new DayMeasureValue(period.Start,
                     new QualityMeasureValue(
                         QualityUtils.CalculateAvailability(totalServices, quality),
                         QualityUtils.CalculateAvailability(totalServices, availability),

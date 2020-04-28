@@ -14,16 +14,14 @@ namespace Owlvey.Falcon.Core.Aggregates
         }
 
         public IEnumerable<(ProductEntity product, ServiceEntity service, FeatureEntity feature,
-            decimal availability,
+            decimal quality,
             decimal points)> MeasurePoints() {
 
             var result = new List<(ProductEntity product, ServiceEntity service, FeatureEntity feature, decimal availability, decimal points)>();
 
             foreach (var featureMap in this._squad.FeatureMaps)
-            {
-                var agg = new FeatureAvailabilityAggregate(featureMap.Feature);
-
-                var quality = agg.MeasureQuality().Quality;
+            {   
+                var quality = featureMap.Feature.MeasureQuality().Quality;
 
                 foreach (var serviceMap in featureMap.Feature.ServiceMaps)
                 {

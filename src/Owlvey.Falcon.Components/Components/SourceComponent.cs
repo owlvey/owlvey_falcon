@@ -154,10 +154,9 @@ namespace Owlvey.Falcon.Components
                     target.Clues = group.ToList();
                 }
 
-                entity.SourceItems = sourceItems;
-                var agg = new SourceAvailabilityAggregate(entity);
-                var measure = agg.MeasureAvailability();                
-                result.Availability = measure.Quality;
+                entity.SourceItems = sourceItems;                
+                var measure = entity.MeasureQuality();                
+                result.Quality = measure.Quality;
                 result.Total = entity.SourceItems.Sum(c=>c.Total);
                 result.Good = entity.SourceItems.Sum(c => c.Good);
                 result.Clues = entity.ExportClues();
@@ -181,10 +180,8 @@ namespace Owlvey.Falcon.Components
             var result = new List<SourceGetListRp>();
             foreach (var source in entities)
             {                
-                source.SourceItems = sourceItems.Where(c => c.SourceId == source.Id).ToList();
-                var agg = new SourceAvailabilityAggregate(source);
-                var proportion= agg.MeasureAvailability();
-
+                source.SourceItems = sourceItems.Where(c => c.SourceId == source.Id).ToList();                
+                var proportion= source.MeasureQuality();
                 var tmp = this._mapper.Map<SourceGetListRp>(source);
                 tmp.References = source.Indicators.Count();
                 tmp.Availability = proportion.Quality;

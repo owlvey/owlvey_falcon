@@ -35,6 +35,18 @@ namespace Owlvey.Falcon.Core.Values
             }
             return result;
         }
+
+        public IEnumerable<DatePeriodValue> GetDatesPeriods()
+        {
+            var result = new List<DatePeriodValue>();
+            var pivot = this.Start;
+            for (int i = 0; i < this.Days; i++)
+            {
+                result.Add( new DatePeriodValue(pivot.Date, DateTimeUtils.AbsoluteEnd(pivot)));
+                pivot = pivot.AddDays(1);
+            }
+            return result;
+        }
         public (DatePeriodValue before, DatePeriodValue previous) CalculateBeforePreviousDates() {
             var (bs, be, ps, pe) = DateTimeUtils.CalculateBeforePreviousDates(this.Start, this.End);
             return (new DatePeriodValue(bs, be), new DatePeriodValue(ps, pe));

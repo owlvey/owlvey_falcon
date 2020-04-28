@@ -122,7 +122,7 @@ namespace Owlvey.Falcon.Models
                             count = targets[i].Count(),
                             budget = targets[i].Sum(c => c.Budget),
                             status = targets[i].Where(c => c.Budget < 0).Count() == 0 ? "success" : targets[i].Where(c => c.Budget >= 0).Count() == 0 ? "danger" : "warning",
-                            tags = targets[i].Select(c => string.Format("{0}, SLO: {1}, Ava: {2}, Budget: {3}", c.Service, c.SLO, c.Availability, c.Budget))
+                            tags = targets[i].Select(c => string.Format("{0}, SLO: {1}, Ava: {2}, Budget: {3}", c.Service, c.SLO, c.Quality, c.Budget))
                         }); 
                     }                   
 
@@ -135,7 +135,7 @@ namespace Owlvey.Falcon.Models
             public int ServiceId { get; set; }
             public string Service { get; set; }
             public decimal SLO { get; set; }
-            public decimal Availability { get; set; }
+            public decimal Quality { get; set; }
             public decimal Budget { get; set; }
 
             public CustomerServiceRp() { }
@@ -143,8 +143,8 @@ namespace Owlvey.Falcon.Models
                 this.ServiceId = service.Id.Value;
                 this.Service = service.Name;
                 this.SLO = service.Slo;
-                this.Availability = service.Quality;
-                this.Budget = QualityUtils.MeasureBudget(this.Availability, this.SLO);
+                this.Quality = service.MeasureQuality().Quality;
+                this.Budget = QualityUtils.MeasureBudget(this.Quality, this.SLO);
             }
         }
 

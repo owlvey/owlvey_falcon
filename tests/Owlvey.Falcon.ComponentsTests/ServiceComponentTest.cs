@@ -4,6 +4,7 @@ using System;
 using System.Threading.Tasks;
 using Xunit;
 using System.Linq;
+using Owlvey.Falcon.Core.Values;
 
 namespace Owlvey.Falcon.ComponentsTests
 {
@@ -20,7 +21,8 @@ namespace Owlvey.Falcon.ComponentsTests
             var serviceQueryComponent = container.GetInstance<ServiceQueryComponent>();
 
 
-            var graph = await serviceQueryComponent.GetGraph(serviceId, OwlveyCalendar.StartJanuary2019, OwlveyCalendar.EndJanuary2019);
+            var graph = await serviceQueryComponent.GetGraph(serviceId, 
+                new DatePeriodValue(OwlveyCalendar.StartJanuary2019, OwlveyCalendar.EndJanuary2019));
 
             Assert.NotNull(graph);
             Assert.NotEmpty(graph.Nodes);

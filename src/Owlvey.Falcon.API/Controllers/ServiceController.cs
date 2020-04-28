@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Core.Values;
 using Owlvey.Falcon.Models;
 
 namespace Owlvey.Falcon.API.Controllers
@@ -38,13 +39,11 @@ namespace Owlvey.Falcon.API.Controllers
         {
             IEnumerable<ServiceGetListRp> model = new List<ServiceGetListRp>();
             if (start.HasValue && end.HasValue) {
-                if (string.IsNullOrWhiteSpace(group))
+                model = await this._serviceQueryService.GetServicesWithAvailability(productId, start.Value, end.Value);
+                if (!string.IsNullOrWhiteSpace(group))
                 {
-                    model = await this._serviceQueryService.GetServicesWithAvailability(productId, start.Value, end.Value);
+                    model = model.Where(c => c.Group == group).ToList();                    
                 }
-                else {
-                    model = await this._serviceQueryService.GetServicesWithAvailabilityByGroup(productId, start.Value, end.Value, group);
-                }                
             }
             else {
                 model = await this._serviceQueryService.GetServices(productId);
@@ -209,8 +208,20 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok(model);
         }
         #endregion
-        
-        #region reports
+
+        #region reports        
+        [HttpGet("reports/serviceGroup")]        
+        [ProducesResponseType(typeof(ServiceGroupListRp), 200)]
+        public async Task<IActionResult> ReportServiceGroup(int productId, DateTime? start, DateTime? end)
+        {
+            if (!start.HasValue || !end.HasValue)
+            {
+                return this.BadRequest("start is required");
+            }
+            var period = new DatePeriodValue(start.Value, end.Value);
+            var model = await this._serviceQueryService.GetServiceGroupReport(productId, period);
+            return this.Ok(model);
+        }
 
         [HttpGet("{id}/reports/daily/series")]
         [ProducesResponseType(typeof(SeriesGetRp), 200)]
@@ -239,7 +250,7 @@ namespace Owlvey.Falcon.API.Controllers
         {
             if (start.HasValue && end.HasValue)
             {
-                GraphGetRp result = await this._serviceQueryService.GetGraph(id, start.Value, end.Value);
+                GraphGetRp result = await this._serviceQueryService.GetGraph(id, new DatePeriodValue(start.Value, end.Value));
                 return this.Ok(result);
             }
             else

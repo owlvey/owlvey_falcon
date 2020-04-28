@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using Owlvey.Falcon.Repositories.Products;
 using System.ComponentModel.DataAnnotations;
 using Owlvey.Falcon.Core.Values;
+using System.IO.Pipes;
 
 namespace Owlvey.Falcon.Components
 {
@@ -30,83 +31,50 @@ namespace Owlvey.Falcon.Components
         {
             this._dbContext = dbContext;            
         }
-
-        public async Task<IEnumerable<ServiceGetListRp>> GetServicesWithAvailabilityByGroup(int productId, DateTime start, DateTime end, string group)
+        public async Task<IEnumerable<ServiceGroupListRp>> GetServiceGroupReport(int productId, DatePeriodValue period)
         {
-            var (bs, be, ps, pe) = DateTimeUtils.CalculateBeforePreviousDates(start, end);
-            var entity  = await this._dbContext.FullLoadProduct(productId);
+            var (_, _, ps, pe) = DateTimeUtils.CalculateBeforePreviousDates(period.Start, period.End);
+            var entity = await this._dbContext.FullLoadProductWithSourceItems(productId, ps, period.End);
+            var result = new List<ServiceGroupListRp>();
 
-            var targetServices = entity.Services.Where(c => string.Equals(c.Group, group,StringComparison.InvariantCultureIgnoreCase)).ToList();
-
-            var result = new List<ServiceGetListRp>();
-            foreach (var item in targetServices)
+            foreach (var group in entity.Services.GroupBy(c=>c.Group))
             {
-
-                var tmp = this._mapper.Map<ServiceGetListRp>(item);
-                tmp.Quality = await this.MeasureAvailability(item, start, end);                
-                tmp.Deploy = QualityUtils.BudgetToAction(tmp.Budget);                
-                result.Add(tmp);
-            }
-
-            entity.ClearSourceItems();
-
-            foreach (var item in targetServices)
-            {
-                var tmp = result.Where(c => c.Id == item.Id).SingleOrDefault();
-                if (tmp != null) {
-                    tmp.Previous = await this.MeasureAvailability(item, ps, pe);
-                }                
+                var temp = new ServiceGroupListRp();
+                temp.Name = group.Key;
+                temp.SloAvg = QualityUtils.CalculateAverage(group.Select(c => c.Slo));
+                temp.SloMin = QualityUtils.CalculateMinimum(group.Select(c => c.Slo));
+                var measures = group.Select(c => new { measure = c.MeasureQuality(period), slo = c.Slo });
+                temp.QualityAvg = QualityUtils.CalculateAverage(measures.Select(c => c.measure.Quality));
+                temp.QualityMin = QualityUtils.CalculateMinimum(measures.Select(c => c.measure.Quality));
+                temp.AvailabilityAvg = QualityUtils.CalculateAverage(measures.Select(c => c.measure.Availability));
+                temp.AvailabilityMin = QualityUtils.CalculateMinimum(measures.Select(c => c.measure.Availability));
+                temp.LatencyAvg = QualityUtils.CalculateAverage(measures.Select(c => c.measure.Latency));
+                temp.LatencyMin = QualityUtils.CalculateMinimum(measures.Select(c => c.measure.Latency));
+                temp.Count = group.Count();
+                temp.Status = QualityUtils.CalculateProportion(temp.Count, measures.Where(c => c.measure.Quality >= c.slo).Count());
+                var previous = group.Select(c => new { measure = c.MeasureQuality(new DatePeriodValue(ps, pe)), slo = c.Slo });
+                temp.Previous = QualityUtils.CalculateProportion(temp.Count, previous.Where(c => c.measure.Quality >= c.slo).Count());
+                result.Add(temp);
             }
             return result;
         }
-
         public async Task<IEnumerable<ServiceGetListRp>> GetServicesWithAvailability(int productId, DateTime start, DateTime end)
         {            
-            var (bs, be, ps, pe) = DateTimeUtils.CalculateBeforePreviousDates(start, end); 
+            var (_, _, ps, pe) = DateTimeUtils.CalculateBeforePreviousDates(start, end);
 
-            var entity = await this._dbContext.FullLoadProduct(productId);
-            var sourceItems = await this._dbContext.GetSourceItemsByProduct(productId, start, end);
+            var entity = await this._dbContext.FullLoadProductWithSourceItems(productId, ps, end);
+                        
+            var result = new List<ServiceGetListRp>();
+
             foreach (var service in entity.Services)
             {
-                foreach (var map in service.FeatureMap)
-                {
-                    foreach (var indicator in map.Feature.Indicators)
-                    {                        
-                        indicator.Source.SourceItems = sourceItems.Where(c=>c.SourceId == indicator.SourceId).ToList();
-                    }
-                }
-            }            
-
-            var result = new List<ServiceGetListRp>();
-            foreach (var item in entity.Services)
-            {
-                item.MeasureQuality();               
-
-                var tmp = this._mapper.Map<ServiceGetListRp>(item);                
-                tmp.Deploy = QualityUtils.BudgetToAction(tmp.Budget); 
+                var tmp = this._mapper.Map<ServiceGetListRp>(service);
+                tmp.LoadMeasure(service.MeasureQuality(new DatePeriodValue(start, end)));                                
+                tmp.Deploy = QualityUtils.BudgetToAction(tmp.Budget);
+                tmp.Previous = service.MeasureQuality(new DatePeriodValue(ps, pe)).Quality;
                 result.Add(tmp);
             }
-            entity.ClearSourceItems();
-            
-            sourceItems = await this._dbContext.GetSourceItemsByProduct(productId, ps, pe);
-            foreach (var service in entity.Services)
-            {
-                foreach (var map in service.FeatureMap)
-                {
-                    foreach (var indicator in map.Feature.Indicators)
-                    {
-                        indicator.Source.SourceItems = sourceItems.Where(c => c.SourceId == indicator.SourceId).ToList();
-                    }
-                }
-            }
-            foreach (var item in entity.Services)
-            {
-                var tmp = result.Where(c => c.Id == item.Id).SingleOrDefault();
-                if (tmp != null) {
-                    item.MeasureQuality();                    
-                    tmp.Previous = item.Quality;
-                }                
-            }
+
             return result;
         }
 
@@ -136,23 +104,21 @@ namespace Owlvey.Falcon.Components
 
             foreach (var map in entity.FeatureMap)
             {                
-                var tmp = this._mapper.Map<SequenceFeatureGetListRp>(map.Feature);                
-                var feateureAgg = new FeatureAvailabilityAggregate(map.Feature);
-                var measure = feateureAgg.MeasureQuality(start, end);                
+                var tmp = this._mapper.Map<SequenceFeatureGetListRp>(map.Feature);                                
+                var measure = map.Feature.MeasureQuality( new DatePeriodValue( start, end));                
                 tmp.Quality = measure.Quality;
                 tmp.Availability = measure.Availability;
                 tmp.Latency = measure.Latency;                                
                 tmp.MapId = map.Id.Value;
                 model.Features.Add(tmp);
             }            
-            
-            var agg = new ServiceQualityAggregate(entity);
-            model.Availability = agg.MeasureQuality(start, end).Quality;
-            model.PreviousAvailability = agg.MeasureQuality(previous.Start, previous.End).Quality;
-            model.PreviousAvailabilityII = agg.MeasureQuality(before.Start, before.End).Quality;
+                        
+            model.Quality = entity.MeasureQuality(new DatePeriodValue( start, end)).Quality;
+            model.PreviousQuality = entity.MeasureQuality(new DatePeriodValue(previous.Start, previous.End)).Quality; 
+            model.PreviousQualityII = entity.MeasureQuality(new DatePeriodValue(before.Start, before.End)).Quality;
             return model;
         }
-        private async Task<decimal> MeasureAvailability(ServiceEntity entity, DateTime start, DateTime end)
+        private async Task<QualityMeasureValue> MeasureAvailability(ServiceEntity entity, DateTime start, DateTime end)
         {
             var sources = entity.FeatureMap.SelectMany(c => c.Feature.Indicators).Select(c => c.SourceId).Distinct().ToList();
             var sourceItems = await this._dbContext.GetSourceItems(sources, start, end);
@@ -164,8 +130,7 @@ namespace Owlvey.Falcon.Components
                     indicator.Source.SourceItems = sourceItems.Where(c=>c.SourceId == indicator.SourceId).ToList();
                 }
             }            
-            entity.MeasureQuality();
-            return entity.Quality;
+            return entity.MeasureQuality();            
         }
         public async Task<ServiceGetRp> GetServiceByName(int productId, string name)
         {
@@ -242,7 +207,7 @@ namespace Owlvey.Falcon.Components
         #region Graphs
 
 
-        public async Task<GraphGetRp> GetGraph(int id, DateTime start, DateTime end)
+        public async Task<GraphGetRp> GetGraph(int id, DatePeriodValue period)
         {
 
             GraphGetRp result = new GraphGetRp();
@@ -254,8 +219,7 @@ namespace Owlvey.Falcon.Components
             var rootFeatures = rootService.FeatureMap.Select(c => c.FeatureId).Distinct().ToList();
 
             var extendedServicesIds = await this._dbContext.ServiceMaps
-                .Where(c => rootFeatures.Contains(c.FeatureId))
-                .Select(c => c.ServiceId)
+                .Where(c => rootFeatures.Contains(c.FeatureId)).Select(c => c.ServiceId)
                 .ToListAsync();
 
             var extendedServices = await this._dbContext.Services
@@ -263,11 +227,9 @@ namespace Owlvey.Falcon.Components
                 .Where(c => extendedServicesIds.Contains(c.Id.Value))
                 .ToListAsync();
 
-
             var featuresExtended = extendedServices.SelectMany(c => c.FeatureMap.Select(d => d.FeatureId));
             var featuresRoot = rootService.FeatureMap.Select(c => c.FeatureId);
             var featuresIds = featuresExtended.Union(featuresRoot).ToList();
-
 
             var features = await this._dbContext.Features
                 .Include(c => c.Indicators)
@@ -277,7 +239,7 @@ namespace Owlvey.Falcon.Components
 
             var sources = features.SelectMany(c => c.Indicators.Select(d => d.SourceId));
             
-            var sourceItems = await this._dbContext.GetSourceItems(sources, start, end);
+            var sourceItems = await this._dbContext.GetSourceItems(sources, period.Start, period.End);
             
             var services = new List<ServiceEntity>(extendedServices);
             services.Add(rootService);
@@ -289,40 +251,39 @@ namespace Owlvey.Falcon.Components
                 {
                     indicator.Source.SourceItems = sourceItems.Where(c => c.SourceId == indicator.Source.Id).ToList();
                 }
-                feature.MeasureAvailability();
+                feature.MeasureQuality();
             }
 
             foreach (var service in services)
             {
                 foreach (var map in service.FeatureMap)
-                {
-                    var temp_feature = features.Where(c => c.Id == map.FeatureId).Single();
-                    map.Feature = temp_feature;
+                {                    
+                    map.Feature = features.Where(c => c.Id == map.FeatureId).Single();
 
-                    if (temp_feature.ServiceMaps.Where(
-                        c => c.FeatureId == temp_feature.Id.Value &&
+                    if (map.Feature.ServiceMaps.Where(
+                        c => c.FeatureId == map.Feature.Id.Value &&
                              c.ServiceId == service.Id.Value
                         ).Count() == 0) {
-                        temp_feature.ServiceMaps.Add(new ServiceMapEntity()
+                        map.Feature.ServiceMaps.Add(new ServiceMapEntity()
                         {
-                            FeatureId = temp_feature.Id.Value,
+                            FeatureId = map.Feature.Id.Value,
                             ServiceId = service.Id.Value,
-                            Feature = temp_feature,
+                            Feature = map.Feature,
                             Service = service
                         });
                     }                    
-                }
-                service.MeasureQuality();
+                }                
             }
 
+            var rootMeasure = rootService.MeasureQuality();
 
             var snode = new GraphNode("services", "service",
                     rootService.Id.Value,
                     rootService.Avatar,
                     string.Format("{0} [ {1} | {2} ]", rootService.Name,
                     Math.Round(rootService.Slo, 2),
-                    Math.Round(rootService.Quality, 2))
-                    ,rootService.Quality, rootService.Slo);
+                    Math.Round(rootMeasure.Quality, 2))
+                    , rootMeasure.Quality, rootService.Slo);
             
             result.Nodes.Add(snode);
 
@@ -336,7 +297,7 @@ namespace Owlvey.Falcon.Components
                     fnode = new GraphNode("features", "feature", feature.Id.Value,
                         feature.Avatar,                        
                         feature.Name,                        
-                        feature.Availability, 0);
+                        feature.MeasureQuality().Quality, 0);
 
                     result.Nodes.Add(fnode);
                 }
@@ -353,14 +314,17 @@ namespace Owlvey.Falcon.Components
                 {
                     var temporal = extended.FeatureMap.Where(c => c.FeatureId == feature.Id).SingleOrDefault();
                     if (temporal != null && temporal.Feature.ServiceMaps.Count <= 10) {
+
+                        var extendedMeasure = extended.MeasureQuality();
+
                         var temp_node = new GraphNode("services",
                             "service",
                             extended.Id.Value,
                             extended.Avatar,
                         string.Format("{0} [ {1} | {2} ]", extended.Name,
                         Math.Round(extended.Slo, 2),
-                        Math.Round(extended.Quality, 2))
-                        , extended.Quality, extended.Slo);
+                        Math.Round(extendedMeasure.Quality, 2))
+                        , extendedMeasure.Quality, extended.Slo);
 
                         if (result.Nodes.Count(c => c.Id == temp_node.Id) == 0)
                         {

@@ -44,7 +44,7 @@ namespace Owlvey.Falcon.Models
 
     public class IndicatorAvailabilityGetListRp : IndicatorGetListRp
     {
-        public decimal Availability { get; set; }        
+        public decimal Quality { get; set; }        
     }
 
     public class IndicatorPostRp

@@ -51,7 +51,7 @@ namespace Owlvey.Falcon.Core
             return (int)Math.Round(input.Average());
         }        
 
-        public static decimal CalculateMinimumAvailability(IEnumerable<decimal> availabilities, int round = 5, decimal defaultValue = 1)
+        public static decimal CalculateMinimum(IEnumerable<decimal> availabilities, int round = 3, decimal defaultValue = 1)
         {
             if (availabilities.Count() == 0)
             {
@@ -62,7 +62,7 @@ namespace Owlvey.Falcon.Core
             }            
         }
 
-        public static decimal CalculateAverageAvailability(IEnumerable<decimal> availabilities, int round = 5)
+        public static decimal CalculateAverage(IEnumerable<decimal> availabilities, int round = 3)
         {
             if (availabilities.Count() == 0) {
                 return 0;

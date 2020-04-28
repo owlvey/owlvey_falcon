@@ -4,6 +4,7 @@ using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Repositories;
 using Xunit;
 using System.Linq;
+using Owlvey.Falcon.Core.Values;
 
 namespace Owlvey.Falcon.ComponentsTests
 {
@@ -120,8 +121,9 @@ namespace Owlvey.Falcon.ComponentsTests
 
             var product = (await productQueryComponent.GetProducts(customerId)).ElementAt(0);            
 
-            var result = await productQueryComponent.GetDailyServiceSeriesById(product.Id, OwlveyCalendar.StartJanuary2019,
-                OwlveyCalendar.January201910);
+            var result = await productQueryComponent.GetDailyServiceSeriesById(product.Id, 
+                new DatePeriodValue( OwlveyCalendar.StartJanuary2019,
+                OwlveyCalendar.January201910));
 
             Assert.NotEmpty(result.Series);
         }

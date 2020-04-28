@@ -33,7 +33,12 @@ namespace Owlvey.Falcon.Models
     public class ProductGetListRp : ProductBaseRp
     {
         public int ServicesCount { get; set; }
+        public int FeaturesCount { get; set; }
+        public int SourcesCount { get; set; }
 
+        public decimal Coverage { get; set; }
+        public decimal Ownership { get; set; }
+        public decimal Utilization { get; set; }
     }
 
     public class ProductPostRp {

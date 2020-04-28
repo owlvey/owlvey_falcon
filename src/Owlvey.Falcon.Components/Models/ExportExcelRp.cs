@@ -9,23 +9,23 @@ namespace Owlvey.Falcon.Models
     public class ExportExcelFeatureRp {
         public int FeatureId { get; set; }          
         public string Name { get; set; }
-        public decimal Availability { get; set; }        
+        public decimal Quality { get; set; }        
 
         public ExportExcelFeatureRp() { }
 
         public ExportExcelFeatureRp(FeatureEntity feature) {
             this.FeatureId = feature.Id.Value;            
             this.Name = feature.Name;            
-            this.Availability = feature.Availability;            
+            this.Quality = feature.MeasureQuality().Quality;            
         }
     }
     public class ExportExcelFeatureDetailRp{
         public int FeatureId { get; set; }
         public int SourceId { get; set; }
         public string Feature { get; set; }
-        public decimal FeatureAvailability { get; set; }
+        public decimal FeatureQuality { get; set; }
         public string Source { get; set; }
-        public decimal SourceAvailability { get; set; }
+        public decimal SourceQuality { get; set; }
 
         public ExportExcelFeatureDetailRp() { }
 
@@ -36,8 +36,8 @@ namespace Owlvey.Falcon.Models
             this.SourceId = indicator.SourceId;
             this.Feature = feature.Name;
             this.Source = indicator.Source.Name;
-            this.FeatureAvailability = feature.Availability;
-            this.SourceAvailability = indicator.Source.Availability;
+            this.FeatureQuality = feature.MeasureQuality().Quality;
+            this.SourceQuality = indicator.Source.MeasureQuality().Quality;
         }
     }
      
@@ -46,7 +46,7 @@ namespace Owlvey.Falcon.Models
         public string Source { get; set; }
         public string Description { get; set; }
         public string Kind { get; set; }                         
-        public decimal Availability { get; set; }
+        public decimal Quality { get; set; }
         public string GoodDefinition { get; set; }
         public string TotalDefinition { get; set; }
         public ExportExcelSourceRp() { }
@@ -54,7 +54,7 @@ namespace Owlvey.Falcon.Models
             this.SourceId = source.Id.Value;
             this.Source = source.Name;
             this.Kind = source.Kind.ToString();
-            this.Availability = source.Availability;            
+            this.Quality = source.MeasureQuality().Quality;            
             this.TotalDefinition = source.TotalDefinition;
             this.GoodDefinition = source.GoodDefinition;
             this.Description = source.Description;            
@@ -69,10 +69,10 @@ namespace Owlvey.Falcon.Models
         public string Name { get; set; }
         public string Description { get; set; }                
         public decimal SLO { get; set; }
-        public decimal Availability { get; set; }
+        public decimal Quality { get; set; }
         public decimal Budget { get                 
             {
-                return QualityUtils.MeasureBudget(Availability, SLO);                
+                return QualityUtils.MeasureBudget(Quality, SLO);                
             }
         }
         public string Action { get {
@@ -87,7 +87,7 @@ namespace Owlvey.Falcon.Models
             this.Group = service.Group;
             this.Name = service.Name;
             this.SLO = service.Slo;
-            this.Availability = service.Quality;
+            this.Quality = service.MeasureQuality().Quality;
             this.Description = service.Description;         
         }
 
@@ -99,18 +99,18 @@ namespace Owlvey.Falcon.Models
         public string Service { get; set; }
         public string Feature { get; set; }
         public decimal SLO { get; set; }
-        public decimal ServiceAvailability { get; set; }
+        public decimal ServiceQuality { get; set; }
         public decimal ServiceBudget
         {
             get
             {
-                return QualityUtils.MeasureBudget(this.ServiceAvailability, this.SLO);
+                return QualityUtils.MeasureBudget(this.ServiceQuality, this.SLO);
             }
         }
         public decimal FeatureSLO { get; set; }        
-        public decimal FeatureAvailability { get; set; }
+        public decimal FeatureQuality { get; set; }
         public decimal FeatureBudget { get {
-                return QualityUtils.MeasureBudget(this.FeatureAvailability, this.FeatureSLO);
+                return QualityUtils.MeasureBudget(this.FeatureQuality, this.FeatureSLO);
             } }
 
         public ExportExcelServiceDetailRp() { }
@@ -124,8 +124,8 @@ namespace Owlvey.Falcon.Models
             this.Feature = feature.Name;
             this.SLO = service.Slo;
             this.FeatureSLO = service.FeatureSLO;
-            this.ServiceAvailability = service.Quality;
-            this.FeatureAvailability = feature.Availability;
+            this.ServiceQuality = service.MeasureQuality().Quality;
+            this.FeatureQuality= feature.MeasureQuality().Quality;
         }
     }
 

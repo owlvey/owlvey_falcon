@@ -50,7 +50,7 @@ namespace Owlvey.Falcon.Core.Values
             {
                 var minimun = points.Min(c => c.Minimun);
                 var maximun = points.Max(c => c.Maximun);
-                var average = QualityUtils.CalculateAverageAvailability(points.Select(c => c.Average));
+                var average = QualityUtils.CalculateAverage(points.Select(c => c.Average));
             }
             
         }

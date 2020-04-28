@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Core.Values;
 using Owlvey.Falcon.Models;
 
 namespace Owlvey.Falcon.API.Controllers
@@ -30,12 +32,19 @@ namespace Owlvey.Falcon.API.Controllers
         /// Get Products
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpGet("")]
         [ProducesResponseType(typeof(IEnumerable<ProductGetListRp>), 200)]
-        public async Task<IActionResult> Get(int customerId, string expand)
+        public async Task<IActionResult> Get(int customerId)
+        {            
+            var model = await this._productQueryService.GetProductsWithInformation(customerId);
+            return this.Ok(model);
+        }
+
+        [HttpGet("lite")]
+        [ProducesResponseType(typeof(IEnumerable<ProductGetListRp>), 200)]
+        public async Task<IActionResult> GetLite(int customerId)
         {
-            IEnumerable<ProductGetListRp> model = new List<ProductGetListRp>();
-            model = await this._productQueryService.GetProductsWithServices(customerId);
+            var model = await this._productQueryService.GetProducts(customerId);
             return this.Ok(model);
         }
 
@@ -241,6 +250,9 @@ namespace Owlvey.Falcon.API.Controllers
             return File(result.Item2, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);                       
         }
 
+               
+
+
         [HttpGet("{id}/reports/daily/services/series")]
         [ProducesResponseType(typeof(SeriesGetRp), 200)]
         public async Task<IActionResult> ReportSeries(int id, DateTime? start, DateTime? end, string group = null)
@@ -254,14 +266,13 @@ namespace Owlvey.Falcon.API.Controllers
                 return this.BadRequest("end is required");
             }
             MultiSeriesGetRp result;
+            var period = new DatePeriodValue(start.Value, end.Value);  
             if (string.IsNullOrWhiteSpace(group))
             {
-                result = await this._productQueryService.GetDailyServiceSeriesById(id, 
-                    start.Value, end.Value);
+                result = await this._productQueryService.GetDailyServiceSeriesById(id, period);
             }
             else {
-                result = await this._productQueryService.GetDailyServiceSeriesByIdAndGroup(id, 
-                    start.Value, end.Value, group);
+                result = await this._productQueryService.GetDailyServiceSeriesByIdAndGroup(id, period, group);
             }            
 
             return this.Ok(result);

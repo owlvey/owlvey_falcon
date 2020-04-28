@@ -114,9 +114,8 @@ namespace Owlvey.Falcon.Components
         private async Task<decimal> GetAvailabilityByIndicator(IndicatorEntity entity, DateTime start, DateTime end)
         {
             var sourceItems = await this._dbContext.GetSourceItems(entity.Source.Id.Value, start, end);
-            entity.Source.SourceItems = sourceItems;
-            var agg = new IndicatorQualityAggregate(entity);
-            return agg.MeasureAvailability().Quality;            
+            entity.Source.SourceItems = sourceItems;            
+            return entity.Source.MeasureQuality().Quality;            
         }
         
         public async Task<IEnumerable<IndicatorAvailabilityGetListRp>> GetByFeatureWithAvailability(int featureId, DateTime start, DateTime end)
@@ -126,7 +125,7 @@ namespace Owlvey.Falcon.Components
             foreach (var item in entities)
             {                
                 var tmp = this._mapper.Map<IndicatorAvailabilityGetListRp>(item);
-                tmp.Availability = await this.GetAvailabilityByIndicator(item, start, end);
+                tmp.Quality = await this.GetAvailabilityByIndicator(item, start, end);
                 result.Add(tmp);
             }
             return result;

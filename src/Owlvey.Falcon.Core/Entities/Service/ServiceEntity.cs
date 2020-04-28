@@ -79,28 +79,6 @@ namespace Owlvey.Falcon.Core.Entities
             this.Validate();
         }
 
-
-        #region Availability
-
-        [NotMapped]
-        public decimal Quality { get; protected set; }
-        [NotMapped] 
-        public decimal Availability { get; protected set; }
-
-        [NotMapped]
-        public decimal Latency { get; protected set; }
-
-        public void MeasureQuality()
-        {
-            var agg = new ServiceQualityAggregate(this);
-            var measure = agg.MeasureQuality();
-            this.Quality = measure.Quality;
-            this.Availability = measure.Availability;
-            this.Latency = measure.Latency;            
-        }
-        #endregion
-
-
         public bool ValidateLeader(string email) {
             return !string.IsNullOrWhiteSpace(this.Leaders) && this.Leaders.Contains(email);
         }

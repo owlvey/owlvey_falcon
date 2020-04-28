@@ -6,6 +6,8 @@ using Owlvey.Falcon.Core;
 using System.Linq;
 using Owlvey.Falcon.Core.Entities;
 using System.Text.Json.Serialization;
+using Owlvey.Falcon.Core.Values;
+using System.Linq.Expressions;
 
 namespace Owlvey.Falcon.Models
 {
@@ -55,13 +57,15 @@ namespace Owlvey.Falcon.Models
 
     public class ServiceGetRp : ServiceBaseRp {
         public List<FeatureGetListRp> Features { get; set; } = new List<FeatureGetListRp>();
-        public decimal Availability { get; set; }  
-        
-        public decimal PreviousAvailability { get; set; }
+        public decimal Quality { get; set; }
+        public decimal Availability { get; set; }
+        public decimal Latency { get; set; }
 
-        public decimal PreviousAvailabilityII { get; set; }
+        public decimal PreviousQuality { get; set; }
+
+        public decimal PreviousQualityII { get; set; }
         public decimal Budget { get {
-                return QualityUtils.MeasureBudget(Availability, SLO);
+                return QualityUtils.MeasureBudget(this.Quality, SLO);
             } }
         public decimal FeatureSlo {
             get {
@@ -83,6 +87,27 @@ namespace Owlvey.Falcon.Models
             }
             this.Features = result;            
         }
+        
+    }
+
+    public class ServiceGroupListRp { 
+        public string Name { get; set; }
+        public decimal Status { get; set; } = 1;
+
+        public decimal Previous { get; set; } = 1;
+        public int Count { get; set; } = 1;
+        public decimal SloAvg { get; set; } = 1;
+        public decimal SloMin { get; set; } = 1;
+
+        public decimal QualityAvg { get; set; } = 1;
+        public decimal QualityMin { get; set; } = 1;
+
+        public decimal AvailabilityAvg { get; set; } = 1;
+        public decimal AvailabilityMin { get; set; } = 1;
+
+        public decimal LatencyAvg { get; set; } = 1;
+        public decimal LatencyMin { get; set; } = 1;
+
     }
 
     public class ServiceGetListRp : ServiceBaseRp
@@ -92,7 +117,13 @@ namespace Owlvey.Falcon.Models
         public decimal Availability { get; set; }
         public decimal Latency { get; set; }
         public decimal Previous { get; set; }
-                
+
+        public void LoadMeasure(QualityMeasureValue measure) {
+            this.Quality = measure.Quality;
+            this.Availability = measure.Availability;
+            this.Latency = measure.Latency;
+        }
+
         public string Deploy { get; set; }        
         public decimal FeatureSlo { get {
                 if (this.FeaturesCount == 0) return this.SLO;

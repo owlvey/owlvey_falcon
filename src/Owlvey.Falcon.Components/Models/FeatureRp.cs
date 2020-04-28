@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using Owlvey.Falcon.Core.Entities;
+using Owlvey.Falcon.Core.Values;
 
 namespace Owlvey.Falcon.Models
 {
@@ -53,9 +54,14 @@ namespace Owlvey.Falcon.Models
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }        
         public decimal Quality { get; set; }
-
         public decimal Latency { get; set; }
         public decimal Availability { get; set; }
+        public void LoadQuality(QualityMeasureValue quality)
+        {
+            this.Availability = quality.Availability;
+            this.Quality = quality.Quality;
+            this.Latency = quality.Latency;
+        }
         public string MTTM { get; set; }
         public string MTTE { get; set; }
         public string MTTD { get; set; }
@@ -81,6 +87,12 @@ namespace Owlvey.Falcon.Models
         public override void Read(FeatureEntity Entity){
             base.Read(Entity); 
 
+        }
+
+        public void LoadQuality(QualityMeasureValue quality) {
+            this.Availability = quality.Availability;
+            this.Quality = quality.Quality;
+            this.Latency = quality.Latency;
         }
     }
 
@@ -116,7 +128,7 @@ namespace Owlvey.Falcon.Models
         public int IndicatorsCount { get; set; }
         public decimal SLO { get; set; }
         public decimal Impact { get; set; }
-        public decimal Availability { get; set; }
+        public decimal Quality { get; set; }
         public decimal Points { get; set; }
     }
 

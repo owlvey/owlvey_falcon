@@ -12,22 +12,24 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         [Fact]
         public void FeatureDateAvailabilityAggregateSuccess() {
 
-            var agg = new FeatureAvailabilityAggregate(new FeatureEntity() {
-                  Id = 1,
-                  Name = "test",
-                  Indicators = new List<IndicatorEntity>() { new IndicatorEntity() {
+            var entity = new FeatureEntity()
+            {
+                Id = 1,
+                Name = "test",
+                Indicators = new List<IndicatorEntity>() { new IndicatorEntity() {
                         Id  = 1,
                         Source = new SourceEntity(){
                              SourceItems = new List<SourceItemEntity>(){
                                   new SourceItemEntity(){
                                        Good = 800, Total = 1000,
-                                       Target = OwlveyCalendar.January201903                                       
+                                       Target = OwlveyCalendar.January201903
                                   }
                              }
                         }
                   } }
-            });
-            var result = agg.MeasureQuality();
+            };
+            
+            var result = entity.MeasureQuality();
             
             Assert.Equal(0.8m, result.Quality);
             
@@ -38,7 +40,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         public void FeatureAvailabilityMix()
         {
 
-            var agg = new FeatureAvailabilityAggregate(new FeatureEntity()
+            var entity = new FeatureEntity()
             {
                 Id = 1,
                 Name = "test",
@@ -50,7 +52,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                              SourceItems = new List<SourceItemEntity>(){
                                   new SourceItemEntity(){
                                        Good = 800, Total = 1000,
-                                       Target = OwlveyCalendar.January201903                                       
+                                       Target = OwlveyCalendar.January201903
                                   }
                              }
                         }
@@ -62,14 +64,14 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                              SourceItems = new List<SourceItemEntity>(){
                                   new SourceItemEntity(){
                                        Good = 90, Total = 100,
-                                       Target = OwlveyCalendar.January201903                                       
+                                       Target = OwlveyCalendar.January201903
                                   }
                              }
                         }
                     }
                 }
-            });
-            var result = agg.MeasureQuality();
+            };
+            var result = entity.MeasureQuality();
             Assert.Equal(0.8m, result.Quality);
 
         }

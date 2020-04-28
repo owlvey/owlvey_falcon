@@ -22,12 +22,11 @@ namespace Owlvey.Falcon.Core.Aggregates
         {            
             var result = new List<DayMeasureValue>();
 
-            foreach (var item in this.Period.GetDatesIntervals())
-            {
-                var agg = new SourceAvailabilityAggregate(this.Source);
-                var measure = agg.MeasureAvailability(item.start, item.end);
+            foreach (var item in this.Period.GetDatesPeriods())
+            {                
+                var measure = this.Source.MeasureQuality(item);
                 if (measure.HasData) {
-                    result.Add(new DayMeasureValue(item.start, new QualityMeasureValue(measure.Quality) ));
+                    result.Add(new DayMeasureValue(item.Start, new QualityMeasureValue(measure.Quality) ));
                 }    
             }
             return result;
