@@ -14,17 +14,22 @@ using Owlvey.Falcon.Repositories.Products;
 using Owlvey.Falcon.Repositories.Features;
 using Owlvey.Falcon.Repositories.Services;
 using Polly;
+using System.IO;
+using OfficeOpenXml;
 
 namespace Owlvey.Falcon.Components
 {
     public class ProductComponent : BaseComponent
     {
         private readonly FalconDbContext _dbContext;
-        
+        private readonly SourceItemComponent _sourceItemComponent;
+
         public ProductComponent(FalconDbContext dbContext,
             IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway, 
-            IMapper mapper, ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityService, configuration)
+            IMapper mapper, ConfigurationComponent configuration,
+            SourceItemComponent sourceItemComponent) : base(dateTimeGateway, mapper, identityService, configuration)
         {
+            this._sourceItemComponent = sourceItemComponent;
             this._dbContext = dbContext;            
         }
 
@@ -169,7 +174,56 @@ namespace Owlvey.Falcon.Components
             }
             
         }
-        
+
+
+        public async Task<IEnumerable<string>> ImportsItems(int productId, MemoryStream input)
+        {
+            var logs = new List<string>();
+
+            var sources =  this._dbContext.Sources.Where(c => c.ProductId == productId).ToList();
+
+            using (var package = new ExcelPackage(input))
+            {                   
+                var sourceItemsSheet = package.Workbook.Worksheets["SourceItems"];
+
+                var sourceItems = new List<(SourceEntity, SourceItemPostRp)>();
+
+                for (int row = 2; row <= sourceItemsSheet.Dimension.Rows; row++)
+                {                    
+                    var source = sourceItemsSheet.Cells[row, 1].GetValue<string>();
+                    var good = sourceItemsSheet.Cells[row, 2].GetValue<int>();
+                    var total = sourceItemsSheet.Cells[row, 3].GetValue<int>();
+                    var target = DateTime.Parse(sourceItemsSheet.Cells[row, 4].GetValue<string>());
+
+                    var sourceTarget = sources.SingleOrDefault(c => c.Name == source);
+                    if (sourceTarget != null)
+                    {
+                        sourceItems.Add((sourceTarget, new SourceItemPostRp()
+                        {
+                            SourceId = sourceTarget.Id.Value,
+                            Start = target,
+                            End = target,
+                            Good = good,
+                            Total = total,
+                            Clues = new Dictionary<string, decimal>()
+                        }));
+                    }
+                    else {
+                        logs.Add(" source not found " + source);
+                    }                    
+                }
+
+                var groups = sourceItems.GroupBy(c => c.Item1, new SourceEntityComparer());
+                foreach (var item in groups)
+                {
+                    await this._sourceItemComponent.BulkInsert(item.Key, item.Select(c => c.Item2).ToList());
+                }
+            }
+
+            return logs;
+        }
+
+
         /// <summary>
         /// Update Product
         /// </summary>

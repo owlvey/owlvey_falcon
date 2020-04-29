@@ -514,5 +514,30 @@ namespace Owlvey.Falcon.Components
             return result;
         }
         #endregion
+
+        #region Exports
+        
+
+        public async Task<MemoryStream> ExportItems(int productId, DatePeriodValue period)
+        {
+            var stream = new MemoryStream();
+            using (var package = new ExcelPackage(stream))
+            {
+                var sources = await this._dbContext.Sources.Where(c=>c.ProductId == productId).ToListAsync();
+                var sourceItems = await this._dbContext.SourcesItems.Where(c=>c.Source.ProductId == productId).ToListAsync();
+
+                var aggregate = new BackupItemsAggregate(sources, sourceItems);
+                var model = aggregate.Execute();
+
+                var sourceItemsSheet = package.Workbook.Worksheets.Add("SourceItems");
+                sourceItemsSheet.Cells.LoadFromCollection(model, true);
+
+                package.Save();
+            }
+            stream.Position = 0;
+            return stream;
+        }
+
+        #endregion
     }
 }

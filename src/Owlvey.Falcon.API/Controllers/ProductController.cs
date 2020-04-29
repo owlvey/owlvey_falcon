@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using Owlvey.Falcon.Components;
@@ -234,8 +236,37 @@ namespace Owlvey.Falcon.API.Controllers
         #endregion
 
 
+        #region exports
+
+        [HttpGet("{id}/exports/items")]
+        public async Task<IActionResult> Exportitems(int id, DateTime? start, DateTime? end)
+        {
+            var stream = await this._productQueryService.ExportItems(id, new DatePeriodValue(start, end));
+
+            string excelName = $"owlvey-items-{DateTime.Now:yyyyMMdd}.xlsx";
+
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
+        }
+
+
+        [HttpPost("{id}/imports/items")]
+        [Authorize(Policy = "RequireAdminRole")]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> PostBackupAsync([FromRoute]int id, [FromForm(Name = "data")] IFormFile file)
+        {
+            using (MemoryStream excelStream = new MemoryStream())
+            {
+                file.CopyTo(excelStream);
+                var logs = await this._productService.ImportsItems(id, excelStream);
+                return Ok(logs);
+            }
+        }
+        #endregion
+
 
         #region reports
+
+
 
         [HttpGet("{id}/reports/excel")]
         [ProducesResponseType(typeof(SeriesGetRp), 200)]

@@ -859,7 +859,7 @@ namespace Owlvey.Falcon.Components
 
             return logs;
         }
-
+        
         public async Task<MemoryStream> Backup(bool includeData)
         {
             var stream = new MemoryStream();
