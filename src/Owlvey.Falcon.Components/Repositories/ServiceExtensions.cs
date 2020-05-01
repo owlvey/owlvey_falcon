@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.Core.Values;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
+using System.Runtime.CompilerServices;
 
 namespace Owlvey.Falcon.Repositories.Services
 {
@@ -81,7 +82,7 @@ namespace Owlvey.Falcon.Repositories.Services
             return service;
         }
 
-        public static async Task<ServiceEntity> FullGetServiceWithSourceItems(this FalconDbContext context, int serviceId,
+        public static async Task<ServiceEntity> FullServiceWithSourceItems(this FalconDbContext context, int serviceId,
             DateTime start, DateTime end) {
             var entity = await GetService(context, serviceId);
             var sources = entity.FeatureMap.SelectMany(c => c.Feature.Indicators).Select(c => c.SourceId).Distinct().ToList();
@@ -95,6 +96,8 @@ namespace Owlvey.Falcon.Repositories.Services
             }
             return entity;
         }
+
+        
 
         public static async Task<IEnumerable<IncidentEntity>> GetIncidentsByService(
             this FalconDbContext context, int serviceId)

@@ -16,6 +16,12 @@ namespace Owlvey.Falcon.Core.Values
             (this.Start, this.End) = DateTimeUtils.ToDate(start.Value, end.Value);
             this.Days = this.End.Add(TimeSpan.FromTicks(1)).Subtract(this.Start).Days;
         }
+
+        public DatePeriodValue(DateTime start): this(start, DateTimeUtils.AbsoluteEnd(start))
+        {           
+         
+        }
+
         public int Days { get; protected set; }
 
         public bool IsValid() {
@@ -57,6 +63,54 @@ namespace Owlvey.Falcon.Core.Values
         public (DatePeriodValue before, DatePeriodValue previous) CalculateBeforePreviousDates() {
             var (bs, be, ps, pe) = DateTimeUtils.CalculateBeforePreviousDates(this.Start, this.End);
             return (new DatePeriodValue(bs, be), new DatePeriodValue(ps, pe));
+        }
+
+        public List<DatePeriodValue> ToYearPeriods() {
+            var result = new List<DatePeriodValue>();
+            var year = this.Start.Year;
+            for (int i = 1; i < 13; i++)
+            {
+                var stemp = new DateTime(year, i, 1);
+                var temp = DateTime.Now;
+                if (i < 12)
+                {
+                    temp = new DateTime(year, i + 1, 1) - TimeSpan.FromTicks(1);
+                }
+                else {
+                    temp = new DateTime(year, i, 31);
+                }
+                
+                result.Add(new DatePeriodValue(stemp, temp));
+            }
+            return result;                        
+        }
+
+        public List<DatePeriodValue> ToWeeksPeriods() {
+            var result = new List<DatePeriodValue>();
+            var previouus = this.Start;
+            var pivot = this.Start.AddDays(7);
+            while (pivot.Year == this.Start.Year) {
+                result.Add(new DatePeriodValue(previouus, pivot));
+                pivot += TimeSpan.FromDays(7);
+                previouus += TimeSpan.FromDays(7);
+            }
+            return result;
+        }
+
+        public List<DatePeriodValue> ToDaysPeriods()
+        {
+            var result = new List<DatePeriodValue>();            
+            var pivot = this.Start;
+            while (pivot.Year == this.Start.Year)
+            {
+                result.Add(new DatePeriodValue(pivot));
+                pivot += TimeSpan.FromDays(1);                
+            }
+            return result;
+        }
+        public static DatePeriodValue ToYearFromStart(DateTime start) {
+            var period = new DatePeriodValue(new DateTime(start.Year, 1, 1), new DateTime(start.Year + 1, 1, 1) - TimeSpan.FromTicks(1));
+            return period;
         }
     }
 }

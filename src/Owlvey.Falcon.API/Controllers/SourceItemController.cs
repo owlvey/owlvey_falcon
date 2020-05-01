@@ -38,7 +38,8 @@ namespace Owlvey.Falcon.API.Controllers
         
 
         [HttpPost("proportion")]
-        [ProducesResponseType(typeof(SourceItemGetRp), 200)]        
+        [ProducesResponseType(typeof(SourceItemGetRp), 200)]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> PostProportion([FromBody]SourceItemPropotionPostRp model)
         {
             Console.WriteLine("aqui " + model.Proportion.ToString());

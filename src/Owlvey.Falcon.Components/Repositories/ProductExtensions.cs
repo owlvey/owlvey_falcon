@@ -35,6 +35,8 @@ namespace Owlvey.Falcon.Repositories.Products
             return product;
         }
 
+        
+
         public static async Task<ProductEntity> FullLoadProductWithSourceItems(this FalconDbContext context, int productId, DateTime start, DateTime end) {
             var product = await FullLoadProduct(context, productId);
             var sourceItems = await context.GetSourceItemsByProduct(productId, start, end);

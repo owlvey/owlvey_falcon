@@ -19,7 +19,7 @@ namespace Owlvey.Falcon.Models
 
         public string Leaders { get; set; }
         public int Id { get; set; }
-        public int ProductId { get; set; }        
+        public int ProductId { get; set; }
         public decimal SLO { get; set; }
         public decimal Impact { get; set; }
         public string CreatedBy { get; set; }
@@ -28,8 +28,8 @@ namespace Owlvey.Falcon.Models
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public ServiceAggregationEnum Aggregation { get; set; }
 
-        public int MTTD { get; set; }        
-        public int MTTE { get; set; }        
+        public int MTTD { get; set; }
+        public int MTTE { get; set; }
         public int MTTF { get; set; }
         public int MTTM { get {
                 return this.MTTD + this.MTTE + this.MTTF;
@@ -48,7 +48,7 @@ namespace Owlvey.Falcon.Models
         public string ProductName { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public decimal SLO { get; set; }        
+        public decimal SLO { get; set; }
         public string Avatar { get; set; }
         public string Leaders { get; set; }
         public string Aggregation { get; set; }
@@ -69,27 +69,73 @@ namespace Owlvey.Falcon.Models
             } }
         public decimal FeatureSlo {
             get {
-                if (this.Features.Count() == 0 ) {
+                if (this.Features.Count() == 0) {
                     return this.SLO;
                 }
                 return Math.Round((decimal)Math.Pow((double)this.SLO, 1 / (double)this.Features.Count()), 4);
-            }            
+            }
         }
         public decimal BudgetMinutes { get; set; }
 
-        internal void MergeFeaturesFrom(IEnumerable<FeatureEntity> features){
+        internal void MergeFeaturesFrom(IEnumerable<FeatureEntity> features) {
             var result = new List<FeatureGetListRp>(this.Features);
             foreach (var item in features)
             {
-                var temporal = new FeatureGetListRp(); 
-                temporal.Read(item); 
-                result.Add(temporal);                 
+                var temporal = new FeatureGetListRp();
+                temporal.Read(item);
+                result.Add(temporal);
             }
-            this.Features = result;            
+            this.Features = result;
         }
-        
+
     }
 
+    public class MonthRp
+    {
+        public string Name { get; set; }
+        public int Count { get; set; }
+        public decimal Jan { get; set; } = 1;
+        public decimal Feb { get; set; } = 1;
+        public decimal Mar { get; set; } = 1;
+        public decimal Apr { get; set; } = 1;
+        public decimal May { get; set; } = 1;
+        public decimal Jun { get; set; } = 1;
+        public decimal Jul { get; set; } = 1;
+        public decimal Aug { get; set; } = 1;
+        public decimal Sep { get; set; } = 1;
+        public decimal Oct { get; set; } = 1;
+        public decimal Nov { get; set; } = 1;
+        public decimal Dec { get; set; } = 1;
+
+        public void SetMonthValue(int month, decimal value) {
+            switch (month)
+            {
+                case 0: this.Jan = value; break;
+                case 1: this.Feb = value; break;
+                case 2: this.Mar = value; break;
+                case 3: this.Apr = value; break;
+                case 4: this.May = value; break;
+                case 5: this.Jun = value; break;                
+                case 6: this.Jul = value; break;
+                case 7: this.Aug = value; break;
+                case 8: this.Sep = value; break;
+                case 9: this.Oct = value; break;
+                case 10: this.Nov = value; break;
+                case 11: this.Dec = value; break;
+                default: break;
+            }
+        }
+    }
+    public class AnnualServiceGroupListRp 
+    {
+        
+        public List<MonthRp> Availability { get; set; } = new List<MonthRp>();
+        public List<MonthRp> Latency { get; set; } = new List<MonthRp>();
+        public List<MonthRp> Quality { get; set; } = new List<MonthRp>();
+        public MultiSeriesGetRp Weekly { get; set; } = new MultiSeriesGetRp();
+
+
+    }
     public class ServiceGroupListRp { 
         public string Name { get; set; }
         public decimal Status { get; set; } = 1;

@@ -223,6 +223,42 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok(model);
         }
 
+        [HttpGet("reports/serviceGroup/annual")]
+        [ProducesResponseType(typeof(ServiceGroupListRp), 200)]
+        public async Task<IActionResult> ReportAnnualServiceGroup(int productId, DateTime? start)
+        {
+            if (!start.HasValue)
+            {
+                return this.BadRequest("start is required");
+            }            
+            var model = await this._serviceQueryService.GetAnnualServiceGroupReport(productId, start.Value);
+            return this.Ok(model);
+        }
+
+        [HttpGet("{id}/reports/serviceGroup/annual/calendar")]
+        [ProducesResponseType(typeof(MultiSerieItemGetRp), 200)]
+        public async Task<IActionResult> ReportAnnualServiceGroupCalendar(int id, DateTime? start)
+        {
+            if (!start.HasValue)
+            {
+                return this.BadRequest("start is required");
+            }
+            var model = await this._serviceQueryService.GetAnnualServiceGroupCalendarReport(id, start.Value);
+            return this.Ok(model);
+        }
+
+        [HttpGet("reports/serviceGroup/annual/calendar")]
+        [ProducesResponseType(typeof(MultiSerieItemGetRp), 200)]
+        public async Task<IActionResult> ReportAnnualServiceGroupCalendar(int productId, string group, DateTime? start)
+        {
+            if (!start.HasValue)
+            {
+                return this.BadRequest("start is required");
+            }
+            var model = await this._serviceQueryService.GetAnnualServiceGroupCalendarReport(productId, group, start.Value);
+            return this.Ok(model);
+        }
+
         [HttpGet("{id}/reports/daily/series")]
         [ProducesResponseType(typeof(SeriesGetRp), 200)]
         public async Task<IActionResult> ReportSeries(int id, DateTime? start, DateTime? end)

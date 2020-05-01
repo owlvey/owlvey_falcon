@@ -34,5 +34,19 @@ namespace Owlvey.Falcon.UnitTests.Values
             Assert.Equal(OwlveyCalendar.January201904, intervals.ElementAt(1));
             Assert.Equal(OwlveyCalendar.January201905, intervals.ElementAt(2));
         }
+
+        [Fact]
+        public void GenerateYear() {
+            var value = new DateTime(2019, 1, 15);
+            var target = DatePeriodValue.ToYearFromStart(value);
+            Assert.Equal(365, target.Days);
+        }
+        [Fact]
+        public void GenerateYearPeriods() {
+            var value = new DateTime(2019, 1, 15);
+            var target = DatePeriodValue.ToYearFromStart(value);
+            var periods = target.ToYearPeriods();
+            Assert.Equal(12, periods.Count);
+        }
     }
 }

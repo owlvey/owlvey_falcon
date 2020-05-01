@@ -17,6 +17,11 @@ using Owlvey.Falcon.Repositories.Products;
 using System.ComponentModel.DataAnnotations;
 using Owlvey.Falcon.Core.Values;
 using System.IO.Pipes;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
+using System.Text.RegularExpressions;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
+using OfficeOpenXml.Table.PivotTable;
+using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
 
 namespace Owlvey.Falcon.Components
 {
@@ -31,6 +36,166 @@ namespace Owlvey.Falcon.Components
         {
             this._dbContext = dbContext;            
         }
+
+        public async Task<MultiSerieItemGetRp> GetAnnualServiceGroupCalendarReport(int serviceId, DateTime start)
+        {
+            var result = new MultiSerieItemGetRp();
+            var period = DatePeriodValue.ToYearFromStart(start);
+            var service = await this._dbContext.FullServiceWithSourceItems(serviceId, period.Start, period.End);
+            var days = period.ToDaysPeriods();
+            result.Avatar = service.Avatar;
+            result.Name = service.Name;
+            foreach (var day in days)
+            {
+                var measure = service.MeasureQuality(day);
+                result.Items.Add(new SeriesItemGetRp(day.Start, measure.Quality));
+            }
+            return result;
+        }
+
+        public async Task<MultiSerieItemGetRp> GetAnnualServiceGroupCalendarReport(int productId, string group, DateTime start)
+        {
+            var period = DatePeriodValue.ToYearFromStart(start);
+            var product = await this._dbContext.FullLoadProductWithGroupAndSourceItems(productId, group, period.Start, period.End);
+            var result = new MultiSerieItemGetRp();                        
+            var days = period.ToDaysPeriods();            
+            result.Name = group;
+            foreach (var day in days)
+            {
+                var temp = new List<QualityMeasureValue>();
+                foreach (var item in product.Services)
+                {
+                    temp.Add(item.MeasureQuality(day));
+                }
+                
+                result.Items.Add(new SeriesItemGetRp(day.Start, QualityUtils.CalculateAverage(temp.Select(c=>c.Quality))));
+            }
+            return result;
+        }
+
+        public async Task<AnnualServiceGroupListRp> GetAnnualServiceGroupReport(int productId, DateTime start)
+        {
+            var result = new AnnualServiceGroupListRp();
+            var period = DatePeriodValue.ToYearFromStart(start);
+
+            var product = await this._dbContext.FullLoadProductWithSourceItems(productId, period.Start, period.End);
+
+            var months = period.ToYearPeriods();
+            var serviceGroups = product.Services.GroupBy(c => c.Group).ToList();
+            var pivot = new Dictionary<string, List<ServiceGroupListRp>>();
+            int month = 1;
+            foreach (var monthperiod in months)
+            {
+                var groupsReport = new List<ServiceGroupListRp>();
+                foreach (var group in serviceGroups)
+                {                   
+                    var temp = new ServiceGroupListRp();
+                    temp.Name = group.Key;
+                    temp.SloAvg = QualityUtils.CalculateAverage(group.Select(c => c.Slo));                    
+                    var measures = group.Select(c => new { measure = c.MeasureQuality(monthperiod), slo = c.Slo });
+                    temp.QualityAvg = QualityUtils.CalculateAverage(measures.Select(c => c.measure.Quality));                    
+                    temp.AvailabilityAvg = QualityUtils.CalculateAverage(measures.Select(c => c.measure.Availability));                    
+                    temp.LatencyAvg = QualityUtils.CalculateAverage(measures.Select(c => c.measure.Latency));                    
+                    temp.Count = group.Count();
+                    groupsReport.Add(temp); 
+                }                
+                
+                foreach (var group in groupsReport)
+                {
+                    if (!pivot.ContainsKey(group.Name)) {
+                        pivot.Add(group.Name, new List<ServiceGroupListRp>()); 
+                    }
+                    pivot[group.Name].Add(group);
+                }
+                month += 1;
+            }
+
+            if (pivot.Count == 0) return result;
+
+            result.Quality = pivot.Select(c =>
+            {
+                var tmp = new MonthRp() { Name = c.Key, Count = c.Value.ElementAt(0).Count };
+                for (int i = 0; i < c.Value.Count; i++)
+                {
+                    tmp.SetMonthValue(i, c.Value[i].QualityAvg);
+                }                
+                return tmp;
+            }).ToList();
+
+            result.Availability = pivot.Select(c =>
+            {
+                var tmp = new MonthRp() { Name = c.Key, Count = c.Value.ElementAt(0).Count };
+                for (int i = 0; i < c.Value.Count; i++)
+                {
+                    tmp.SetMonthValue(i, c.Value[i].AvailabilityAvg);
+                }
+                return tmp;
+            }).ToList();
+
+            result.Latency = pivot.Select(c =>
+            {
+                var tmp = new MonthRp() { Name = c.Key, Count = c.Value.ElementAt(0).Count };
+                for (int i = 0; i < c.Value.Count; i++)
+                {
+                    tmp.SetMonthValue(i, c.Value[i].LatencyAvg);
+                }
+                return tmp;
+            }).ToList();
+
+
+            var weeks = period.ToWeeksPeriods();
+            pivot = new Dictionary<string, List<ServiceGroupListRp>>();
+            foreach (var week in weeks)
+            {
+                var groupsReport = new List<ServiceGroupListRp>();
+                foreach (var group in serviceGroups)
+                {
+                    var temp = new ServiceGroupListRp();
+                    temp.Name = group.Key;
+                    temp.SloAvg = QualityUtils.CalculateAverage(group.Select(c => c.Slo));
+                    var measures = group.Select(c => new { measure = c.MeasureQuality(week), slo = c.Slo });
+                    temp.QualityAvg = QualityUtils.CalculateAverage(measures.Select(c => c.measure.Quality));
+                    temp.AvailabilityAvg = QualityUtils.CalculateAverage(measures.Select(c => c.measure.Availability));
+                    temp.LatencyAvg = QualityUtils.CalculateAverage(measures.Select(c => c.measure.Latency));
+                    temp.Count = group.Count();
+                    groupsReport.Add(temp);
+                }
+                foreach (var group in groupsReport)
+                {
+                    if (!pivot.ContainsKey(group.Name))
+                    {
+                        pivot.Add(group.Name, new List<ServiceGroupListRp>());
+                    }
+                    pivot[group.Name].Add(group);
+                }
+            }
+
+            result.Weekly.Start = period.Start;
+            result.Weekly.End = period.End;
+            result.Weekly.Name = "Weekly Group Report";
+
+            var all = new MultiSerieItemGetRp();
+            all.Name = "All";
+            for (int i = 0; i < weeks.Count; i++)
+            {                
+                var quality = QualityUtils.CalculateAverage(pivot.Select(c => c.Value[i].QualityAvg).ToList());
+                all.Items.Add(new SeriesItemGetRp(weeks[i].End, quality));
+            }
+            result.Weekly.Series.Add(all);
+                        
+            foreach (var item in serviceGroups)
+            {
+                var serie = new MultiSerieItemGetRp();                
+                serie.Name = item.Key;
+                for (int i = 0; i < weeks.Count; i++) {
+                    serie.Items.Add(new SeriesItemGetRp(weeks[i].End, pivot[item.Key][i].QualityAvg));
+                }                
+                result.Weekly.Series.Add(serie);                
+            }            
+
+            return result;
+        }
+        
         public async Task<IEnumerable<ServiceGroupListRp>> GetServiceGroupReport(int productId, DatePeriodValue period)
         {
             var (_, _, ps, pe) = DateTimeUtils.CalculateBeforePreviousDates(period.Start, period.End);
@@ -95,7 +260,7 @@ namespace Owlvey.Falcon.Components
 
             var (before, previous) = period.CalculateBeforePreviousDates();
 
-            var entity = await this._dbContext.FullGetServiceWithSourceItems(id, before.Start, end);
+            var entity = await this._dbContext.FullServiceWithSourceItems(id, before.Start, end);
 
             if (entity == null)
                 return null;                    
