@@ -40,14 +40,13 @@ namespace Owlvey.Falcon.Core.Entities
             }
             if (result.Count > 0)
             {
-                return new QualityMeasureValue(
-                    QualityUtils.CalculateMinimum(result, round: 3),
+                return new QualityMeasureValue(                    
                     QualityUtils.CalculateMinimum(availability, 3),
                     QualityUtils.CalculateMinimum(latency, 3), true);
             }
             else
             {
-                return new QualityMeasureValue(1, 1, 1, false);
+                return new QualityMeasureValue(1, 1, false);
             }
         }
     }

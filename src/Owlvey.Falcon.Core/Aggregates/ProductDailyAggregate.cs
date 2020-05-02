@@ -16,39 +16,32 @@ namespace Owlvey.Falcon.Core.Aggregates
             this.Product = product;
             this.Period = period;
         }
-        public IEnumerable<DayMeasureValue> MeasureQuality() {
-            var result = new List<DayMeasureValue>();
+        public IEnumerable<DayBudgetMeasure> MeasureQuality() {
+            var result = new List<DayBudgetMeasure>();
             var totalServices = this.Product.Services.Count;
             if (totalServices == 0)
             {
                 return result;
-            }            
-            
+            }                        
             foreach (var period in this.Period.GetDatesPeriods())
             {
-                var quality = 0;
-                var availability = 0;
-                var latency = 0;
+                decimal debt = 0;
+                decimal asset= 0;                
                 bool hasData = false;
                 foreach (var service in this.Product.Services)
                 {                    
                     var measure = service.MeasureQuality(period);
                     if (measure.HasData) {
-                        if (measure.Quality >= service.Slo) quality += 1;
-                        if (measure.Availability >= service.Slo) availability += 1;
-                        if (measure.Latency >= service.Slo) latency += 1;
+                        asset += measure.Asset;                        
+                        debt += measure.Debt;
                         hasData = true;
                     }                    
                 }
                 if (hasData) {
-                    result.Add(new DayMeasureValue(period.Start,
-                    new QualityMeasureValue(
-                        QualityUtils.CalculateAvailability(totalServices, quality),
-                        QualityUtils.CalculateAvailability(totalServices, availability),
-                        QualityUtils.CalculateAvailability(totalServices, latency)
-                    )));
-                }
-                
+                    result.Add(
+                        new DayBudgetMeasure(period.Start,
+                        new BudgetMeasureValue(debt, asset)));
+                }                
             }
             return result;
         }

@@ -101,7 +101,7 @@ namespace Owlvey.Falcon.Core.Values
         {
             var result = new List<DatePeriodValue>();            
             var pivot = this.Start;
-            while (pivot.Year == this.Start.Year)
+            while (pivot.Date <= this.End.Date)
             {
                 result.Add(new DatePeriodValue(pivot));
                 pivot += TimeSpan.FromDays(1);                

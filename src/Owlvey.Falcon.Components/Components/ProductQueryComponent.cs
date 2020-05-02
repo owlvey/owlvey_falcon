@@ -219,34 +219,18 @@ namespace Owlvey.Falcon.Components
 
             var response = agg.MeasureQuality();
 
-            var allSerie = new MultiSerieItemGetRp()
+            var debtSerie = new MultiSerieItemGetRp()
             {
-                Name = "Quality",
+                Name = "Debt",
                 Avatar = product.Avatar
-            };
-            var availabilitySerie = new MultiSerieItemGetRp()
-            {
-                Name = "Availability",
-                Avatar = product.Avatar
-            };
-            var latencySerie = new MultiSerieItemGetRp()
-            {
-                Name = "Latency",
-                Avatar = product.Avatar
-            };
+            };            
             foreach (var item in response.OrderBy(c => c.Date))
-            {
-                allSerie.Items.Add(new SeriesItemGetRp(item.Date, item.Measure.Quality));
-                availabilitySerie.Items.Add(new SeriesItemGetRp(item.Date, item.Measure.Availability));
-                latencySerie.Items.Add(new SeriesItemGetRp(item.Date, item.Measure.Latency));
+            {                
+                debtSerie.Items.Add(new SeriesItemGetRp(item.Date, item.Measure.Debt));                                
             }
-
-            result.Series.Add(allSerie);
-            result.Series.Add(availabilitySerie);
-            result.Series.Add(latencySerie);
+            result.Series.Add(debtSerie);            
 
             return result;
-
         }
         public async Task<MultiSeriesGetRp> GetDailyServiceSeriesByIdAndGroup(int productId, DatePeriodValue period, string group)
         {

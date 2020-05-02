@@ -7,8 +7,8 @@ using System.Text;
 namespace Owlvey.Falcon.Core.Entities
 {
     public partial class ServiceEntity
-    {
-        public QualityMeasureValue MeasureQuality(DatePeriodValue period = null)
+    {        
+        public ServiceQualityMeasureValue MeasureQuality(DatePeriodValue period = null)
         {
             var result = new List<decimal>();
             var resultAvailability = new List<decimal>();
@@ -35,14 +35,14 @@ namespace Owlvey.Falcon.Core.Entities
 
             if (result.Count > 0)
             {
-                return new QualityMeasureValue(
-                    QualityUtils.CalculateMinimum(result, round: 3),
+                return new ServiceQualityMeasureValue(                    
+                    this.Slo,
                     QualityUtils.CalculateMinimum(resultAvailability, round: 3),
                     QualityUtils.CalculateMinimum(resultLatency, round: 3));
             }
             else
             {
-                return new QualityMeasureValue(1, 1, 1, false);
+                return new ServiceQualityMeasureValue(this.Slo, 1, 1, false);
             }
         }
     }

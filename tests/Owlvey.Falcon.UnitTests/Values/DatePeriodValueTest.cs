@@ -48,5 +48,19 @@ namespace Owlvey.Falcon.UnitTests.Values
             var periods = target.ToYearPeriods();
             Assert.Equal(12, periods.Count);
         }
+        [Fact]
+        public void GenerateDays() {
+            var value = new DateTime(2019, 1, 15);
+            var target = DatePeriodValue.ToYearFromStart(value);
+            var periods = target.ToDaysPeriods();
+            Assert.Equal(365, periods.Count);
+        }
+        [Fact]
+        public void GenerateDaysMonth()
+        {
+            var target = new DatePeriodValue(new DateTime(2019, 4, 1), new DateTime(2019, 4, 30));
+            var periods = target.ToDaysPeriods();
+            Assert.Equal(30, periods.Count);
+        }
     }
 }

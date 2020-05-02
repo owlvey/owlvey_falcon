@@ -209,10 +209,12 @@ namespace Owlvey.Falcon.API.Controllers
         }
         #endregion
 
-        #region reports        
-        [HttpGet("reports/serviceGroup")]        
+
+
+        #region ServiceGroups
+        [HttpGet("serviceGroup")]
         [ProducesResponseType(typeof(ServiceGroupListRp), 200)]
-        public async Task<IActionResult> ReportServiceGroup(int productId, DateTime? start, DateTime? end)
+        public async Task<IActionResult> GetServiceGroups(int productId, DateTime? start, DateTime? end)
         {
             if (!start.HasValue || !end.HasValue)
             {
@@ -223,8 +225,16 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok(model);
         }
 
+        
+
+        
+        #endregion
+
+        #region reports        
+
+
         [HttpGet("reports/serviceGroup/annual")]
-        [ProducesResponseType(typeof(ServiceGroupListRp), 200)]
+        [ProducesResponseType(typeof(AnnualServiceGroupListRp), 200)]
         public async Task<IActionResult> ReportAnnualServiceGroup(int productId, DateTime? start)
         {
             if (!start.HasValue)
@@ -248,7 +258,7 @@ namespace Owlvey.Falcon.API.Controllers
         }
 
         [HttpGet("reports/serviceGroup/annual/calendar")]
-        [ProducesResponseType(typeof(MultiSerieItemGetRp), 200)]
+        [ProducesResponseType(typeof(IEnumerable<MultiSerieItemGetRp>), 200)]
         public async Task<IActionResult> ReportAnnualServiceGroupCalendar(int productId, string group, DateTime? start)
         {
             if (!start.HasValue)
@@ -274,6 +284,19 @@ namespace Owlvey.Falcon.API.Controllers
             var result = await this._serviceQueryService.GetDailySeriesById(id, start.Value, end.Value);
 
             return this.Ok(result);
+        }
+
+        [HttpGet("reports/debt/daily/series")]
+        [ProducesResponseType(typeof(IEnumerable<MultiSerieItemGetRp>), 200)]
+        public async Task<IActionResult> GetDailyServiceGroups(int productId, string group, DateTime? start, DateTime? end)
+        {
+            if (!start.HasValue || !end.HasValue)
+            {
+                return this.BadRequest("start is required");
+            }
+            var period = new DatePeriodValue(start.Value, end.Value);
+            var model = await this._serviceQueryService.GetServiceGroupDailyErrorBudget(productId,  period, group);
+            return this.Ok(model);
         }
 
         #endregion

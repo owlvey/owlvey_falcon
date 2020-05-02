@@ -44,9 +44,9 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var result = aggregate.MeasureAvailability();
 
             Assert.Equal(3, result.Count());
-            Assert.Equal(0.79940M, result.ElementAt(0).Measure.Quality);
-            Assert.Equal(0.79940M, result.ElementAt(1).Measure.Quality);
-            Assert.Equal(0.79940M, result.ElementAt(2).Measure.Quality);            
+            Assert.Equal(0.7990M, result.ElementAt(0).Measure.Quality);
+            Assert.Equal(0.7990M, result.ElementAt(1).Measure.Quality);
+            Assert.Equal(0.7990M, result.ElementAt(2).Measure.Quality);            
         }
 
         [Fact]
@@ -73,9 +73,9 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var result = aggregate.MeasureAvailability();
 
             Assert.Equal(3, result.Count());            
-            Assert.Equal(0.90210M, result.ElementAt(0).Measure.Quality);
-            Assert.Equal(0.90210M, result.ElementAt(1).Measure.Quality);
-            Assert.Equal(0.90210M, result.ElementAt(2).Measure.Quality);
+            Assert.Equal(0.902M, result.ElementAt(0).Measure.Quality);
+            Assert.Equal(0.902M, result.ElementAt(1).Measure.Quality);
+            Assert.Equal(0.902M, result.ElementAt(2).Measure.Quality);
         }
 
         [Fact]
@@ -102,7 +102,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var result = aggregate.MeasureAvailability();
 
             Assert.Equal(5, result.Count());
-            Assert.Equal(0.90210M, result.First().Measure.Quality);
+            Assert.Equal(0.902M, result.First().Measure.Quality);
         }
              
 
@@ -140,7 +140,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var availabilities = aggregate.MeasureAvailability();
 
             Assert.Equal(31, availabilities.Count());
-            Assert.Equal(0.76923m, availabilities.First().Measure.Quality);
+            Assert.Equal(0.769m, availabilities.First().Measure.Quality);
         }
 
         [Fact]
