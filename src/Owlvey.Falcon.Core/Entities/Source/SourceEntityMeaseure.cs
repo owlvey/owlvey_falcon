@@ -9,7 +9,7 @@ namespace Owlvey.Falcon.Core.Entities
 {
     public partial class SourceEntity
     {
-        public QualityMeasureValue MeasureQuality(DatePeriodValue period = null)
+        public ProportionMeasureValue MeasureProportion(DatePeriodValue period = null)
         {
             int total;
             int good;
@@ -25,13 +25,12 @@ namespace Owlvey.Falcon.Core.Entities
 
             if (data.Count() == 0)
             {
-                return new QualityMeasureValue(1, false);
+                return new ProportionMeasureValue(1, false);
             }
 
             total = data.Sum(c => c.Total);
-            good = data.Sum(c => c.Good);
-            var availability = QualityUtils.CalculateAvailability(total, good, 1);
-            return new QualityMeasureValue(availability);
+            good = data.Sum(c => c.Good);            
+            return new ProportionMeasureValue(total, good);
         }
     }
 }

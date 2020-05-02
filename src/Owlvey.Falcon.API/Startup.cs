@@ -117,7 +117,7 @@ namespace Owlvey.Falcon.API
             if (!env.IsDocker())
             {
                 dbContext.Migrate(Environment.EnvironmentName);
-                dbContext.SeedData(Environment.EnvironmentName, dateTimeGateway);
+                dbContext.SeedData(Environment.EnvironmentName, dateTimeGateway.GetCurrentDateTime());
             }
 
            

@@ -38,6 +38,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Owlvey.Falcon.Components\Owlvey.Falcon.Components.csproj" />
+    <ProjectReference Include="..\..\src\Owlvey.Falcon.Repositories\Owlvey.Falcon.Repositories.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Mocks\" />

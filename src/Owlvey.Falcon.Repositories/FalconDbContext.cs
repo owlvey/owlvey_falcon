@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Owlvey.Falcon.Core;
 using System.Threading;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 
 namespace Owlvey.Falcon.Repositories
 {
@@ -19,9 +18,6 @@ namespace Owlvey.Falcon.Repositories
         {
 
         }
-
-
-
         
         public DbSet<AppSettingEntity> AppSettings { get; set; }
         public DbSet<SquadEntity> Squads { get; set; }
@@ -36,7 +32,7 @@ namespace Owlvey.Falcon.Repositories
 
         public DbSet<FeatureEntity> Features { get; set; }
 
-        public DbSet<SourceEntity> Sources { get; set; }
+        public DbSet<SourceEntity> Sources { get; set; }        
 
         public DbSet<SourceItemEntity> SourcesItems { get; set; }
 
@@ -73,7 +69,16 @@ namespace Owlvey.Falcon.Repositories
             modelBuilder.Entity<ServiceEntity>()                
                 .HasIndex(c => new { c.ProductId, c.Name }).IsUnique();
             modelBuilder.Entity<FeatureEntity>().HasIndex(c => new { c.ProductId, c.Name }).IsUnique();
+
+            modelBuilder.Entity<SourceEntity>()
+                .HasDiscriminator<SourceKindEnum>("Kind")
+                .HasValue<InteractionSourceEntity>(SourceKindEnum.Interaction)
+                .HasValue<ProportionSourceEntity>(SourceKindEnum.Proportion);
+
             modelBuilder.Entity<SourceEntity>().HasIndex(c => new { c.ProductId, c.Name }).IsUnique();
+            modelBuilder.Entity<ProportionSourceEntity>().HasBaseType<SourceEntity>();
+            modelBuilder.Entity<InteractionSourceEntity>().HasBaseType<SourceEntity>();
+
             modelBuilder.Entity<SquadEntity>().HasIndex(c => new { c.CustomerId, c.Name }).IsUnique();
 
 
@@ -149,7 +154,7 @@ namespace Owlvey.Falcon.Repositories
             return base.SaveChangesAsync(cancellationToken);
         }
 
-        internal async Task<ICollection<SourceItemEntity>> GetSourceItems(int sourceId,
+        public async Task<ICollection<SourceItemEntity>> GetSourceItems(int sourceId,
             DateTime start, DateTime end) {
             start = start.Date;
             end = end.Date;
@@ -168,7 +173,7 @@ namespace Owlvey.Falcon.Repositories
             return result;
         }
 
-        internal async Task<ICollection<SourceItemEntity>> GetSourceItems(DateTime start, DateTime end)
+        public async Task<ICollection<SourceItemEntity>> GetSourceItems(DateTime start, DateTime end)
         {
             start = start.Date;
             end = end.Date;
@@ -178,7 +183,7 @@ namespace Owlvey.Falcon.Repositories
         }
 
 
-        internal async Task<ICollection<SourceItemEntity>> GetSourceItemsByProduct(IEnumerable<int> productIds, DateTime start, DateTime end)
+        public async Task<ICollection<SourceItemEntity>> GetSourceItemsByProduct(IEnumerable<int> productIds, DateTime start, DateTime end)
         {
             start = start.Date;
             end = end.Date;
@@ -187,12 +192,12 @@ namespace Owlvey.Falcon.Repositories
             return result;
         }
 
-        internal async Task<ICollection<SourceItemEntity>> GetSourceItemsByProduct(int productId, DateTime start, DateTime end)
+        public async Task<ICollection<SourceItemEntity>> GetSourceItemsByProduct(int productId, DateTime start, DateTime end)
         {
             return await this.GetSourceItemsByProduct(new List<int>() { productId }, start, end);
         }
 
-        internal async Task LoadIndicators(IEnumerable<ServiceMapEntity> serviceMaps) {
+        public async Task LoadIndicators(IEnumerable<ServiceMapEntity> serviceMaps) {
             var sourceIds = serviceMaps.SelectMany(c => c.Feature.Indicators.Select(d => d.SourceId)).Distinct().ToList();
             var sources = await this.Sources.Where(c => sourceIds.Contains(c.Id.Value)).ToListAsync();
             foreach (var item in serviceMaps)

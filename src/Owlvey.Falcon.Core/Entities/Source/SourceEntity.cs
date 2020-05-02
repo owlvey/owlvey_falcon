@@ -7,21 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Owlvey.Falcon.Core.Entities
 {
-    public class SourceEntityComparer : IEqualityComparer<SourceEntity>
-    {
-        public bool Equals(SourceEntity x, SourceEntity y)
-        {
-            return x.Id == y.Id;
-        }
-
-        public int GetHashCode(SourceEntity obj)
-        {
-            return obj.Id.Value;
-        }
-    }
-
-
-    public partial class SourceEntity: BaseEntity
+    public abstract partial class SourceEntity: BaseEntity
     {
         [Required]
         public string Name { get; set; }
@@ -42,6 +28,10 @@ namespace Owlvey.Falcon.Core.Entities
         public int Good { get {
                 return this.SourceItems.Sum(c=>c.Good);
             } }
+        [Required]
+        public SourceKindEnum Kind { get; set; }
+        [Required]
+        public SourceGroupEnum Group { get; set; }
 
         [NotMapped]
         public int Total
@@ -50,13 +40,9 @@ namespace Owlvey.Falcon.Core.Entities
             {
                 return this.SourceItems.Sum(c => c.Total);
             }
-        }
+        }     
 
-        [Required]
-        public SourceKindEnum Kind { get; set; }
-
-        [Required]
-        public SourceGroupEnum Group { get; set; }
+        
 
         public virtual ProductEntity Product { get; set; }
 

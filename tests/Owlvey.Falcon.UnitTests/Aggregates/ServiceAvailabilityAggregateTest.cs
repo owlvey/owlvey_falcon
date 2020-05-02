@@ -23,7 +23,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                                 Name = "test",
                                 Indicators = new List<IndicatorEntity>() { new IndicatorEntity() {
                                         Id  = 1,
-                                        Source = new SourceEntity(){
+                                        Source = new InteractionSourceEntity(){
                                                 SourceItems = new List<SourceItemEntity>(){
                                                     new SourceItemEntity(){
                                                         Good = 800, Total = 1000,

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.Core.Values;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using System.Runtime.CompilerServices;
 
 namespace Owlvey.Falcon.Repositories.Services

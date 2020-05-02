@@ -36,6 +36,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Owlvey.Falcon.API\Owlvey.Falcon.API.csproj" />
+    <ProjectReference Include="..\..\src\Owlvey.Falcon.Repositories\Owlvey.Falcon.Repositories.csproj" />
   </ItemGroup>
 
   <ItemGroup>

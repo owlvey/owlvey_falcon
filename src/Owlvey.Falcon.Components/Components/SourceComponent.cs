@@ -155,8 +155,8 @@ namespace Owlvey.Falcon.Components
                 }
 
                 entity.SourceItems = sourceItems;                
-                var measure = entity.MeasureQuality();                
-                result.Quality = measure.Quality;
+                var measure = entity.MeasureProportion();                
+                result.Quality = measure.Proportion;
                 result.Total = entity.SourceItems.Sum(c=>c.Total);
                 result.Good = entity.SourceItems.Sum(c => c.Good);
                 result.Clues = entity.ExportClues();
@@ -181,10 +181,10 @@ namespace Owlvey.Falcon.Components
             foreach (var source in entities)
             {                
                 source.SourceItems = sourceItems.Where(c => c.SourceId == source.Id).ToList();                
-                var proportion= source.MeasureQuality();
+                var proportion= source.MeasureProportion();
                 var tmp = this._mapper.Map<SourceGetListRp>(source);
                 tmp.References = source.Indicators.Count();
-                tmp.Availability = proportion.Quality;
+                tmp.Availability = proportion.Proportion;
                 tmp.Total = source.Total;
                 tmp.Good = source.Good; 
                 result.Add(tmp);

@@ -2,13 +2,13 @@ export ASPNETCORE_ENVIRONMENT=prod
 
 dotnet tool install --global dotnet-ef
 
-rm -rf ./../src/Owlvey.Falcon.Components/Migrations
+rm -rf ./../src/Owlvey.Falcon.Repositories/Migrations
 
 rm ./../src/Owlvey.Falcon.Api/FalconDb.db
 
 dotnet build ./../Owlvey.Falcon.sln -v:q
 
-pushd ./../src/Owlvey.Falcon.Components
+pushd ./../src/Owlvey.Falcon.Repositories
 
 echo dotnet ef migrations add initial create 
 
@@ -22,7 +22,7 @@ echo build components
 
 pwd 
 
-pushd ./../src/Owlvey.Falcon.Components
+pushd ./../src/Owlvey.Falcon.Repositories
 
 pwd
 

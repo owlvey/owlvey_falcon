@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using Owlvey.Falcon.Repositories.Products;
 using Owlvey.Falcon.Repositories.Services;
 using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
+using Owlvey.Falcon.Core.Entities.Source;
 
 namespace Owlvey.Falcon.Components
 {
@@ -167,7 +168,7 @@ namespace Owlvey.Falcon.Components
             {
                 item.Services = services.Where(c => c.ProductId == item.Id).ToList();
                 item.Features = features.Where(c => c.ProductId == item.Id).ToList();
-                item.Sources = sources.Where(c => c.ProductId == item.Id).ToList();
+                item.Sources = new SourceCollection(sources.Where(c => c.ProductId == item.Id).ToList());
 
                 foreach (var service in item.Services)
                 {
@@ -404,11 +405,11 @@ namespace Owlvey.Falcon.Components
             foreach (var source in product.Sources)
             {
                 source.SourceItems = sourceItems.Where(c => c.SourceId == source.Id).ToList();                
-                var measure = source.MeasureQuality();
+                var measure = source.MeasureProportion();
                 result.Sources.Add(new SourceGetListRp()
                 {
                     Id = source.Id.Value,
-                    Availability = measure.Quality,
+                    Availability = measure.Proportion,
                     Total = source.Total,
                     Good = source.Good,
                     Avatar = source.Avatar,

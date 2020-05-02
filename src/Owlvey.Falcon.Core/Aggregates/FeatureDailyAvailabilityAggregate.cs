@@ -38,9 +38,10 @@ namespace Owlvey.Falcon.Core.Aggregates
                 var temporal = new List<DayMeasureValue>();
                 foreach (var period in this.Period.GetDatesPeriods())
                 {                    
-                    var measure = indicator.Source.MeasureQuality(period);
+                    var measure = indicator.Source.MeasureProportion(period);
                     if (measure.HasData) 
-                        temporal.Add(new DayMeasureValue(period.Start, new QualityMeasureValue(measure.Quality)));
+                        temporal.Add(new DayMeasureValue(period.Start, 
+                            new QualityMeasureValue(measure.Proportion)));
                 }
                 indicatorResult.Add( (indicator, temporal ));
             }

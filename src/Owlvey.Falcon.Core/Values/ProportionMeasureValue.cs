@@ -18,7 +18,7 @@ namespace Owlvey.Falcon.Core.Values
             this.Proportion = proportion;
             this.HasData = hasData;
         }
-        public ProportionMeasureValue(decimal proportion, int total, int good, bool hasData = true): this(proportion, hasData)
+        public ProportionMeasureValue(int total, int good, bool hasData = true): this(QualityUtils.CalculateAvailability(total, good), hasData)
         {
             this.Good = good;
             this.Total = total;            

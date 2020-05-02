@@ -24,9 +24,10 @@ namespace Owlvey.Falcon.Core.Aggregates
 
             foreach (var item in this.Period.GetDatesPeriods())
             {                
-                var measure = this.Source.MeasureQuality(item);
+                var measure = this.Source.MeasureProportion(item);
                 if (measure.HasData) {
-                    result.Add(new DayMeasureValue(item.Start, new QualityMeasureValue(measure.Quality) ));
+                    result.Add(new DayMeasureValue(item.Start, 
+                        new QualityMeasureValue(measure.Proportion) ));
                 }    
             }
             return result;

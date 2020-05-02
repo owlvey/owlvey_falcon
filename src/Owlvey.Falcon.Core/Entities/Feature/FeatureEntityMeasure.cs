@@ -15,26 +15,26 @@ namespace Owlvey.Falcon.Core.Entities
             var latency = new List<decimal>();
             foreach (var indicator in this.Indicators)
             {                
-                QualityMeasureValue proportion;
+                ProportionMeasureValue measure;
                 if (period != null)
                 {
-                    proportion = indicator.Source.MeasureQuality(period);
+                    measure = indicator.Source.MeasureProportion(period);
                 }
                 else
                 {
-                    proportion = indicator.Source.MeasureQuality();
+                    measure = indicator.Source.MeasureProportion();
                 }
 
-                if (proportion.HasData)
+                if (measure.HasData)
                 {
-                    result.Add(proportion.Quality);
+                    result.Add(measure.Proportion);
                     if (indicator.Source.Group == SourceGroupEnum.Availability)
                     {
-                        availability.Add(proportion.Quality);
+                        availability.Add(measure.Proportion);
                     }
                     else if (indicator.Source.Group == SourceGroupEnum.Latency)
                     {
-                        latency.Add(proportion.Quality);
+                        latency.Add(measure.Proportion);
                     }
                 }
             }

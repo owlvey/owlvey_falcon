@@ -18,7 +18,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                 Name = "test",
                 Indicators = new List<IndicatorEntity>() { new IndicatorEntity() {
                         Id  = 1,
-                        Source = new SourceEntity(){
+                        Source = new InteractionSourceEntity(){
                              SourceItems = new List<SourceItemEntity>(){
                                   new SourceItemEntity(){
                                        Good = 800, Total = 1000,
@@ -47,7 +47,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                 Indicators = new List<IndicatorEntity>() {
                     new IndicatorEntity() {
                         Id  = 1,
-                        Source = new SourceEntity(){
+                        Source = new InteractionSourceEntity(){
                              Kind = SourceKindEnum.Interaction,
                              SourceItems = new List<SourceItemEntity>(){
                                   new SourceItemEntity(){
@@ -59,7 +59,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                     },
                     new IndicatorEntity() {
                         Id  = 2,
-                        Source = new SourceEntity(){
+                        Source = new InteractionSourceEntity(){
                              Kind = SourceKindEnum.Proportion,
                              SourceItems = new List<SourceItemEntity>(){
                                   new SourceItemEntity(){

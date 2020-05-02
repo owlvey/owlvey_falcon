@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Core.Entities;
-using Owlvey.Falcon.Gateways;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -19,12 +17,11 @@ namespace Owlvey.Falcon.Repositories
             dbContext.Database.Migrate();
         }
 
-        public static void SeedData(this FalconDbContext dbContext, string env, IDateTimeGateway dateTimeGateway) {
+        public static void SeedData(this FalconDbContext dbContext, string env, DateTime date) {
 
             if (env == "Development" || env.Equals("docker", StringComparison.InvariantCultureIgnoreCase))
             {
-                var userCreated = "test-user";
-                var date = dateTimeGateway.GetCurrentDateTime();
+                var userCreated = "test-user";                
 
                 string customerName = $"Awesome Organization";
 

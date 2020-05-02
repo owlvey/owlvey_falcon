@@ -3,6 +3,7 @@ using Owlvey.Falcon.Core.Models.Migrate;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
+using Owlvey.Falcon.Core.Entities.Source;
 
 namespace Owlvey.Falcon.Core.Aggregates
 {
@@ -45,7 +46,7 @@ namespace Owlvey.Falcon.Core.Aggregates
                 {
                     product.Features = this.Features.Where(c => c.ProductId == product.Id).ToList();
                     product.Services = this.Services.Where(c => c.ProductId == product.Id).ToList();
-                    product.Sources = this.Sources.Where(c => c.ProductId == product.Id).ToList();
+                    product.Sources = new SourceCollection(this.Sources.Where(c => c.ProductId == product.Id).ToList());
                     
                     foreach (var service in product.Services)
                     {

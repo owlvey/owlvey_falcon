@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Owlvey.Falcon.Core.Entities.Source;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
@@ -21,7 +23,7 @@ namespace Owlvey.Falcon.Core.Entities
 
         public virtual ICollection<ServiceEntity> Services { get; set; } = new List<ServiceEntity>();
         public virtual ICollection<FeatureEntity> Features { get; set; } = new List<FeatureEntity>();
-        public virtual ICollection<SourceEntity> Sources { get; set; } = new List<SourceEntity>();
+        public virtual SourceCollection Sources { get; set; } = new SourceCollection();
         public virtual ICollection<IncidentEntity> Incidents { get; set; } = new List<IncidentEntity>();
         public virtual ICollection<AnchorEntity> Anchors { get; set; } = new List<AnchorEntity>(); 
 

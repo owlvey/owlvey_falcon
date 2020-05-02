@@ -94,8 +94,8 @@ namespace Owlvey.Falcon.Components
             foreach (var indicator in feature.Indicators)
             {                
                 var tmp = this._mapper.Map<IndicatorAvailabilityGetListRp>(indicator);
-                var proportion = indicator.Source.MeasureQuality();
-                tmp.Quality = proportion.Quality;                
+                var proportion = indicator.Source.MeasureProportion();
+                tmp.Quality = proportion.Proportion;                
                 model.Indicators.Add(tmp);
             }
 

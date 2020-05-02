@@ -11,22 +11,22 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         [Fact]
         public void MeasureFeatureAvailability()
         {
-            var entity = new SourceEntity()
+            var entity = new InteractionSourceEntity()
             {
                 Kind = SourceKindEnum.Interaction,
                 SourceItems = new List<SourceItemEntity>() {
                      new SourceItemEntity(){ Total = 1000, Good = 800 }
                  }
             };            
-            var proportion = entity.MeasureQuality();
+            var proportion = entity.MeasureProportion();
 
-            Assert.Equal(0.8m, proportion.Quality);
+            Assert.Equal(0.8m, proportion.Proportion);
         }
 
         [Fact]
         public void MeasureProportionAvailability()
         {
-            var entity = new SourceEntity()
+            var entity = new InteractionSourceEntity()
             {
                 Kind = SourceKindEnum.Proportion,
                 SourceItems = new List<SourceItemEntity>() {
@@ -34,8 +34,8 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                 }
             };
             
-            var a = entity.MeasureQuality();
-            Assert.Equal(0.8m, a.Quality);
+            var a = entity.MeasureProportion();
+            Assert.Equal(0.8m, a.Proportion);
         }
     }
 }

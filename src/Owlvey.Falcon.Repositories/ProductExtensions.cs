@@ -3,8 +3,7 @@ using Owlvey.Falcon.Core.Entities;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.CompilerServices;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
+using Owlvey.Falcon.Core.Entities.Source;
 
 namespace Owlvey.Falcon.Repositories.Products
 {
@@ -76,7 +75,7 @@ namespace Owlvey.Falcon.Repositories.Products
 
             var sources = await context.Sources.Where(c => c.ProductId == productId).ToListAsync();
 
-            product.Sources = sources;
+            product.Sources = new SourceCollection(sources);
 
             foreach (var feature in product.Features)
             {

@@ -37,7 +37,7 @@ namespace Owlvey.Falcon.Models
             this.Feature = feature.Name;
             this.Source = indicator.Source.Name;
             this.FeatureQuality = feature.MeasureQuality().Quality;
-            this.SourceQuality = indicator.Source.MeasureQuality().Quality;
+            this.SourceQuality = indicator.Source.MeasureProportion().Proportion;
         }
     }
      
@@ -54,7 +54,7 @@ namespace Owlvey.Falcon.Models
             this.SourceId = source.Id.Value;
             this.Source = source.Name;
             this.Kind = source.Kind.ToString();
-            this.Quality = source.MeasureQuality().Quality;            
+            this.Quality = source.MeasureProportion().Proportion;            
             this.TotalDefinition = source.TotalDefinition;
             this.GoodDefinition = source.GoodDefinition;
             this.Description = source.Description;            

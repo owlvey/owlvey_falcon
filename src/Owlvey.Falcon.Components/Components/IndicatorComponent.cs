@@ -115,7 +115,7 @@ namespace Owlvey.Falcon.Components
         {
             var sourceItems = await this._dbContext.GetSourceItems(entity.Source.Id.Value, start, end);
             entity.Source.SourceItems = sourceItems;            
-            return entity.Source.MeasureQuality().Quality;            
+            return entity.Source.MeasureProportion().Proportion;            
         }
         
         public async Task<IEnumerable<IndicatorAvailabilityGetListRp>> GetByFeatureWithAvailability(int featureId, DateTime start, DateTime end)

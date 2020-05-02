@@ -14,7 +14,7 @@ namespace Owlvey.Falcon.Core.Entities
             {
                 string goodDefinition = "e.g. successful requests, as measured from the laod balancer metrics, Any HTTP status othen than 500-599 is considered successful.";
                 string totalDefinition = "e.g. All requests measured from the load balancer.";
-                var entity = new SourceEntity()
+                var entity = new InteractionSourceEntity()
                 {
                     Name = name,
                     GoodDefinition = goodDefinition,

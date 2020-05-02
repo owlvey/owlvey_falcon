@@ -50,7 +50,7 @@ namespace Owlvey.Falcon.ComponentsTests
             context.Database.OpenConnection();
             context.Database.EnsureCreated();
             //context.Migrate("Development");
-            context.SeedData("Development", new MockDateTimeGateway());            
+            context.SeedData("Development", new MockDateTimeGateway().GetCurrentDateTime());            
             container.RegisterInstance<FalconDbContext>(context);
             return container;
         }

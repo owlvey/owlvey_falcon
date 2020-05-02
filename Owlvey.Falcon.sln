@@ -5,18 +5,20 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{8D367435-27EC-4270-A65F-135989E11D7F}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		scripts\alltest.bash = scripts\alltest.bash
 		scripts\build.definition.yml = scripts\build.definition.yml
+		scripts\componenttest.bash = scripts\componenttest.bash
 		scripts\coverage.bash = scripts\coverage.bash
 		scripts\coverage.bat = scripts\coverage.bat
+		scripts\generate_sqlserver_migration.bash = scripts\generate_sqlserver_migration.bash
+		scripts\generate_sqlserver_migration.bat = scripts\generate_sqlserver_migration.bat
+		scripts\integrationtest.bash = scripts\integrationtest.bash
 		scripts\migrations.bash = scripts\migrations.bash
+		scripts\migrations.bat = scripts\migrations.bat
+		scripts\performance_test.txt = scripts\performance_test.txt
 		scripts\run_server.bash = scripts\run_server.bash
 		scripts\run_server.bat = scripts\run_server.bat
 		scripts\unittest.bash = scripts\unittest.bash
-		scripts\componenttest.bash = scripts\componenttest.bash
-		scripts\integrationtest.bash = scripts\integrationtest.bash
-		scripts\alltest.bash = scripts\alltest.bash
-		scripts\generate_sqlserver_migration.bash = scripts\generate_sqlserver_migration.bash
-		scripts\performance_test.txt = scripts\performance_test.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{09B34A06-A407-451C-8C5F-59E16DBC89BB}"
@@ -27,7 +29,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1. API", "1. API", "{FB79E3
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2. Components", "2. Components", "{EF44CE22-16DD-4510-A2BB-D12C7734A76B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3. Core", "3. Core", "{A05A9DAE-0BF8-4F77-B351-2C5302EE10CF}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4. Core", "4. Core", "{A05A9DAE-0BF8-4F77-B351-2C5302EE10CF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Owlvey.Falcon.API", "src\Owlvey.Falcon.API\Owlvey.Falcon.API.csproj", "{F2399747-7C25-4DBB-8168-2DFAB8B2681B}"
 EndProject
@@ -54,6 +56,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "api", "api", "{906B5B66-D0C
 	ProjectSection(SolutionItems) = preProject
 		infrastructure\api\Dockerfile = infrastructure\api\Dockerfile
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3. Gateways", "3. Gateways", "{55162B70-50DB-45CC-9E3E-E90236CE6A3E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Owlvey.Falcon.Repositories", "src\Owlvey.Falcon.Repositories\Owlvey.Falcon.Repositories.csproj", "{57C339B5-6627-4F90-A95A-367571E3871F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,6 +95,10 @@ Global
 		{FDFC7D89-D7A7-4013-AE9F-17B11110F154}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FDFC7D89-D7A7-4013-AE9F-17B11110F154}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FDFC7D89-D7A7-4013-AE9F-17B11110F154}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57C339B5-6627-4F90-A95A-367571E3871F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57C339B5-6627-4F90-A95A-367571E3871F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57C339B5-6627-4F90-A95A-367571E3871F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57C339B5-6627-4F90-A95A-367571E3871F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -106,6 +116,8 @@ Global
 		{FDFC7D89-D7A7-4013-AE9F-17B11110F154} = {FAB670B9-6AD8-4FBB-A128-1D98153488B2}
 		{ECA720CE-A6D9-4E14-8956-133854A83E14} = {F8C95DC8-B09A-4DAC-AD59-60659AD3304D}
 		{906B5B66-D0CF-4F16-8B1F-F61E5E88CB75} = {F8C95DC8-B09A-4DAC-AD59-60659AD3304D}
+		{55162B70-50DB-45CC-9E3E-E90236CE6A3E} = {09B34A06-A407-451C-8C5F-59E16DBC89BB}
+		{57C339B5-6627-4F90-A95A-367571E3871F} = {55162B70-50DB-45CC-9E3E-E90236CE6A3E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BD993390-77A7-4442-9BA6-842A755ADD53}
