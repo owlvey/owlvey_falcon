@@ -77,7 +77,7 @@ namespace Owlvey.Falcon.API.Controllers
         [HttpPost("restore")]
         [Authorize(Policy = "RequireAdminRole")]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> PostBackupAsync([FromForm(Name = "data")] IFormFile file)
+        public async Task<IActionResult> RestoreAsync([FromForm(Name = "data")] IFormFile file)
         {
             using (MemoryStream excelStream = new MemoryStream())
             {

@@ -17,7 +17,7 @@ namespace Owlvey.Falcon.ComponentsTests
             var sourceComponent = container.GetInstance<SourceComponent>();
             var itemComponent = container.GetInstance<SourceItemComponent>();
             
-            await itemComponent.Create(new Models.SourceItemPostRp()
+            await itemComponent.Create(new Models.SourceItemInteractionPostRp()
             {
                 SourceId = source,
                 Start = OwlveyCalendar.January201905,
@@ -39,7 +39,7 @@ namespace Owlvey.Falcon.ComponentsTests
             var sourceComponent = container.GetInstance<SourceComponent>();
             var itemComponent = container.GetInstance<SourceItemComponent>();
 
-            await itemComponent.Create(new Models.SourceItemPostRp()
+            await itemComponent.Create(new Models.SourceItemInteractionPostRp()
             {
                 SourceId = source,
                 Start = OwlveyCalendar.January201905,
@@ -51,7 +51,7 @@ namespace Owlvey.Falcon.ComponentsTests
                 }
             });
 
-            await itemComponent.Create(new Models.SourceItemPostRp()
+            await itemComponent.Create(new Models.SourceItemInteractionPostRp()
             {
                 SourceId = source,
                 Start = OwlveyCalendar.January201905,
@@ -92,7 +92,7 @@ namespace Owlvey.Falcon.ComponentsTests
             var sourceComponent = container.GetInstance<SourceComponent>();
             var itemComponent = container.GetInstance<SourceItemComponent>();
 
-            await itemComponent.Create(new Models.SourceItemPostRp()
+            await itemComponent.Create(new Models.SourceItemInteractionPostRp()
             {
                 SourceId = source,
                 Start = OwlveyCalendar.January201905,
@@ -123,7 +123,7 @@ namespace Owlvey.Falcon.ComponentsTests
 
             var itemComponent = container.GetInstance<SourceItemComponent>();
 
-            await itemComponent.Create(new Models.SourceItemPostRp()
+            await itemComponent.Create(new Models.SourceItemInteractionPostRp()
             {
                  SourceId = source.Id,
                  Start = DateTime.Now,
@@ -155,7 +155,7 @@ namespace Owlvey.Falcon.ComponentsTests
             });
             var testSource = await component.GetByName(product, "test");
 
-            var item = await sourceItemComponent.Create(new Models.SourceItemPostRp()
+            var item = await sourceItemComponent.Create(new Models.SourceItemInteractionPostRp()
             {
                 SourceId = testSource.Id,
                 Total = 1000,

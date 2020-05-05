@@ -92,7 +92,7 @@ namespace Owlvey.Falcon.ComponentsTests
             });
             var testSource = await component.GetByName(product, "test");
 
-            var item = await sourceItemComponent.Create(new Models.SourceItemPostRp() {
+            var item = await sourceItemComponent.Create(new Models.SourceItemInteractionPostRp() {
                  SourceId = testSource.Id,  Total = 1000, Good = 800,
                  Start = OwlveyCalendar.January201904,
                  End = OwlveyCalendar.January201906

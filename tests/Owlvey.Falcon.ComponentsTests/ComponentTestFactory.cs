@@ -239,7 +239,7 @@ namespace Owlvey.Falcon.ComponentsTests
                 ProductId = product
             });
 
-            await sourceItemComponent.Create(new Models.SourceItemPostRp()
+            await sourceItemComponent.Create(new Models.SourceItemInteractionPostRp()
             {
                 SourceId = source.Id,
                 Start = start,

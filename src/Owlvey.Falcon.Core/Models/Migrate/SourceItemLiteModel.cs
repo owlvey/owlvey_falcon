@@ -11,12 +11,14 @@ namespace Owlvey.Falcon.Core.Models.Migrate
         public int Good { get; set; }
         public int Total { get; set; }
         public string Target { get; set; }
+        public decimal Proportion { get; set; }
 
         public void Load(string source, SourceItemEntity entity)
         {        
             this.Source = source;
             this.Good = entity.Good;
             this.Total = entity.Total;
+            this.Proportion = entity.Proportion;
             this.Target = entity.Target.ToString("s", System.Globalization.CultureInfo.InvariantCulture);
         }
         public static IEnumerable<SourceItemLiteModel> Loads(string source, IEnumerable<SourceItemEntity> entities)

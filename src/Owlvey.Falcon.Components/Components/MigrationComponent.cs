@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Owlvey.Falcon.Core.Aggregates;
+using Owlvey.Falcon.Core;
 
 namespace Owlvey.Falcon.Components
 {
@@ -251,7 +252,8 @@ namespace Owlvey.Falcon.Components
                         Good = item.Good,
                         Source = item.Source.Name,
                         Total = item.Total,
-                        Clues = JsonConvert.SerializeObject(item.ExportClues())
+                        Clues = JsonConvert.SerializeObject(item.ExportClues()),
+                        Proportion = item.Proportion
                     });
                 }
             }
@@ -518,7 +520,7 @@ namespace Owlvey.Falcon.Components
 
                 var sources = await this._dbContext.Sources.Include(c => c.Product).Where(c => c.Product.CustomerId == customerId).ToListAsync();
 
-                var sourceItems = new List<(SourceEntity, SourceItemPostRp)>();
+                var sourceItems = new List<(SourceEntity, SourceItemInteractionPostRp)>();
                 for (int row = 2; row <= sourceItemsSheet.Dimension.Rows; row++)
                 {
                     var product = sourceItemsSheet.Cells[row, 1].GetValue<string>();
@@ -536,7 +538,7 @@ namespace Owlvey.Falcon.Components
                             targetClues = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(clues);
                         }
 
-                        sourceItems.Add((tmp, new SourceItemPostRp()
+                        sourceItems.Add((tmp, new SourceItemInteractionPostRp()
                         {
                             SourceId = tmp.Id.Value,
                             Start = target,
@@ -825,8 +827,8 @@ namespace Owlvey.Falcon.Components
 
                 var sourceItemsSheet = package.Workbook.Worksheets["SourceItems"];
 
-
-                var sourceItems = new List<(SourceEntity, SourceItemPostRp)>();
+                var sourceItems= new List<(SourceEntity, SourceItemPostRp)>();
+                
 
                 for (int row = 2; row <= sourceItemsSheet.Dimension.Rows; row++)
                 {
@@ -836,18 +838,32 @@ namespace Owlvey.Falcon.Components
                     var good = sourceItemsSheet.Cells[row, 4].GetValue<int>();
                     var total = sourceItemsSheet.Cells[row, 5].GetValue<int>();
                     var target = DateTime.Parse(sourceItemsSheet.Cells[row, 6].GetValue<string>());
-                    
+                    var proportion = sourceItemsSheet.Cells[row, 7].GetValue<decimal?>();
 
                     var sourceTarget = sources.Single(c => c.Name == source && c.Product.Name == product && c.Product.Customer.Name == organization);
-                    sourceItems.Add((sourceTarget, new SourceItemPostRp()
+
+                    if (sourceTarget.Kind == SourceKindEnum.Interaction)
                     {
-                        SourceId = sourceTarget.Id.Value,
-                        Start = target,
-                        End = target,
-                        Good = good,
-                        Total = total,
-                        Clues = new Dictionary<string, decimal>()
-                    }));
+                        sourceItems.Add((sourceTarget, new SourceItemInteractionPostRp()
+                        {
+                            SourceId = sourceTarget.Id.Value,
+                            Start = target,
+                            End = target,
+                            Good = good,
+                            Total = total,
+                            Clues = new Dictionary<string, decimal>()
+                        }));
+                    }
+                    else {
+                        sourceItems.Add((sourceTarget, new SourceItemProportionPostRp()
+                        {
+                            SourceId = sourceTarget.Id.Value,
+                            Start = target,
+                            End = target,
+                            Proportion = proportion.HasValue ? proportion.Value : QualityUtils.CalculateProportion(total, good),
+                            Clues = new Dictionary<string, decimal>()
+                        })); ;
+                    }                    
                 }
 
                 var groups = sourceItems.GroupBy(c => c.Item1, new SourceEntityComparer());

@@ -27,7 +27,7 @@ namespace Owlvey.Falcon.Components
         }
 
 
-        public async Task<IEnumerable<SourceItemGetListRp>> CreateProportion(SourceItemPropotionPostRp model) {
+        public async Task<IEnumerable<SourceItemGetListRp>> CreateProportion(SourceItemProportionPostRp model) {
 
             var createdBy = this._identityService.GetIdentity();
             var source = await this._dbContext.Sources.SingleAsync(c => c.Id == model.SourceId);
@@ -46,7 +46,7 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<SourceItemGetListRp>>(entities);             
         }        
         
-        public async Task<IEnumerable<SourceItemGetListRp>> Create(SourceItemPostRp model)
+        public async Task<IEnumerable<SourceItemGetListRp>> Create(SourceItemInteractionPostRp model)
         {
             
             var createdBy = this._identityService.GetIdentity();
@@ -71,30 +71,54 @@ namespace Owlvey.Falcon.Components
             await this._dbContext.SaveChangesAsync();
             return this._mapper.Map<IEnumerable<SourceItemGetListRp>>(range);
         }
-        public async Task BulkInsert(SourceEntity source, IEnumerable<SourceItemPostRp> models) {
+        public async Task BulkInsert(SourceEntity source, 
+            IEnumerable<SourceItemPostRp> sourceItems) {
 
             var createdBy = this._identityService.GetIdentity();
             int period = 0;
-            foreach (var model in models)
+            foreach (var model in sourceItems)
             {
-                var range = SourceItemEntity.Factory.CreateInteractionsFromRange(source, model.Start,
-                    model.End, model.Good, model.Total, 
-                    this._datetimeGateway.GetCurrentDateTime(), createdBy);
-
-                foreach (var clue in model.Clues)
+                var interaction = model as SourceItemInteractionPostRp;
+                if (interaction != null)
                 {
+                    var range = SourceItemEntity.Factory.CreateInteractionsFromRange(source, interaction.Start,
+                                interaction.End, interaction.Good, interaction.Total,
+                                this._datetimeGateway.GetCurrentDateTime(), createdBy);
+                    foreach (var clue in model.Clues)
+                    {
+                        foreach (var item in range)
+                        {
+                            ClueEntityFactory.Factory.Create(clue.Key, clue.Value,
+                            this._datetimeGateway.GetCurrentDateTime(), createdBy, item);
+                        }
+                    }
                     foreach (var item in range)
                     {
-                        ClueEntityFactory.Factory.Create(clue.Key, clue.Value,
-                        this._datetimeGateway.GetCurrentDateTime(), createdBy, item);
-                    }                    
+                        this._dbContext.SourcesItems.Add(item);
+                        period += 1;
+                    }
+                }
+                var proportion = model as SourceItemProportionPostRp;
+                if (proportion != null)
+                {
+                    var range = SourceItemEntity.Factory.CreateProportionFromRange(source,
+                        proportion.Start, proportion.End, proportion.Proportion, 
+                                this._datetimeGateway.GetCurrentDateTime(), createdBy);
+                    foreach (var clue in model.Clues)
+                    {
+                        foreach (var item in range)
+                        {
+                            ClueEntityFactory.Factory.Create(clue.Key, clue.Value,
+                            this._datetimeGateway.GetCurrentDateTime(), createdBy, item);
+                        }
+                    }
+                    foreach (var item in range)
+                    {
+                        this._dbContext.SourcesItems.Add(item);
+                        period += 1;
+                    }
                 }
 
-                foreach (var item in range)
-                {
-                    this._dbContext.SourcesItems.Add(item);
-                }
-                
                 if (period > 50) {                    
                     await this._dbContext.SaveChangesAsync();
                     period = 0;
@@ -127,6 +151,23 @@ namespace Owlvey.Falcon.Components
             
             return result;
         }
+
+        public async Task<BaseComponentResultRp> DeleteSource(int sourceId)
+        {
+            var result = new BaseComponentResultRp();
+
+            var items = await this._dbContext.SourcesItems.Where(c=> c.SourceId == sourceId).ToListAsync();
+
+            foreach (var item in items)
+            {
+                this._dbContext.SourcesItems.Remove(item);
+            }            
+
+            await this._dbContext.SaveChangesAsync();
+
+            return result;
+        }
+
 
         public async Task<IEnumerable<SourceItemGetListRp>> GetBySource(int sourceId)
         {

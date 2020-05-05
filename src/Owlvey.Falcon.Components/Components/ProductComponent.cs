@@ -194,19 +194,33 @@ namespace Owlvey.Falcon.Components
                     var good = sourceItemsSheet.Cells[row, 2].GetValue<int>();
                     var total = sourceItemsSheet.Cells[row, 3].GetValue<int>();
                     var target = DateTime.Parse(sourceItemsSheet.Cells[row, 4].GetValue<string>());
+                    var proportion = sourceItemsSheet.Cells[row, 5].GetValue<Decimal>();
 
                     var sourceTarget = sources.SingleOrDefault(c => c.Name == source);
                     if (sourceTarget != null)
                     {
-                        sourceItems.Add((sourceTarget, new SourceItemPostRp()
+                        if (sourceTarget.Kind == SourceKindEnum.Interaction)
                         {
-                            SourceId = sourceTarget.Id.Value,
-                            Start = target,
-                            End = target,
-                            Good = good,
-                            Total = total,
-                            Clues = new Dictionary<string, decimal>()
-                        }));
+                            sourceItems.Add((sourceTarget, new SourceItemInteractionPostRp()
+                            {
+                                SourceId = sourceTarget.Id.Value,
+                                Start = target,
+                                End = target,
+                                Good = good,
+                                Total = total,                                
+                                Clues = new Dictionary<string, decimal>(),
+                            }));
+                        }
+                        else {
+                            sourceItems.Add((sourceTarget, new SourceItemProportionPostRp()
+                            {
+                                SourceId = sourceTarget.Id.Value,
+                                Start = target,
+                                End = target,
+                                Proportion = proportion,                                
+                                Clues = new Dictionary<string, decimal>(),
+                            }));
+                        }                        
                     }
                     else {
                         logs.Add(" source not found " + source);
