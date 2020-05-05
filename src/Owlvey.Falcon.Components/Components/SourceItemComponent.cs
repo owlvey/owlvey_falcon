@@ -26,35 +26,25 @@ namespace Owlvey.Falcon.Components
             this._dbContext = dbContext;            
         }
 
-        public async Task<IEnumerable<SourceItemGetListRp>> Create(SourceItemPropotionPostRp model) {
-            var (good, total) = QualityUtils.ProportionToNumbers(model.Proportion);
-            return await this.Create(new SourceItemPostRp()
-            {
-                 SourceId = model.SourceId,
-                 Start = model.Start,
-                 End = model.End,
-                 Good = good,
-                 Total = total,
-                 Clues = model.Clues
-            });
-        }
-        public async Task<SourceItemGetListRp> Create(SourceItemPostV2Rp model)
-        {
+
+        public async Task<IEnumerable<SourceItemGetListRp>> CreateProportion(SourceItemPropotionPostRp model) {
+
             var createdBy = this._identityService.GetIdentity();
             var source = await this._dbContext.Sources.SingleAsync(c => c.Id == model.SourceId);
 
+            var entities = SourceItemEntity.Factory.CreateProportionFromRange(source,model.Start, model.End, model.Proportion,
+                this._datetimeGateway.GetCurrentDateTime(), createdBy);
 
-            var item = SourceItemEntity.Factory.Create(source, model.Target, model.Good, model.Total, this._datetimeGateway.GetCurrentDateTime(), createdBy);
-
-            foreach (var key in model.Clues.Keys)
-            {                
-               ClueEntityFactory.Factory.Create(key, model.Clues[key], this._datetimeGateway.GetCurrentDateTime(), createdBy, item);                
+            foreach (var item in entities)
+            {
+                this._dbContext.SourcesItems.Add(item);
             }
-
-            await this._dbContext.SourcesItems.AddAsync(item);
             await this._dbContext.SaveChangesAsync();
-            return this._mapper.Map<SourceItemGetListRp>(item);
-        }
+
+            var entitiess = this._dbContext.SourcesItems.Where(c => c.SourceId == source.Id).ToList(); 
+
+            return this._mapper.Map<IEnumerable<SourceItemGetListRp>>(entities);             
+        }        
         
         public async Task<IEnumerable<SourceItemGetListRp>> Create(SourceItemPostRp model)
         {
@@ -63,7 +53,7 @@ namespace Owlvey.Falcon.Components
             var on = this._datetimeGateway.GetCurrentDateTime();
             var source = await this._dbContext.Sources.SingleAsync(c => c.Id == model.SourceId);
 
-            var range = SourceItemEntity.Factory.CreateFromRange(source, model.Start, model.End, model.Good, model.Total, on, createdBy);
+            var range = SourceItemEntity.Factory.CreateInteractionsFromRange(source, model.Start, model.End, model.Good, model.Total, on, createdBy);
 
             foreach (var key in model.Clues.Keys)
             {
@@ -87,7 +77,7 @@ namespace Owlvey.Falcon.Components
             int period = 0;
             foreach (var model in models)
             {
-                var range = SourceItemEntity.Factory.CreateFromRange(source, model.Start,
+                var range = SourceItemEntity.Factory.CreateInteractionsFromRange(source, model.Start,
                     model.End, model.Good, model.Total, 
                     this._datetimeGateway.GetCurrentDateTime(), createdBy);
 

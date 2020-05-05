@@ -22,27 +22,12 @@ namespace Owlvey.Falcon.Core.Entities
         
         public string Avatar { get; set; }
 
-        public string Description { get; set; }
-
-        [NotMapped]
-        public int Good { get {
-                return this.SourceItems.Sum(c=>c.Good);
-            } }
+        public string Description { get; set; }        
+        
         [Required]
         public SourceKindEnum Kind { get; set; }
         [Required]
         public SourceGroupEnum Group { get; set; }
-
-        [NotMapped]
-        public int Total
-        {
-            get
-            {
-                return this.SourceItems.Sum(c => c.Total);
-            }
-        }     
-
-        
 
         public virtual ProductEntity Product { get; set; }
 

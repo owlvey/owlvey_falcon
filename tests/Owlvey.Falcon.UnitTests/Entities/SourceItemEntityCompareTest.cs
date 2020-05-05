@@ -14,10 +14,10 @@ namespace Owlvey.Falcon.UnitTests.Entities
         {
             var compare = new SourceItemEntityComparer();
 
-            var result = compare.Equals(new SourceItemEntity() { Id = 2 }, new SourceItemEntity() { Id = 3 });
+            var result = compare.Equals(new InteractionSourceItemEntity() { Id = 2 }, new InteractionSourceItemEntity() { Id = 3 });
             Assert.False(result);
 
-            result = compare.Equals(new SourceItemEntity() { Id = 2 }, new SourceItemEntity() { Id = 2 });
+            result = compare.Equals(new InteractionSourceItemEntity() { Id = 2 }, new InteractionSourceItemEntity() { Id = 2 });
             Assert.True(result);
         }
 
@@ -25,7 +25,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
         public void GetHashCodeSuccess()
         {
             var compare = new SourceItemEntityComparer();
-            var result = compare.GetHashCode(new SourceItemEntity() { Id = 3 });
+            var result = compare.GetHashCode(new InteractionSourceItemEntity() { Id = 3 });
             Assert.Equal(3, result);
         }
     }

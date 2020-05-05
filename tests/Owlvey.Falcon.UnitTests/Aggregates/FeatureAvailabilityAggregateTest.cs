@@ -20,7 +20,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                         Id  = 1,
                         Source = new InteractionSourceEntity(){
                              SourceItems = new List<SourceItemEntity>(){
-                                  new SourceItemEntity(){
+                                  new InteractionSourceItemEntity(){
                                        Good = 800, Total = 1000,
                                        Target = OwlveyCalendar.January201903
                                   }
@@ -50,7 +50,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                         Source = new InteractionSourceEntity(){
                              Kind = SourceKindEnum.Interaction,
                              SourceItems = new List<SourceItemEntity>(){
-                                  new SourceItemEntity(){
+                                  new InteractionSourceItemEntity(){
                                        Good = 800, Total = 1000,
                                        Target = OwlveyCalendar.January201903
                                   }
@@ -62,7 +62,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                         Source = new InteractionSourceEntity(){
                              Kind = SourceKindEnum.Proportion,
                              SourceItems = new List<SourceItemEntity>(){
-                                  new SourceItemEntity(){
+                                  new InteractionSourceItemEntity(){
                                        Good = 90, Total = 100,
                                        Target = OwlveyCalendar.January201903
                                   }

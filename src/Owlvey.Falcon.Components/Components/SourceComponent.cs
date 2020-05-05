@@ -185,8 +185,8 @@ namespace Owlvey.Falcon.Components
                 var tmp = this._mapper.Map<SourceGetListRp>(source);
                 tmp.References = source.Indicators.Count();
                 tmp.Availability = proportion.Proportion;
-                tmp.Total = source.Total;
-                tmp.Good = source.Good; 
+                tmp.Total = source is InteractionSourceEntity ? ((InteractionSourceEntity)source).Total : 0;
+                tmp.Good = source is InteractionSourceEntity ? ((InteractionSourceEntity)source).Good : 0; 
                 result.Add(tmp);
             }
             return result.OrderBy(c=>c.Availability).ToList();

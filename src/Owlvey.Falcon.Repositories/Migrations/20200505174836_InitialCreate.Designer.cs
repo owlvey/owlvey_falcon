@@ -11,7 +11,7 @@ using Owlvey.Falcon.Repositories;
 namespace Owlvey.Falcon.Repositories.Migrations
 {
     [DbContext(typeof(FalconDbContext))]
-    [Migration("20200502234432_InitialCreate")]
+    [Migration("20200505174836_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -643,6 +643,9 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     b.Property<int>("Good")
                         .HasColumnType("int");
 
+                    b.Property<int>("Kind")
+                        .HasColumnType("int");
+
                     b.Property<string>("ModifiedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -650,6 +653,9 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     b.Property<DateTime?>("ModifiedOn")
                         .IsRequired()
                         .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Proportion")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("SourceId")
                         .HasColumnType("int");
@@ -667,6 +673,8 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     b.HasIndex("Target");
 
                     b.ToTable("SourceItemEntity");
+
+                    b.HasDiscriminator<int>("Kind");
                 });
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.SquadEntity", b =>
@@ -807,6 +815,20 @@ namespace Owlvey.Falcon.Repositories.Migrations
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.ProportionSourceEntity", b =>
                 {
                     b.HasBaseType("Owlvey.Falcon.Core.Entities.SourceEntity");
+
+                    b.HasDiscriminator().HasValue(1);
+                });
+
+            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.InteractionSourceItemEntity", b =>
+                {
+                    b.HasBaseType("Owlvey.Falcon.Core.Entities.SourceItemEntity");
+
+                    b.HasDiscriminator().HasValue(0);
+                });
+
+            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.Sourceitem.ProportionSourceItemEntity", b =>
+                {
+                    b.HasBaseType("Owlvey.Falcon.Core.Entities.SourceItemEntity");
 
                     b.HasDiscriminator().HasValue(1);
                 });

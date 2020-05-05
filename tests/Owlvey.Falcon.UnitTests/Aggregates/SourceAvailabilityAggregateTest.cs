@@ -15,7 +15,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             {
                 Kind = SourceKindEnum.Interaction,
                 SourceItems = new List<SourceItemEntity>() {
-                     new SourceItemEntity(){ Total = 1000, Good = 800 }
+                     new InteractionSourceItemEntity(){ Total = 1000, Good = 800 }
                  }
             };            
             var proportion = entity.MeasureProportion();
@@ -30,7 +30,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             {
                 Kind = SourceKindEnum.Proportion,
                 SourceItems = new List<SourceItemEntity>() {
-                     new SourceItemEntity(){ Total = 1000, Good = 800 }
+                     new InteractionSourceItemEntity(){ Total = 1000, Good = 800 }
                 }
             };
             

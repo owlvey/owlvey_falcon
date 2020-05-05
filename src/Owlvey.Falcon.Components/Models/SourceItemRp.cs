@@ -64,20 +64,7 @@ namespace Owlvey.Falcon.Models
     }
 
 
-    public class SourceItemPostV2Rp
-    {
-        [Required]
-        public int SourceId { get; set; }
-        [Required]
-        public int Good { get; set; }
-        [Required]
-        public int Total { get; set; }
-        [Required]
-        public DateTime Target { get; set; }        
-
-        public IDictionary<string, decimal> Clues { get; set; } = new Dictionary<string, decimal>();
-    }
-
+    
     public class SourceItemPropotionPostRp
     {
         [Required]

@@ -31,8 +31,8 @@ namespace Owlvey.Falcon.API.Controllers
             {
                 return this.BadRequest(this.ModelState);
             }            
-            await this._sourceItemComponent.Create(model);            
-            return this.Ok(new { });
+            var response = await this._sourceItemComponent.Create(model);            
+            return this.Ok(response);
         }
 
         
@@ -41,18 +41,13 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(SourceItemGetRp), 200)]
         [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> PostProportion([FromBody]SourceItemPropotionPostRp model)
-        {
-            Console.WriteLine("aqui " + model.Proportion.ToString());
+        {            
             if (!this.ModelState.IsValid)
             {
                 return this.BadRequest(this.ModelState);
             }
-            var response = await this._sourceItemComponent.Create(model);
-
-            //TODO fix
-
-            // return this.Created(Url.RouteUrl("GetBySourceItemId", new { response.Id }), response);
-            return this.Ok(new { }); 
+            var response = await this._sourceItemComponent.CreateProportion(model);
+            return this.Ok(response); 
         }
 
         [HttpGet("{id}", Name = "GetBySourceItemId")]

@@ -108,7 +108,7 @@ namespace Owlvey.Falcon.UnitTests
             var start = new DateTime(2019, 01, 01);            
             foreach (var item in results)
             {
-                SourceItemEntity.Factory.Create(item, start, 900, 1000, DateTime.Now, "test");
+                SourceItemEntity.Factory.CreateInteraction(item, start, 900, 1000, DateTime.Now, "test");
             }
             return results;
         }
@@ -142,10 +142,10 @@ namespace Owlvey.Falcon.UnitTests
                 
                 var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, Guid.NewGuid().ToString());
 
-                var sourceItem = SourceItemEntity.Factory.Create(source, OwlveyCalendar.StartJanuary2019,
+                var sourceItem = SourceItemEntity.Factory.CreateInteraction(source, OwlveyCalendar.StartJanuary2019,
                     900, 1200, DateTime.Now, "test");                
 
-                var sourceItemA = SourceItemEntity.Factory.Create(source, 
+                var sourceItemA = SourceItemEntity.Factory.CreateInteraction(source, 
                     OwlveyCalendar.EndJanuary2019, 900, 1200, DateTime.Now, "test");
 
                 source.SourceItems.Add(sourceItem);

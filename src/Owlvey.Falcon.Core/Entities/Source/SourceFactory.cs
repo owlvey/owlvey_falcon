@@ -14,20 +14,26 @@ namespace Owlvey.Falcon.Core.Entities
             {
                 string goodDefinition = "e.g. successful requests, as measured from the laod balancer metrics, Any HTTP status othen than 500-599 is considered successful.";
                 string totalDefinition = "e.g. All requests measured from the load balancer.";
-                var entity = new InteractionSourceEntity()
+                SourceEntity entity;
+                if (kind == SourceKindEnum.Interaction)
                 {
-                    Name = name,
-                    GoodDefinition = goodDefinition,
-                    TotalDefinition = totalDefinition,
-                    CreatedBy = user,
-                    ModifiedBy = user,
-                    CreatedOn = on,
-                    ModifiedOn = on,
-                    Description = name,
-                    Kind =  kind,
-                    Group = group,
-                    Product = product
-                };
+                    entity = new InteractionSourceEntity();
+                }
+                else {
+                    entity = new ProportionSourceEntity();
+                }
+
+                entity.Name = name;
+                entity.GoodDefinition = goodDefinition;
+                entity.TotalDefinition = totalDefinition;
+                entity.CreatedBy = user;
+                entity.ModifiedBy = user;
+                entity.CreatedOn = on;
+                entity.ModifiedOn = on;
+                entity.Description = name;
+                entity.Kind = kind;
+                entity.Group = group;
+                entity.Product = product;                
                 entity.Avatar = "https://d2.alternativeto.net/dist/icons/restpack-html-to-pdf-api_135030.png?width=128&height=128&mode=crop&upscale=false";
                 entity.Validate();
                 return entity;

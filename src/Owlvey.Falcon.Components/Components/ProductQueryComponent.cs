@@ -405,20 +405,21 @@ namespace Owlvey.Falcon.Components
             foreach (var source in product.Sources)
             {
                 source.SourceItems = sourceItems.Where(c => c.SourceId == source.Id).ToList();                
-                var measure = source.MeasureProportion();
+                var measure = source.MeasureProportion();                
+                
                 result.Sources.Add(new SourceGetListRp()
                 {
                     Id = source.Id.Value,
                     Availability = measure.Proportion,
-                    Total = source.Total,
-                    Good = source.Good,
+                    Total = source is InteractionSourceEntity ? ((InteractionSourceEntity)source).Total : 0,
+                    Good = source is InteractionSourceEntity ? ((InteractionSourceEntity)source).Good : 0,
                     Avatar = source.Avatar,
                     CreatedBy = source.CreatedBy,
                     CreatedOn = source.CreatedOn.Value,
                     GoodDefinition = source.GoodDefinition,
                     TotalDefinition = source.TotalDefinition,
                     Name = source.Name
-                });
+                });                
             }
 
             foreach (var feature in product.Features)

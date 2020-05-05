@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Owlvey.Falcon.Core;
 using System.Threading;
+using Owlvey.Falcon.Core.Entities.Sourceitem;
 
 namespace Owlvey.Falcon.Repositories
 {
@@ -56,7 +57,13 @@ namespace Owlvey.Falcon.Repositories
             }
 
             // Customer Name Unique
-            modelBuilder.Entity<SourceItemEntity>().HasIndex(p => p.Target);            
+            modelBuilder.Entity<SourceItemEntity>().HasIndex(p => p.Target);
+
+            modelBuilder.Entity<SourceItemEntity>()
+                .HasDiscriminator<SourceKindEnum>("Kind")
+                .HasValue<InteractionSourceItemEntity>(SourceKindEnum.Interaction)
+                .HasValue<ProportionSourceItemEntity>(SourceKindEnum.Proportion);
+
             modelBuilder.Entity<CustomerEntity>().HasIndex(c => c.Name).IsUnique();
 
             modelBuilder.Entity<SquadFeatureEntity>().HasKey(x => new { x.Id });
@@ -147,7 +154,7 @@ namespace Owlvey.Falcon.Repositories
         
         public override int SaveChanges()
         {            
-            return base.SaveChanges();
+            return base.SaveChanges(); 
         }
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {   

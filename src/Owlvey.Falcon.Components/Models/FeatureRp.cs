@@ -105,9 +105,7 @@ namespace Owlvey.Falcon.Models
         public int ServiceCount { get; set; }
         public decimal Availability { get; set; }
         public decimal Quality { get; set; }
-        public decimal Latency { get; set; }
-        public int Total { get; set; }
-        public int Good { get; set; }
+        public decimal Latency { get; set; }        
         public int Squads { get; set; }
     }
 

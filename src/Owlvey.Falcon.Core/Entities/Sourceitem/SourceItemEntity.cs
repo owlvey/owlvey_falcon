@@ -5,19 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Owlvey.Falcon.Core.Entities
 {
-    public class SourceItemEntityComparer : IEqualityComparer<SourceItemEntity>
-    {
-        public bool Equals(SourceItemEntity x, SourceItemEntity y)
-        {
-            return x.Id == y.Id;
-        }
-
-        public int GetHashCode(SourceItemEntity obj)
-        {
-            return obj.Id.Value;
-        }
-    }
-    public partial class SourceItemEntity: BaseEntity
+ 
+    public abstract partial class SourceItemEntity: BaseEntity
     {
         public int SourceId { get; set; }
 
@@ -29,7 +18,12 @@ namespace Owlvey.Falcon.Core.Entities
 
         [Required]
         public DateTime Target { get; set; }
-        
+
+        [Required]
+        public decimal Proportion { get; set; }
+
+        [Required]
+        public SourceKindEnum Kind { get; set; }
 
         public virtual ICollection<ClueEntity> Clues { get; set; } = new List<ClueEntity>();
 

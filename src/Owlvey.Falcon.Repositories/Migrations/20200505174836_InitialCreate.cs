@@ -429,7 +429,9 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     SourceId = table.Column<int>(nullable: false),
                     Good = table.Column<int>(nullable: false),
                     Total = table.Column<int>(nullable: false),
-                    Target = table.Column<DateTime>(nullable: false)
+                    Target = table.Column<DateTime>(nullable: false),
+                    Proportion = table.Column<decimal>(nullable: false),
+                    Kind = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
