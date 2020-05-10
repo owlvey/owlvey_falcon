@@ -42,7 +42,7 @@ namespace Owlvey.Falcon.Models
         public int SourceId { get; set; }
         public int Good { get; set; }
         public int Total { get; set; }
-        public decimal Availability { get; set; }
+        public decimal Proportion { get; set; }
         public DateTime Target { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }

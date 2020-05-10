@@ -39,6 +39,13 @@ namespace Owlvey.Falcon.Core
         /// <param name="start"></param>
         /// <returns></returns>
         public static int DaysDiff(DateTime end, DateTime start) {
+
+            if (start > end) {
+                var temp = end;
+                end = start;
+                start = temp;
+            }
+
             TimeSpan span = end.AddDays(1).Subtract(start);
             return Math.Abs((int)span.TotalDays);
         }
