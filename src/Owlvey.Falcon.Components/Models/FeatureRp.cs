@@ -56,11 +56,13 @@ namespace Owlvey.Falcon.Models
         public decimal Quality { get; set; }
         public decimal Latency { get; set; }
         public decimal Availability { get; set; }
+        public decimal Experience { get; set; }
         public void LoadQuality(QualityMeasureValue quality)
         {
             this.Availability = quality.Availability;
             this.Quality = quality.Quality;
             this.Latency = quality.Latency;
+            this.Experience = quality.Experience;
         }
         public string MTTM { get; set; }
         public string MTTE { get; set; }
@@ -82,6 +84,8 @@ namespace Owlvey.Falcon.Models
         public decimal Availability { get; set; }
         public decimal Quality { get; set; }
         public decimal Latency { get; set; }
+
+        public decimal Experience { get; set; }
         public int MapId { get; set; }
         
         public override void Read(FeatureEntity Entity){
@@ -105,6 +109,7 @@ namespace Owlvey.Falcon.Models
         public int ServiceCount { get; set; }
         public decimal Availability { get; set; }
         public decimal Quality { get; set; }
+        public decimal Experience { get; set; }
         public decimal Latency { get; set; }        
         public int Squads { get; set; }
     }

@@ -71,13 +71,13 @@ namespace Owlvey.Falcon.Core.Entities
 
                     for (int j = 1; j < 28; j++)
                     {
-                        var defaultSourceItem = SourceItemEntity.Factory.CreateInteraction(defaultSource, new DateTime(year, i, j), random.Next(800, 1000), 1000, on, user);
+                        var defaultSourceItem = InteractionSourceEntity.Factory.CreateInteraction(defaultSource, new DateTime(year, i, j), random.Next(800, 1000), 1000, on, user);
                         defaultSource.SourceItems.Add(defaultSourceItem);
 
-                        var registrationSourceItem = SourceItemEntity.Factory.CreateInteraction(registrationSource, new DateTime(year, i, j), random.Next(800, 1000), 1000, on, user);
+                        var registrationSourceItem = InteractionSourceEntity.Factory.CreateInteraction(registrationSource, new DateTime(year, i, j), random.Next(800, 1000), 1000, on, user);
                         registrationSource.SourceItems.Add(registrationSourceItem);
 
-                        var paymentSourceItem = SourceItemEntity.Factory.CreateInteraction(paymentSource, new DateTime(year, i, j), random.Next(800, 1000), 1000, on, user);
+                        var paymentSourceItem = InteractionSourceEntity.Factory.CreateInteraction(paymentSource, new DateTime(year, i, j), random.Next(800, 1000), 1000, on, user);
                         paymentSource.SourceItems.Add(paymentSourceItem);
 
                     }                    

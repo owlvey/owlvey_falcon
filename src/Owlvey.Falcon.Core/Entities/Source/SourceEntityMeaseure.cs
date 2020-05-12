@@ -10,9 +10,7 @@ namespace Owlvey.Falcon.Core.Entities
     public partial class SourceEntity
     {
         public ProportionMeasureValue MeasureProportion(DatePeriodValue period = null)
-        {
-            int total;
-            int good;
+        {            
             IEnumerable<SourceItemEntity> data;
             if (period != null)
             {
@@ -28,9 +26,8 @@ namespace Owlvey.Falcon.Core.Entities
                 return new ProportionMeasureValue(1, false);
             }
 
-            total = data.Sum(c => c.Total);
-            good = data.Sum(c => c.Good);            
-            return new ProportionMeasureValue(total, good);
+            var proportion = QualityUtils.CalculateAverage(data.Select(c => c.Proportion));            
+            return new ProportionMeasureValue(proportion);
         }
     }
 }

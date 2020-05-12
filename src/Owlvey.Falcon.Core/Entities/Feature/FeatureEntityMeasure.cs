@@ -13,6 +13,7 @@ namespace Owlvey.Falcon.Core.Entities
             var result = new List<decimal>();
             var availability = new List<decimal>();
             var latency = new List<decimal>();
+            var experience = new List<decimal>();
             foreach (var indicator in this.Indicators)
             {                
                 ProportionMeasureValue measure;
@@ -36,17 +37,21 @@ namespace Owlvey.Falcon.Core.Entities
                     {
                         latency.Add(measure.Proportion);
                     }
+                    else if (indicator.Source.Group == SourceGroupEnum.Experience) {
+                        experience.Add(measure.Proportion);
+                    }
                 }
             }
             if (result.Count > 0)
             {
                 return new QualityMeasureValue(                    
                     QualityUtils.CalculateMinimum(availability, 3),
-                    QualityUtils.CalculateMinimum(latency, 3), true);
+                    QualityUtils.CalculateMinimum(latency, 3),
+                    QualityUtils.CalculateMinimum(experience, 3), true);
             }
             else
             {
-                return new QualityMeasureValue(1, 1, false);
+                return new QualityMeasureValue(1, 1, 1, false);
             }
         }
     }

@@ -64,13 +64,7 @@ namespace Owlvey.Falcon.ComponentsTests
             });
 
             var items = await itemComponent.GetBySourceIdAndDateRange(source, OwlveyCalendar.StartJanuary2019, OwlveyCalendar.January201908);
-            Assert.NotEmpty(items);
-
-            foreach (var item in items)
-            {
-                var sourceItem = await itemComponent.GetById(item.Id);
-                Assert.NotEmpty(sourceItem.Clues);
-            }
+            Assert.NotEmpty(items);                       
 
             var sourceRp = await sourceComponent.GetByIdWithAvailability(source, 
                 OwlveyCalendar.StartJanuary2019, 

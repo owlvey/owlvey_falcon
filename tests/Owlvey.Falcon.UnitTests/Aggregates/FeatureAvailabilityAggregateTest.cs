@@ -12,20 +12,16 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         [Fact]
         public void FeatureDateAvailabilityAggregateSuccess() {
 
+            var sourceEntity = new InteractionSourceEntity(){};
+            sourceEntity.AddSourceItem(800, 1000, OwlveyCalendar.January201903, DateTime.Now, "test");
+
             var entity = new FeatureEntity()
             {
                 Id = 1,
                 Name = "test",
                 Indicators = new List<IndicatorEntity>() { new IndicatorEntity() {
                         Id  = 1,
-                        Source = new InteractionSourceEntity(){
-                             SourceItems = new List<SourceItemEntity>(){
-                                  new InteractionSourceItemEntity(){
-                                       Good = 800, Total = 1000,
-                                       Target = OwlveyCalendar.January201903
-                                  }
-                             }
-                        }
+                        Source = sourceEntity
                   } }
             };
             
@@ -39,38 +35,34 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         [Fact]
         public void FeatureAvailabilityMix()
         {
+            var Source_A = new InteractionSourceEntity()
+            {
+                Kind = SourceKindEnum.Interaction                
+            };
+            Source_A.AddSourceItem(800, 1000, OwlveyCalendar.January201903, DateTime.Now, "test");
 
+            var Source_B = new InteractionSourceEntity()
+            {
+                Kind = SourceKindEnum.Interaction            
+            };
+            Source_B.AddSourceItem(90, 100, OwlveyCalendar.January201903, DateTime.Now, "test");
+            var Indicators = new List<IndicatorEntity>() {
+                    new IndicatorEntity() {
+                        Id  = 1,
+                        Source = Source_A
+                    },
+                    new IndicatorEntity() {
+                        Id  = 2,
+                        Source = Source_B                        
+                    }
+                };
             var entity = new FeatureEntity()
             {
                 Id = 1,
                 Name = "test",
-                Indicators = new List<IndicatorEntity>() {
-                    new IndicatorEntity() {
-                        Id  = 1,
-                        Source = new InteractionSourceEntity(){
-                             Kind = SourceKindEnum.Interaction,
-                             SourceItems = new List<SourceItemEntity>(){
-                                  new InteractionSourceItemEntity(){
-                                       Good = 800, Total = 1000,
-                                       Target = OwlveyCalendar.January201903
-                                  }
-                             }
-                        }
-                    },
-                    new IndicatorEntity() {
-                        Id  = 2,
-                        Source = new InteractionSourceEntity(){
-                             Kind = SourceKindEnum.Proportion,
-                             SourceItems = new List<SourceItemEntity>(){
-                                  new InteractionSourceItemEntity(){
-                                       Good = 90, Total = 100,
-                                       Target = OwlveyCalendar.January201903
-                                  }
-                             }
-                        }
-                    }
-                }
+                Indicators = Indicators                
             };
+
             var result = entity.MeasureQuality();
             Assert.Equal(0.8m, result.Quality);
 

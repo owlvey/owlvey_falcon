@@ -13,6 +13,7 @@ namespace Owlvey.Falcon.Core.Entities
             var result = new List<decimal>();
             var resultAvailability = new List<decimal>();
             var resultLatency = new List<decimal>();
+            var resultExperience = new List<decimal>(); 
 
             foreach (var map in this.FeatureMap)
             {                
@@ -30,6 +31,7 @@ namespace Owlvey.Falcon.Core.Entities
                     result.Add(measure.Quality);
                     resultAvailability.Add(measure.Availability);
                     resultLatency.Add(measure.Latency);
+                    resultExperience.Add(measure.Experience); 
                 }
             }
 
@@ -38,11 +40,12 @@ namespace Owlvey.Falcon.Core.Entities
                 return new ServiceQualityMeasureValue(                    
                     this.Slo,
                     QualityUtils.CalculateMinimum(resultAvailability, round: 3),
-                    QualityUtils.CalculateMinimum(resultLatency, round: 3));
+                    QualityUtils.CalculateMinimum(resultLatency, round: 3),
+                    QualityUtils.CalculateMinimum(resultExperience, round: 3));
             }
             else
             {
-                return new ServiceQualityMeasureValue(this.Slo, 1, 1, false);
+                return new ServiceQualityMeasureValue(this.Slo, 1, 1, 1, false);
             }
         }
     }

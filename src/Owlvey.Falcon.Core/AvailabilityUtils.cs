@@ -81,7 +81,7 @@ namespace Owlvey.Falcon.Core
             }
             else
             {
-                return Math.Round(good / total, 2);
+                return Math.Round(good / total, 3);
             }
         }
         public static decimal CalculateAvailability(decimal total, decimal good, decimal defaultValue = 1) {

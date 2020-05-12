@@ -131,6 +131,7 @@ namespace Owlvey.Falcon.Models
         
         public List<MonthRp> Availability { get; set; } = new List<MonthRp>();
         public List<MonthRp> Latency { get; set; } = new List<MonthRp>();
+        public List<MonthRp> Experience { get; set; } = new List<MonthRp>();
         public List<MonthRp> Quality { get; set; } = new List<MonthRp>();
         public IList<MultiSerieItemGetRp> Weekly { get; set; } = new List<MultiSerieItemGetRp>();
         
@@ -154,6 +155,10 @@ namespace Owlvey.Falcon.Models
 
             public decimal LatencyAvg { get; set; } = 1;
             public decimal LatencyMin { get; set; } = 1;
+
+            public decimal ExperienceAvg { get; set; } = 1;
+            public decimal ExperienceMin { get; set; } = 1;
+
         }
         public IList<ServiceGrouptem> Items { get; set; } = new List<ServiceGrouptem>();
         public IList<MultiSerieItemGetRp> Series { get; set; } = new List<MultiSerieItemGetRp>();
@@ -166,12 +171,14 @@ namespace Owlvey.Falcon.Models
         public decimal Quality { get; set; }
         public decimal Availability { get; set; }
         public decimal Latency { get; set; }
+        public decimal Experience { get; set; }
         public decimal Previous { get; set; }
 
         public void LoadMeasure(QualityMeasureValue measure) {
             this.Quality = measure.Quality;
             this.Availability = measure.Availability;
             this.Latency = measure.Latency;
+            this.Experience = measure.Experience;
         }
 
         public string Deploy { get; set; }        

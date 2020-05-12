@@ -38,7 +38,7 @@ namespace Owlvey.Falcon.API.Controllers
         
 
         [HttpPost("proportion")]
-        [ProducesResponseType(typeof(SourceItemGetRp), 200)]
+        [ProducesResponseType(typeof(InteractiveSourceItemGetRp), 200)]
         [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> PostProportion([FromBody]SourceItemProportionPostRp model)
         {            
@@ -51,7 +51,7 @@ namespace Owlvey.Falcon.API.Controllers
         }
 
         [HttpGet("{id}", Name = "GetBySourceItemId")]
-        [ProducesResponseType(typeof(SourceItemGetRp), 200)]
+        [ProducesResponseType(typeof(InteractiveSourceItemGetRp), 200)]
         public async Task<IActionResult> GetBySourceItemId(int id)
         {
             var model = await this._sourceItemComponent.GetById(id);
@@ -59,7 +59,7 @@ namespace Owlvey.Falcon.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [ProducesResponseType(typeof(SourceItemGetRp), 200)]
+        [ProducesResponseType(typeof(InteractiveSourceItemGetRp), 200)]
         [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> DeleteSourceItem(int id)
         {
@@ -68,7 +68,7 @@ namespace Owlvey.Falcon.API.Controllers
         }
 
         [HttpDelete()]
-        [ProducesResponseType(typeof(SourceItemGetRp), 200)]
+        [ProducesResponseType(typeof(InteractiveSourceItemGetRp), 200)]
         [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> DeleteAllSourceItems(int sourceId)
         {

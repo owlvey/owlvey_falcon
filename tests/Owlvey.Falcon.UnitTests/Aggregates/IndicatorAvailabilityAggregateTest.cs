@@ -20,10 +20,10 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
 
             var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, "test");
 
-            var sourceItemA = SourceItemEntity.Factory.CreateInteractionsFromRange(source,
+            var sourceItemA = InteractionSourceEntity.Factory.CreateInteractionsFromRange(source,
                 OwlveyCalendar.StartJanuary2019, OwlveyCalendar.EndJanuary2019,
                 900, 1200, DateTime.Now, "test");            
-            var sourceItemB = SourceItemEntity.Factory.CreateInteraction(source,
+            var sourceItemB = InteractionSourceEntity.Factory.CreateInteraction(source,
                 TDF.OwlveyCalendar.StartJanuary2019,
                 900, 1200, DateTime.Now, "test");
 
@@ -42,7 +42,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var availabilities = aggregate.MeasureAvailability();
 
             Assert.Equal(31, availabilities.Count());
-            Assert.Equal(0.751m, availabilities.First().Measure.Quality);
+            Assert.Equal(0.760m, availabilities.First().Measure.Quality);
         }
 
         [Fact]
@@ -53,10 +53,10 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
 
             var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, "test");
 
-            var sourceItemA = SourceItemEntity.Factory.CreateInteraction(source,
+            var sourceItemA = InteractionSourceEntity.Factory.CreateInteraction(source,
                 OwlveyCalendar.January201905,                
                 900, 1200, DateTime.Now, "test");
-            var sourceItemB = SourceItemEntity.Factory.CreateInteraction(source,                
+            var sourceItemB = InteractionSourceEntity.Factory.CreateInteraction(source,                
                 OwlveyCalendar.EndJanuary2019,
                 900, 1200, DateTime.Now, "test");
 

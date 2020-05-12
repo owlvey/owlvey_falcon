@@ -12,6 +12,9 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         [Fact]
         public void AvailabilityAggregateSuccess() {
 
+            var sourceEntity = new InteractionSourceEntity() { };
+            sourceEntity.AddSourceItem(800, 1000, OwlveyCalendar.January201903, DateTime.Now, "test");
+
 
             var entity = new ServiceEntity()
             {
@@ -23,14 +26,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                                 Name = "test",
                                 Indicators = new List<IndicatorEntity>() { new IndicatorEntity() {
                                         Id  = 1,
-                                        Source = new InteractionSourceEntity(){
-                                                SourceItems = new List<SourceItemEntity>(){
-                                                    new InteractionSourceItemEntity(){
-                                                        Good = 800, Total = 1000,
-                                                        Target = OwlveyCalendar.January201903
-                                                    }
-                                                }
-                                        }
+                                        Source = sourceEntity
                                     } }
                             }
                      }

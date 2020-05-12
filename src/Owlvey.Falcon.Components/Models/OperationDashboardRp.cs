@@ -6,8 +6,7 @@ namespace Owlvey.Falcon.Models
 { 
 
     public class OperationProductDashboardRp
-    {
-        public long SourceTotal { get; set; }
+    {        
         public StatsValue SourceStats { get; set; }
         public StatsValue FeaturesStats { get; set; }
         public decimal FeaturesCoverage { get; set; }

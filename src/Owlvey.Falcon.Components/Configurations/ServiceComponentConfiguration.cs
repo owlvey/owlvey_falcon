@@ -20,6 +20,7 @@ namespace Owlvey.Falcon.Components
                 .ForMember(m => m.MTTM, ope => ope.Ignore())
                 .ForMember(m => m.Quality, ope => ope.Ignore())
                 .ForMember(m => m.Availability, ope => ope.Ignore())
+                .ForMember(m => m.Experience, ope => ope.Ignore())
                 .ForMember(m => m.Latency, ope => ope.Ignore());
 
 

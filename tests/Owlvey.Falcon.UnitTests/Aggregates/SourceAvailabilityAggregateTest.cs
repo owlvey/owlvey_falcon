@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Owlvey.Falcon.Core.Aggregates;
 using Owlvey.Falcon.Core.Entities;
 using Xunit;
+using static Owlvey.Falcon.UnitTests.TestDataFactory;
 
 namespace Owlvey.Falcon.UnitTests.Aggregates
 {
@@ -11,13 +12,14 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         [Fact]
         public void MeasureFeatureAvailability()
         {
+
             var entity = new InteractionSourceEntity()
             {
-                Kind = SourceKindEnum.Interaction,
-                SourceItems = new List<SourceItemEntity>() {
-                     new InteractionSourceItemEntity(){ Total = 1000, Good = 800 }
-                 }
-            };            
+                Kind = SourceKindEnum.Interaction,            
+            };
+
+            entity.SourceItems.Add(InteractionSourceEntity.Factory.CreateInteraction(entity, DateTime.Now, 800, 1000, DateTime.Now, "test"));
+
             var proportion = entity.MeasureProportion();
 
             Assert.Equal(0.8m, proportion.Proportion);
@@ -26,15 +28,11 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         [Fact]
         public void MeasureProportionAvailability()
         {
-            var entity = new InteractionSourceEntity()
-            {
-                Kind = SourceKindEnum.Proportion,
-                SourceItems = new List<SourceItemEntity>() {
-                     new InteractionSourceItemEntity(){ Total = 1000, Good = 800 }
-                }
-            };
+
+            var sourceEntity = new InteractionSourceEntity() { };
+            sourceEntity.AddSourceItem(800, 1000, OwlveyCalendar.January201903, DateTime.Now, "test");
             
-            var a = entity.MeasureProportion();
+            var a = sourceEntity.MeasureProportion();
             Assert.Equal(0.8m, a.Proportion);
         }
     }

@@ -83,25 +83,27 @@ namespace Owlvey.Falcon.Components
 
             var months = period.ToYearPeriods();
             var serviceGroups = product.Services.GroupBy(c => c.Group).ToList();
-            var pivot = new Dictionary<string, List<(int count, decimal quality, decimal availability, decimal latency)>>();
+            var pivot = new Dictionary<string, List<(int count, decimal quality, decimal availability, decimal latency, decimal experience)>>();
             
             foreach (var monthperiod in months)
             {
-                var groupsReport = new List<(string name, int count, decimal quality, decimal availability, decimal latency)>();
+                var groupsReport = new List<(string name, int count, decimal quality, decimal availability, decimal latency, decimal experience)>();
                 foreach (var group in serviceGroups)
                 {                   
-                    var measures = group.Select(c => new { measure = c.MeasureQuality(monthperiod), slo = c.Slo });                                        
+                    var measures = group.Select(c => new { measure = c.MeasureQuality(monthperiod), slo = c.Slo }).ToList();                                        
                     groupsReport.Add(( group.Key, group.Count(), measures.Sum(c => c.measure.Debt),
                         measures.Sum(c => c.measure.AvailabilityDebt),
-                        measures.Sum(c => c.measure.LatencyDebt))); 
+                        measures.Sum(c => c.measure.LatencyDebt),
+                        measures.Sum(c => c.measure.ExperienceDebt)
+                        )); 
                 }                
                 
                 foreach (var group in groupsReport)
                 {
                     if (!pivot.ContainsKey(group.name)) {
-                        pivot.Add(group.name, new List<(int count, decimal quality, decimal availability, decimal latency)>()); 
+                        pivot.Add(group.name, new List<(int count, decimal quality, decimal availability, decimal latency, decimal experience)>()); 
                     }
-                    pivot[group.name].Add( (group.count, group.quality, group.availability, group.latency) );
+                    pivot[group.name].Add( (group.count, group.quality, group.availability, group.latency, group.experience) );
                 }
                 
             }
@@ -138,27 +140,38 @@ namespace Owlvey.Falcon.Components
                 return tmp;
             }).ToList();
 
+            result.Experience = pivot.Select(c =>
+            {
+                var tmp = new MonthRp() { Name = c.Key, Count = c.Value.ElementAt(0).count };
+                for (int i = 0; i < c.Value.Count; i++)
+                {
+                    tmp.SetMonthValue(i, c.Value[i].experience);
+                }
+                return tmp;
+            }).ToList();
+
 
             var weeks = period.ToWeeksPeriods();
-            pivot = new Dictionary<string, List<(int count, decimal quality, decimal availability, decimal latency)>>();
+            pivot = new Dictionary<string, List<(int count, decimal quality, decimal availability, decimal latency, decimal experience)>>();
             foreach (var week in weeks)
             {
-                var groupsReport = new List<(string name, int count, decimal quality, decimal availability, decimal latency)>();
+                var groupsReport = new List<(string name, int count, decimal quality, decimal availability, decimal latency, decimal experience)>();
                 foreach (var group in serviceGroups)
                 {
                     var temp = new ServiceGroupListRp.ServiceGrouptem();                    
                     var measures = group.Select(c => new { measure = c.MeasureQuality(week), slo = c.Slo });
                     groupsReport.Add((group.Key, group.Count(), measures.Sum(c => c.measure.Debt),
                             measures.Sum(c => c.measure.AvailabilityDebt),
-                            measures.Sum(c => c.measure.LatencyDebt)));
+                            measures.Sum(c => c.measure.LatencyDebt),
+                            measures.Sum(c => c.measure.ExperienceDebt)));
                 }
                 foreach (var group in groupsReport)
                 {
                     if (!pivot.ContainsKey(group.name))
                     {
-                        pivot.Add(group.name, new List<(int count, decimal quality, decimal availability, decimal latency)>());
+                        pivot.Add(group.name, new List<(int count, decimal quality, decimal availability, decimal latency, decimal experience)>());
                     }
-                    pivot[group.name].Add((group.count, group.quality, group.availability, group.latency));
+                    pivot[group.name].Add((group.count, group.quality, group.availability, group.latency, group.experience));
                 }
                 
             }                       
@@ -213,6 +226,9 @@ namespace Owlvey.Falcon.Components
                 temp.AvailabilityMin = QualityUtils.CalculateMinimum(measures.Select(c => c.measure.Availability));
                 temp.LatencyAvg = QualityUtils.CalculateAverage(measures.Select(c => c.measure.Latency));
                 temp.LatencyMin = QualityUtils.CalculateMinimum(measures.Select(c => c.measure.Latency));
+                temp.ExperienceAvg = QualityUtils.CalculateAverage(measures.Select(c => c.measure.Experience));
+                temp.ExperienceMin = QualityUtils.CalculateMinimum(measures.Select(c => c.measure.Experience));
+
                 temp.Count = group.Count();
                 temp.ErrorBudget = measures.Where(c => c.measure.ErrorBudget < 0).Sum(c => c.measure.ErrorBudget);
                 var previous = group.Select(c => new { measure = c.MeasureQuality(new DatePeriodValue(ps, pe)), slo = c.Slo });
@@ -295,7 +311,8 @@ namespace Owlvey.Falcon.Components
                 var measure = map.Feature.MeasureQuality( new DatePeriodValue( start, end));                
                 tmp.Quality = measure.Quality;
                 tmp.Availability = measure.Availability;
-                tmp.Latency = measure.Latency;                                
+                tmp.Latency = measure.Latency;
+                tmp.Experience = measure.Experience;
                 tmp.MapId = map.Id.Value;
                 model.Features.Add(tmp);
             }            

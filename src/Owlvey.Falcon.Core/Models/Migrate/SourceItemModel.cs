@@ -21,8 +21,11 @@ namespace Owlvey.Falcon.Core.Models.Migrate
             this.Organization = organization;
             this.Product = product;
             this.Source = source;
-            this.Good = entity.Good;
-            this.Total = entity.Total;
+            var interactive = entity as InteractionSourceItemEntity;
+            if (interactive != null) {
+                this.Good = interactive.Good;
+                this.Total = interactive.Total;
+            }            
             this.Target = entity.Target.ToString("s", System.Globalization.CultureInfo.InvariantCulture);
             this.Proportion = entity.Proportion;
         }

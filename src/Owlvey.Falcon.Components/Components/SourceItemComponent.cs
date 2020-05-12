@@ -32,7 +32,7 @@ namespace Owlvey.Falcon.Components
             var createdBy = this._identityService.GetIdentity();
             var source = await this._dbContext.Sources.SingleAsync(c => c.Id == model.SourceId);
 
-            var entities = SourceItemEntity.Factory.CreateProportionFromRange(source,model.Start, model.End, model.Proportion,
+            var entities = ProportionSourceEntity.Factory.CreateProportionFromRange(source,model.Start, model.End, model.Proportion,
                 this._datetimeGateway.GetCurrentDateTime(), createdBy);
 
             foreach (var item in entities)
@@ -53,7 +53,7 @@ namespace Owlvey.Falcon.Components
             var on = this._datetimeGateway.GetCurrentDateTime();
             var source = await this._dbContext.Sources.SingleAsync(c => c.Id == model.SourceId);
 
-            var range = SourceItemEntity.Factory.CreateInteractionsFromRange(source, model.Start, model.End, model.Good, model.Total, on, createdBy);
+            var range = InteractionSourceEntity.Factory.CreateInteractionsFromRange(source, model.Start, model.End, model.Good, model.Total, on, createdBy);
 
             foreach (var key in model.Clues.Keys)
             {
@@ -81,7 +81,7 @@ namespace Owlvey.Falcon.Components
                 var interaction = model as SourceItemInteractionPostRp;
                 if (interaction != null)
                 {
-                    var range = SourceItemEntity.Factory.CreateInteractionsFromRange(source, interaction.Start,
+                    var range = InteractionSourceEntity.Factory.CreateInteractionsFromRange(source, interaction.Start,
                                 interaction.End, interaction.Good, interaction.Total,
                                 this._datetimeGateway.GetCurrentDateTime(), createdBy);
                     foreach (var clue in model.Clues)
@@ -101,7 +101,7 @@ namespace Owlvey.Falcon.Components
                 var proportion = model as SourceItemProportionPostRp;
                 if (proportion != null)
                 {
-                    var range = SourceItemEntity.Factory.CreateProportionFromRange(source,
+                    var range = ProportionSourceEntity.Factory.CreateProportionFromRange(source,
                         proportion.Start, proportion.End, proportion.Proportion, 
                                 this._datetimeGateway.GetCurrentDateTime(), createdBy);
                     foreach (var clue in model.Clues)
@@ -132,13 +132,25 @@ namespace Owlvey.Falcon.Components
 
             var entity = await this._dbContext.SourcesItems.Where(c => c.Id == sourceItemId).SingleAsync();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
-            entity.Update(total, good, target);
+            
+            var interactive = entity as InteractionSourceItemEntity;
+            if (interactive != null)
+            {
+                interactive.Update(total, good, target);                
+            }                     
             this._dbContext.SourcesItems.Update(entity);
             await this._dbContext.SaveChangesAsync();
-
             return this._mapper.Map<SourceItemGetListRp>(entity);            
         }
-
+        public async Task<SourceItemGetListRp> Update(int sourceItemId, decimal proportion, DateTime target)
+        {
+            var entity = await this._dbContext.SourcesItems.Where(c => c.Id == sourceItemId).SingleAsync();
+            this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
+            entity.Update(proportion, target);
+            this._dbContext.SourcesItems.Update(entity);
+            await this._dbContext.SaveChangesAsync();
+            return this._mapper.Map<SourceItemGetListRp>(entity);
+        }
         public async Task<BaseComponentResultRp> Delete(int id)
         {
             var result = new BaseComponentResultRp();
@@ -184,12 +196,12 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<SourceItemGetListRp>>(entity);
         }
         
-        public async Task<SourceItemGetRp> GetById(int id)
+        public async Task<SourceItemGetListRp> GetById(int id)
         {
             var entity = await this._dbContext.SourcesItems
                 .Include(c => c.Clues)
                 .Where(c => c.Id == id).SingleAsync();
-            return this._mapper.Map<SourceItemGetRp>(entity);
+            return this._mapper.Map<SourceItemGetListRp>(entity);
         }
 
         public async Task<IEnumerable<SourceItemGetListRp>> GetBySourceIdAndDateRange(int sourceId, 

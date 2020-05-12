@@ -31,17 +31,19 @@ namespace Owlvey.Falcon.API.Controllers
             else if (productId.HasValue)
             {
                 model = await this._sourceComponent.GetByProductId(productId.Value);
-            }            
+            }
             else if (indicatorId.HasValue)
             {
                 model = await this._sourceComponent.GetByIndicatorId(indicatorId.Value);
-            }            
-            else {
+            }
+            else
+            {
                 return this.NotFound($"The Resource doesn't exists.");
             }
-            
+
             return this.Ok(model);
         }
+
 
         [HttpGet("{id}", Name = "GetSourceById")]
         [ProducesResponseType(typeof(SourceGetRp), 200)]

@@ -232,7 +232,6 @@ namespace Owlvey.Falcon.Components
 
             var sourceLites = this._mapper.Map<IEnumerable<SourceMigrateRp>>(sources);
 
-
             var indicatorLites = await this.ExportIndicators(customerId);             
 
             List<SourceItemMigrationRp> items = new List<SourceItemMigrationRp>();
@@ -245,16 +244,21 @@ namespace Owlvey.Falcon.Components
                 foreach (var item in temp)
                 {
                     var product = customer.Products.Where(c => c.Id == item.Source.ProductId).Single();
-                    items.Add(new SourceItemMigrationRp()
+                    var map = new SourceItemMigrationRp()
                     {
                         Product = product.Name,
                         Target = item.Target.ToString("s", System.Globalization.CultureInfo.InvariantCulture),                        
-                        Good = item.Good,
                         Source = item.Source.Name,
-                        Total = item.Total,
                         Clues = JsonConvert.SerializeObject(item.ExportClues()),
                         Proportion = item.Proportion
-                    });
+                    };
+                    var interactive = item as InteractionSourceItemEntity;
+                    if (interactive != null)
+                    {
+                        map.Total = interactive.Total;
+                        map.Good = interactive.Good;                        
+                    }
+                    items.Add(map);                    
                 }
             }
 

@@ -165,6 +165,7 @@ namespace Owlvey.Falcon.Components
                 var measure = feature.MeasureQuality();                
                 tmp.Quality = measure.Quality;
                 tmp.Availability = measure.Availability;
+                tmp.Experience = measure.Experience;
                 tmp.Latency = measure.Latency;
                 tmp.Squads = feature.Squads.Count();                                
                 tmp.ServiceCount = feature.ServiceMaps.Count();                

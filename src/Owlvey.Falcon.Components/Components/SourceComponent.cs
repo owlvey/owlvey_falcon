@@ -14,6 +14,7 @@ using Owlvey.Falcon.Core;
 using Owlvey.Falcon.Repositories.Sources;
 using Polly;
 using Owlvey.Falcon.Core.Values;
+using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
 
 namespace Owlvey.Falcon.Components
 {
@@ -157,8 +158,8 @@ namespace Owlvey.Falcon.Components
                 entity.SourceItems = sourceItems;                
                 var measure = entity.MeasureProportion();                
                 result.Quality = measure.Proportion;
-                result.Total = entity.SourceItems.Sum(c=>c.Total);
-                result.Good = entity.SourceItems.Sum(c => c.Good);
+                result.Total = entity.SourceItems.OfType<InteractionSourceItemEntity>().Sum(c=>c.Total);
+                result.Good = entity.SourceItems.OfType<InteractionSourceItemEntity>().Sum(c => c.Good);
                 result.Clues = entity.ExportClues();
                 result.Features = entity.Indicators.ToDictionary(d => d.Feature.Name, c => c.Feature.Id.Value);
             }            
@@ -170,12 +171,11 @@ namespace Owlvey.Falcon.Components
             var entities = await this._dbContext.Sources.Where(c => c.Product.Id == productId).ToListAsync();
             return this._mapper.Map<IEnumerable<SourceGetListRp>>(entities);
         }
+   
         public async Task<IEnumerable<SourceGetListRp>> GetByProductIdWithAvailability(int productId, DateTime start, DateTime end)
         {
             var entities = await this._dbContext.Sources.Include(c=>c.Indicators).Where(c => c.Product.Id == productId).ToListAsync();            
             var sourceItems = await this._dbContext.GetSourceItems(start, end);
-
-            
 
             var result = new List<SourceGetListRp>();
             foreach (var source in entities)
@@ -184,9 +184,7 @@ namespace Owlvey.Falcon.Components
                 var proportion= source.MeasureProportion();
                 var tmp = this._mapper.Map<SourceGetListRp>(source);
                 tmp.References = source.Indicators.Count();
-                tmp.Availability = proportion.Proportion;
-                tmp.Total = source is InteractionSourceEntity ? ((InteractionSourceEntity)source).Total : 0;
-                tmp.Good = source is InteractionSourceEntity ? ((InteractionSourceEntity)source).Good : 0; 
+                tmp.Availability = proportion.Proportion;                
                 result.Add(tmp);
             }
             return result.OrderBy(c=>c.Availability).ToList();

@@ -10,19 +10,25 @@ namespace Owlvey.Falcon.Models
         public int Id { get; set; }
     }
 
-    public class SourceItemGetRp : SourceItemBaseRp
+    public class InteractiveSourceItemGetRp : SourceItemBaseRp
     {
-        public int SourceId { get; set; }
+        
         public int Good { get; set; }
         public int Total { get; set; }
         public DateTime Target { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
-
-        public decimal Availability { get; set; }
-
+        public decimal Proportion { get; set; }
         public IDictionary<string, decimal> Clues { get; set; } = new Dictionary<string, decimal>();
+    }
 
+    public class ProportionSourceItemGetRp : SourceItemBaseRp
+    {        
+        public DateTime Target { get; set; }
+        public string CreatedBy { get; set; }
+        public DateTime? CreatedOn { get; set; }
+        public decimal Proportion { get; set; }
+        public IDictionary<string, decimal> Clues { get; set; } = new Dictionary<string, decimal>();
     }
 
     public class SourceItemMigrationRp {
@@ -39,9 +45,7 @@ namespace Owlvey.Falcon.Models
 
     public class SourceItemGetListRp : SourceItemBaseRp
     {
-        public int SourceId { get; set; }
-        public int Good { get; set; }
-        public int Total { get; set; }
+        public int SourceId { get; set; }        
         public decimal Proportion { get; set; }
         public DateTime Target { get; set; }
         public string CreatedBy { get; set; }

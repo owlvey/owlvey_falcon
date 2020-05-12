@@ -16,8 +16,12 @@ namespace Owlvey.Falcon.Core.Models.Migrate
         public void Load(string source, SourceItemEntity entity)
         {        
             this.Source = source;
-            this.Good = entity.Good;
-            this.Total = entity.Total;
+            var interactive = entity as InteractionSourceItemEntity;
+            if (interactive != null)
+            {
+                this.Good = interactive.Good;
+                this.Total = interactive.Total;
+            }            
             this.Proportion = entity.Proportion;
             this.Target = entity.Target.ToString("s", System.Globalization.CultureInfo.InvariantCulture);
         }

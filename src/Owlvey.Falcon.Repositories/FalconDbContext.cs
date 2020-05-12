@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Owlvey.Falcon.Core;
 using System.Threading;
-using Owlvey.Falcon.Core.Entities.Sourceitem;
 
 namespace Owlvey.Falcon.Repositories
 {

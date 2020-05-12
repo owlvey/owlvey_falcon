@@ -638,9 +638,6 @@ namespace Owlvey.Falcon.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Good")
-                        .HasColumnType("int");
-
                     b.Property<int>("Kind")
                         .HasColumnType("int");
 
@@ -660,9 +657,6 @@ namespace Owlvey.Falcon.Repositories.Migrations
 
                     b.Property<DateTime>("Target")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("Total")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -821,10 +815,16 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 {
                     b.HasBaseType("Owlvey.Falcon.Core.Entities.SourceItemEntity");
 
+                    b.Property<int>("Good")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Total")
+                        .HasColumnType("int");
+
                     b.HasDiscriminator().HasValue(0);
                 });
 
-            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.Sourceitem.ProportionSourceItemEntity", b =>
+            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.ProportionSourceItemEntity", b =>
                 {
                     b.HasBaseType("Owlvey.Falcon.Core.Entities.SourceItemEntity");
 

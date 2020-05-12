@@ -36,6 +36,14 @@ namespace Owlvey.Falcon.Core.Values
                 return Math.Abs(error < 0 ? error : 0);
             }
         }
+        public decimal ExperienceDebt
+        {
+            get
+            {
+                var error = QualityUtils.MeasureBudget(this.Experience, this.Slo.Value);
+                return Math.Abs(error < 0 ? error : 0);
+            }
+        }
         public decimal Asset
         {
             get
@@ -43,7 +51,7 @@ namespace Owlvey.Falcon.Core.Values
                 return this.ErrorBudget > 0 ? this.ErrorBudget : 0;
             }
         }
-        public ServiceQualityMeasureValue(decimal slo, decimal availability, decimal latency, bool hasdata = true) : base(availability, latency, hasdata)
+        public ServiceQualityMeasureValue(decimal slo, decimal availability, decimal latency, decimal experience, bool hasdata = true) : base(availability, latency, experience,  hasdata)
         {
             this.Slo = slo;
         }

@@ -11,10 +11,7 @@ namespace Owlvey.Falcon.Core.Entities
         public int SourceId { get; set; }
 
         public virtual SourceEntity Source { get; set; }
-        [Required]
-        public int Good { get; set; }
-        [Required]
-        public int Total { get; set; }
+        
 
         [Required]
         public DateTime Target { get; set; }
@@ -36,17 +33,10 @@ namespace Owlvey.Falcon.Core.Entities
             }
             return result; 
         }
-
-        [NotMapped]
-        public decimal Availability { get {
-                return QualityUtils.CalculateAvailability(this.Total, this.Good, 1);                
-            } }
-
-        public void Update(int total, int good, DateTime target)
+        public void Update(decimal proportion, DateTime target)
         {
-            this.Total = total;
-            this.Good = good;            
             this.Target = target;
+            this.Proportion = proportion;
         }
     }
 }
