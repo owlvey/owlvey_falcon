@@ -507,13 +507,19 @@ namespace Owlvey.Falcon.Components
             using (var package = new ExcelPackage(stream))
             {
                 var sources = await this._dbContext.Sources.Where(c=>c.ProductId == productId).ToListAsync();
-                var sourceItems = await this._dbContext.SourcesItems.Where(c=>c.Source.ProductId == productId).ToListAsync();
+
+                var ids = sources.Select(c => c.Id.Value).Distinct().ToList();
+                var sourceItems = await this._dbContext.GetSourceItems(ids, period.Start, period.End);
 
                 var aggregate = new BackupItemsAggregate(sources, sourceItems);
                 var model = aggregate.Execute();
 
+
+                var sourceSheet = package.Workbook.Worksheets.Add("Sources");
+                sourceSheet.Cells.LoadFromCollection(model.sources, true);
+
                 var sourceItemsSheet = package.Workbook.Worksheets.Add("SourceItems");
-                sourceItemsSheet.Cells.LoadFromCollection(model, true);
+                sourceItemsSheet.Cells.LoadFromCollection(model.items, true);
 
                 package.Save();
             }

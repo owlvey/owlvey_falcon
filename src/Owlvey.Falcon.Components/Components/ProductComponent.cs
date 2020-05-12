@@ -16,6 +16,7 @@ using Owlvey.Falcon.Repositories.Services;
 using Polly;
 using System.IO;
 using OfficeOpenXml;
+using Owlvey.Falcon.Core.Models.Migrate;
 
 namespace Owlvey.Falcon.Components
 {
@@ -23,14 +24,17 @@ namespace Owlvey.Falcon.Components
     {
         private readonly FalconDbContext _dbContext;
         private readonly SourceItemComponent _sourceItemComponent;
+        private readonly SourceComponent _sourceComponent;
 
         public ProductComponent(FalconDbContext dbContext,
             IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway, 
             IMapper mapper, ConfigurationComponent configuration,
-            SourceItemComponent sourceItemComponent) : base(dateTimeGateway, mapper, identityService, configuration)
+            SourceItemComponent sourceItemComponent,
+            SourceComponent sourceComponent) : base(dateTimeGateway, mapper, identityService, configuration)
         {
             this._sourceItemComponent = sourceItemComponent;
-            this._dbContext = dbContext;            
+            this._dbContext = dbContext;
+            this._sourceComponent = sourceComponent;
         }
 
         public async Task<AnchorRp> PostAnchor(int productId, string name)
@@ -77,8 +81,6 @@ namespace Owlvey.Falcon.Components
             }
             return this._mapper.Map<AnchorRp>(entity);
         }
-
-
 
         public async Task PutAnchor(int productId, string name, AnchorPutRp model)
         {
@@ -178,12 +180,34 @@ namespace Owlvey.Falcon.Components
 
         public async Task<IEnumerable<string>> ImportsItems(int productId, MemoryStream input)
         {
+            var product = await this._dbContext.Products.Include(c=>c.Customer)
+                .Where(c => c.Id == productId).SingleAsync();
+
             var logs = new List<string>();
 
             var sources =  this._dbContext.Sources.Where(c => c.ProductId == productId).ToList();
 
             using (var package = new ExcelPackage(input))
-            {                   
+            {
+                var sourceSheet = package.Workbook.Worksheets["Sources"];
+                for (int row = 2; row <= sourceSheet.Dimension.Rows; row++)
+                {                    
+                    var name = sourceSheet.Cells[row, 1].GetValue<string>();
+                    var avatar = sourceSheet.Cells[row, 2].GetValue<string>();
+                    var description = sourceSheet.Cells[row, 3].GetValue<string>();
+                    var group = sourceSheet.Cells[row, 4].GetValue<string>();
+                    var goodDefinition = sourceSheet.Cells[row, 5].GetValue<string>();
+                    var totalDefinition = sourceSheet.Cells[row, 6].GetValue<string>();
+                    var kind = sourceSheet.Cells[row, 7].GetValue<string>();                    
+                    if (!sources.Exists(c=>c.Name == name)) {                        
+                        await this._sourceComponent.CreateOrUpdate(product.Customer, product.Name,
+                            name, null, avatar, goodDefinition, totalDefinition, description, kind, group);
+                    }                    
+                }
+
+                // reload sources 
+                sources = this._dbContext.Sources.Where(c => c.ProductId == productId).ToList();
+
                 var sourceItemsSheet = package.Workbook.Worksheets["SourceItems"];
 
                 var sourceItems = new List<(SourceEntity, SourceItemPostRp)>();
@@ -194,8 +218,7 @@ namespace Owlvey.Falcon.Components
                     var good = sourceItemsSheet.Cells[row, 2].GetValue<int>();
                     var total = sourceItemsSheet.Cells[row, 3].GetValue<int>();
                     var target = DateTime.Parse(sourceItemsSheet.Cells[row, 4].GetValue<string>());
-                    var proportion = sourceItemsSheet.Cells[row, 5].GetValue<Decimal>();
-
+                    var proportion = sourceItemsSheet.Cells[row, 5].GetValue<decimal>();
                     var sourceTarget = sources.SingleOrDefault(c => c.Name == source);
                     if (sourceTarget != null)
                     {

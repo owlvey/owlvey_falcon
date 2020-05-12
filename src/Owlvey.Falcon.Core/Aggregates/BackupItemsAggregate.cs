@@ -18,17 +18,17 @@ namespace Owlvey.Falcon.Core.Aggregates
             SourceItems = sourceItems;
         }
 
-        public ICollection<SourceItemLiteModel> Execute() {
-            var result = new List<SourceItemLiteModel>();
-
+        public (ICollection<SourceLiteModel> sources, ICollection<SourceItemLiteModel> items) Execute() {
+            var roots = new List<SourceLiteModel>();
+            var items = new List<SourceItemLiteModel>();
+            roots.AddRange(SourceLiteModel.Load(this.Sources));
             foreach (var source in this.Sources)
-            {
+            {               
                 source.SourceItems = this.SourceItems.Where(c => c.SourceId == source.Id).ToList();
-
-                result.AddRange(SourceItemLiteModel.Loads(source.Name, source.SourceItems));                
+                items.AddRange(SourceItemLiteModel.Loads(source.Name, source.SourceItems));                
             }
 
-            return result;
+            return (roots,items);
         }
 
 
