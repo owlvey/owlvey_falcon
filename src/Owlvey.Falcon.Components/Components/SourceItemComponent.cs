@@ -119,7 +119,7 @@ namespace Owlvey.Falcon.Components
                     }
                 }
 
-                if (period > 500) {                    
+                if (period > 1000) {                    
                     await this._dbContext.SaveChangesAsync();
                     period = 0;
                 }
