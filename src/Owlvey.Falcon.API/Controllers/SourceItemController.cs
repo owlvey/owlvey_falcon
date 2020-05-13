@@ -93,6 +93,22 @@ namespace Owlvey.Falcon.API.Controllers
             }
             return this.Ok(model);
         }
-        
+
+        [HttpGet("interactions")]
+        [ProducesResponseType(typeof(IEnumerable<InteractionSourceItemGetListRp>), 200)]
+        public async Task<IActionResult> GetInteractionsBySourceId(int? sourceId, DateTime? start, DateTime? end)
+        {            
+            if (sourceId.HasValue && start.HasValue && end.HasValue)
+            {
+                var model = await this._sourceItemComponent.GetInteractionsBySourceIdAndDateRange(sourceId.Value, start.Value, end.Value);
+                return this.Ok(model);
+            }            
+            else
+            {
+                return this.BadRequest();
+            }
+            
+        }
+
     }
 }

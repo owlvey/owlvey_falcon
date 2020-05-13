@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
+using Owlvey.Falcon.Core.Entities;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,14 +14,21 @@ namespace Owlvey.Falcon.Models
 
     public class InteractiveSourceItemGetRp : SourceItemBaseRp
     {
-        
+        public InteractiveSourceItemGetRp() { }
+        public InteractiveSourceItemGetRp(InteractionSourceItemEntity entity) {
+            this.Good = entity.Good;
+            this.Total = entity.Total;
+            this.Target = entity.Target;
+            this.CreatedBy = entity.CreatedBy;
+            this.CreatedOn = entity.CreatedOn;
+            this.Proportion = entity.Proportion;            
+        }
         public int Good { get; set; }
         public int Total { get; set; }
         public DateTime Target { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
-        public decimal Proportion { get; set; }
-        public IDictionary<string, decimal> Clues { get; set; } = new Dictionary<string, decimal>();
+        public decimal Proportion { get; set; }        
     }
 
     public class ProportionSourceItemGetRp : SourceItemBaseRp
@@ -47,6 +56,15 @@ namespace Owlvey.Falcon.Models
     {
         public int SourceId { get; set; }        
         public decimal Proportion { get; set; }
+        public DateTime Target { get; set; }
+        public string CreatedBy { get; set; }
+        public DateTime? CreatedOn { get; set; }
+    }
+    public class InteractionSourceItemGetListRp : SourceItemBaseRp {
+        public int SourceId { get; set; }
+        public decimal Proportion { get; set; }
+        public int Total { get; set; }
+        public int Good { get; set; }
         public DateTime Target { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }

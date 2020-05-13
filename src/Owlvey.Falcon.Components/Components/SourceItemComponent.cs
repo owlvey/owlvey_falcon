@@ -210,6 +210,19 @@ namespace Owlvey.Falcon.Components
             var entity = await this._dbContext.GetSourceItems(sourceId, start, end);
             return this._mapper.Map<IEnumerable<SourceItemGetListRp>>(entity);
         }
-        
+
+        public async Task<IEnumerable<InteractiveSourceItemGetRp>> GetInteractionsBySourceIdAndDateRange(int sourceId,
+            DateTime start, DateTime end)
+        {
+            var entities = await this._dbContext.GetSourceItems(sourceId, start, end);
+            var  temp = entities.OfType<InteractionSourceItemEntity>().ToList();
+            var result = new List<InteractiveSourceItemGetRp>();
+            foreach (var item in temp)
+            {
+                result.Add(new InteractiveSourceItemGetRp(item));
+            }
+            return result;
+        }
+
     }
 }
