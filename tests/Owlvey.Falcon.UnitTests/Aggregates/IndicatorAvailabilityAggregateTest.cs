@@ -42,7 +42,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var availabilities = aggregate.MeasureAvailability();
 
             Assert.Equal(31, availabilities.Count());
-            Assert.Equal(0.760m, availabilities.First().Measure.Quality);
+            Assert.Equal(0.751m, availabilities.First().Measure.Quality);
         }
 
         [Fact]
