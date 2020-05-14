@@ -70,6 +70,9 @@ namespace Owlvey.Falcon.Models
         public string Description { get; set; }                
         public decimal SLO { get; set; }
         public decimal Quality { get; set; }
+        public decimal Availability { get; set; }
+        public decimal Latency { get; set; }
+        public decimal Experience { get; set; }
         public decimal Budget { get                 
             {
                 return QualityUtils.MeasureBudget(Quality, SLO);                
@@ -87,8 +90,13 @@ namespace Owlvey.Falcon.Models
             this.Group = service.Group;
             this.Name = service.Name;
             this.SLO = service.Slo;
-            this.Quality = service.MeasureQuality().Quality;
-            this.Description = service.Description;         
+            var measure = service.MeasureQuality();
+            this.Quality = measure.Quality;
+            this.Availability = measure.Availability;
+            this.Latency = measure.Latency;
+            this.Experience = measure.Experience;
+            this.Description = service.Description;       
+            
         }
 
     }
