@@ -105,7 +105,17 @@ namespace Owlvey.Falcon.Components
                     }
                     pivot[group.name].Add( (group.count, group.quality, group.availability, group.latency, group.experience) );
                 }
-                
+                if (!pivot.ContainsKey("[Total]")) {
+                    pivot.Add("[Total]", new List<(int count, decimal quality, decimal availability, decimal latency, decimal experience)>());
+                }
+                pivot["[Total]"].Add(
+                    (
+                        groupsReport.Sum(c => c.count),
+                        groupsReport.Sum(c => c.quality),
+                        groupsReport.Sum(c => c.availability),
+                        groupsReport.Sum(c => c.latency),
+                        groupsReport.Sum(c => c.experience)
+                    ));
             }
 
             if (pivot.Count == 0) return result;
