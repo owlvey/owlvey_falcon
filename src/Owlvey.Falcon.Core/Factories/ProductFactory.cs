@@ -19,12 +19,16 @@ namespace Owlvey.Falcon.Core.Entities
                     ModifiedBy = user,
                     CreatedOn = on,
                     ModifiedOn = on,
+                    
                 };
 
                 var anchorSLI = AnchorEntity.Factory.Create("sample", on, user, entity);                
-                entity.Anchors.Add(anchorSLI);                
-                entity.Customer = customer;
+                entity.Anchors.Add(anchorSLI);                                
                 entity.Validate();
+                entity.Customer = customer;
+                customer.Products.Add(entity);
+
+
                 return entity;
             }
         }

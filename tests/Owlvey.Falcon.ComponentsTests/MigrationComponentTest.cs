@@ -25,7 +25,7 @@ namespace Owlvey.Falcon.ComponentsTests
 
             var result = await customerComponet.CreateCustomer(new Models.CustomerPostRp()
             {
-                Name = "test"
+                Name = "test", Default=true
             });
 
             var user1 = await userComponent.CreateUser(new Models.UserPostRp() { Email = "test1@test.com" });
@@ -60,7 +60,8 @@ namespace Owlvey.Falcon.ComponentsTests
             var dbcontext = container.GetInstance<FalconDbContext>();
 
 
-            var target = new Core.Entities.CustomerEntity() { Name = "target_test", Avatar = "target",
+            var target = new Core.Entities.CustomerEntity() {
+                Name = "target_test", Avatar = "target",
                 CreatedBy = "test",
                 ModifiedBy = "test",
                 ModifiedOn = DateTime.Now,
@@ -70,7 +71,7 @@ namespace Owlvey.Falcon.ComponentsTests
 
             var result = await customerComponet.CreateCustomer(new Models.CustomerPostRp()
             {
-                Name = "test"
+                Name = "test", Default= true
             });
 
             var user1 = await userComponent.CreateUser(new Models.UserPostRp() { Email = "test1@test.com" });
@@ -139,7 +140,7 @@ namespace Owlvey.Falcon.ComponentsTests
 
             var result = await customerComponet.CreateCustomer(new Models.CustomerPostRp()
             {
-                Name = "test"
+                Name = "test",  Default = true   
             });            
 
             var stream = await migrationComponent.Backup(true);
@@ -210,7 +211,7 @@ namespace Owlvey.Falcon.ComponentsTests
 
             var result = await customerComponet.CreateCustomer(new Models.CustomerPostRp()
             {
-                Name = "test"
+                Name = "test", Default=true
             });
 
 

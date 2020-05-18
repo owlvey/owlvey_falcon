@@ -20,9 +20,11 @@ namespace Owlvey.Falcon.Core.Entities
                     CreatedOn = on,
                     ModifiedOn = on,
                     Avatar = avatar,
-                    Customer = customer
+                    
                 };
                 entity.Validate();
+                entity.Customer = customer;
+                customer.Squads.Add(entity);
                 return entity;
             }            
         }

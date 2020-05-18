@@ -5,6 +5,7 @@ using Owlvey.Falcon.Repositories;
 using Xunit;
 using System.Linq;
 using Owlvey.Falcon.Core.Values;
+using Moq;
 
 namespace Owlvey.Falcon.ComponentsTests
 {
@@ -81,7 +82,7 @@ namespace Owlvey.Falcon.ComponentsTests
 
             var products = await productQueryComponent.GetProducts(customerId);
             Assert.NotEmpty(products);
-            Assert.Equal(2, products.Count());
+            Assert.Equal(1, products.Count());
         }
 
 
@@ -114,7 +115,7 @@ namespace Owlvey.Falcon.ComponentsTests
         [Fact]
         public async Task ProductReportDaily() {
             var container = ComponentTestFactory.BuildContainer();
-            var customerId = await ComponentTestFactory.BuildCustomer(container);
+            var customerId = await ComponentTestFactory.BuildCustomer(container, defaultValue: true );
             var productComponet = container.GetInstance<ProductComponent>();
             var productQueryComponent = container.GetInstance<ProductQueryComponent>();
 

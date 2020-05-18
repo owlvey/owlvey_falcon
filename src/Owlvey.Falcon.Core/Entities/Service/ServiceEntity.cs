@@ -29,7 +29,7 @@ namespace Owlvey.Falcon.Core.Entities
         public string Description { get; set; }
                 
         [Required]
-        public decimal AvailabilitySlo { get; set; }
+        public decimal AvailabilitySlo { get; set; } 
 
         [Required]
         public decimal ExperienceSlo { get; set; }

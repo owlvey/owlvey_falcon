@@ -74,7 +74,7 @@ namespace Owlvey.Falcon.ComponentsTests
         [Fact]
         public async Task SquadgetDetailSucces() {
             var container = ComponentTestFactory.BuildContainer();
-            var (customer, product) = await ComponentTestFactory.BuildCustomerProduct(container);
+            var (customer, product) = await ComponentTestFactory.BuildCustomerProduct(container, defaultValues: true);
 
             var squadComponent = container.GetInstance<SquadComponent>();
             var squadQueryComponent = container.GetInstance<SquadQueryComponent>();

@@ -37,12 +37,11 @@ namespace Owlvey.Falcon.Components
             return await retryPolicy.ExecuteAsync(async () =>
             {
                 var entity = await this._dbContext.GetCustomer(model.Name);
-
                 if (entity == null)
                 {
                     entity = CustomerEntity.Factory.Create(createdBy,
                         this._datetimeGateway.GetCurrentDateTime()
-                        , model.Name);
+                        , model.Name, defaultValue : model.Default);
                     await this._dbContext.AddAsync(entity);
                     await this._dbContext.SaveChangesAsync();
                 }

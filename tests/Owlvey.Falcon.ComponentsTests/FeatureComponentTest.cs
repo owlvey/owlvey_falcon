@@ -73,7 +73,7 @@ namespace Owlvey.Falcon.ComponentsTests
         public async Task FeatureSeriesTest()
         {
             var container = ComponentTestFactory.BuildContainer();
-            var (customer, product) = await ComponentTestFactory.BuildCustomerProduct(container);
+            var (customer, product) = await ComponentTestFactory.BuildCustomerProduct(container, defaultValues:true);
 
             var productQueryComponent = container.GetInstance<ProductQueryComponent>();
             var products = await productQueryComponent.GetProducts(customer);

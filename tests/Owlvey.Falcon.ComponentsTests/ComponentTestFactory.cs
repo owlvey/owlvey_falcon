@@ -92,12 +92,13 @@ namespace Owlvey.Falcon.ComponentsTests
         
 
 
-        public static async Task<int> BuildCustomer(Container container, string name = "test") {            
+        public static async Task<int> BuildCustomer(Container container, string name = "test", bool defaultValue=false) {            
             var customerComponet = container.GetInstance<CustomerComponent>();
             var customerQueryComponent = container.GetInstance<CustomerQueryComponent>();
             await customerComponet.CreateCustomer(new Models.CustomerPostRp()
             {
-                Name = name
+                Name = name,
+                Default = defaultValue
             });
             var customer = await customerQueryComponent.GetCustomerByName(name);
             return customer.Id;
@@ -184,13 +185,13 @@ namespace Owlvey.Falcon.ComponentsTests
         }
 
         public static async Task<(int customer, int product)> BuildCustomerProduct(Container container,
-            string customerName="customer", string productName="product") {
+            string customerName="customer", string productName="product", bool defaultValues = false) {
 
             var customerComponet = container.GetInstance<CustomerComponent>();
             var customerQueryComponent = container.GetInstance<CustomerQueryComponent>();
             await customerComponet.CreateCustomer(new Models.CustomerPostRp()
             {
-                Name = customerName
+                Name = customerName, Default = defaultValues
             });
 
             var productComponent = container.GetInstance<ProductComponent>();

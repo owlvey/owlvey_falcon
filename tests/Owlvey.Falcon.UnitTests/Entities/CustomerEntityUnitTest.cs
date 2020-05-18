@@ -44,12 +44,5 @@ namespace Owlvey.Falcon.UnitTests.Entities
             Assert.NotNull(entity.Name);
         }
 
-        [Fact]
-        public void AddProductToCustomerSuccess()
-        {
-            var entity = TestDataFactory.BuildCustomer();
-            var product = ProductEntity.Factory.Create("test",  DateTime.Now, "user", entity);            
-            Assert.NotNull(product.Customer);
-        }
     }
 }

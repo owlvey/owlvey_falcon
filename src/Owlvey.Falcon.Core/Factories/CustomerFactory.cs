@@ -11,7 +11,7 @@ namespace Owlvey.Falcon.Core.Entities
 
             private static void DefaultValues(CustomerEntity result, DateTime on , string user) {
                 var defaultProduct = ProductEntity.Factory.Create("Awesome Product", on, user, result);
-                result.Products.Add(defaultProduct);                
+                             
 
                 var defaultFeature = FeatureEntity.Factory.Create("Awesome Login", on, user, defaultProduct);
                 defaultProduct.Features.Add(defaultFeature);
@@ -23,12 +23,9 @@ namespace Owlvey.Falcon.Core.Entities
                 defaultProduct.Features.Add(paymentFeature);
 
                 var defaultService = ServiceEntity.Factory.Create("Awesome Onboarding", on, user, defaultProduct);
-                defaultService.AvailabilitySlo = 0.999m;                
-
                 defaultProduct.Services.Add(defaultService);
 
-                var defaultPaymentService = ServiceEntity.Factory.Create("Awesome Payment Service", on, user, defaultProduct);
-                defaultPaymentService.AvailabilitySlo = 0.99m;
+                var defaultPaymentService = ServiceEntity.Factory.Create("Awesome Payment Service", on, user, defaultProduct);                
                 defaultProduct.Services.Add(defaultPaymentService);
 
                 var defaultMap = ServiceMapEntity.Factory.Create(defaultService, defaultFeature, on, user);
@@ -41,7 +38,7 @@ namespace Owlvey.Falcon.Core.Entities
                 defaultPaymentService.FeatureMap.Add(defaultMap);
 
                 var defaultSquad = SquadEntity.Factory.Create("Spartans", on, user, result);
-                result.Squads.Add(defaultSquad);
+               
 
                 var defaultSquadFeature = SquadFeatureEntity.Factory.Create(defaultSquad, defaultFeature, on, user);
                 defaultSquad.FeatureMaps.Add(defaultSquadFeature);
@@ -49,9 +46,8 @@ namespace Owlvey.Falcon.Core.Entities
                 defaultSquadFeature = SquadFeatureEntity.Factory.Create(defaultSquad, defaultRegistration, on, user);
                 defaultSquad.FeatureMaps.Add(defaultSquadFeature);
 
-
                 var AllBlacksSquad = SquadEntity.Factory.Create("All Blacks", on, user, result);
-                result.Squads.Add(AllBlacksSquad);
+                
 
                 defaultSquadFeature = SquadFeatureEntity.Factory.Create(AllBlacksSquad, paymentFeature, on, user);
                 AllBlacksSquad.FeatureMaps.Add(defaultSquadFeature);                
