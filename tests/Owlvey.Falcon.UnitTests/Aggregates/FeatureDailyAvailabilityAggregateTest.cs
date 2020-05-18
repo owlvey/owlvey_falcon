@@ -22,7 +22,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
 
             var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, "/api/customer");
 
-            var sourceItems = InteractionSourceEntity.Factory.CreateInteractionsFromRange(source, OwlveyCalendar.StartJanuary2019,
+            var sourceItems = SourceEntity.Factory.CreateInteractionsFromRange(source, OwlveyCalendar.StartJanuary2019,
                 OwlveyCalendar.EndJanuary2019, 900, 1200, DateTime.Now, "test");
 
             foreach (var item in sourceItems)
@@ -32,7 +32,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
 
             var indicatorA = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, "/api/customer");
 
-            var sourceItemsA = InteractionSourceEntity.Factory.CreateInteractionsFromRange(source, OwlveyCalendar.StartJanuary2019,
+            var sourceItemsA = SourceEntity.Factory.CreateInteractionsFromRange(source, OwlveyCalendar.StartJanuary2019,
                 OwlveyCalendar.EndJanuary2019, 900, 1200, DateTime.Now, "test");
 
             foreach (var item in sourceItemsA)

@@ -225,7 +225,7 @@ namespace Owlvey.Falcon.ComponentsTests
                     var sourceItems = await sourceItemComponent.GetBySource(source.Id);
                     foreach (var sour in sourceItems)
                     {   
-                        await sourceItemComponent.Update(sour.Id, sour.Proportion,
+                        await sourceItemComponent.Update(sour.Id, sour.Measure,
                             OwlveyCalendar.January201903);
                     }
                 }

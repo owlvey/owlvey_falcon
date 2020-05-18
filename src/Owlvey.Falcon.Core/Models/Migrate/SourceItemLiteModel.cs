@@ -1,6 +1,7 @@
 ﻿using Owlvey.Falcon.Core.Entities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using System.Text;
 
 namespace Owlvey.Falcon.Core.Models.Migrate
@@ -11,18 +12,15 @@ namespace Owlvey.Falcon.Core.Models.Migrate
         public int Good { get; set; }
         public int Total { get; set; }
         public string Target { get; set; }
-        public decimal Proportion { get; set; }
+        public decimal Measure { get; set; }
 
         public void Load(string source, SourceItemEntity entity)
         {        
-            this.Source = source;
-            var interactive = entity as InteractionSourceItemEntity;
-            if (interactive != null)
-            {
-                this.Good = interactive.Good;
-                this.Total = interactive.Total;
-            }            
-            this.Proportion = entity.Proportion;
+            this.Source = source;            
+            this.Good = entity.Good.GetValueOrDefault();
+            this.Total = entity.Total.GetValueOrDefault();
+            
+            this.Measure = entity.Measure;
             this.Target = entity.Target.ToString("s", System.Globalization.CultureInfo.InvariantCulture);
         }
         public static IEnumerable<SourceItemLiteModel> Loads(string source, IEnumerable<SourceItemEntity> entities)

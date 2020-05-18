@@ -1,6 +1,7 @@
 ﻿using Owlvey.Falcon.Core.Entities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Owlvey.Falcon.Models
@@ -52,7 +53,7 @@ namespace Owlvey.Falcon.Models
     {
         public string CreatedBy { get; set; }
         public DateTime CreatedOn { get; set; }
-        public decimal Availability { get; set; }        
+        public decimal Measure { get; set; }        
         public int References { get; set; }
     }
 
@@ -76,5 +77,10 @@ namespace Owlvey.Falcon.Models
         public string Avatar { get; set; }
         public string GoodDefinition { get; set; }
         public string TotalDefinition { get; set; }
+    }
+
+    public class LatencySourcePutRp: SourcePutRp
+    {        
+        public decimal Percentile { get; set; }
     }
 }

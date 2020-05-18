@@ -30,53 +30,6 @@ namespace Owlvey.Falcon.ComponentsTests
         }
 
         [Fact]
-        public async Task SourceItemWithClues()
-        {
-            var container = ComponentTestFactory.BuildContainer();
-            var (_, product) = await ComponentTestFactory.BuildCustomerProduct(container);
-            var source = await ComponentTestFactory.BuildSource(container, product: product);
-
-            var sourceComponent = container.GetInstance<SourceComponent>();
-            var itemComponent = container.GetInstance<SourceItemComponent>();
-
-            await itemComponent.Create(new Models.SourceItemInteractionPostRp()
-            {
-                SourceId = source,
-                Start = OwlveyCalendar.January201905,
-                End = OwlveyCalendar.January201910,
-                Good = 900,
-                Total = 1000,
-                Clues = new Dictionary<string, decimal>() {
-                    { "test", 0.3M }, { "test_a", 0.7M }
-                }
-            });
-
-            await itemComponent.Create(new Models.SourceItemInteractionPostRp()
-            {
-                SourceId = source,
-                Start = OwlveyCalendar.January201905,
-                End = OwlveyCalendar.January201910,
-                Good = 900,
-                Total = 1000,
-                Clues = new Dictionary<string, decimal>() {
-                    { "test", 0.8M }, { "test_a", 0.5M }
-                }
-            });
-
-            var items = await itemComponent.GetBySourceIdAndDateRange(source, OwlveyCalendar.StartJanuary2019, OwlveyCalendar.January201908);
-            Assert.NotEmpty(items);                       
-
-            var sourceRp = await sourceComponent.GetByIdWithAvailability(source, 
-                OwlveyCalendar.StartJanuary2019, 
-                OwlveyCalendar.January201908);
-
-            Assert.NotEmpty(sourceRp.Clues);
-
-            Assert.Equal(4.4M, sourceRp.Clues["test"]);
-            Assert.Equal(4.8M, sourceRp.Clues["test_a"]);
-        }
-
-        [Fact]
         public async Task SourceItemEndMiddle()
         {
             var container = ComponentTestFactory.BuildContainer();

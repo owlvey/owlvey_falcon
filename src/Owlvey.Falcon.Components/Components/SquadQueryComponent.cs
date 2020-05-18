@@ -108,9 +108,9 @@ namespace Owlvey.Falcon.Components
                     ServiceAvatar = item.service.Avatar,                    
                 };
                 tmp.Name = item.feature.Name;
-                tmp.SLO = item.service.Slo;
+                tmp.SLO = item.service.AvailabilitySlo;
                 tmp.Service = item.service.Name;
-                tmp.Impact = QualityUtils.MeasureImpact(item.service.Slo);
+                tmp.Impact = QualityUtils.MeasureImpact(item.service.AvailabilitySlo);
                 tmp.Points = item.points;
 
                 result.Points += tmp.Points;

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using Owlvey.Falcon.Models;
 
 namespace Owlvey.Falcon.Components
 {    
@@ -11,10 +12,10 @@ namespace Owlvey.Falcon.Components
     {
         public static void ConfigureMappers(IMapperConfigurationExpression cfg)
         {
-            cfg.CreateMap<IncidentEntity, Models.IncidentGetListRp>()
+            cfg.CreateMap<IncidentEntity, IncidentGetListRp>()
                     .ForMember(c => c.FeaturesCount, opt => opt.MapFrom(c => c.FeatureMaps.Count()));
 
-            cfg.CreateMap<IncidentEntity, Models.IncidentDetailtRp>()
+            cfg.CreateMap<IncidentEntity, IncidentDetailtRp>()
                 .ForMember(c => c.Features, opt => opt.MapFrom(c=>c.FeatureMaps.Select(d=>d.Feature).ToList()));
         }
     }

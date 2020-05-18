@@ -11,17 +11,17 @@ namespace Owlvey.Falcon.UnitTests.Entities
         {
             var compare = new SourceEntityComparer();
 
-            var result = compare.Equals(new InteractionSourceEntity() { Id = 2 }, new InteractionSourceEntity() { Id = 3 });
+            var result = compare.Equals(new SourceEntity() { Id = 2 }, new SourceEntity() { Id = 3 });
             Assert.False(result);
 
-            result = compare.Equals(new InteractionSourceEntity() { Id = 2 }, new InteractionSourceEntity() { Id = 2 });
+            result = compare.Equals(new SourceEntity() { Id = 2 }, new SourceEntity() { Id = 2 });
             Assert.True(result);
         }
         [Fact]
         public void GetHashCodeSuccess()
         {
             var compare = new SourceEntityComparer();
-            var result = compare.GetHashCode(new InteractionSourceEntity() { Id = 3 });
+            var result = compare.GetHashCode(new SourceEntity() { Id = 3 });
             Assert.Equal(3, result);
         }
     }

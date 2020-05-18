@@ -89,17 +89,16 @@ namespace Owlvey.Falcon.Components
             }
                         
             var model = this._mapper.Map<FeatureQualityGetRp>(feature);
-            var measure = feature.MeasureQuality();
+            var measure = feature.Measure();
             model.LoadQuality(measure);
             foreach (var indicator in feature.Indicators)
             {                
-                var tmp = this._mapper.Map<IndicatorAvailabilityGetListRp>(indicator);
-                var proportion = indicator.Source.MeasureProportion();
-                tmp.Quality = proportion.Proportion;                
+                var tmp = this._mapper.Map<IndicatorAvailabilityGetListRp>(indicator);                
+                tmp.Measure = indicator.Source.Measure().Value;                
                 model.Indicators.Add(tmp);
             }
 
-            model.Indicators = model.Indicators.OrderByDescending(c => c.Quality).ToList();
+            model.Indicators = model.Indicators.OrderByDescending(c => c.Measure).ToList();
 
             foreach (var map in feature.ServiceMaps)
             {
@@ -162,8 +161,7 @@ namespace Owlvey.Falcon.Components
                     indicator.Source.SourceItems = sourceItems.Where(c=>c.SourceId == indicator.SourceId).ToList();
                 }
                 var tmp = this._mapper.Map<FeatureAvailabilityGetListRp>(feature);                
-                var measure = feature.MeasureQuality();                
-                tmp.Quality = measure.Quality;
+                var measure = feature.Measure();                                
                 tmp.Availability = measure.Availability;
                 tmp.Experience = measure.Experience;
                 tmp.Latency = measure.Latency;
@@ -207,9 +205,9 @@ namespace Owlvey.Falcon.Components
                 }
 
                 var tmp = this._mapper.Map<SequenceFeatureGetListRp>(feature);                                
-                var measure = feature.MeasureQuality();
-                tmp.Quality = measure.Quality;
+                var measure = feature.Measure();                
                 tmp.Availability = measure.Availability;
+                tmp.Experience = measure.Experience;
                 tmp.Latency = measure.Latency;                
                 tmp.MapId = map.Id.Value;                
                 result.Add(tmp);
@@ -225,7 +223,8 @@ namespace Owlvey.Falcon.Components
             return result;
         }
 
-        public async Task<MultiSeriesGetRp> GetDailySeriesById(int featureId, DateTime start, DateTime end)
+        public async Task<MultiSeriesGetRp> GetDailyAvailabilitySeriesById(int featureId,
+            DateTime start, DateTime end)
         {
             var entity = await this._dbContext.Features.Include(c => c.Indicators)
                 .ThenInclude(c => c.Source)
@@ -251,9 +250,9 @@ namespace Owlvey.Falcon.Components
 
             result.Series.Add(new MultiSerieItemGetRp()
             {
-                Name = "Quality",
+                Name = "Availability",
                 Avatar = entity.Avatar,
-                Items = availability.Select(c => new SeriesItemGetRp(c.Date, c.Measure.Quality)).ToList()
+                Items = availability.Select(c => new SeriesItemGetRp(c.Date, c.Measure.Availability)).ToList()
             }); 
 
             foreach (var indicator in indicators)
@@ -262,7 +261,7 @@ namespace Owlvey.Falcon.Components
                 {
                     Name = string.Format("SLI:{0}", indicator.Item1.Id),
                     Avatar = indicator.Item1.Avatar,
-                    Items = indicator.Item2.Select(c => new SeriesItemGetRp(c.Date, c.Measure.Quality)).ToList()
+                    Items = indicator.Item2.Select(c => new SeriesItemGetRp(c.Date, c.Measure.Availability)).ToList()
                 });
             }
 

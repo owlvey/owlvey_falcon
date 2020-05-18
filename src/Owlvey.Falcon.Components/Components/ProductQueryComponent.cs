@@ -82,26 +82,26 @@ namespace Owlvey.Falcon.Components
             */
             foreach (var service in product.Services)
             {
-                var measure = service.MeasureQuality();
+                var measure = service.Measure();
                 var snode = new GraphNode
                 {
                     Id = string.Format("service_{0}", service.Id),
                     Avatar = service.Avatar,
                     Name = string.Format("{0} [ {1} | {2} ]", service.Name,
-                        Math.Round(service.Slo, 2),
-                        Math.Round(measure.Quality, 2)),
-                    Value = measure.Quality,
+                        Math.Round(service.AvailabilitySlo, 2),
+                        Math.Round(measure.Availability, 2)),
+                    Value = measure.Availability,
                     Group = "services",
-                    Slo = service.Slo,
-                    Importance = QualityUtils.MeasureImpact(service.Slo),
-                    Budget = QualityUtils.MeasureBudget(measure.Quality, service.Slo)
+                    Slo = service.AvailabilitySlo,
+                    Importance = QualityUtils.MeasureImpact(service.AvailabilitySlo),
+                    Budget = measure.AvailabilityErrorBudget
                 };
                 
                 result.Nodes.Add(snode);                
 
                 foreach (var map in service.FeatureMap)
                 {
-                    var featureMeasure = map.Feature.MeasureQuality();
+                    var featureMeasure = map.Feature.Measure();
                     var Id = string.Format("feature_{0}", map.Feature.Id);
                     var fnode = result.Nodes.SingleOrDefault(c => c.Id == Id);
                     if (fnode == null)
@@ -111,7 +111,7 @@ namespace Owlvey.Falcon.Components
                             Id = Id,
                             Avatar = map.Feature.Avatar,
                             Name = map.Feature.Name,
-                            Value = featureMeasure.Quality,
+                            Value = featureMeasure.Availability,
                             Group = "features"
                         };
                         result.Nodes.Add(fnode);
@@ -120,7 +120,7 @@ namespace Owlvey.Falcon.Components
                     {
                         From = snode.Id,
                         To = fnode.Id,
-                        Value =  fnode.Value - service.Slo,
+                        Value =  fnode.Value - service.AvailabilitySlo,
                         Tags = new Dictionary<string, object>() {
                             { "Availability", fnode.Value }
                         }
@@ -227,7 +227,7 @@ namespace Owlvey.Falcon.Components
             };            
             foreach (var item in response.OrderBy(c => c.Date))
             {                
-                debtSerie.Items.Add(new SeriesItemGetRp(item.Date, item.Measure.Debt));                                
+                debtSerie.Items.Add(new SeriesItemGetRp(item.Date, item.Measure.AvailabilityDebt));                                
             }
             result.Series.Add(debtSerie);            
 
@@ -280,7 +280,7 @@ namespace Owlvey.Falcon.Components
                     squadMap.Feature = feature;
                     feature.Squads.Add(squadMap);
                 }
-                feature.MeasureQuality();
+                feature.Measure();
                 featuresExports.Add(new ExportExcelFeatureRp(feature));
 
                 foreach (var indicator in feature.Indicators)
@@ -297,7 +297,7 @@ namespace Owlvey.Falcon.Components
                 {
                     map.Feature = product.Features.Single(c => c.Id == map.FeatureId);
                 }
-                service.MeasureQuality();
+                service.Measure();
                 serviceExports.Add(new ExportExcelServiceRp(service));
              
                 foreach (var featureMap in service.FeatureMap)
@@ -364,9 +364,9 @@ namespace Owlvey.Falcon.Components
                     {
                         map.Feature = product.Features.Single(c => c.Id == map.FeatureId);
                     }
-                    var measure = service.MeasureQuality();
+                    var measure = service.Measure();
                     
-                    if (measure.Quality < service.Slo)
+                    if (measure.Availability < service.AvailabilitySlo)
                     {
                         targetGroup.Fail += 1;
                         sloFails += 1;
@@ -405,12 +405,12 @@ namespace Owlvey.Falcon.Components
             foreach (var source in product.Sources)
             {
                 source.SourceItems = sourceItems.Where(c => c.SourceId == source.Id).ToList();                
-                var measure = source.MeasureProportion();                
+                var measure = source.Measure();                
                 
                 result.Sources.Add(new SourceGetListRp()
                 {
                     Id = source.Id.Value,
-                    Availability = measure.Proportion,                    
+                    Measure = measure.Value,                    
                     Avatar = source.Avatar,
                     CreatedBy = source.CreatedBy,
                     CreatedOn = source.CreatedOn.Value,
@@ -433,8 +433,8 @@ namespace Owlvey.Falcon.Components
                 }
                                 
                 var tmp = this._mapper.Map<FeatureGetListRp>(feature);
-                var measure = feature.MeasureQuality();
-                tmp.LoadQuality(measure);
+                var measure = feature.Measure();
+                tmp.LoadMeasure(measure);
                 result.Features.Add(tmp);
 
                 var featureIncidents = incidentsData.Where(c => c.FeatureId == feature.Id)
@@ -472,9 +472,9 @@ namespace Owlvey.Falcon.Components
                     map.Feature = product.Features.Single(c => c.Id == map.FeatureId);
                 }                
                 
-                var measure = service.MeasureQuality();
+                var measure = service.Measure();
 
-                if (measure.Quality < service.Slo)
+                if (measure.Availability < service.AvailabilitySlo)
                 {
                     sloFails += 1;
                 }
@@ -485,15 +485,15 @@ namespace Owlvey.Falcon.Components
                 
             }
 
-            result.Services = result.Services.OrderBy(c => c.Quality).ToList();
+            result.Services = result.Services.OrderBy(c => c.Availability).ToList();
             result.SLOFail = sloFails;
             result.SLOProportion = QualityUtils.CalculateFailProportion(product.Services.Count, sloFails);
-            result.SourceStats = new StatsValue(result.Sources.Select(c => c.Availability));            
-            result.FeaturesStats = new StatsValue(result.Features.Select(c => c.Quality));
+            result.SourceStats = new StatsValue(result.Sources.Select(c => c.Measure));            
+            result.FeaturesStats = new StatsValue(result.Features.Select(c => c.Availability));
             result.FeaturesCoverage = QualityUtils.CalculateProportion(product.Features.Count,
                 squadsData.Select(c=>c.FeatureId).Distinct().Count());
 
-            result.ServicesStats = new StatsValue(result.Services.Select(c => c.Quality));
+            result.ServicesStats = new StatsValue(result.Services.Select(c => c.Availability));
             return result;
         }
         #endregion

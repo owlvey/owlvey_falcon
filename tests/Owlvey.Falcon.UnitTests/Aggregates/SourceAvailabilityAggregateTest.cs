@@ -13,27 +13,27 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         public void MeasureFeatureAvailability()
         {
 
-            var entity = new InteractionSourceEntity()
+            var entity = new SourceEntity()
             {
                 Kind = SourceKindEnum.Interaction,            
             };
 
-            entity.SourceItems.Add(InteractionSourceEntity.Factory.CreateInteraction(entity, DateTime.Now, 800, 1000, DateTime.Now, "test"));
+            entity.SourceItems.Add(SourceEntity.Factory.CreateInteraction(entity, DateTime.Now, 800, 1000, DateTime.Now, "test"));
 
-            var proportion = entity.MeasureProportion();
+            var proportion = entity.Measure();
 
-            Assert.Equal(0.8m, proportion.Proportion);
+            Assert.Equal(0.8m, proportion.Value);
         }
 
         [Fact]
         public void MeasureProportionAvailability()
         {
 
-            var sourceEntity = new InteractionSourceEntity() { };
+            var sourceEntity = new SourceEntity() { };
             sourceEntity.AddSourceItem(800, 1000, OwlveyCalendar.January201903, DateTime.Now, "test");
             
-            var a = sourceEntity.MeasureProportion();
-            Assert.Equal(0.8m, a.Proportion);
+            var a = sourceEntity.Measure();
+            Assert.Equal(0.8m, a.Value);
         }
     }
 }

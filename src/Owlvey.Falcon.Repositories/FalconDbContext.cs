@@ -58,10 +58,10 @@ namespace Owlvey.Falcon.Repositories
             // Customer Name Unique
             modelBuilder.Entity<SourceItemEntity>().HasIndex(p => p.Target);
 
-            modelBuilder.Entity<SourceItemEntity>()
-                .HasDiscriminator<SourceKindEnum>("Kind")
-                .HasValue<InteractionSourceItemEntity>(SourceKindEnum.Interaction)
-                .HasValue<ProportionSourceItemEntity>(SourceKindEnum.Proportion);
+            //modelBuilder.Entity<SourceItemEntity>()
+            //    .HasDiscriminator<SourceKindEnum>("Kind")
+            //    .HasValue<SourceItemEntity>(SourceKindEnum.Interaction)
+            //    .HasValue<SourceItemEntity>(SourceKindEnum.Proportion);
 
             modelBuilder.Entity<CustomerEntity>().HasIndex(c => c.Name).IsUnique();
 
@@ -70,20 +70,26 @@ namespace Owlvey.Falcon.Repositories
             modelBuilder.Entity<ProductEntity>().HasIndex(c => new { c.CustomerId, c.Name }).IsUnique();
 
             modelBuilder.Entity<ServiceEntity>()
-                .Property(c => c.Slo).HasColumnType("decimal(5,3)");
+                .Property(c => c.AvailabilitySlo).HasColumnType("decimal(5,3)");
+            modelBuilder.Entity<ServiceEntity>()
+                .Property(c => c.LatencySlo).HasColumnType("decimal(5,3)");
+            modelBuilder.Entity<ServiceEntity>()
+                .Property(c => c.ExperienceSlo).HasColumnType("decimal(5,3)");
+
 
             modelBuilder.Entity<ServiceEntity>()                
                 .HasIndex(c => new { c.ProductId, c.Name }).IsUnique();
             modelBuilder.Entity<FeatureEntity>().HasIndex(c => new { c.ProductId, c.Name }).IsUnique();
 
-            modelBuilder.Entity<SourceEntity>()
-                .HasDiscriminator<SourceKindEnum>("Kind")
-                .HasValue<InteractionSourceEntity>(SourceKindEnum.Interaction)
-                .HasValue<ProportionSourceEntity>(SourceKindEnum.Proportion);
+            //modelBuilder.Entity<SourceEntity>()
+            //    .HasDiscriminator<SourceKindEnum>("Kind")
+            //    .HasValue<InteractionSourceEntity>(SourceKindEnum.Interaction)
+            //    .HasValue<ProportionSourceEntity>(SourceKindEnum.Proportion);
 
             modelBuilder.Entity<SourceEntity>().HasIndex(c => new { c.ProductId, c.Name }).IsUnique();
-            modelBuilder.Entity<ProportionSourceEntity>().HasBaseType<SourceEntity>();
-            modelBuilder.Entity<InteractionSourceEntity>().HasBaseType<SourceEntity>();
+
+            //modelBuilder.Entity<ProportionSourceEntity>().HasBaseType<SourceEntity>();
+            //modelBuilder.Entity<InteractionSourceEntity>().HasBaseType<SourceEntity>();
 
             modelBuilder.Entity<SquadEntity>().HasIndex(c => new { c.CustomerId, c.Name }).IsUnique();
 

@@ -13,7 +13,9 @@ namespace Owlvey.Falcon.Core.Entities
                 var entity = new ServiceEntity()
                 {
                     Name = name,                    
-                    Slo = 0.99m,
+                    AvailabilitySlo = 0.99m,
+                    ExperienceSlo = 0.99m,
+                    LatencySlo = 1000m,
                     Avatar = "https://cdn4.iconfinder.com/data/icons/pretty-office-part-7-reflection-style/256/Cup-gold.png",
                     CreatedBy = user,
                     ModifiedBy = user,                    

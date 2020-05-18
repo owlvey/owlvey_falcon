@@ -9,23 +9,27 @@ namespace Owlvey.Falcon.Models
     public class ExportExcelFeatureRp {
         public int FeatureId { get; set; }          
         public string Name { get; set; }
-        public decimal Quality { get; set; }        
+        public decimal Availability { get; set; }
+        public decimal Latency { get; set; }
+        public decimal Experience{ get; set; }
 
         public ExportExcelFeatureRp() { }
 
         public ExportExcelFeatureRp(FeatureEntity feature) {
             this.FeatureId = feature.Id.Value;            
-            this.Name = feature.Name;            
-            this.Quality = feature.MeasureQuality().Quality;            
+            this.Name = feature.Name;
+            var measure = feature.Measure();
+            this.Availability= measure.Availability;
+            this.Latency = measure.Latency;
+            this.Experience= measure.Experience;
         }
     }
     public class ExportExcelFeatureDetailRp{
         public int FeatureId { get; set; }
         public int SourceId { get; set; }
-        public string Feature { get; set; }
-        public decimal FeatureQuality { get; set; }
+        public string Feature { get; set; }        
         public string Source { get; set; }
-        public decimal SourceQuality { get; set; }
+        public decimal SourceMeasure { get; set; }
 
         public ExportExcelFeatureDetailRp() { }
 
@@ -35,9 +39,8 @@ namespace Owlvey.Falcon.Models
             this.FeatureId = feature.Id.Value;
             this.SourceId = indicator.SourceId;
             this.Feature = feature.Name;
-            this.Source = indicator.Source.Name;
-            this.FeatureQuality = feature.MeasureQuality().Quality;
-            this.SourceQuality = indicator.Source.MeasureProportion().Proportion;
+            this.Source = indicator.Source.Name;            
+            this.SourceMeasure = indicator.Source.Measure().Value;
         }
     }
      
@@ -54,7 +57,7 @@ namespace Owlvey.Falcon.Models
             this.SourceId = source.Id.Value;
             this.Source = source.Name;
             this.Kind = source.Kind.ToString();
-            this.Quality = source.MeasureProportion().Proportion;            
+            this.Quality = source.Measure().Value;            
             this.TotalDefinition = source.TotalDefinition;
             this.GoodDefinition = source.GoodDefinition;
             this.Description = source.Description;            
@@ -68,20 +71,19 @@ namespace Owlvey.Falcon.Models
         public string Group { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }                
-        public decimal SLO { get; set; }
-        public decimal Quality { get; set; }
+        public decimal AvailabilitySLO { get; set; }
+        public decimal LatencySLO { get; set; }
+        public decimal ExperienceSLO { get; set; }
+        public decimal Experience { get; set; }
         public decimal Availability { get; set; }
         public decimal Latency { get; set; }
-        public decimal Experience { get; set; }
-        public decimal Budget { get                 
+        
+        public decimal AvailabilityErrorBudget { get                 
             {
-                return QualityUtils.MeasureBudget(Quality, SLO);                
+                return QualityUtils.MeasureBudget(this.Availability, this.AvailabilitySLO);                
             }
         }
-        public string Action { get {
-                return QualityUtils.BudgetToAction(this.Budget);
-            }
-        }        
+            
 
         public ExportExcelServiceRp() { }
         public ExportExcelServiceRp(ServiceEntity service) {
@@ -89,16 +91,15 @@ namespace Owlvey.Falcon.Models
             this.Product = service.Product.Name;
             this.Group = service.Group;
             this.Name = service.Name;
-            this.SLO = service.Slo;
-            var measure = service.MeasureQuality();
-            this.Quality = measure.Quality;
+            this.AvailabilitySLO = service.AvailabilitySlo;
+            this.ExperienceSLO = service.ExperienceSlo;
+            this.LatencySLO = service.LatencySlo;
+            var measure = service.Measure();            
             this.Availability = measure.Availability;
             this.Latency = measure.Latency;
             this.Experience = measure.Experience;
-            this.Description = service.Description;       
-            
+            this.Description = service.Description;                   
         }
-
     }
 
     public class ExportExcelServiceDetailRp {
@@ -106,20 +107,19 @@ namespace Owlvey.Falcon.Models
         public int FeatureId { get; set; }        
         public string Service { get; set; }
         public string Feature { get; set; }
-        public decimal SLO { get; set; }
+        public decimal AvailabilitySLO { get; set; }
+        public decimal LatencySLO { get; set; }
+        public decimal ExperienceSLO { get; set; }
         public decimal ServiceQuality { get; set; }
         public decimal ServiceBudget
         {
             get
             {
-                return QualityUtils.MeasureBudget(this.ServiceQuality, this.SLO);
+                return QualityUtils.MeasureBudget(this.ServiceQuality, this.AvailabilitySLO);
             }
         }
-        public decimal FeatureSLO { get; set; }        
-        public decimal FeatureQuality { get; set; }
-        public decimal FeatureBudget { get {
-                return QualityUtils.MeasureBudget(this.FeatureQuality, this.FeatureSLO);
-            } }
+        
+        
 
         public ExportExcelServiceDetailRp() { }
 
@@ -130,10 +130,8 @@ namespace Owlvey.Falcon.Models
             this.FeatureId = feature.Id.Value;            
             this.Service = service.Name;
             this.Feature = feature.Name;
-            this.SLO = service.Slo;
-            this.FeatureSLO = service.FeatureSLO;
-            this.ServiceQuality = service.MeasureQuality().Quality;
-            this.FeatureQuality= feature.MeasureQuality().Quality;
+            this.AvailabilitySLO = service.AvailabilitySlo;            
+            this.ServiceQuality = service.Measure().Availability;            
         }
     }
 

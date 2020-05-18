@@ -238,8 +238,7 @@ namespace Owlvey.Falcon.Components
             if (includeItems)
             {
                 var temp = await this._dbContext.SourcesItems
-                    .Include(c => c.Source)
-                    .Include(c=> c.Clues)
+                    .Include(c => c.Source)                    
                     .Where(c => c.Source.Product.CustomerId == customerId).ToListAsync();
                 foreach (var item in temp)
                 {
@@ -248,16 +247,13 @@ namespace Owlvey.Falcon.Components
                     {
                         Product = product.Name,
                         Target = item.Target.ToString("s", System.Globalization.CultureInfo.InvariantCulture),                        
-                        Source = item.Source.Name,
-                        Clues = JsonConvert.SerializeObject(item.ExportClues()),
-                        Proportion = item.Proportion
+                        Source = item.Source.Name,                        
+                        Proportion = item.Measure
                     };
-                    var interactive = item as InteractionSourceItemEntity;
-                    if (interactive != null)
-                    {
-                        map.Total = interactive.Total;
-                        map.Good = interactive.Good;                        
-                    }
+                    
+                    map.Total = item.Total.GetValueOrDefault();
+                    map.Good = item.Good.GetValueOrDefault();                        
+                    
                     items.Add(map);                    
                 }
             }
@@ -466,16 +462,18 @@ namespace Owlvey.Falcon.Components
                     var product = serviceSheet.Cells[row, 1].GetValue<string>();
                     var name = serviceSheet.Cells[row, 2].GetValue<string>();
                     var description = serviceSheet.Cells[row, 3].GetValue<string>();
-                    var slo = serviceSheet.Cells[row, 4].GetValue<decimal>();
-                    var avatar = serviceSheet.Cells[row, 5].GetValue<string>();
-                    var leaders = serviceSheet.Cells[row, 6].GetValue<string>();
-                    var aggregation = serviceSheet.Cells[row, 7].GetValue<string>();
-                    var group = serviceSheet.Cells[row, 8].GetValue<string>();
+                    var availabilitySlo = serviceSheet.Cells[row, 4].GetValue<decimal>();
+                    var latencySlo = serviceSheet.Cells[row, 5].GetValue<decimal>();
+                    var experienceSlo = serviceSheet.Cells[row, 6].GetValue<decimal>();
+                    var avatar = serviceSheet.Cells[row, 7].GetValue<string>();
+                    var leaders = serviceSheet.Cells[row, 8].GetValue<string>();
+                    var aggregation = serviceSheet.Cells[row, 9].GetValue<string>();
+                    var group = serviceSheet.Cells[row, 10].GetValue<string>();
                     if (product != null && name != null)
                     {
                         await this._serviceComponent.CreateOrUpdate(customer, 
                             product, name, description, 
-                            avatar, slo, leaders, aggregation, group);
+                            avatar, availabilitySlo, latencySlo, experienceSlo, leaders, aggregation, group);
                     }
                 }
 
@@ -548,8 +546,7 @@ namespace Owlvey.Falcon.Components
                             Start = target,
                             End = target,
                             Good = good,
-                            Total = total,
-                            Clues = targetClues
+                            Total = total                            
                         }));                        
                     }
                 }
@@ -727,13 +724,16 @@ namespace Owlvey.Falcon.Components
                     var product = servicesSheet.Cells[row, 2].GetValue<string>();
                     var name = servicesSheet.Cells[row, 3].GetValue<string>();
                     var group = servicesSheet.Cells[row, 4].GetValue<string>();
-                    var slo = servicesSheet.Cells[row, 5].GetValue<decimal>();
-                    var description = servicesSheet.Cells[row, 6].GetValue<string>();
-                    var avatar = servicesSheet.Cells[row, 7].GetValue<string>();
-                    var leaders = servicesSheet.Cells[row, 8].GetValue<string>();
-                    var aggregation = servicesSheet.Cells[row, 9].GetValue<string>();
+                    var availabilitySlo = servicesSheet.Cells[row, 5].GetValue<decimal>();
+                    var latencySlo = servicesSheet.Cells[row, 6].GetValue<decimal>();
+                    var experienceSlo = servicesSheet.Cells[row, 7].GetValue<decimal>();
+                    var description = servicesSheet.Cells[row, 8].GetValue<string>();
+                    var avatar = servicesSheet.Cells[row, 9].GetValue<string>();
+                    var leaders = servicesSheet.Cells[row, 10].GetValue<string>();
+                    var aggregation = servicesSheet.Cells[row, 11].GetValue<string>();
                     await this._serviceComponent.CreateOrUpdate(
-                        organizations.Single(c=>c.Name == organization),product, name, description, avatar, slo, leaders, aggregation, group);
+                        organizations.Single(c=>c.Name == organization),product, name,
+                        description, avatar, availabilitySlo, latencySlo, experienceSlo, leaders, aggregation, group);
                 }
 
                 var services = await this._dbContext.Services.ToListAsync();
@@ -854,8 +854,7 @@ namespace Owlvey.Falcon.Components
                             Start = target,
                             End = target,
                             Good = good,
-                            Total = total,
-                            Clues = new Dictionary<string, decimal>()
+                            Total = total
                         }));
                     }
                     else {
@@ -864,8 +863,7 @@ namespace Owlvey.Falcon.Components
                             SourceId = sourceTarget.Id.Value,
                             Start = target,
                             End = target,
-                            Proportion = proportion.HasValue ? proportion.Value : QualityUtils.CalculateProportion(total, good),
-                            Clues = new Dictionary<string, decimal>()
+                            Proportion = proportion.HasValue ? proportion.Value : QualityUtils.CalculateProportion(total, good),                            
                         })); ;
                     }                    
                 }

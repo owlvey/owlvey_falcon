@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Owlvey.Falcon.Core.Values;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -30,8 +31,8 @@ namespace Owlvey.Falcon.Core
             return Math.Floor( (minutes * budget) / 100m);
         }
 
-        public static string BudgetToAction(decimal budget) {
-            if (budget > 0)
+        public static string BudgetToAction(ServiceQualityMeasureValue measure) {
+            if (measure.AvailabilityErrorBudget > 0 && measure.LatencyErrorBudget > 0 && measure.ExperienceErrorBudget > 0)
             {
                 return "innovate";                
             }
@@ -60,6 +61,18 @@ namespace Owlvey.Falcon.Core
             else {
                 return Math.Round(availabilities.Min(), round);
             }            
+        }
+
+        public static decimal CalculateMaximum(IEnumerable<decimal> availabilities, int round = 3, decimal defaultValue = 1)
+        {
+            if (availabilities.Count() == 0)
+            {
+                return defaultValue;
+            }
+            else
+            {
+                return Math.Round(availabilities.Max(), round);
+            }
         }
 
         public static decimal CalculateAverage(IEnumerable<decimal> availabilities, int round = 3)

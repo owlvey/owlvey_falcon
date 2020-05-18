@@ -25,22 +25,26 @@ namespace Owlvey.Falcon.Core.Aggregates
             }                        
             foreach (var period in this.Period.GetDatesPeriods())
             {
-                decimal debt = 0;
-                decimal asset= 0;                
+                decimal Avadebt = 0, LatDebt = 0, ExpDebt = 0;
+                decimal Avaasset = 0 , LatAsset = 0, ExpAsset = 0;                
                 bool hasData = false;
                 foreach (var service in this.Product.Services)
                 {                    
-                    var measure = service.MeasureQuality(period);
+                    var measure = service.Measure(period);
                     if (measure.HasData) {
-                        asset += measure.Asset;                        
-                        debt += measure.Debt;
+                        Avaasset += measure.AvailabilityAsset;
+                        LatAsset += measure.LatencyAsset;
+                        ExpAsset += measure.ExperienceAsset;
+                        Avadebt += measure.AvailabilityDebt;
+                        LatDebt += measure.LatencyDebt;
+                        ExpDebt += measure.ExperienceDebt;
                         hasData = true;
                     }                    
                 }
                 if (hasData) {
                     result.Add(
                         new DayBudgetMeasure(period.Start,
-                        new BudgetMeasureValue(debt, asset)));
+                        new BudgetMeasureValue( Avadebt, LatDebt, ExpDebt, Avaasset, LatAsset, ExpAsset)));
                 }                
             }
             return result;

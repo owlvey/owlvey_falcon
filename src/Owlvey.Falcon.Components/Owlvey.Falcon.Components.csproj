@@ -33,6 +33,10 @@
     <Compile Remove="Components\SquadFeatureComponent.cs" />
     <Compile Remove="Components\SquadFeatureComponent.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Components\AvailabilityComponent\Models\" />
+    <Folder Include="Components\ExperienceComponent\Models\" />
+  </ItemGroup>
 
 
 </Project>

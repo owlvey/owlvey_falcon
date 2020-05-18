@@ -8,6 +8,7 @@ using Owlvey.Falcon.Core.Entities;
 using System.Text.Json.Serialization;
 using Owlvey.Falcon.Core.Values;
 using System.Linq.Expressions;
+using Owlvey.Falcon.Components;
 
 namespace Owlvey.Falcon.Models
 {
@@ -20,8 +21,9 @@ namespace Owlvey.Falcon.Models
         public string Leaders { get; set; }
         public int Id { get; set; }
         public int ProductId { get; set; }
-        public decimal SLO { get; set; }
-        public decimal Impact { get; set; }
+        public decimal AvailabilitySLO { get; set; }
+        public decimal LatencySLO { get; set; }
+        public decimal ExperienceSLO { get; set; }        
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
 
@@ -48,7 +50,9 @@ namespace Owlvey.Falcon.Models
         public string ProductName { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public decimal SLO { get; set; }
+        public decimal AvailabilitySLO { get; set; }
+        public decimal LatencySLO { get; set; }
+        public decimal ExperienceSLO { get; set; }
         public string Avatar { get; set; }
         public string Leaders { get; set; }
         public string Aggregation { get; set; }
@@ -57,26 +61,43 @@ namespace Owlvey.Falcon.Models
 
     public class ServiceGetRp : ServiceBaseRp {
         public List<FeatureGetListRp> Features { get; set; } = new List<FeatureGetListRp>();
-        public decimal Quality { get; set; }
+        
         public decimal Availability { get; set; }
         public decimal Latency { get; set; }
+        public decimal Experience { get; set; }
 
-        public decimal PreviousQuality { get; set; }
+        public decimal PreviousAvailability { get; set; }
+        public decimal PreviousLatency { get; set; }
+        public decimal PreviousExperience { get; set; }
 
-        public decimal PreviousQualityII { get; set; }
-        public decimal Budget { get {
-                return QualityUtils.MeasureBudget(this.Quality, SLO);
-            } }
-        public decimal FeatureSlo {
-            get {
-                if (this.Features.Count() == 0) {
-                    return this.SLO;
-                }
-                return Math.Round((decimal)Math.Pow((double)this.SLO, 1 / (double)this.Features.Count()), 4);
-            }
+        public decimal BeforeAvailability { get; set; }
+        public decimal BeforeLatency { get; set; }
+        public decimal BeforeExperience { get; set; }
+                
+        public decimal AvailabilityErrorBudget { get; set; }
+        public decimal LatencyErrorBudget { get; set; }
+        public decimal ExperienceErrorBudget { get; set; }
+
+        internal void LoadMeasure(ServiceQualityMeasureValue measure) {
+            this.Availability = measure.Availability;
+            this.Experience = measure.Experience;
+            this.Latency = measure.Latency;
+            this.AvailabilityErrorBudget = measure.AvailabilityErrorBudget;
+            this.ExperienceErrorBudget = measure.ExperienceErrorBudget;
+            this.LatencyErrorBudget = measure.LatencyErrorBudget;
         }
-        public decimal BudgetMinutes { get; set; }
-
+        internal void LoadPrevious(ServiceQualityMeasureValue measure)
+        {
+            this.PreviousAvailability= measure.Availability;
+            this.PreviousExperience = measure.Experience;
+            this.PreviousLatency = measure.Latency;            
+        }
+        internal void LoadBefore(ServiceQualityMeasureValue measure)
+        {
+            this.BeforeAvailability = measure.Availability;
+            this.BeforeExperience = measure.Experience;
+            this.BeforeLatency = measure.Latency;
+        }
         internal void MergeFeaturesFrom(IEnumerable<FeatureEntity> features) {
             var result = new List<FeatureGetListRp>(this.Features);
             foreach (var item in features)
@@ -167,32 +188,30 @@ namespace Owlvey.Falcon.Models
 
     public class ServiceGetListRp : ServiceBaseRp
     {
-        public int FeaturesCount { get; set; }
-        public decimal Quality { get; set; }
+        public int FeaturesCount { get; set; }        
         public decimal Availability { get; set; }
+        public decimal AvailabilityErrorBudget { get; set; }
         public decimal Latency { get; set; }
-        public decimal Experience { get; set; }
-        public decimal Previous { get; set; }
 
-        public void LoadMeasure(QualityMeasureValue measure) {
-            this.Quality = measure.Quality;
+        public decimal LatencyErrorBudget { get; set; }
+
+        public decimal Experience { get; set; }
+        public decimal ExperienceErrorBudget { get; set; }
+        
+
+        public void LoadMeasure(ServiceQualityMeasureValue measure) {            
             this.Availability = measure.Availability;
             this.Latency = measure.Latency;
             this.Experience = measure.Experience;
-        }
+            this.Deploy = QualityUtils.BudgetToAction(measure);
+            this.AvailabilityErrorBudget = measure.AvailabilityErrorBudget;
+            this.LatencyErrorBudget = measure.LatencyErrorBudget;
+            this.ExperienceErrorBudget = measure.ExperienceErrorBudget;
+        }        
 
         public string Deploy { get; set; }        
-        public decimal FeatureSlo { get {
-                if (this.FeaturesCount == 0) return this.SLO;
-                return Math.Round((decimal)Math.Pow((double)this.SLO, 1 / (double)this.FeaturesCount), 4);                
-            } }
-        public decimal Budget
-        {
-            get
-            {
-                return QualityUtils.MeasureBudget(Quality, SLO);
-            }
-        }        
+        
+           
     }
 
     public class ServicePostRp {
@@ -207,7 +226,9 @@ namespace Owlvey.Falcon.Models
     {
         [Required]
         public string Name { get; set; }        
-        public decimal? Slo { get; set; }        
+        public decimal? AvailabilitySlo { get; set; }
+        public decimal? LatencySlo { get; set; }
+        public decimal? ExperienceSlo { get; set; }
         public string Avatar { get; set; }
         public string Description { get; set; }        
         public string Group { get; set; }

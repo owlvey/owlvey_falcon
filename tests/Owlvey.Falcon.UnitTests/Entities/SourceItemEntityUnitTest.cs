@@ -12,7 +12,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
         {            
             var (_, product) = TestDataFactory.BuildCustomerProduct();
             var source = TestDataFactory.BuildSource(product);
-            var sourceItem = InteractionSourceEntity.Factory.CreateInteraction(source, new DateTime(2019, 01, 01, 8,0,0,0),
+            var sourceItem = SourceEntity.Factory.CreateInteraction(source, new DateTime(2019, 01, 01, 8,0,0,0),
                  900, 1000, DateTime.Now, "test");
             Assert.NotNull(sourceItem.Source);                       
         }
@@ -22,7 +22,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
         public void CraeteRangeSourceItems() {
             var (_, product) = TestDataFactory.BuildCustomerProduct();
             var source = TestDataFactory.BuildSource(product);
-            var sourceItems = InteractionSourceEntity.Factory.CreateInteractionsFromRange(source,
+            var sourceItems = SourceEntity.Factory.CreateInteractionsFromRange(source,
                 new DateTime(2019, 01, 01),
                 new DateTime(2019, 01, 31),
                  900, 1000, DateTime.Now, "test");
@@ -35,7 +35,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
         {
             var (_, product) = TestDataFactory.BuildCustomerProduct();
             var source = TestDataFactory.BuildSource(product);
-            var sourceItems = InteractionSourceEntity.Factory.CreateInteractionsFromRange(source,
+            var sourceItems = SourceEntity.Factory.CreateInteractionsFromRange(source,
                 new DateTime(2019, 01, 02),
                 new DateTime(2019, 01, 05),
                  900, 1000, DateTime.Now, "test");

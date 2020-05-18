@@ -21,13 +21,13 @@ namespace Owlvey.Falcon.Core.Aggregates
 
             foreach (var featureMap in this._squad.FeatureMaps)
             {   
-                var quality = featureMap.Feature.MeasureQuality().Quality;
+                var quality = featureMap.Feature.Measure().Availability;
 
                 foreach (var serviceMap in featureMap.Feature.ServiceMaps)
                 {
                     var service = serviceMap.Service;
-                    var impact = QualityUtils.MeasureImpact(service.Slo);
-                    var points = QualityUtils.MeasurePoints(service.Slo, quality);
+                    var impact = QualityUtils.MeasureImpact(service.AvailabilitySlo);
+                    var points = QualityUtils.MeasurePoints(service.AvailabilitySlo, quality);
 
                     result.Add( (service.Product, service, featureMap.Feature, quality, points) );
                 }

@@ -10,6 +10,7 @@ using Owlvey.Falcon.Core.Entities;
 using System.Collections.Generic;
 using Owlvey.Falcon.Core;
 using Owlvey.Falcon.Core.Values;
+using Owlvey.Falcon.Components.Models;
 
 namespace Owlvey.Falcon.Components
 {
@@ -32,7 +33,7 @@ namespace Owlvey.Falcon.Components
             var createdBy = this._identityService.GetIdentity();
             var source = await this._dbContext.Sources.SingleAsync(c => c.Id == model.SourceId);
 
-            var entities = ProportionSourceEntity.Factory.CreateProportionFromRange(source,model.Start, model.End, model.Proportion,
+            var entities = SourceEntity.Factory.CreateProportionFromRange(source,model.Start, model.End, model.Proportion,
                 this._datetimeGateway.GetCurrentDateTime(), createdBy);
 
             foreach (var item in entities)
@@ -53,16 +54,8 @@ namespace Owlvey.Falcon.Components
             var on = this._datetimeGateway.GetCurrentDateTime();
             var source = await this._dbContext.Sources.SingleAsync(c => c.Id == model.SourceId);
 
-            var range = InteractionSourceEntity.Factory.CreateInteractionsFromRange(source, model.Start, model.End, model.Good, model.Total, on, createdBy);
-
-            foreach (var key in model.Clues.Keys)
-            {
-                foreach (var item in range)
-                {
-                    ClueEntityFactory.Factory.Create(key, model.Clues[key], this._datetimeGateway.GetCurrentDateTime(), createdBy, item);
-                }                
-            }
-
+            var range = SourceEntity.Factory.CreateInteractionsFromRange(source, model.Start, model.End, model.Good, model.Total, on, createdBy);
+            
             foreach (var item in range)
             {
                 this._dbContext.SourcesItems.Add(item);
@@ -81,17 +74,9 @@ namespace Owlvey.Falcon.Components
                 var interaction = model as SourceItemInteractionPostRp;
                 if (interaction != null)
                 {
-                    var range = InteractionSourceEntity.Factory.CreateInteractionsFromRange(source, interaction.Start,
+                    var range = SourceEntity.Factory.CreateInteractionsFromRange(source, interaction.Start,
                                 interaction.End, interaction.Good, interaction.Total,
-                                this._datetimeGateway.GetCurrentDateTime(), createdBy);
-                    foreach (var clue in model.Clues)
-                    {
-                        foreach (var item in range)
-                        {
-                            ClueEntityFactory.Factory.Create(clue.Key, clue.Value,
-                            this._datetimeGateway.GetCurrentDateTime(), createdBy, item);
-                        }
-                    }
+                                this._datetimeGateway.GetCurrentDateTime(), createdBy);                    
                     foreach (var item in range)
                     {
                         this._dbContext.SourcesItems.Add(item);
@@ -101,17 +86,10 @@ namespace Owlvey.Falcon.Components
                 var proportion = model as SourceItemProportionPostRp;
                 if (proportion != null)
                 {
-                    var range = ProportionSourceEntity.Factory.CreateProportionFromRange(source,
+                    var range = SourceEntity.Factory.CreateProportionFromRange(source,
                         proportion.Start, proportion.End, proportion.Proportion, 
                                 this._datetimeGateway.GetCurrentDateTime(), createdBy);
-                    foreach (var clue in model.Clues)
-                    {
-                        foreach (var item in range)
-                        {
-                            ClueEntityFactory.Factory.Create(clue.Key, clue.Value,
-                            this._datetimeGateway.GetCurrentDateTime(), createdBy, item);
-                        }
-                    }
+                    
                     foreach (var item in range)
                     {
                         this._dbContext.SourcesItems.Add(item);
@@ -131,13 +109,8 @@ namespace Owlvey.Falcon.Components
             int total, int good, DateTime target) {
 
             var entity = await this._dbContext.SourcesItems.Where(c => c.Id == sourceItemId).SingleAsync();
-            this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
-            
-            var interactive = entity as InteractionSourceItemEntity;
-            if (interactive != null)
-            {
-                interactive.Update(total, good, target);                
-            }                     
+            this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;                        
+            entity.Update(total, good, target);                            
             this._dbContext.SourcesItems.Update(entity);
             await this._dbContext.SaveChangesAsync();
             return this._mapper.Map<SourceItemGetListRp>(entity);            
@@ -198,8 +171,7 @@ namespace Owlvey.Falcon.Components
         
         public async Task<SourceItemGetListRp> GetById(int id)
         {
-            var entity = await this._dbContext.SourcesItems
-                .Include(c => c.Clues)
+            var entity = await this._dbContext.SourcesItems                
                 .Where(c => c.Id == id).SingleAsync();
             return this._mapper.Map<SourceItemGetListRp>(entity);
         }
@@ -215,7 +187,7 @@ namespace Owlvey.Falcon.Components
             DateTime start, DateTime end)
         {
             var entities = await this._dbContext.GetSourceItems(sourceId, start, end);
-            var  temp = entities.OfType<InteractionSourceItemEntity>().ToList();
+            var  temp = entities.OfType<SourceItemEntity>().ToList();
             var result = new List<InteractiveSourceItemGetRp>();
             foreach (var item in temp)
             {

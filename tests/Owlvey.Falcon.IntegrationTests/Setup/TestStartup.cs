@@ -157,12 +157,12 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
                                 ModifiedOn = DateTime.UtcNow,
                             }
                         },
-                        Services = new List<Core.Entities.ServiceEntity>{
-                            new Core.Entities.ServiceEntity{
+                        Services = new List<ServiceEntity>{
+                            new ServiceEntity{
                                  Id = 9999,
                                 Description= "Default Service",
                                 Name = "Default Service",                                
-                                Slo = 99,
+                                AvailabilitySlo = 99,
                                 Avatar = "default",
                                 CreatedBy = "test",
                                 CreatedOn = DateTime.UtcNow,

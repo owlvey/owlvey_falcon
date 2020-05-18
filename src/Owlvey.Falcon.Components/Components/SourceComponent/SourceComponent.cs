@@ -15,6 +15,7 @@ using Owlvey.Falcon.Repositories.Sources;
 using Polly;
 using Owlvey.Falcon.Core.Values;
 using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
+using Owlvey.Falcon.Components.Models;
 
 namespace Owlvey.Falcon.Components
 {
@@ -29,26 +30,28 @@ namespace Owlvey.Falcon.Components
             this._dbContext = dbContext;
         }
 
-        public async Task<BaseComponentResultRp> Update(int sourceId, SourcePutRp model) {
-            var result = new BaseComponentResultRp();
-            var createdBy = this._identityService.GetIdentity();
-            
-            this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
+        public static void ConfigureMappers(IMapperConfigurationExpression cfg)
+        {
+            cfg.CreateMap<SourceEntity, Models.ProportionSourceGetRp>()
+                .ForMember(c => c.Proportion, opt => opt.Ignore())
+                .ForMember(c => c.Features, opt => opt.Ignore());
+            cfg.CreateMap<SourceEntity, Models.InteractionSourceGetRp>()
+                .ForMember(c => c.Proportion, opt => opt.Ignore())
+                .ForMember(c => c.Total, opt => opt.Ignore())
+                .ForMember(c => c.Good, opt => opt.Ignore())
+                .ForMember(c => c.Features, opt => opt.Ignore());
 
-            var entity = await this._dbContext.Sources.Where(c => c.Id == sourceId).SingleAsync();
+            cfg.CreateMap<SourceItemEntity, SourceItemBaseRp>();
+            cfg.CreateMap<SourceItemEntity, InteractiveSourceItemGetRp>(); 
+            cfg.CreateMap<SourceItemEntity, ProportionSourceItemGetRp>();
 
-            entity.Update(model.Name, model.Avatar, model.GoodDefinition, model.TotalDefinition,
-                this._datetimeGateway.GetCurrentDateTime(), createdBy, null, model.Description);
-                       
-            this._dbContext.Update(entity);
 
-            await this._dbContext.SaveChangesAsync();
 
-            result.AddResult("Id", entity.Id);
 
-            return result;
+
         }
 
+      
 
         public async Task<SourceGetListRp> CreateOrUpdate(CustomerEntity customer, string product, string name, string tags,
             string avatar, string good, string total, string description, string kind, string group)
@@ -146,22 +149,13 @@ namespace Owlvey.Falcon.Components
                 var sourceItems = await this._dbContext.GetSourceItems(entity.Id.Value, start, end);
 
                 var ids = sourceItems.Select(c => c.Id).ToList();
-
-                var clues = await this._dbContext.Clues.Where(c => ids.Contains(c.SourceItemId)).ToListAsync();
-
-                foreach (var group in clues.GroupBy(c=>c.SourceItemId))
-                {
-                    var target = sourceItems.Where(c => c.Id == group.Key).Single();
-                    target.Clues = group.ToList();
-                }
-
+                
                 entity.SourceItems = sourceItems;                
-                var measure = entity.MeasureProportion();                
-                result.Quality = measure.Proportion;
-                result.Total = entity.SourceItems.OfType<InteractionSourceItemEntity>().Sum(c=>c.Total);
-                result.Good = entity.SourceItems.OfType<InteractionSourceItemEntity>().Sum(c => c.Good);
-                result.Clues = entity.ExportClues();
-                result.Features = entity.Indicators.ToDictionary(d => d.Feature.Name, c => c.Feature.Id.Value);
+                var measure = entity.Measure();                
+                result.Quality = measure.Value;
+                result.Total = entity.SourceItems.Sum(c=> c.Total.GetValueOrDefault());
+                result.Good = entity.SourceItems.Sum(c => c.Good.GetValueOrDefault());                
+                result.Features = entity.FeaturesToDictionary();
             }            
             return result;
         }        
@@ -181,13 +175,13 @@ namespace Owlvey.Falcon.Components
             foreach (var source in entities)
             {                
                 source.SourceItems = sourceItems.Where(c => c.SourceId == source.Id).ToList();                
-                var proportion= source.MeasureProportion();
+                var proportion= source.Measure();
                 var tmp = this._mapper.Map<SourceGetListRp>(source);
                 tmp.References = source.Indicators.Count();
-                tmp.Availability = proportion.Proportion;                
+                tmp.Measure = proportion.Value;                
                 result.Add(tmp);
             }
-            return result.OrderBy(c=>c.Availability).ToList();
+            return result.OrderBy(c=>c.Measure).ToList();
         }
 
         public async Task<IEnumerable<SourceGetListRp>> GetByIndicatorId(int indicatorId)
@@ -213,7 +207,7 @@ namespace Owlvey.Falcon.Components
             };
             var aggregator = new SourceDailyAvailabilityAggregate(source, period);
             var items = aggregator.MeasureAvailability();
-            result.Items = items.Select(c=> new SeriesItemGetRp(c.Date, c.Measure.Quality)).ToList();
+            result.Items = items.Select(c=> new SeriesItemGetRp(c.Date, c.Measure.Availability)).ToList();
             return result;
         }
     }

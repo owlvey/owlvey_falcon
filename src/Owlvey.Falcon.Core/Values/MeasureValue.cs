@@ -4,14 +4,14 @@ using System.Text;
 
 namespace Owlvey.Falcon.Core.Values
 {
-    public class ProportionMeasureValue
+    public class MeasureValue
     {
-        public decimal Proportion { get; protected set; }
+        public decimal Value { get; protected set; }
 
         public bool HasData { get; set; } 
 
-        public ProportionMeasureValue(decimal proportion, bool hasData=true) {
-            this.Proportion = proportion;
+        public MeasureValue(decimal value, bool hasData=true) {
+            this.Value = value;
             this.HasData = hasData;
         }        
     }

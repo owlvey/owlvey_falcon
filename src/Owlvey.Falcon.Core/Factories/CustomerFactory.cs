@@ -23,11 +23,12 @@ namespace Owlvey.Falcon.Core.Entities
                 defaultProduct.Features.Add(paymentFeature);
 
                 var defaultService = ServiceEntity.Factory.Create("Awesome Onboarding", on, user, defaultProduct);
-                defaultService.Slo = 0.999m;
+                defaultService.AvailabilitySlo = 0.999m;                
+
                 defaultProduct.Services.Add(defaultService);
 
                 var defaultPaymentService = ServiceEntity.Factory.Create("Awesome Payment Service", on, user, defaultProduct);
-                defaultPaymentService.Slo = 0.99m;
+                defaultPaymentService.AvailabilitySlo = 0.99m;
                 defaultProduct.Services.Add(defaultPaymentService);
 
                 var defaultMap = ServiceMapEntity.Factory.Create(defaultService, defaultFeature, on, user);
@@ -71,13 +72,13 @@ namespace Owlvey.Falcon.Core.Entities
 
                     for (int j = 1; j < 28; j++)
                     {
-                        var defaultSourceItem = InteractionSourceEntity.Factory.CreateInteraction(defaultSource, new DateTime(year, i, j), random.Next(800, 1000), 1000, on, user);
+                        var defaultSourceItem = SourceEntity.Factory.CreateInteraction(defaultSource, new DateTime(year, i, j), random.Next(800, 1000), 1000, on, user);
                         defaultSource.SourceItems.Add(defaultSourceItem);
 
-                        var registrationSourceItem = InteractionSourceEntity.Factory.CreateInteraction(registrationSource, new DateTime(year, i, j), random.Next(800, 1000), 1000, on, user);
+                        var registrationSourceItem = SourceEntity.Factory.CreateInteraction(registrationSource, new DateTime(year, i, j), random.Next(800, 1000), 1000, on, user);
                         registrationSource.SourceItems.Add(registrationSourceItem);
 
-                        var paymentSourceItem = InteractionSourceEntity.Factory.CreateInteraction(paymentSource, new DateTime(year, i, j), random.Next(800, 1000), 1000, on, user);
+                        var paymentSourceItem = SourceEntity.Factory.CreateInteraction(paymentSource, new DateTime(year, i, j), random.Next(800, 1000), 1000, on, user);
                         paymentSource.SourceItems.Add(paymentSourceItem);
 
                     }                    

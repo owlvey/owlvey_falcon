@@ -5,13 +5,7 @@ using System.Text;
 namespace Owlvey.Falcon.Core.Values
 {
     public class QualityMeasureValue
-    {   
-        public decimal Quality {
-            get {
-                return QualityUtils.CalculateMinimum(
-                    new decimal[] { this.Availability, this.Latency, this.Experience });
-            }
-        }
+    {           
         public decimal Availability { get; protected set; }
         public decimal Latency { get; protected set; }
         public decimal Experience { get; protected set; }
@@ -23,6 +17,14 @@ namespace Owlvey.Falcon.Core.Values
             this.Latency = latency;
             this.HasData= hasdata;
             this.Experience = experience;
+        }
+
+        public QualityMeasureValue(bool hasdata = true)
+        {
+            this.Availability = 1;
+            this.Latency = 1;
+            this.HasData = hasdata;
+            this.Experience = 1;
         }
         public QualityMeasureValue(decimal quality, bool hasdata = true) : this(quality, quality, quality, hasdata)
         {

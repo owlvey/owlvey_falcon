@@ -22,15 +22,15 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                                   ServiceMaps = new List<ServiceMapEntity>(){
                                       new ServiceMapEntity(){
                                            Service = new ServiceEntity(){
-                                                Slo = 0.99m
+                                                AvailabilitySlo = 0.99m
                                            }
                                       }
                                   },
                                   Indicators = new List<IndicatorEntity>() { new IndicatorEntity() {
                                         Id  = 1,
-                                        Source = new InteractionSourceEntity(){
+                                        Source = new SourceEntity(){
                                              SourceItems = new List<SourceItemEntity>(){
-                                                  new InteractionSourceItemEntity(){
+                                                  new SourceItemEntity(){
                                                        Good = 800, Total = 1000,
                                                        Target = OwlveyCalendar.January201903                                                       
                                                   }

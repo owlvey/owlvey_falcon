@@ -7,6 +7,7 @@ namespace Owlvey.Falcon.Core.Entities
     public enum SourceKindEnum
     {
         Interaction, 
-        Proportion
+        Proportion,
+        MiliSeconds
     }
 }

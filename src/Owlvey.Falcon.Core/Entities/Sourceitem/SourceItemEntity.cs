@@ -6,37 +6,34 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Owlvey.Falcon.Core.Entities
 {
  
-    public abstract partial class SourceItemEntity: BaseEntity
+    public partial class SourceItemEntity: BaseEntity
     {
         public int SourceId { get; set; }
 
         public virtual SourceEntity Source { get; set; }
+                        
+        public int? Good { get; set; }
         
+        public int? Total { get; set; }
+    
 
         [Required]
         public DateTime Target { get; set; }
 
         [Required]
-        public decimal Proportion { get; set; }
-
-        [Required]
-        public SourceKindEnum Kind { get; set; }
-
-        public virtual ICollection<ClueEntity> Clues { get; set; } = new List<ClueEntity>();
-
-
-        public IDictionary<string, decimal> ExportClues() {
-            var result = new Dictionary<string, decimal>();
-            foreach (var clue in this.Clues)
-            {
-                result.Add(clue.Name, clue.Value);    
-            }
-            return result; 
-        }
+        public decimal Measure { get; set; }
+                
         public void Update(decimal proportion, DateTime target)
         {
             this.Target = target;
-            this.Proportion = proportion;
+            this.Measure = proportion;
+        }        
+        public void Update(int total, int good, DateTime target)
+        {
+            this.Total = total;
+            this.Good = good;
+            this.Measure = QualityUtils.CalculateProportion(total, good);
+            this.Target = target;
         }
     }
 }

@@ -52,15 +52,13 @@ namespace Owlvey.Falcon.Models
     public class FeatureQualityGetRp : FeatureBaseRp
     {
         public string CreatedBy { get; set; }
-        public DateTime? CreatedOn { get; set; }        
-        public decimal Quality { get; set; }
+        public DateTime? CreatedOn { get; set; }                
         public decimal Latency { get; set; }
         public decimal Availability { get; set; }
         public decimal Experience { get; set; }
         public void LoadQuality(QualityMeasureValue quality)
         {
-            this.Availability = quality.Availability;
-            this.Quality = quality.Quality;
+            this.Availability = quality.Availability;            
             this.Latency = quality.Latency;
             this.Experience = quality.Experience;
         }
@@ -81,8 +79,7 @@ namespace Owlvey.Falcon.Models
         public string Product { get; set; }
         public int IndicatorsCount { get; set; }
         public int ServiceCount { get; set; }
-        public decimal Availability { get; set; }
-        public decimal Quality { get; set; }
+        public decimal Availability { get; set; }        
         public decimal Latency { get; set; }
 
         public decimal Experience { get; set; }
@@ -93,9 +90,9 @@ namespace Owlvey.Falcon.Models
 
         }
 
-        public void LoadQuality(QualityMeasureValue quality) {
+        public void LoadMeasure(QualityMeasureValue quality) {
             this.Availability = quality.Availability;
-            this.Quality = quality.Quality;
+            this.Experience = quality.Experience;
             this.Latency = quality.Latency;
         }
     }
@@ -107,8 +104,7 @@ namespace Owlvey.Falcon.Models
         public string Product { get; set; }
         public int IndicatorsCount { get; set; }
         public int ServiceCount { get; set; }
-        public decimal Availability { get; set; }
-        public decimal Quality { get; set; }
+        public decimal Availability { get; set; }        
         public decimal Experience { get; set; }
         public decimal Latency { get; set; }        
         public int Squads { get; set; }

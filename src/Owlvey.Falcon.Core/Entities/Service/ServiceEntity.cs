@@ -29,7 +29,14 @@ namespace Owlvey.Falcon.Core.Entities
         public string Description { get; set; }
                 
         [Required]
-        public decimal Slo { get; set; }       
+        public decimal AvailabilitySlo { get; set; }
+
+        [Required]
+        public decimal ExperienceSlo { get; set; }
+
+        [Required]
+        public decimal LatencySlo { get; set; }
+
 
         [Required]
         public ServiceAggregationEnum Aggregation { get; set; }
@@ -40,36 +47,36 @@ namespace Owlvey.Falcon.Core.Entities
         public string Leaders { get; set; }
 
         [NotMapped]
-        public decimal Impact
+        public decimal AvailabilityImpact
         {
             get
             {
-                return QualityUtils.MeasureImpact(this.Slo);
+                return QualityUtils.MeasureImpact(this.AvailabilitySlo);
             }
         }
 
         [Required]
         public string Group { get; set; }
 
-        [NotMapped]
-        public decimal FeatureSLO { get {
-                return QualityUtils.CalculateFeatureSlo(this.Slo, this.FeatureMap.Count());
-            } }
-
         
-
         public int ProductId { get; set; }
 
         public virtual ProductEntity Product { get; set; }
 
         public virtual ICollection<ServiceMapEntity> FeatureMap { get; set; } = new List<ServiceMapEntity>();
 
-        public void Update(DateTime on, string modifiedBy, string name, decimal? slo, string description, string avatar,
+        public void Update(DateTime on, string modifiedBy, string name, 
+            decimal? availabilitySlo,
+            decimal? latencySlo,
+            decimal? experienceSlo,
+            string description, string avatar,
             string leaders, ServiceAggregationEnum aggregation, string group)
         {
             this.Leaders = leaders ?? this.Leaders;
             this.Name = name ?? this.Name;
-            this.Slo = slo ?? this.Slo;
+            this.AvailabilitySlo = availabilitySlo ?? this.AvailabilitySlo;
+            this.ExperienceSlo = experienceSlo ?? this.ExperienceSlo;
+            this.LatencySlo = latencySlo ?? this.LatencySlo;
             this.Description = description ?? this.Description;
             this.Avatar = avatar ?? this.Avatar;
             this.ModifiedBy = modifiedBy;

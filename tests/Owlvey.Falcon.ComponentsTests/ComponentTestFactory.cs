@@ -10,6 +10,7 @@ using SimpleInjector;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.ComponentsTests.Mocks;
+using Owlvey.Falcon.Core.Values;
 
 namespace Owlvey.Falcon.ComponentsTests
 {
@@ -31,9 +32,11 @@ namespace Owlvey.Falcon.ComponentsTests
         public static DateTime January201914 = new DateTime(2019, 01, 14);
         public static DateTime January201920 = new DateTime(2019, 01, 20);
         public static DateTime EndJanuary2019 = new DateTime(2019, 01, 31);
+        public static DateTime EndDecember2019 = new DateTime(2019, 12, 31);
 
         public static DateTime StartJuly2019 = new DateTime(2019, 07, 1);
         public static DateTime EndJuly2019 = new DateTime(2019, 07, 31);
+        public static DatePeriodValue year2019 = new DatePeriodValue(StartJanuary2019, EndDecember2019);
 
     }
     public static class ComponentTestFactory
@@ -69,7 +72,12 @@ namespace Owlvey.Falcon.ComponentsTests
                 SourceComponentConfiguration.ConfigureMappers(cfg);
                 SourceItemComponentConfiguration.ConfigureMappers(cfg);
                 SquadFeatureComponentConfiguration.ConfigureMappers(cfg);                
-                IndicatorComponentConfiguration.ConfigureMappers(cfg);                
+                IndicatorComponentConfiguration.ConfigureMappers(cfg);
+
+                LatencySourceComponent.ConfigureMappers(cfg);
+                AvailabilitySourceComponent.ConfigureMappers(cfg);
+                ExperienceSourceComponent.ConfigureMappers(cfg);
+                SourceComponent.ConfigureMappers(cfg);
             });
             configuration.AssertConfigurationIsValid();
             var mapper = configuration.CreateMapper();

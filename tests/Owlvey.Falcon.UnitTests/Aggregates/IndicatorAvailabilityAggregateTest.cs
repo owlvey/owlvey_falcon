@@ -20,10 +20,10 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
 
             var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, "test");
 
-            var sourceItemA = InteractionSourceEntity.Factory.CreateInteractionsFromRange(source,
+            var sourceItemA = SourceEntity.Factory.CreateInteractionsFromRange(source,
                 OwlveyCalendar.StartJanuary2019, OwlveyCalendar.EndJanuary2019,
                 900, 1200, DateTime.Now, "test");            
-            var sourceItemB = InteractionSourceEntity.Factory.CreateInteraction(source,
+            var sourceItemB = SourceEntity.Factory.CreateInteraction(source,
                 TDF.OwlveyCalendar.StartJanuary2019,
                 900, 1200, DateTime.Now, "test");
 
@@ -42,7 +42,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var availabilities = aggregate.MeasureAvailability();
 
             Assert.Equal(31, availabilities.Count());
-            Assert.Equal(0.751m, availabilities.First().Measure.Quality);
+            Assert.Equal(0.751m, availabilities.First().Measure.Availability);
         }
 
         [Fact]
@@ -53,10 +53,10 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
 
             var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, "test");
 
-            var sourceItemA = InteractionSourceEntity.Factory.CreateInteraction(source,
+            var sourceItemA = SourceEntity.Factory.CreateInteraction(source,
                 OwlveyCalendar.January201905,                
                 900, 1200, DateTime.Now, "test");
-            var sourceItemB = InteractionSourceEntity.Factory.CreateInteraction(source,                
+            var sourceItemB = SourceEntity.Factory.CreateInteraction(source,                
                 OwlveyCalendar.EndJanuary2019,
                 900, 1200, DateTime.Now, "test");
 
@@ -71,8 +71,8 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var availabilities = aggregate.MeasureAvailability();
 
             Assert.Equal(2, availabilities.Count());
-            Assert.Equal(0.75m, availabilities.ElementAt(0).Measure.Quality);
-            Assert.Equal(0.75m, availabilities.ElementAt(1).Measure.Quality);            
+            Assert.Equal(0.75m, availabilities.ElementAt(0).Measure.Availability);
+            Assert.Equal(0.75m, availabilities.ElementAt(1).Measure.Availability);            
         }
 
         [Fact]

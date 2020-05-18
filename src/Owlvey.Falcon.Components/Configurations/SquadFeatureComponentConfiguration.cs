@@ -1,6 +1,7 @@
 ﻿using System;
 using AutoMapper;
 using Owlvey.Falcon.Core.Entities;
+using Owlvey.Falcon.Models;
 
 namespace Owlvey.Falcon.Components
 {
@@ -8,8 +9,8 @@ namespace Owlvey.Falcon.Components
     {
         public static void ConfigureMappers(IMapperConfigurationExpression cfg)
         {
-            cfg.CreateMap<SquadFeatureEntity, Models.SquadFeatureGetListRp>();
-            cfg.CreateMap<SquadFeatureEntity, Models.SquadFeatureGetRp>();
+            cfg.CreateMap<SquadFeatureEntity, SquadFeatureGetListRp>();
+            cfg.CreateMap<SquadFeatureEntity, SquadFeatureGetRp>();
         }
     }
 }

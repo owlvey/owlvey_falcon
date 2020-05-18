@@ -32,6 +32,9 @@ namespace Owlvey.Falcon.IoC
 
             services.AddTransient<SourceItemComponent>();
             services.AddTransient<SourceComponent>();
+            services.AddTransient<LatencySourceComponent>();
+            services.AddTransient<ExperienceSourceComponent>();
+            services.AddTransient<AvailabilitySourceComponent>();
             services.AddTransient<IndicatorComponent>();
 
             services.AddTransient<FeatureQueryComponent>();
@@ -79,6 +82,11 @@ namespace Owlvey.Falcon.IoC
                 SourceItemComponentConfiguration.ConfigureMappers(cfg);
                 SquadFeatureComponentConfiguration.ConfigureMappers(cfg);
                 IndicatorComponentConfiguration.ConfigureMappers(cfg);
+
+                LatencySourceComponent.ConfigureMappers(cfg);
+                AvailabilitySourceComponent.ConfigureMappers(cfg);
+                ExperienceSourceComponent.ConfigureMappers(cfg);
+                SourceComponent.ConfigureMappers(cfg);
             });
 
             IMapper mapper = mapperCfg.CreateMapper();

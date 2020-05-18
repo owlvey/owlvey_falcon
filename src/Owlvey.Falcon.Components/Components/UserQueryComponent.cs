@@ -76,7 +76,7 @@ namespace Owlvey.Falcon.Components
                             temp["product"] = product.Name;
                             temp["serviceId"] = service.Id;
                             temp["service"] = service.Name;
-                            temp["slo"] = service.Slo;
+                            temp["slo"] = service.AvailabilitySlo;
                             result.Services.Add(temp);
                         }                            
                     }

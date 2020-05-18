@@ -37,6 +37,10 @@ namespace Owlvey.Falcon.ManualTests
                 SourceComponentConfiguration.ConfigureMappers(cfg);
                 SourceItemComponentConfiguration.ConfigureMappers(cfg);
                 IndicatorComponentConfiguration.ConfigureMappers(cfg);
+                LatencySourceComponent.ConfigureMappers(cfg);
+                AvailabilitySourceComponent.ConfigureMappers(cfg);
+                ExperienceSourceComponent.ConfigureMappers(cfg);
+                SourceComponent.ConfigureMappers(cfg);
             });
             configuration.AssertConfigurationIsValid();
             var mapper = configuration.CreateMapper();

@@ -20,7 +20,8 @@ namespace Owlvey.Falcon.API.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<SourceGetListRp>), 200)]
-        public async Task<IActionResult> Get(int? productId, int? indicatorId, DateTime? start, DateTime? end)
+        public async Task<IActionResult> Get(int? productId, int? indicatorId,
+            DateTime? start, DateTime? end)
         {
             IEnumerable<SourceGetListRp> model = new List<SourceGetListRp>();
 
@@ -43,7 +44,7 @@ namespace Owlvey.Falcon.API.Controllers
 
             return this.Ok(model);
         }
-
+        
 
         [HttpGet("{id}", Name = "GetSourceById")]
         [ProducesResponseType(typeof(SourceGetRp), 200)]
@@ -76,25 +77,7 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Created(Url.RouteUrl("GetSourceById", new { response.Id }), response);
         }
 
-        [HttpPut("{id}")]
-        [ProducesResponseType(typeof(SourceGetRp), 200)]
-        [ProducesResponseType(409)]
-        [ProducesResponseType(400)]
-        [Authorize(Policy = "RequireAdminRole")]
-        public async Task<IActionResult> Put(int id, [FromBody]SourcePutRp resource)
-        {
-            if (!this.ModelState.IsValid)
-                return this.BadRequest(this.ModelState);
-
-            var response = await this._sourceComponent.Update(id, resource);
-
-            if (response.HasConflicts())
-            {
-                return this.Conflict(response.GetConflicts());
-            }
-            
-            return this.Ok();               
-        }
+        
 
         [HttpDelete("{id}")]
         [ProducesResponseType(typeof(void), 200)]

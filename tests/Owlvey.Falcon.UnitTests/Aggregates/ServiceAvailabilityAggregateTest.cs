@@ -12,7 +12,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         [Fact]
         public void AvailabilityAggregateSuccess() {
 
-            var sourceEntity = new InteractionSourceEntity() { };
+            var sourceEntity = new SourceEntity() { };
             sourceEntity.AddSourceItem(800, 1000, OwlveyCalendar.January201903, DateTime.Now, "test");
 
 
@@ -33,8 +33,8 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                  }
             };
             
-            var result = entity.MeasureQuality();
-            Assert.Equal(0.8m, result.Quality);            
+            var result = entity.Measure();
+            Assert.Equal(0.8m, result.Availability);            
         }
     }
 }

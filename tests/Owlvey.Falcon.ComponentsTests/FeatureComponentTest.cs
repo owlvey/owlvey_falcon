@@ -83,7 +83,7 @@ namespace Owlvey.Falcon.ComponentsTests
             var featureQueryComponent = container.GetInstance<FeatureQueryComponent>();
             var features = await featureQueryComponent.GetFeatures(product);
 
-            var daily = await featureQueryComponent.GetDailySeriesById(features.ElementAt(0).Id,
+            var daily = await featureQueryComponent.GetDailyAvailabilitySeriesById(features.ElementAt(0).Id,
                 OwlveyCalendar.StartJanuary2019,
                 OwlveyCalendar.StartJuly2019);
 

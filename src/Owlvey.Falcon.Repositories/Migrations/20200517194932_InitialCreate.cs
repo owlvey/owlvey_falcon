@@ -215,7 +215,9 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     ModifiedBy = table.Column<string>(nullable: false),
                     Name = table.Column<string>(nullable: false),
                     Description = table.Column<string>(nullable: true),
-                    Slo = table.Column<decimal>(type: "decimal(5,3)", nullable: false),
+                    AvailabilitySlo = table.Column<decimal>(type: "decimal(5,3)", nullable: false),
+                    ExperienceSlo = table.Column<decimal>(type: "decimal(5,3)", nullable: false),
+                    LatencySlo = table.Column<decimal>(type: "decimal(5,3)", nullable: false),
                     Aggregation = table.Column<int>(nullable: false),
                     Avatar = table.Column<string>(nullable: false),
                     Leaders = table.Column<string>(nullable: true),
@@ -251,7 +253,9 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     Description = table.Column<string>(nullable: true),
                     Kind = table.Column<int>(nullable: false),
                     Group = table.Column<int>(nullable: false),
-                    ProductId = table.Column<int>(nullable: false)
+                    Percentile = table.Column<decimal>(nullable: false),
+                    ProductId = table.Column<int>(nullable: false),
+                    Latency = table.Column<decimal>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -427,11 +431,10 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     ModifiedOn = table.Column<DateTime>(nullable: false),
                     ModifiedBy = table.Column<string>(nullable: false),
                     SourceId = table.Column<int>(nullable: false),
-                    Target = table.Column<DateTime>(nullable: false),
-                    Proportion = table.Column<decimal>(nullable: false),
-                    Kind = table.Column<int>(nullable: false),
                     Good = table.Column<int>(nullable: true),
-                    Total = table.Column<int>(nullable: true)
+                    Total = table.Column<int>(nullable: true),
+                    Target = table.Column<DateTime>(nullable: false),
+                    Measure = table.Column<decimal>(nullable: false)
                 },
                 constraints: table =>
                 {

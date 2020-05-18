@@ -77,8 +77,10 @@ namespace Owlvey.Falcon.ComponentsTests
             await serviceComponent.UpdateService(serviceInstance.Id, new Models.ServicePutRp() {
                  Name = "change",
                  Description = "change",
-                 Slo = 0.95m,
-                 Avatar = "http://change.org",
+                 AvailabilitySlo = 0.95m,
+                LatencySlo = 2000m,
+                ExperienceSlo = 0.95m,
+                Avatar = "http://change.org",
                  Group = "change group"
             });
 
@@ -89,7 +91,7 @@ namespace Owlvey.Falcon.ComponentsTests
             Assert.Equal("change group", serviceDetail.Group);
             Assert.Equal("change", serviceDetail.Description);
             Assert.Equal("http://change.org", serviceDetail.Avatar);
-            Assert.Equal(0.95m, serviceDetail.SLO);            
+            Assert.Equal(0.95m, serviceDetail.AvailabilitySLO);            
         }
 
 

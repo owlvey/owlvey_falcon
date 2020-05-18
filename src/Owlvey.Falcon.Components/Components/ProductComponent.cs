@@ -230,8 +230,7 @@ namespace Owlvey.Falcon.Components
                                 Start = target,
                                 End = target,
                                 Good = good,
-                                Total = total,                                
-                                Clues = new Dictionary<string, decimal>(),
+                                Total = total
                             }));
                         }
                         else {
@@ -240,8 +239,7 @@ namespace Owlvey.Falcon.Components
                                 SourceId = sourceTarget.Id.Value,
                                 Start = target,
                                 End = target,
-                                Proportion = proportion,                                
-                                Clues = new Dictionary<string, decimal>(),
+                                Proportion = proportion
                             }));
                         }                        
                     }

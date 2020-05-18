@@ -10,34 +10,17 @@ namespace Owlvey.Falcon.Models
     public class SourceItemBaseRp
     {
         public int Id { get; set; }
-    }
-
-    public class InteractiveSourceItemGetRp : SourceItemBaseRp
-    {
-        public InteractiveSourceItemGetRp() { }
-        public InteractiveSourceItemGetRp(InteractionSourceItemEntity entity) {
-            this.Good = entity.Good;
-            this.Total = entity.Total;
-            this.Target = entity.Target;
-            this.CreatedBy = entity.CreatedBy;
-            this.CreatedOn = entity.CreatedOn;
-            this.Proportion = entity.Proportion;            
-        }
-        public int Good { get; set; }
-        public int Total { get; set; }
-        public DateTime Target { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
-        public decimal Proportion { get; set; }        
+
+        public DateTime Target { get; set; }
     }
+
+   
 
     public class ProportionSourceItemGetRp : SourceItemBaseRp
-    {        
-        public DateTime Target { get; set; }
-        public string CreatedBy { get; set; }
-        public DateTime? CreatedOn { get; set; }
-        public decimal Proportion { get; set; }
-        public IDictionary<string, decimal> Clues { get; set; } = new Dictionary<string, decimal>();
+    {   
+        public decimal Measure { get; set; }        
     }
 
     public class SourceItemMigrationRp {
@@ -55,7 +38,7 @@ namespace Owlvey.Falcon.Models
     public class SourceItemGetListRp : SourceItemBaseRp
     {
         public int SourceId { get; set; }        
-        public decimal Proportion { get; set; }
+        public decimal Measure { get; set; }
         public DateTime Target { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
@@ -76,11 +59,7 @@ namespace Owlvey.Falcon.Models
         [Required]
         public DateTime Start { get; set; }
         [Required]
-        public DateTime End { get; set; }
-
-        public IDictionary<string, decimal> Clues { get; set; } = new Dictionary<string, decimal>();
-
-        
+        public DateTime End { get; set; }        
     }
 
     public class SourceItemInteractionPostRp: SourceItemPostRp

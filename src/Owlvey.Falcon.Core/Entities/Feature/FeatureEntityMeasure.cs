@@ -8,7 +8,7 @@ namespace Owlvey.Falcon.Core.Entities
 {
     public partial class FeatureEntity 
     {
-        public QualityMeasureValue MeasureQuality(DatePeriodValue period = null)
+        public QualityMeasureValue Measure(DatePeriodValue period = null)
         {
             var result = new List<decimal>();
             var availability = new List<decimal>();
@@ -16,29 +16,29 @@ namespace Owlvey.Falcon.Core.Entities
             var experience = new List<decimal>();
             foreach (var indicator in this.Indicators)
             {                
-                ProportionMeasureValue measure;
+                MeasureValue measure;
                 if (period != null)
                 {
-                    measure = indicator.Source.MeasureProportion(period);
+                    measure = indicator.Source.Measure(period);
                 }
                 else
                 {
-                    measure = indicator.Source.MeasureProportion();
+                    measure = indicator.Source.Measure();
                 }
 
                 if (measure.HasData)
                 {
-                    result.Add(measure.Proportion);
+                    result.Add(measure.Value);
                     if (indicator.Source.Group == SourceGroupEnum.Availability)
                     {
-                        availability.Add(measure.Proportion);
+                        availability.Add(measure.Value);
                     }
                     else if (indicator.Source.Group == SourceGroupEnum.Latency)
                     {
-                        latency.Add(measure.Proportion);
+                        latency.Add(measure.Value);
                     }
                     else if (indicator.Source.Group == SourceGroupEnum.Experience) {
-                        experience.Add(measure.Proportion);
+                        experience.Add(measure.Value);
                     }
                 }
             }
@@ -46,12 +46,12 @@ namespace Owlvey.Falcon.Core.Entities
             {
                 return new QualityMeasureValue(                    
                     QualityUtils.CalculateMinimum(availability, 3),
-                    QualityUtils.CalculateMinimum(latency, 3),
+                    QualityUtils.CalculateMaximum(latency, 3),
                     QualityUtils.CalculateMinimum(experience, 3), true);
             }
             else
             {
-                return new QualityMeasureValue(1, 1, 1, false);
+                return new QualityMeasureValue(false);
             }
         }
     }

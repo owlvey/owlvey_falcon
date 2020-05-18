@@ -20,14 +20,11 @@ namespace Owlvey.Falcon.Core.Models.Migrate
         {
             this.Organization = organization;
             this.Product = product;
-            this.Source = source;
-            var interactive = entity as InteractionSourceItemEntity;
-            if (interactive != null) {
-                this.Good = interactive.Good;
-                this.Total = interactive.Total;
-            }            
+            this.Source = source;            
+            this.Good = entity.Good.GetValueOrDefault();
+            this.Total = entity.Total.GetValueOrDefault();            
             this.Target = entity.Target.ToString("s", System.Globalization.CultureInfo.InvariantCulture);
-            this.Proportion = entity.Proportion;
+            this.Proportion = entity.Measure;
         }
         public static IEnumerable<SourceItemModel> Load(string organization, string product, string source, IEnumerable<SourceItemEntity> entities)
         {

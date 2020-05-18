@@ -12,7 +12,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         [Fact]
         public void FeatureDateAvailabilityAggregateSuccess() {
 
-            var sourceEntity = new InteractionSourceEntity(){};
+            var sourceEntity = new SourceEntity(){};
             sourceEntity.AddSourceItem(800, 1000, OwlveyCalendar.January201903, DateTime.Now, "test");
 
             var entity = new FeatureEntity()
@@ -25,9 +25,9 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                   } }
             };
             
-            var result = entity.MeasureQuality();
+            var result = entity.Measure();
             
-            Assert.Equal(0.8m, result.Quality);
+            Assert.Equal(0.8m, result.Availability);
             
         }
 
@@ -35,13 +35,13 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         [Fact]
         public void FeatureAvailabilityMix()
         {
-            var Source_A = new InteractionSourceEntity()
+            var Source_A = new SourceEntity()
             {
                 Kind = SourceKindEnum.Interaction                
             };
             Source_A.AddSourceItem(800, 1000, OwlveyCalendar.January201903, DateTime.Now, "test");
 
-            var Source_B = new InteractionSourceEntity()
+            var Source_B = new SourceEntity()
             {
                 Kind = SourceKindEnum.Interaction            
             };
@@ -63,8 +63,8 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                 Indicators = Indicators                
             };
 
-            var result = entity.MeasureQuality();
-            Assert.Equal(0.8m, result.Quality);
+            var result = entity.Measure();
+            Assert.Equal(0.8m, result.Availability);
 
         }
     }

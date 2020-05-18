@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Components.Models;
 using Owlvey.Falcon.Core.Values;
 using Owlvey.Falcon.Models;
 

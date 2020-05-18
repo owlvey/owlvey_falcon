@@ -5,13 +5,12 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Owlvey.Falcon.Core.Entities;
 using Owlvey.Falcon.Repositories;
 
 namespace Owlvey.Falcon.Repositories.Migrations
 {
     [DbContext(typeof(FalconDbContext))]
-    [Migration("20200514204928_InitialCreate")]
+    [Migration("20200517194932_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -475,6 +474,9 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     b.Property<int>("Aggregation")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("AvailabilitySlo")
+                        .HasColumnType("decimal(5,3)");
+
                     b.Property<string>("Avatar")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -490,9 +492,15 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("ExperienceSlo")
+                        .HasColumnType("decimal(5,3)");
+
                     b.Property<string>("Group")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("LatencySlo")
+                        .HasColumnType("decimal(5,3)");
 
                     b.Property<string>("Leaders")
                         .HasColumnType("nvarchar(max)");
@@ -511,9 +519,6 @@ namespace Owlvey.Falcon.Repositories.Migrations
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("Slo")
-                        .HasColumnType("decimal(5,3)");
 
                     b.HasKey("Id");
 
@@ -593,6 +598,9 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     b.Property<int>("Kind")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("Latency")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("ModifiedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -604,6 +612,9 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<decimal>("Percentile")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -621,8 +632,6 @@ namespace Owlvey.Falcon.Repositories.Migrations
                         .IsUnique();
 
                     b.ToTable("SourceEntity");
-
-                    b.HasDiscriminator<int>("Kind");
                 });
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.SourceItemEntity", b =>
@@ -640,8 +649,11 @@ namespace Owlvey.Falcon.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Kind")
+                    b.Property<int?>("Good")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("Measure")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ModifiedBy")
                         .IsRequired()
@@ -651,14 +663,14 @@ namespace Owlvey.Falcon.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("Proportion")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int>("SourceId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Target")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("Total")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -667,8 +679,6 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     b.HasIndex("Target");
 
                     b.ToTable("SourceItemEntity");
-
-                    b.HasDiscriminator<int>("Kind");
                 });
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.SquadEntity", b =>
@@ -799,40 +809,6 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     b.ToTable("UserEntity");
                 });
 
-            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.InteractionSourceEntity", b =>
-                {
-                    b.HasBaseType("Owlvey.Falcon.Core.Entities.SourceEntity");
-
-                    b.HasDiscriminator().HasValue(0);
-                });
-
-            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.ProportionSourceEntity", b =>
-                {
-                    b.HasBaseType("Owlvey.Falcon.Core.Entities.SourceEntity");
-
-                    b.HasDiscriminator().HasValue(1);
-                });
-
-            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.InteractionSourceItemEntity", b =>
-                {
-                    b.HasBaseType("Owlvey.Falcon.Core.Entities.SourceItemEntity");
-
-                    b.Property<int>("Good")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Total")
-                        .HasColumnType("int");
-
-                    b.HasDiscriminator().HasValue(0);
-                });
-
-            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.ProportionSourceItemEntity", b =>
-                {
-                    b.HasBaseType("Owlvey.Falcon.Core.Entities.SourceItemEntity");
-
-                    b.HasDiscriminator().HasValue(1);
-                });
-
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.AnchorEntity", b =>
                 {
                     b.HasOne("Owlvey.Falcon.Core.Entities.ProductEntity", "Product")
@@ -845,7 +821,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.ClueEntity", b =>
                 {
                     b.HasOne("Owlvey.Falcon.Core.Entities.SourceItemEntity", "SourceItem")
-                        .WithMany("Clues")
+                        .WithMany()
                         .HasForeignKey("SourceItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

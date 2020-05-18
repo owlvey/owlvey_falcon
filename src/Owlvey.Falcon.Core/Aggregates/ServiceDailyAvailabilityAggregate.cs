@@ -26,7 +26,7 @@ namespace Owlvey.Falcon.Core.Aggregates
 
             foreach (var period in this.Period.GetDatesPeriods())
             {                
-                var measure = this.Service.MeasureQuality(period);
+                var measure = this.Service.Measure(period);
                 if (measure.HasData) {
                     serviceResult.Add(new DayMeasureValue(period.Start, measure));
                 }                
@@ -39,7 +39,7 @@ namespace Owlvey.Falcon.Core.Aggregates
                 List<DayMeasureValue> temp = new List<DayMeasureValue>();
                 foreach (var item in this.Period.GetDatesPeriods())
                 {                    
-                    var measure = map.Feature.MeasureQuality(item);
+                    var measure = map.Feature.Measure(item);
                     if (measure.HasData) {
                         temp.Add(new DayMeasureValue(item.Start, measure));
                     }                    

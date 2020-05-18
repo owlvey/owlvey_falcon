@@ -39,9 +39,9 @@ namespace Owlvey.Falcon.Core.Values
         public DayPointValue(DateTime date, IEnumerable<SourceItemEntity> sourceItems) : this(date)
         {
             if (sourceItems.Count() > 0) {
-                this.Minimun = sourceItems.Min(c => c.Proportion);
-                this.Maximun = sourceItems.Max(c => c.Proportion);
-                this.Average = sourceItems.Average(c => c.Proportion);
+                this.Minimun = sourceItems.Min(c => c.Measure);
+                this.Maximun = sourceItems.Max(c => c.Measure);
+                this.Average = sourceItems.Average(c => c.Measure);
             }
         }
         public DayPointValue(DateTime date, IEnumerable<DayPointValue> points) : this(date)

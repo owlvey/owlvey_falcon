@@ -15,6 +15,8 @@ namespace Owlvey.Falcon.Core.Models.Migrate
         public string TotalDefinition { get; set; }
         public string Kind { get; set; }
 
+        public decimal Percentile { get; set; }
+
         public void Load(SourceEntity entity)
         {            
             this.Name = entity.Name;
@@ -24,6 +26,7 @@ namespace Owlvey.Falcon.Core.Models.Migrate
             this.GoodDefinition = entity.GoodDefinition;
             this.TotalDefinition = entity.TotalDefinition;
             this.Kind = entity.Kind.ToString();
+            this.Percentile = entity.Percentile;
         }
         public static IEnumerable<SourceLiteModel> Load(IEnumerable<SourceEntity> entities)
         {

@@ -246,7 +246,7 @@ namespace Owlvey.Falcon.API.Controllers
             {
                 return this.BadRequest("end is required");
             }
-            var result = await this._featureQueryService.GetDailySeriesById(id, start.Value, end.Value);
+            var result = await this._featureQueryService.GetDailyAvailabilitySeriesById(id, start.Value, end.Value);
 
             return this.Ok(result);
         }

@@ -4,10 +4,11 @@ using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace Owlvey.Falcon.Core.Entities
 {
-    public abstract partial class SourceEntity: BaseEntity
+    public partial class SourceEntity: BaseEntity
     {
         [Required]
         public string Name { get; set; }
@@ -29,6 +30,8 @@ namespace Owlvey.Falcon.Core.Entities
         [Required]
         public SourceGroupEnum Group { get; set; }
 
+        public decimal Percentile { get; set; } = 0.95m;
+
         public virtual ProductEntity Product { get; set; }
 
         public int ProductId { get; set; }
@@ -37,25 +40,8 @@ namespace Owlvey.Falcon.Core.Entities
 
         public virtual ICollection<SourceItemEntity> SourceItems { get; set; } = new List<SourceItemEntity>();
 
-
-        public Dictionary<string, decimal> ExportClues() {
-            var result = new Dictionary<string, decimal>();
-
-            foreach (var item in this.SourceItems)
-            {
-                foreach (var clue in item.Clues)
-                {
-                    if (result.ContainsKey(clue.Name))
-                    {
-                        result[clue.Name] += clue.Value;
-                    }
-                    else {
-                        result[clue.Name] = clue.Value;
-                    }
-                }
-            }
-            return result; 
-        }
+        public decimal Latency { get; set; }
+                
         public virtual void Update(
             string name, string avatar,
             string goodDefinition, string totalDefinition,            
@@ -70,5 +56,34 @@ namespace Owlvey.Falcon.Core.Entities
             this.Tags = tags ?? this.Tags;
             this.ModifiedBy = modifiedBy;            
         }
+
+        public virtual void Update(
+         string name, string avatar,
+         string goodDefinition, string totalDefinition,
+         DateTime on, string modifiedBy, string tags, string description, decimal percentile)
+        {
+            this.Name = string.IsNullOrWhiteSpace(name) ? this.Name : name;
+            this.Avatar = string.IsNullOrWhiteSpace(avatar) ? this.Avatar : avatar;
+            this.GoodDefinition = string.IsNullOrWhiteSpace(goodDefinition) ? this.GoodDefinition : goodDefinition;
+            this.TotalDefinition = string.IsNullOrWhiteSpace(totalDefinition) ? this.TotalDefinition : totalDefinition;
+            this.Description = string.IsNullOrWhiteSpace(description) ? this.Description : description;
+            this.ModifiedOn = on;
+            this.Percentile = percentile;
+            this.Tags = tags ?? this.Tags;
+            this.ModifiedBy = modifiedBy;
+        }
+
+        public SourceItemEntity AddSourceItem(int good, int total, DateTime target, DateTime on, string createdBy)
+        {
+            var result = SourceEntity.Factory.CreateInteraction(this, target, good, total, on, createdBy);
+            this.SourceItems.Add(result);
+            return result;
+        }
+
+        public Dictionary<string, int> FeaturesToDictionary() {
+            return this.Indicators.ToDictionary(d => d.Feature.Name, c => c.Feature.Id.Value); 
+        }
+
+
     }
 }

@@ -47,8 +47,8 @@ namespace Owlvey.Falcon.Components
             result.Name = service.Name;
             foreach (var day in days)
             {
-                var measure = service.MeasureQuality(day);
-                result.Items.Add(new SeriesItemGetRp(day.Start, measure.Quality));
+                var measure = service.Measure(day);
+                result.Items.Add(new SeriesItemGetRp(day.Start, measure.Availability));
             }
             return result;
         }
@@ -66,7 +66,8 @@ namespace Owlvey.Falcon.Components
             foreach (var day in days)
             {   
                 root.Items.Add(                
-                    new SeriesItemGetRp(day.Start, product.Services.Select(c => c.MeasureQuality(day).Debt).Sum())
+                    new SeriesItemGetRp(day.Start, 
+                    product.Services.Select(c => c.Measure(day).AvailabilityDebt).Sum())
                 );
             }
 
@@ -90,8 +91,8 @@ namespace Owlvey.Falcon.Components
                 var groupsReport = new List<(string name, int count, decimal quality, decimal availability, decimal latency, decimal experience)>();
                 foreach (var group in serviceGroups)
                 {                   
-                    var measures = group.Select(c => new { measure = c.MeasureQuality(monthperiod), slo = c.Slo }).ToList();                                        
-                    groupsReport.Add(( group.Key, group.Count(), measures.Sum(c => c.measure.Debt),
+                    var measures = group.Select(c => new { measure = c.Measure(monthperiod), slo = c.AvailabilitySlo }).ToList();                                        
+                    groupsReport.Add(( group.Key, group.Count(), measures.Sum(c => c.measure.AvailabilityDebt),
                         measures.Sum(c => c.measure.AvailabilityDebt),
                         measures.Sum(c => c.measure.LatencyDebt),
                         measures.Sum(c => c.measure.ExperienceDebt)
@@ -169,8 +170,9 @@ namespace Owlvey.Falcon.Components
                 foreach (var group in serviceGroups)
                 {
                     var temp = new ServiceGroupListRp.ServiceGrouptem();                    
-                    var measures = group.Select(c => new { measure = c.MeasureQuality(week), slo = c.Slo });
-                    groupsReport.Add((group.Key, group.Count(), measures.Sum(c => c.measure.Debt),
+                    var measures = group.Select(c => new { measure = c.Measure(week), 
+                        slo = c.AvailabilitySlo });
+                    groupsReport.Add((group.Key, group.Count(), measures.Sum(c => c.measure.AvailabilityDebt),
                             measures.Sum(c => c.measure.AvailabilityDebt),
                             measures.Sum(c => c.measure.LatencyDebt),
                             measures.Sum(c => c.measure.ExperienceDebt)));
@@ -220,18 +222,18 @@ namespace Owlvey.Falcon.Components
                 foreach (var day in days)
                 {
                     serie.Items.Add(new SeriesItemGetRp(day.Start,
-                        group.Select(c => c.MeasureQuality(day).Debt).Sum()));
+                        group.Select(c => c.Measure(day).AvailabilityDebt).Sum()));
                 }
 
-                var measures = group.Select(c => new { measure = c.MeasureQuality(period), slo = c.Slo }).ToList();
+                var measures = group.Select(c => new { measure = c.Measure(period), slo = c.AvailabilitySlo}).ToList();
                 var temp = new ServiceGroupListRp.ServiceGrouptem
                 {
                     Name = group.Key,
-                    SloAvg = QualityUtils.CalculateAverage(group.Select(c => c.Slo)),
-                    SloMin = QualityUtils.CalculateMinimum(group.Select(c => c.Slo))
+                    SloAvg = QualityUtils.CalculateAverage(group.Select(c => c.AvailabilitySlo)),
+                    SloMin = QualityUtils.CalculateMinimum(group.Select(c => c.AvailabilitySlo))
                 };
-                temp.QualityAvg = QualityUtils.CalculateAverage(measures.Select(c => c.measure.Quality));
-                temp.QualityMin = QualityUtils.CalculateMinimum(measures.Select(c => c.measure.Quality));
+                temp.QualityAvg = QualityUtils.CalculateAverage(measures.Select(c => c.measure.Availability));
+                temp.QualityMin = QualityUtils.CalculateMinimum(measures.Select(c => c.measure.Availability));
                 temp.AvailabilityAvg = QualityUtils.CalculateAverage(measures.Select(c => c.measure.Availability));
                 temp.AvailabilityMin = QualityUtils.CalculateMinimum(measures.Select(c => c.measure.Availability));
                 temp.LatencyAvg = QualityUtils.CalculateAverage(measures.Select(c => c.measure.Latency));
@@ -240,9 +242,9 @@ namespace Owlvey.Falcon.Components
                 temp.ExperienceMin = QualityUtils.CalculateMinimum(measures.Select(c => c.measure.Experience));
 
                 temp.Count = group.Count();
-                temp.ErrorBudget = measures.Where(c => c.measure.ErrorBudget < 0).Sum(c => c.measure.ErrorBudget);
-                var previous = group.Select(c => new { measure = c.MeasureQuality(new DatePeriodValue(ps, pe)), slo = c.Slo });
-                temp.Previous = previous.Where(c => c.measure.ErrorBudget < 0).Sum(c => c.measure.ErrorBudget);
+                temp.ErrorBudget = measures.Where(c => c.measure.AvailabilityErrorBudget< 0).Sum(c => c.measure.AvailabilityErrorBudget);
+                var previous = group.Select(c => new { measure = c.Measure(new DatePeriodValue(ps, pe)), slo = c.AvailabilitySlo});
+                temp.Previous = previous.Where(c => c.measure.AvailabilityErrorBudget < 0).Sum(c => c.measure.AvailabilityErrorBudget);
 
                 result.Series.Add(serie);
                 result.Items.Add(temp);
@@ -262,7 +264,7 @@ namespace Owlvey.Falcon.Components
                 {
                      Name = service.Name,
                      Avatar = service.Avatar,                       
-                     Items = days.Select(c => new SeriesItemGetRp(c.Start, service.MeasureQuality(c).Debt)).ToList()
+                     Items = days.Select(c => new SeriesItemGetRp(c.Start, service.Measure(c).AvailabilityDebt)).ToList()
                 });                
             }
             return result;            
@@ -272,19 +274,15 @@ namespace Owlvey.Falcon.Components
         #endregion
 
         public async Task<IEnumerable<ServiceGetListRp>> GetServicesWithAvailability(int productId, DateTime start, DateTime end)
-        {            
-            var (_, _, ps, pe) = DateTimeUtils.CalculateBeforePreviousDates(start, end);
-
-            var entity = await this._dbContext.FullLoadProductWithSourceItems(productId, ps, end);
+        {   
+            var entity = await this._dbContext.FullLoadProductWithSourceItems(productId, start, end);
                         
             var result = new List<ServiceGetListRp>();
 
             foreach (var service in entity.Services)
             {
-                var tmp = this._mapper.Map<ServiceGetListRp>(service);
-                tmp.LoadMeasure(service.MeasureQuality(new DatePeriodValue(start, end)));                                
-                tmp.Deploy = QualityUtils.BudgetToAction(tmp.Budget);
-                tmp.Previous = service.MeasureQuality(new DatePeriodValue(ps, pe)).Quality;
+                var tmp = this._mapper.Map<ServiceGetListRp>(service);                
+                tmp.LoadMeasure(service.Measure(new DatePeriodValue(start, end)));                       
                 result.Add(tmp);
             }
 
@@ -318,18 +316,15 @@ namespace Owlvey.Falcon.Components
             foreach (var map in entity.FeatureMap)
             {                
                 var tmp = this._mapper.Map<SequenceFeatureGetListRp>(map.Feature);                                
-                var measure = map.Feature.MeasureQuality( new DatePeriodValue( start, end));                
-                tmp.Quality = measure.Quality;
-                tmp.Availability = measure.Availability;
-                tmp.Latency = measure.Latency;
-                tmp.Experience = measure.Experience;
+                var measure = map.Feature.Measure( new DatePeriodValue( start, end));
+                tmp.LoadMeasure(measure);                                
                 tmp.MapId = map.Id.Value;
                 model.Features.Add(tmp);
             }            
                         
-            model.Quality = entity.MeasureQuality(new DatePeriodValue( start, end)).Quality;
-            model.PreviousQuality = entity.MeasureQuality(new DatePeriodValue(previous.Start, previous.End)).Quality; 
-            model.PreviousQualityII = entity.MeasureQuality(new DatePeriodValue(before.Start, before.End)).Quality;
+            model.LoadMeasure(entity.Measure(new DatePeriodValue( start, end)));
+            model.LoadPrevious(entity.Measure(new DatePeriodValue(previous.Start, previous.End)));
+            model.LoadBefore(entity.Measure(new DatePeriodValue(before.Start, before.End)));
             return model;
         }
         public async Task<ServiceGetRp> GetServiceByName(int productId, string name)
@@ -379,7 +374,7 @@ namespace Owlvey.Falcon.Components
                 End = end,
                 Name = service.Name,
                 Avatar = service.Avatar,
-                SLO = service.Slo
+                SLO = service.AvailabilitySlo
             };
 
             var aggregator = new ServiceDailyAggregate(service, new DatePeriodValue(start, end));
@@ -390,7 +385,7 @@ namespace Owlvey.Falcon.Components
             {
                 Name = "Quality",
                 Avatar = service.Avatar,
-                Items = availability.OrderBy(c => c.Date).Select(c => new SeriesItemGetRp(c.Date, c.Measure.Quality)).ToList()
+                Items = availability.OrderBy(c => c.Date).Select(c => new SeriesItemGetRp(c.Date, c.Measure.Availability)).ToList()
             }); ;
 
             foreach (var indicator in features)
@@ -399,7 +394,7 @@ namespace Owlvey.Falcon.Components
                 {
                     Name = string.Format("Id:{0}", indicator.Item1.Id),
                     Avatar = indicator.Item1.Avatar,
-                    Items = indicator.Item2.OrderBy(c => c.Date).Select(c => new SeriesItemGetRp(c.Date, c.Measure.Quality)).ToList()
+                    Items = indicator.Item2.OrderBy(c => c.Date).Select(c => new SeriesItemGetRp(c.Date, c.Measure.Availability)).ToList()
                 }); 
             }
             return result;
@@ -452,7 +447,7 @@ namespace Owlvey.Falcon.Components
                 {
                     indicator.Source.SourceItems = sourceItems.Where(c => c.SourceId == indicator.Source.Id).ToList();
                 }
-                feature.MeasureQuality();
+                feature.Measure();
             }
 
             foreach (var service in services)
@@ -476,15 +471,15 @@ namespace Owlvey.Falcon.Components
                 }                
             }
 
-            var rootMeasure = rootService.MeasureQuality();
+            var rootMeasure = rootService.Measure();
 
             var snode = new GraphNode("services", "service",
                     rootService.Id.Value,
                     rootService.Avatar,
                     string.Format("{0} [ {1} | {2} ]", rootService.Name,
-                    Math.Round(rootService.Slo, 2),
-                    Math.Round(rootMeasure.Quality, 2))
-                    , rootMeasure.Quality, rootService.Slo);
+                    Math.Round(rootService.AvailabilitySlo, 2),
+                    Math.Round(rootMeasure.Availability, 2))
+                    , rootMeasure.Availability, rootService.AvailabilitySlo);
             
             result.Nodes.Add(snode);
 
@@ -498,13 +493,13 @@ namespace Owlvey.Falcon.Components
                     fnode = new GraphNode("features", "feature", feature.Id.Value,
                         feature.Avatar,                        
                         feature.Name,                        
-                        feature.MeasureQuality().Quality, 0);
+                        feature.Measure().Availability, 0);
 
                     result.Nodes.Add(fnode);
                 }
 
                 var fedge = new GraphEdge(snode.Id, fnode.Id,
-                        fnode.Value - rootService.Slo,
+                        fnode.Value - rootService.AvailabilitySlo,
                         new Dictionary<string, object>() {
                             { "Availability", fnode.Value }
                         });
@@ -516,16 +511,16 @@ namespace Owlvey.Falcon.Components
                     var temporal = extended.FeatureMap.Where(c => c.FeatureId == feature.Id).SingleOrDefault();
                     if (temporal != null && temporal.Feature.ServiceMaps.Count <= 10) {
 
-                        var extendedMeasure = extended.MeasureQuality();
+                        var extendedMeasure = extended.Measure();
 
                         var temp_node = new GraphNode("services",
                             "service",
                             extended.Id.Value,
                             extended.Avatar,
                         string.Format("{0} [ {1} | {2} ]", extended.Name,
-                        Math.Round(extended.Slo, 2),
-                        Math.Round(extendedMeasure.Quality, 2))
-                        , extendedMeasure.Quality, extended.Slo);
+                        Math.Round(extended.AvailabilitySlo, 2),
+                        Math.Round(extendedMeasure.Availability, 2))
+                        , extendedMeasure.Availability, extended.AvailabilitySlo);
 
                         if (result.Nodes.Count(c => c.Id == temp_node.Id) == 0)
                         {
@@ -534,7 +529,7 @@ namespace Owlvey.Falcon.Components
                             var tmp_edge = new GraphEdge(
                                 temp_node.Id, 
                                 fnode.Id, 
-                                fnode.Value - extended.Slo,
+                                fnode.Value - extended.AvailabilitySlo,
                                 new Dictionary<string, object>() {
                                     { "Availability", fnode.Value }
                                 });

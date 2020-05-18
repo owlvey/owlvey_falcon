@@ -13,6 +13,7 @@ using Owlvey.Falcon.Repositories.Sources;
 using Owlvey.Falcon.Core;
 using Owlvey.Falcon.Core.Validators;
 using Polly;
+using Owlvey.Falcon.Core.Values;
 
 namespace Owlvey.Falcon.Components
 {
@@ -111,21 +112,24 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<IndicatorGetListRp>>(entity);
         }
 
-        private async Task<decimal> GetAvailabilityByIndicator(IndicatorEntity entity, DateTime start, DateTime end)
-        {
-            var sourceItems = await this._dbContext.GetSourceItems(entity.Source.Id.Value, start, end);
-            entity.Source.SourceItems = sourceItems;            
-            return entity.Source.MeasureProportion().Proportion;            
-        }
         
         public async Task<IEnumerable<IndicatorAvailabilityGetListRp>> GetByFeatureWithAvailability(int featureId, DateTime start, DateTime end)
         {
-            var entities = await this._dbContext.Indicators.Include(c => c.Feature).Include(c => c.Source).Where(c => c.Feature.Id == featureId).ToListAsync();
+            var entities = await this._dbContext.Indicators
+                .Include(c => c.Feature)
+                .Include(c => c.Source).Where(c => c.Feature.Id == featureId).ToListAsync();
+
+            var sourceIds = entities.Select(c => c.SourceId).Distinct().ToList();
+
+            var sourceitems = await this._dbContext.GetSourceItems(sourceIds, start, end); 
+
             var result = new List<IndicatorAvailabilityGetListRp>();
             foreach (var item in entities)
-            {                
+            {
+                item.Source.SourceItems = sourceitems.Where(c => c.SourceId == item.SourceId).ToList();
+                var measure = item.Source.Measure();                
                 var tmp = this._mapper.Map<IndicatorAvailabilityGetListRp>(item);
-                tmp.Quality = await this.GetAvailabilityByIndicator(item, start, end);
+                tmp.Measure = measure.Value;
                 result.Add(tmp);
             }
             return result;

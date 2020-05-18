@@ -159,7 +159,7 @@ namespace Owlvey.Falcon.Components
                                 indicator.Source.SourceItems = target;
                             }
                         }
-                        service.MeasureQuality();
+                        service.Measure();
                         var serviceResult = new CustomerDashboardRp.CustomerServiceRp(service);
                         productResult.Services.Add(serviceResult);
                     }

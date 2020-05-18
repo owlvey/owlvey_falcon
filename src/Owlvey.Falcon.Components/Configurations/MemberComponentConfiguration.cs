@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Owlvey.Falcon.Core.Entities;
+using Owlvey.Falcon.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,9 +11,9 @@ namespace Owlvey.Falcon.Components
     {
         public static void ConfigureMappers(IMapperConfigurationExpression cfg)
         {
-            cfg.CreateMap<MemberEntity, Models.MemberGetRp>()
+            cfg.CreateMap<MemberEntity, MemberGetRp>()
                 .ForMember(d=> d.Email , m=> m.MapFrom(src=> src.User.Email));
-            cfg.CreateMap<MemberEntity, Models.MemberGetListRp>()
+            cfg.CreateMap<MemberEntity, MemberGetListRp>()
                 .ForMember(d => d.Email, m => m.MapFrom(src => src.User.Email));
 
 
