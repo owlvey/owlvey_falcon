@@ -92,9 +92,9 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<SourceItemBaseRp>>(range);
         }
 
-        public async Task<BaseComponentResultRp> Update(int sourceId, LatencySourcePutRp model)
+        public async Task<LatencySourceGetRp> Update(int sourceId, LatencySourcePutRp model)
         {
-            var result = new BaseComponentResultRp();
+            
             var createdBy = this._identityService.GetIdentity();
 
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
@@ -107,10 +107,8 @@ namespace Owlvey.Falcon.Components
             this._dbContext.Update(entity);
 
             await this._dbContext.SaveChangesAsync();
-
-            result.AddResult("Id", entity.Id);
-
-            return result;
+            
+            return this._mapper.Map<LatencySourceGetRp>(entity);
         }
 
     }

@@ -37,6 +37,7 @@ namespace Owlvey.Falcon.Models
         public Dictionary<string, decimal> Clues { get; set; } = new Dictionary<string, decimal>();
     }
 
+
     public class SourceMigrateRp {
         public string ProductName { get; set; }
         public string Name { get; set; }

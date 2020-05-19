@@ -198,10 +198,11 @@ namespace Owlvey.Falcon.Components
                     var group = sourceSheet.Cells[row, 4].GetValue<string>();
                     var goodDefinition = sourceSheet.Cells[row, 5].GetValue<string>();
                     var totalDefinition = sourceSheet.Cells[row, 6].GetValue<string>();
-                    var kind = sourceSheet.Cells[row, 7].GetValue<string>();                    
+                    var kind = sourceSheet.Cells[row, 7].GetValue<string>();
+                    var percentile = sourceSheet.Cells[row, 8].GetValue<decimal>();                    
                     if (!sources.Exists(c=>c.Name == name)) {                        
                         await this._sourceComponent.CreateOrUpdate(product.Customer, product.Name,
-                            name, null, avatar, goodDefinition, totalDefinition, description, kind, group);
+                            name, null, avatar, goodDefinition, totalDefinition, description, kind, group, percentile);
                     }                    
                 }
 

@@ -15,7 +15,7 @@ namespace Owlvey.Falcon.Core.Entities
                     ModifiedBy = user,
                     CreatedOn = on,
                     ModifiedOn = on,
-                    Target = on.Subtract(TimeSpan.FromDays(60)).Date
+                    Target = new DateTime(on.Year, 01, 01)
                 };
 
                 

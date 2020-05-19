@@ -408,10 +408,11 @@ namespace Owlvey.Falcon.Components
                 var description = source.Cells[row, 7].GetValue<string>();
                 var kind = source.Cells[row, 8].GetValue<string>();
                 var group = source.Cells[row, 9].GetValue<string>();
+                var percentile = source.Cells[row, 10].GetValue<decimal>();
                 if (product != null && name != null)
                 {
                     await this._sourceComponent.CreateOrUpdate(customer,
-                        product, name, tags, avatar, good, total, description, kind, group);
+                        product, name, tags, avatar, good, total, description, kind, group, percentile);
                 }
             }
         }
@@ -788,8 +789,9 @@ namespace Owlvey.Falcon.Components
                     var good = sourcesSheet.Cells[row, 7].GetValue<string>();
                     var total = sourcesSheet.Cells[row, 8].GetValue<string>();
                     var kind = sourcesSheet.Cells[row, 9].GetValue<string>();
+                    var percentile = sourcesSheet.Cells[row, 10].GetValue<decimal>();
                     await this._sourceComponent.CreateOrUpdate(
-                        organizations.Single(c => c.Name == organization), product, name, string.Empty, avatar, good, total, description, kind, group);                        
+                        organizations.Single(c => c.Name == organization), product, name, string.Empty, avatar, good, total, description, kind, group, percentile);                        
                 }
 
                 var sources = await this._dbContext.Sources.ToListAsync();

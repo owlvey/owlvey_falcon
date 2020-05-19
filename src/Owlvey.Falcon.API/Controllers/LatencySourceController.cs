@@ -60,7 +60,7 @@ namespace Owlvey.Falcon.API.Controllers
         }
 
         [HttpPut("{id}")]
-        [ProducesResponseType(typeof(SourceGetRp), 200)]
+        [ProducesResponseType(typeof(LatencySourceGetRp), 200)]
         [ProducesResponseType(409)]
         [ProducesResponseType(400)]
         [Authorize(Policy = "RequireAdminRole")]
@@ -69,14 +69,9 @@ namespace Owlvey.Falcon.API.Controllers
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._sourceComponent.Update(id, resource);
+            var response = await this._sourceComponent.Update(id, resource);            
 
-            if (response.HasConflicts())
-            {
-                return this.Conflict(response.GetConflicts());
-            }
-
-            return this.Ok();
+            return this.Ok(response);
         }
     }
 }
