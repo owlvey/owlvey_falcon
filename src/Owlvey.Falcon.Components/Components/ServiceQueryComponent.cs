@@ -379,20 +379,25 @@ namespace Owlvey.Falcon.Components
 
             result.Series.Add(new MultiSerieItemGetRp()
             {
-                Name = "Quality",
+                Name = "Availability",
                 Avatar = service.Avatar,
                 Items = availability.OrderBy(c => c.Date).Select(c => new SeriesItemGetRp(c.Date, c.Measure.Availability)).ToList()
-            }); ;
+            });
 
-            foreach (var indicator in features)
+            result.Series.Add(new MultiSerieItemGetRp()
             {
-                result.Series.Add(new MultiSerieItemGetRp()
-                {
-                    Name = string.Format("Id:{0}", indicator.Item1.Id),
-                    Avatar = indicator.Item1.Avatar,
-                    Items = indicator.Item2.OrderBy(c => c.Date).Select(c => new SeriesItemGetRp(c.Date, c.Measure.Availability)).ToList()
-                }); 
-            }
+                Name = "Latency",
+                Avatar = service.Avatar,
+                Items = availability.OrderBy(c => c.Date).Select(c => new SeriesItemGetRp(c.Date, c.Measure.Latency)).ToList()
+            });
+
+            result.Series.Add(new MultiSerieItemGetRp()
+            {
+                Name = "Experience",
+                Avatar = service.Avatar,
+                Items = availability.OrderBy(c => c.Date).Select(c => new SeriesItemGetRp(c.Date, c.Measure.Experience)).ToList()
+            });
+
             return result;
         }
 
