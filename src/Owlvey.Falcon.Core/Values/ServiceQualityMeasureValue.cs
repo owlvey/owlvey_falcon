@@ -22,7 +22,7 @@ namespace Owlvey.Falcon.Core.Values
         {
             get
             {
-                return QualityUtils.MeasureBudget(this.Latency, this.LatencySlo);
+                return QualityUtils.MeasureLatencyBudget(this.Latency, this.LatencySlo);
             }
         }
 
@@ -69,7 +69,7 @@ namespace Owlvey.Falcon.Core.Values
         {
             get
             {
-                var error = QualityUtils.MeasureBudget(this.Latency, this.LatencySlo);
+                var error = QualityUtils.MeasureLatencyBudget(this.Latency, this.LatencySlo);
                 return Math.Abs(error < 0 ? error : 0);
             }
         }
@@ -100,11 +100,9 @@ namespace Owlvey.Falcon.Core.Values
            decimal availabilitySlo,
            decimal latencySlo,
            decimal experienceSlo,           
-           bool hasdata = true) : this (availabilitySlo, latencySlo, experienceSlo, 1 , 1 ,1 , hasdata)
+           bool hasdata = true) : this (availabilitySlo, latencySlo, experienceSlo, 1 , 101 ,1 , hasdata)
         {
             
         }
-
-
     }
 }

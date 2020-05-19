@@ -22,7 +22,7 @@ namespace Owlvey.Falcon.Core.Entities
             }
             if (data.Count() == 0)
             {
-                return new MeasureValue(1, false);
+                return new MeasureValue(101, false);
             }
             var proportion = QualityUtils.CalculateAverage(data.Select(c => c.Measure));
             return new MeasureValue(proportion);

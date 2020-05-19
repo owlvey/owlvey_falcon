@@ -148,8 +148,7 @@ namespace Owlvey.Falcon.Models
         
         public List<MonthRp> Availability { get; set; } = new List<MonthRp>();
         public List<MonthRp> Latency { get; set; } = new List<MonthRp>();
-        public List<MonthRp> Experience { get; set; } = new List<MonthRp>();
-        public List<MonthRp> Quality { get; set; } = new List<MonthRp>();
+        public List<MonthRp> Experience { get; set; } = new List<MonthRp>();        
         public IList<MultiSerieItemGetRp> Weekly { get; set; } = new List<MultiSerieItemGetRp>();
         
 
@@ -158,23 +157,26 @@ namespace Owlvey.Falcon.Models
 
         public class ServiceGrouptem {
             public string Name { get; set; }
-            public decimal ErrorBudget { get; set; } = 1;
-            public decimal Previous { get; set; } = 1;
+            
             public int Count { get; set; } = 1;
-            public decimal SloAvg { get; set; } = 1;
-            public decimal SloMin { get; set; } = 1;
 
-            public decimal QualityAvg { get; set; } = 1;
-            public decimal QualityMin { get; set; } = 1;
-
+            public decimal AvailabilitySloAvg { get; set; } = 1;
+            public decimal AvailabilitySloMin { get; set; } = 1;
             public decimal AvailabilityAvg { get; set; } = 1;
             public decimal AvailabilityMin { get; set; } = 1;
+            public decimal AvailabilityDebt { get; set; } = 0;
 
+            public decimal LatencySloAvg { get; set; } = 1;
+            public decimal LatencySloMin { get; set; } = 1;
             public decimal LatencyAvg { get; set; } = 1;
             public decimal LatencyMin { get; set; } = 1;
+            public decimal LatencyDebt { get; set; } = 0;
 
+            public decimal ExperienceSloAvg { get; set; } = 1;
+            public decimal ExperienceSloMin { get; set; } = 1;
             public decimal ExperienceAvg { get; set; } = 1;
             public decimal ExperienceMin { get; set; } = 1;
+            public decimal ExperienceDebt { get; set; } = 0;
 
         }
         public IList<ServiceGrouptem> Items { get; set; } = new List<ServiceGrouptem>();

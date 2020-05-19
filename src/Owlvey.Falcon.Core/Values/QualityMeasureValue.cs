@@ -7,7 +7,18 @@ namespace Owlvey.Falcon.Core.Values
     public class QualityMeasureValue
     {           
         public decimal Availability { get; protected set; }
-        public decimal Latency { get; protected set; }
+
+        private decimal _Latency = 101;
+        public decimal Latency {
+            get {
+                return _Latency;
+            }
+            protected set {
+                if (value == 0) { return; }
+                else { _Latency = value; }
+            }
+        }
+
         public decimal Experience { get; protected set; }
 
         public bool HasData { get; protected set; }
@@ -22,7 +33,7 @@ namespace Owlvey.Falcon.Core.Values
         public QualityMeasureValue(bool hasdata = true)
         {
             this.Availability = 1;
-            this.Latency = 1;
+            this.Latency = 0;
             this.HasData = hasdata;
             this.Experience = 1;
         }

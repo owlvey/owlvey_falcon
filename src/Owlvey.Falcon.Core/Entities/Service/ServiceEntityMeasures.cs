@@ -40,7 +40,7 @@ namespace Owlvey.Falcon.Core.Entities
                     this.LatencySlo, 
                     this.ExperienceSlo,
                     QualityUtils.CalculateMinimum(resultAvailability, round: 3),
-                    QualityUtils.CalculateMinimum(resultLatency, round: 3),
+                    QualityUtils.CalculateMaximum(resultLatency, round: 3),
                     QualityUtils.CalculateMinimum(resultExperience, round: 3));
             }
             else

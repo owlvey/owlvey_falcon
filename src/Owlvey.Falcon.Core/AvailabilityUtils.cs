@@ -44,6 +44,11 @@ namespace Owlvey.Falcon.Core
         public static decimal MeasureBudget(decimal avaialbility, decimal slo) {
             return avaialbility - slo;
         }
+        public static decimal MeasureLatencyBudget(decimal latency, decimal slo) {
+            // 2000 1000
+            // 500 1000
+            return slo - latency;
+        }
 
         public static int MeanTimeInMinutes(IEnumerable<int> input) {
             if (input.Count() == 0) {
@@ -63,7 +68,7 @@ namespace Owlvey.Falcon.Core
             }            
         }
 
-        public static decimal CalculateMaximum(IEnumerable<decimal> availabilities, int round = 3, decimal defaultValue = 1)
+        public static decimal CalculateMaximum(IEnumerable<decimal> availabilities, int round = 3, decimal defaultValue = 0)
         {
             if (availabilities.Count() == 0)
             {
