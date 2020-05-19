@@ -72,7 +72,7 @@ namespace Owlvey.Falcon.Repositories
             modelBuilder.Entity<ServiceEntity>()
                 .Property(c => c.AvailabilitySlo).HasColumnType("decimal(5,3)");
             modelBuilder.Entity<ServiceEntity>()
-                .Property(c => c.LatencySlo).HasColumnType("decimal(5,3)");
+                .Property(c => c.LatencySlo).HasColumnType("decimal(12,3)");
             modelBuilder.Entity<ServiceEntity>()
                 .Property(c => c.ExperienceSlo).HasColumnType("decimal(5,3)");
 
