@@ -37,10 +37,6 @@ namespace Owlvey.Falcon.Core.Entities
         [Required]
         public decimal LatencySlo { get; set; }
 
-
-        [Required]
-        public ServiceAggregationEnum Aggregation { get; set; }
-
         [Required]
         public string Avatar { get; set; }
 
@@ -70,7 +66,7 @@ namespace Owlvey.Falcon.Core.Entities
             decimal? latencySlo,
             decimal? experienceSlo,
             string description, string avatar,
-            string leaders, ServiceAggregationEnum aggregation, string group)
+            string leaders, string group)
         {
             this.Leaders = leaders ?? this.Leaders;
             this.Name = name ?? this.Name;
@@ -79,8 +75,7 @@ namespace Owlvey.Falcon.Core.Entities
             this.LatencySlo = latencySlo ?? this.LatencySlo;
             this.Description = description ?? this.Description;
             this.Avatar = avatar ?? this.Avatar;
-            this.ModifiedBy = modifiedBy;
-            this.Aggregation = aggregation;
+            this.ModifiedBy = modifiedBy;            
             this.ModifiedOn = on;
             this.Group = string.IsNullOrWhiteSpace(group) ? this.Group : group;
             this.Validate();

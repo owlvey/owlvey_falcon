@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Owlvey.Falcon.Core.Aggregates;
 using Owlvey.Falcon.Core;
+using Owlvey.Falcon.Components.Models;
 
 namespace Owlvey.Falcon.Components
 {
@@ -295,60 +296,7 @@ namespace Owlvey.Falcon.Components
                         anchors);
         }
 
-        public async Task<(CustomerEntity entity, MemoryStream stream)> ExportExcel(int customerId, bool includeData)
-        {
-            var (customer, squadLites, memberLites, productLites, serviceLites, serviceMapLites, featureLites,
-                  indicatorLites, sourceLites, sourceItemsLites, incidentLites, incidentFeatureMap,
-                  squadFeatureMap, anchors) = await this.Export(customerId, includeData);
-
-            var stream = new MemoryStream();
-            using (var package = new ExcelPackage(stream))
-            {
-                var squadSheet = package.Workbook.Worksheets.Add("Squads");
-                squadSheet.Cells.LoadFromCollection(squadLites, true);
-                
-                var membersSheet = package.Workbook.Worksheets.Add("Members");
-                membersSheet.Cells.LoadFromCollection(memberLites, true);
-
-                var productSheet = package.Workbook.Worksheets.Add("Products");
-                productSheet.Cells.LoadFromCollection(productLites, true);
-
-                var servicesSheet = package.Workbook.Worksheets.Add("Services");
-                servicesSheet.Cells.LoadFromCollection(serviceLites, true);
-
-                var servicesMapSheet = package.Workbook.Worksheets.Add("ServicesMap");
-                servicesMapSheet.Cells.LoadFromCollection(serviceMapLites, true);
-
-                var featuresSheet = package.Workbook.Worksheets.Add("Features");
-                featuresSheet.Cells.LoadFromCollection(featureLites, true);
-
-                var indicatorsSheet = package.Workbook.Worksheets.Add("Indicators");
-                indicatorsSheet.Cells.LoadFromCollection(indicatorLites, true);
-
-                var sourcesSheet = package.Workbook.Worksheets.Add("Sources");
-                sourcesSheet.Cells.LoadFromCollection(sourceLites, true);
-
-                var sourceItemsSheet = package.Workbook.Worksheets.Add("SourceItems");
-                sourceItemsSheet.Cells.LoadFromCollection(sourceItemsLites, true);
-
-                var incidentSheet = package.Workbook.Worksheets.Add("Incidents");
-                incidentSheet.Cells.LoadFromCollection(incidentLites, true);
-
-                var incidentFeaturesSheet = package.Workbook.Worksheets.Add("IncidentFeatures");
-                incidentFeaturesSheet.Cells.LoadFromCollection(incidentFeatureMap, true);
-
-                var squadFeaturesSheet = package.Workbook.Worksheets.Add("SquadFeatures");
-                squadFeaturesSheet.Cells.LoadFromCollection(squadFeatureMap, true);
-
-                var syncSheet = package.Workbook.Worksheets.Add("Anchors");
-                syncSheet.Cells.LoadFromCollection(anchors);
-
-                package.Save();
-            }
-            stream.Position = 0;
-            return (customer, stream);
-        }
-
+        
 
         #endregion
         #region Import
@@ -417,206 +365,6 @@ namespace Owlvey.Falcon.Components
             }
         }
         
-
-        public async Task<List<string>> ImportMetadata(int customerId, Stream input)
-        {
-            var logs = new List<string>();
-
-            var customer = await this._dbContext.Customers.Where(c => c.Id == customerId).SingleAsync();
-            var squads = await this._dbContext.Squads.Where(c => c.CustomerId == customerId).ToListAsync();
-
-            using (var package = new ExcelPackage(input))
-            {
-                var squadSheet = package.Workbook.Worksheets["Squads"];
-
-                for (int row = 2; row <= squadSheet.Dimension.Rows; row++)
-                {
-                    var name = squadSheet.Cells[row, 1].GetValue<string>();
-                    var description = squadSheet.Cells[row, 2].GetValue<string>();
-                    var avatar = squadSheet.Cells[row, 3].GetValue<string>();
-                    var leaders = squadSheet.Cells[row, 4].GetValue<string>();
-                    logs.Add(" add update " + name);
-                    await this._squadComponent.CreateOrUpdate(customer, name, description, avatar, leaders);
-                }
-
-                var memberSheet = package.Workbook.Worksheets["Members"];
-                await this.ImportMembers(customerId, memberSheet);
-
-                var productSheet = package.Workbook.Worksheets["Products"];
-
-                for (int row = 2; row <= productSheet.Dimension.Rows; row++)
-                {
-                    var name = productSheet.Cells[row, 1].GetValue<string>();
-                    var description = productSheet.Cells[row, 2].GetValue<string>();
-                    var avatar = productSheet.Cells[row, 3].GetValue<string>();
-                    var leaders = productSheet.Cells[row, 4].GetValue<string>();
-                    if (name != null)
-                    {
-                        await this._productComponent.CreateOrUpdate(customer, name, description, avatar, leaders);
-                    }
-                }
-
-                var serviceSheet = package.Workbook.Worksheets["Services"];
-
-                for (int row = 2; row <= serviceSheet.Dimension.Rows; row++)
-                {
-                    var product = serviceSheet.Cells[row, 1].GetValue<string>();
-                    var name = serviceSheet.Cells[row, 2].GetValue<string>();
-                    var description = serviceSheet.Cells[row, 3].GetValue<string>();
-                    var availabilitySlo = serviceSheet.Cells[row, 4].GetValue<decimal>();
-                    var latencySlo = serviceSheet.Cells[row, 5].GetValue<decimal>();
-                    var experienceSlo = serviceSheet.Cells[row, 6].GetValue<decimal>();
-                    var avatar = serviceSheet.Cells[row, 7].GetValue<string>();
-                    var leaders = serviceSheet.Cells[row, 8].GetValue<string>();
-                    var aggregation = serviceSheet.Cells[row, 9].GetValue<string>();
-                    var group = serviceSheet.Cells[row, 10].GetValue<string>();
-                    if (product != null && name != null)
-                    {
-                        await this._serviceComponent.CreateOrUpdate(customer, 
-                            product, name, description, 
-                            avatar, availabilitySlo, latencySlo, experienceSlo, leaders, aggregation, group);
-                    }
-                }
-
-                var featureSheet = package.Workbook.Worksheets["Features"];
-
-                for (int row = 2; row <= featureSheet.Dimension.Rows; row++)
-                {
-                    var product = featureSheet.Cells[row, 1].GetValue<string>();
-                    var name = featureSheet.Cells[row, 2].GetValue<string>();
-                    var description = featureSheet.Cells[row, 3].GetValue<string>();
-                    var avatar = featureSheet.Cells[row, 4].GetValue<string>();
-                    if (product != null && name != null)
-                    {
-                        await this._featureComponent.CreateOrUpdate(customer, product, name, description, avatar);
-                    }
-                }
-
-                var sourceSheet = package.Workbook.Worksheets["Sources"];
-                await this.ImportSource(customer, sourceSheet);                
-
-                var serviceMapSheet = package.Workbook.Worksheets["ServicesMap"];
-                for (int row = 2; row <= serviceMapSheet.Dimension.Rows; row++)
-                {
-                    var product = serviceMapSheet.Cells[row, 1].GetValue<string>();
-                    var service = serviceMapSheet.Cells[row, 2].GetValue<string>();
-                    var feature = serviceMapSheet.Cells[row, 3].GetValue<string>();
-                    if (product != null && service != null)
-                    {
-                        await this._serviceMapComponent.CreateServiceMap(customerId, product, service, feature);
-                    }
-                }
-
-                var indicatorSheet = package.Workbook.Worksheets["Indicators"];
-                for (int row = 2; row <= indicatorSheet.Dimension.Rows; row++)
-                {
-                    var product = indicatorSheet.Cells[row, 1].GetValue<string>();
-                    var feature = indicatorSheet.Cells[row, 2].GetValue<string>();
-                    var source = indicatorSheet.Cells[row, 3].GetValue<string>();                    
-                    if (product != null && source != null)
-                    {
-                        await this._indicatorComponent.Create(customerId, product, source, feature);
-                    }
-                }
-
-                var sourceItemsSheet = package.Workbook.Worksheets["SourceItems"];
-
-                var sources = await this._dbContext.Sources.Include(c => c.Product).Where(c => c.Product.CustomerId == customerId).ToListAsync();
-
-                var sourceItems = new List<(SourceEntity, SourceItemInteractionPostRp)>();
-                for (int row = 2; row <= sourceItemsSheet.Dimension.Rows; row++)
-                {
-                    var product = sourceItemsSheet.Cells[row, 1].GetValue<string>();
-                    var source = sourceItemsSheet.Cells[row, 2].GetValue<string>();
-                    var good = sourceItemsSheet.Cells[row, 3].GetValue<int>();
-                    var total = sourceItemsSheet.Cells[row, 4].GetValue<int>();
-                    var target = DateTime.Parse(sourceItemsSheet.Cells[row, 5].GetValue<string>());                    
-                    var clues = sourceItemsSheet.Cells[row, 6].GetValue<string>();
-                    if (product != null && source != null)
-                    {
-                        var tmp = sources.Where(c => c.Name == source && c.Product.Name == product).Single();
-
-                        var targetClues = new Dictionary<string, decimal>();
-                        if (!string.IsNullOrWhiteSpace(clues)) {
-                            targetClues = JsonConvert.DeserializeObject<Dictionary<string, decimal>>(clues);
-                        }
-
-                        sourceItems.Add((tmp, new SourceItemInteractionPostRp()
-                        {
-                            SourceId = tmp.Id.Value,
-                            Start = target,
-                            End = target,
-                            Good = good,
-                            Total = total                            
-                        }));                        
-                    }
-                }
-
-                var groups = sourceItems.GroupBy(c => c.Item1, new SourceEntityComparer());
-                foreach (var item in groups)
-                {
-                    await this._sourceItemComponent.BulkInsert(item.Key, item.Select(c=>c.Item2).ToList());
-                }
-
-
-                var incidentsSheet = package.Workbook.Worksheets["Incidents"];
-                var products = await this._dbContext.Products.Where(c => c.CustomerId == customerId).ToListAsync();
-
-                for (int row = 2; row <= incidentsSheet.Dimension.Rows; row++)
-                {                    
-                    var product = incidentsSheet.Cells[row, 1].GetValue<string>();
-                    var key = incidentsSheet.Cells[row, 2].GetValue<string>();
-                    if (!string.IsNullOrWhiteSpace(product) && !string.IsNullOrWhiteSpace(key))
-                    {
-                        var title = incidentsSheet.Cells[row, 3].GetValue<string>();
-                        var affected = incidentsSheet.Cells[row, 4].GetValue<int>();
-                        var ttd = incidentsSheet.Cells[row, 5].GetValue<int>();
-                        var tte = incidentsSheet.Cells[row, 6].GetValue<int>();
-                        var ttf = incidentsSheet.Cells[row, 7].GetValue<int>();
-                        var url = incidentsSheet.Cells[row, 8].GetValue<string>();
-                        var end = DateTime.Parse(incidentsSheet.Cells[row, 9].GetValue<string>());
-
-                        var (incident, created) = await this._incidentComponent.Post(new IncidentPostRp()
-                        {
-                            Key = key,
-                            Title = title,
-                            ProductId = products.Where(c => c.Name == product).Single().Id.Value
-                        });
-
-                        await this._incidentComponent.Put(incident.Id, new IncidentPutRp()
-                        {
-                            End = end,
-                            Title = title,
-                            TTD = ttd,
-                            TTE = tte,
-                            TTF = ttf,
-                            URL = url,
-                            Affected = affected
-                        });
-                    }
-                }
-
-                var incidentsFeaturesSheet = package.Workbook.Worksheets["IncidentFeatures"];
-                var incidents = await this._dbContext.Incidents.Where(c => c.Product.CustomerId == customerId).ToListAsync();
-                var features = await this._dbContext.Features.Where(c => c.Product.CustomerId == customerId).ToListAsync();
-                for (int row = 2; row <= incidentsFeaturesSheet.Dimension.Rows; row++)
-                {
-                    var product = incidentsFeaturesSheet.Cells[row, 1].GetValue<string>();
-                    var key = incidentsFeaturesSheet.Cells[row, 2].GetValue<string>();
-                    var feature = incidentsFeaturesSheet.Cells[row, 3].GetValue<string>();
-                    await this._incidentComponent.RegisterFeature(
-                        incidents.Where(c => c.Key == key).Single().Id.Value,
-                        features.Where(c => c.Name == feature).Single().Id.Value);
-                }
-
-                var squadFeaturesSheet = package.Workbook.Worksheets["SquadFeatures"];
-                await this.ImportSquadFeatures(customerId, squadFeaturesSheet);
-
-                var anchorsSheet = package.Workbook.Worksheets["Anchors"];
-                await this.ImportAnchors(customerId, anchorsSheet);
-            }
-            return logs;
-        }
 
         #endregion
 
@@ -731,10 +479,10 @@ namespace Owlvey.Falcon.Components
                     var description = servicesSheet.Cells[row, 8].GetValue<string>();
                     var avatar = servicesSheet.Cells[row, 9].GetValue<string>();
                     var leaders = servicesSheet.Cells[row, 10].GetValue<string>();
-                    var aggregation = servicesSheet.Cells[row, 11].GetValue<string>();
+                    
                     await this._serviceComponent.CreateOrUpdate(
                         organizations.Single(c=>c.Name == organization),product, name,
-                        description, avatar, availabilitySlo, latencySlo, experienceSlo, leaders, aggregation, group);
+                        description, avatar, availabilitySlo, latencySlo, experienceSlo, leaders, group);
                 }
 
                 var services = await this._dbContext.Services.ToListAsync();
@@ -791,7 +539,8 @@ namespace Owlvey.Falcon.Components
                     var kind = sourcesSheet.Cells[row, 9].GetValue<string>();
                     var percentile = sourcesSheet.Cells[row, 10].GetValue<decimal>();
                     await this._sourceComponent.CreateOrUpdate(
-                        organizations.Single(c => c.Name == organization), product, name, string.Empty, avatar, good, total, description, kind, group, percentile);                        
+                        organizations.Single(c => c.Name == organization), product, name, string.Empty, avatar, good, total, 
+                        description, kind, group, percentile);                        
                 }
 
                 var sources = await this._dbContext.Sources.ToListAsync();
@@ -844,30 +593,47 @@ namespace Owlvey.Falcon.Components
                     var good = sourceItemsSheet.Cells[row, 4].GetValue<int>();
                     var total = sourceItemsSheet.Cells[row, 5].GetValue<int>();
                     var target = DateTime.Parse(sourceItemsSheet.Cells[row, 6].GetValue<string>());
-                    var proportion = sourceItemsSheet.Cells[row, 7].GetValue<decimal?>();
+                    var measure = sourceItemsSheet.Cells[row, 7].GetValue<decimal>();
 
                     var sourceTarget = sources.Single(c => c.Name == source && c.Product.Name == product && c.Product.Customer.Name == organization);
 
-                    if (sourceTarget.Kind == SourceKindEnum.Interaction)
+                    if (sourceTarget.Group == SourceGroupEnum.Availability || sourceTarget.Group == SourceGroupEnum.Experience)
                     {
-                        sourceItems.Add((sourceTarget, new SourceItemInteractionPostRp()
+                        if (sourceTarget.Kind == SourceKindEnum.Interaction)
+                        {
+                            sourceItems.Add((sourceTarget, new SourceItemInteractionPostRp()
+                            {
+                                SourceId = sourceTarget.Id.Value,
+                                Start = target,
+                                End = target,
+                                Good = good,
+                                Total = total
+                            }));
+                        }
+                        else
+                        {
+                            sourceItems.Add((sourceTarget, new SourceItemProportionPostRp()
+                            {
+                                SourceId = sourceTarget.Id.Value,
+                                Start = target,
+                                End = target,
+                                Proportion = measure,
+                            })); ;
+                        }
+                    }
+                    else if (sourceTarget.Group == SourceGroupEnum.Latency)
+                    {
+                        sourceItems.Add((sourceTarget, new LatencySourceItemPostRp()
                         {
                             SourceId = sourceTarget.Id.Value,
                             Start = target,
                             End = target,
-                            Good = good,
-                            Total = total
+                            Latency = measure,
                         }));
                     }
                     else {
-                        sourceItems.Add((sourceTarget, new SourceItemProportionPostRp()
-                        {
-                            SourceId = sourceTarget.Id.Value,
-                            Start = target,
-                            End = target,
-                            Proportion = proportion.HasValue ? proportion.Value : QualityUtils.CalculateProportion(total, good),                            
-                        })); ;
-                    }                    
+                        throw new ApplicationException("source is not supported");
+                    }
                 }
 
                 var groups = sourceItems.GroupBy(c => c.Item1, new SourceEntityComparer());

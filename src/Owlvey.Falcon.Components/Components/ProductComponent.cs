@@ -17,6 +17,7 @@ using Polly;
 using System.IO;
 using OfficeOpenXml;
 using Owlvey.Falcon.Core.Models.Migrate;
+using Owlvey.Falcon.Components.Models;
 
 namespace Owlvey.Falcon.Components
 {
@@ -219,30 +220,47 @@ namespace Owlvey.Falcon.Components
                     var good = sourceItemsSheet.Cells[row, 2].GetValue<int>();
                     var total = sourceItemsSheet.Cells[row, 3].GetValue<int>();
                     var target = DateTime.Parse(sourceItemsSheet.Cells[row, 4].GetValue<string>());
-                    var proportion = sourceItemsSheet.Cells[row, 5].GetValue<decimal>();
+                    var measure = sourceItemsSheet.Cells[row, 5].GetValue<decimal>();
                     var sourceTarget = sources.SingleOrDefault(c => c.Name == source);
                     if (sourceTarget != null)
                     {
-                        if (sourceTarget.Kind == SourceKindEnum.Interaction)
+                        if (sourceTarget.Group == SourceGroupEnum.Availability || sourceTarget.Group == SourceGroupEnum.Experience)
                         {
-                            sourceItems.Add((sourceTarget, new SourceItemInteractionPostRp()
+                            if (sourceTarget.Kind == SourceKindEnum.Interaction)
+                            {
+                                sourceItems.Add((sourceTarget, new SourceItemInteractionPostRp()
+                                {
+                                    SourceId = sourceTarget.Id.Value,
+                                    Start = target,
+                                    End = target,
+                                    Good = good,
+                                    Total = total
+                                }));
+                            }
+                            else
+                            {
+                                sourceItems.Add((sourceTarget, new SourceItemProportionPostRp()
+                                {
+                                    SourceId = sourceTarget.Id.Value,
+                                    Start = target,
+                                    End = target,
+                                    Proportion = measure
+                                }));
+                            }
+                        }
+                        else if (sourceTarget.Group == SourceGroupEnum.Latency)
+                        {
+                            sourceItems.Add((sourceTarget, new LatencySourceItemPostRp()
                             {
                                 SourceId = sourceTarget.Id.Value,
                                 Start = target,
                                 End = target,
-                                Good = good,
-                                Total = total
+                                Latency = measure
                             }));
                         }
                         else {
-                            sourceItems.Add((sourceTarget, new SourceItemProportionPostRp()
-                            {
-                                SourceId = sourceTarget.Id.Value,
-                                Start = target,
-                                End = target,
-                                Proportion = proportion
-                            }));
-                        }                        
+                            throw new ApplicationException("source group is not supported");
+                        }
                     }
                     else {
                         logs.Add(" source not found " + source);

@@ -33,7 +33,7 @@ namespace Owlvey.Falcon.Components
             decimal latencySlo,
             decimal experienceSlo,
             string leaders,
-            string aggregation, string group)
+            string group)
         {
             var createdBy = this._identityService.GetIdentity();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
@@ -45,14 +45,9 @@ namespace Owlvey.Falcon.Components
                 entity = ServiceEntity.Factory.Create(name, this._datetimeGateway.GetCurrentDateTime(), createdBy, productEntity);
             }
 
-            ServiceAggregationEnum agg = ServiceAggregationEnum.Minimun;
-            if (!string.IsNullOrWhiteSpace(aggregation))
-            {
-                agg = (ServiceAggregationEnum)Enum.Parse(typeof(ServiceAggregationEnum), aggregation);
-            }
-
+           
             entity.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, 
-                name, availabilitySlo, latencySlo, experienceSlo, description, avatar, leaders, agg, group);
+                name, availabilitySlo, latencySlo, experienceSlo, description, avatar, leaders, group);
 
             this._dbContext.Services.Update(entity);
             await this._dbContext.SaveChangesAsync();
@@ -137,17 +132,13 @@ namespace Owlvey.Falcon.Components
                 }
             }
 
-            ServiceAggregationEnum agg = ServiceAggregationEnum.Minimun;
-            if (!string.IsNullOrWhiteSpace(model.Aggregation)) {
-                agg = (ServiceAggregationEnum)Enum.Parse(typeof(ServiceAggregationEnum), model.Aggregation);
-            }                        
-
+                        
             service.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, model.Name, 
                 model.AvailabilitySlo,
                 model.LatencySlo,
                 model.ExperienceSlo,
                 model.Description, 
-                model.Avatar, model.Leaders, agg, model.Group);
+                model.Avatar, model.Leaders, model.Group);
 
             this._dbContext.Services.Update(service);
 

@@ -96,6 +96,19 @@ namespace Owlvey.Falcon.Components
                         period += 1;
                     }
                 }
+                var latency = model as LatencySourceItemPostRp;
+                if (latency != null)
+                {
+                    var range = SourceEntity.Factory.CreateLatencyFromRange(source,
+                        latency.Start, latency.End, latency.Latency,
+                                this._datetimeGateway.GetCurrentDateTime(), createdBy);
+
+                    foreach (var item in range)
+                    {
+                        this._dbContext.SourcesItems.Add(item);
+                        period += 1;
+                    }
+                }
 
                 if (period > 1000) {                    
                     await this._dbContext.SaveChangesAsync();

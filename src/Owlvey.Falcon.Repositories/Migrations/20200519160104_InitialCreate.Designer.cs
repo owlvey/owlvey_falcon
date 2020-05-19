@@ -10,7 +10,7 @@ using Owlvey.Falcon.Repositories;
 namespace Owlvey.Falcon.Repositories.Migrations
 {
     [DbContext(typeof(FalconDbContext))]
-    [Migration("20200518195814_InitialCreate")]
+    [Migration("20200519160104_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -471,9 +471,6 @@ namespace Owlvey.Falcon.Repositories.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("Aggregation")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("AvailabilitySlo")
                         .HasColumnType("decimal(5,3)");
 
@@ -500,7 +497,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("LatencySlo")
-                        .HasColumnType("decimal(5,3)");
+                        .HasColumnType("decimal(12,3)");
 
                     b.Property<string>("Leaders")
                         .HasColumnType("nvarchar(max)");

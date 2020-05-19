@@ -16,7 +16,7 @@ namespace Owlvey.Falcon.Core.Models.Migrate
         public string Description { get; set; }
         public string Avatar { get; set; }
         public string Leaders { get; set; }
-        public string Aggregation { get; set; }
+        
 
         public void Load(string organization, string product, ServiceEntity entity)
         {            
@@ -30,8 +30,7 @@ namespace Owlvey.Falcon.Core.Models.Migrate
             this.LatencySlo = entity.LatencySlo;
             this.Leaders = entity.Leaders;
             this.Organization = organization;
-            this.Product = product;
-            this.Aggregation = entity.Aggregation.ToString();
+            this.Product = product;            
         }
         public static IEnumerable<ServiceModel> Load(string organization, string product, IEnumerable<ServiceEntity> entities)
         {

@@ -51,9 +51,7 @@ namespace Owlvey.Falcon.Components
             cfg.CreateMap<ServiceEntity, ServiceMigrateRp>()
                 .ForMember(m => m.AvailabilitySLO, ope => ope.Ignore())
                 .ForMember(m => m.ExperienceSLO, ope => ope.Ignore())
-                .ForMember(m => m.LatencySLO, ope => ope.Ignore())
-                .ForMember(m=>m.Aggregation, ope=>ope.MapFrom(c=>c.Aggregation.ToString())
-                );
+                .ForMember(m => m.LatencySLO, ope => ope.Ignore());
         }
     }
 }

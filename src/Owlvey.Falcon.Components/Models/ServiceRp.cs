@@ -26,10 +26,6 @@ namespace Owlvey.Falcon.Models
         public decimal ExperienceSLO { get; set; }        
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
-
-        [JsonConverter(typeof(JsonStringEnumConverter))]
-        public ServiceAggregationEnum Aggregation { get; set; }
-
         public int MTTD { get; set; }
         public int MTTE { get; set; }
         public int MTTF { get; set; }
@@ -233,6 +229,6 @@ namespace Owlvey.Falcon.Models
         public string Description { get; set; }        
         public string Group { get; set; }
         public string Leaders { get; set; }
-        public string Aggregation { get; set; }
+        
     }
 }

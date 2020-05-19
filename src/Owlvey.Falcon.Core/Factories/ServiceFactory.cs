@@ -20,8 +20,7 @@ namespace Owlvey.Falcon.Core.Entities
                     CreatedBy = user,
                     ModifiedBy = user,                    
                     CreatedOn = on,
-                    ModifiedOn = on,
-                    Aggregation = ServiceAggregationEnum.Minimun,
+                    ModifiedOn = on,                    
                     Product = product,
                     Group = "Default"
                 };                

@@ -13,8 +13,7 @@ namespace Owlvey.Falcon.Core.Models.Migrate
         public int Good { get; set; }
         public int Total { get; set; }        
         public string Target { get; set; }        
-
-        public decimal Proportion { get; set; }
+        public decimal Measure { get; set; }
 
         public void Load(string organization, string product, string source, SourceItemEntity entity)
         {
@@ -24,7 +23,7 @@ namespace Owlvey.Falcon.Core.Models.Migrate
             this.Good = entity.Good.GetValueOrDefault();
             this.Total = entity.Total.GetValueOrDefault();            
             this.Target = entity.Target.ToString("s", System.Globalization.CultureInfo.InvariantCulture);
-            this.Proportion = entity.Measure;
+            this.Measure = entity.Measure;
         }
         public static IEnumerable<SourceItemModel> Load(string organization, string product, string source, IEnumerable<SourceItemEntity> entities)
         {
