@@ -19,30 +19,29 @@ namespace Owlvey.Falcon.API.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<SourceGetListRp>), 200)]
+        [ProducesResponseType(typeof(SourcesGetRp), 200)]
         public async Task<IActionResult> Get(int? productId, int? indicatorId,
             DateTime? start, DateTime? end)
         {
-            IEnumerable<SourceGetListRp> model = new List<SourceGetListRp>();
-
             if (productId.HasValue && end.HasValue && start.HasValue)
             {
-                model = await this._sourceComponent.GetByProductIdWithAvailability(productId.Value, start.Value, end.Value);
+                var model = await this._sourceComponent.GetByProductIdWithAvailability(productId.Value, start.Value, end.Value);
+                return this.Ok(model);
             }
             else if (productId.HasValue)
             {
-                model = await this._sourceComponent.GetByProductId(productId.Value);
+                var model = await this._sourceComponent.GetByProductId(productId.Value);
+                return this.Ok(model);
             }
             else if (indicatorId.HasValue)
             {
-                model = await this._sourceComponent.GetByIndicatorId(indicatorId.Value);
+                var model = await this._sourceComponent.GetByIndicatorId(indicatorId.Value);
+                return this.Ok(model);
             }
             else
             {
                 return this.NotFound($"The Resource doesn't exists.");
-            }
-
-            return this.Ok(model);
+            }            
         }
         
 

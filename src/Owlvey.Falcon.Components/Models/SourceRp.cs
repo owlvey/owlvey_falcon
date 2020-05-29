@@ -58,6 +58,21 @@ namespace Owlvey.Falcon.Models
         public int References { get; set; }
     }
 
+    public class SourcesGetRp {
+        public List<SourceGetListRp> Items { get; set; } = new List<SourceGetListRp>();
+
+        public decimal Availability { get; set; }
+
+        public int AvailabilityInteractionsTotal { get; set; }
+        public int AvailabilityInteractionsGood { get; set; }
+        public decimal AvailabilityInteractions { get; set; }
+
+        public decimal Latency { get; set; }
+
+        public decimal Experience { get; set; }
+
+    }
+
  
 
     public class SourcePostRp

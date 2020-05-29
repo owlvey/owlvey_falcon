@@ -167,12 +167,12 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<SourceGetListRp>>(entities);
         }
    
-        public async Task<IEnumerable<SourceGetListRp>> GetByProductIdWithAvailability(int productId, DateTime start, DateTime end)
+        public async Task<SourcesGetRp> GetByProductIdWithAvailability(int productId, DateTime start, DateTime end)
         {
             var entities = await this._dbContext.Sources.Include(c=>c.Indicators).Where(c => c.Product.Id == productId).ToListAsync();            
             var sourceItems = await this._dbContext.GetSourceItems(start, end);
 
-            var result = new List<SourceGetListRp>();
+            var items = new List<SourceGetListRp>();
             foreach (var source in entities)
             {                
                 source.SourceItems = sourceItems.Where(c => c.SourceId == source.Id).ToList();                
@@ -180,9 +180,17 @@ namespace Owlvey.Falcon.Components
                 var tmp = this._mapper.Map<SourceGetListRp>(source);
                 tmp.References = source.Indicators.Count();
                 tmp.Measure = proportion.Value;                
-                result.Add(tmp);
+                items.Add(tmp);
             }
-            return result.OrderBy(c=>c.Measure).ToList();
+            var model = new SourcesGetRp();
+            model.Items = items.OrderBy(c => c.Measure).ToList();
+            var agg = new  SourceMetricsAggregate(entities);
+            (model.Availability, 
+                model.AvailabilityInteractionsTotal,
+                model.AvailabilityInteractionsGood,
+                model.AvailabilityInteractions, 
+                model.Latency, model.Experience) = agg.Execute();
+            return model;            
         }
 
         public async Task<IEnumerable<SourceGetListRp>> GetByIndicatorId(int indicatorId)

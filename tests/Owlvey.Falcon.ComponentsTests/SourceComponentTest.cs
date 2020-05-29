@@ -99,10 +99,10 @@ namespace Owlvey.Falcon.ComponentsTests
             });
 
             var result = await component.GetByProductIdWithAvailability(product, OwlveyCalendar.January201903, OwlveyCalendar.January201907);
-            Assert.NotEmpty(result);
+            Assert.NotEmpty(result.Items);
 
             result = await component.GetByProductIdWithAvailability(product, OwlveyCalendar.January201905, OwlveyCalendar.January201907);
-            Assert.NotEmpty(result);
+            Assert.NotEmpty(result.Items);
 
         }
 
