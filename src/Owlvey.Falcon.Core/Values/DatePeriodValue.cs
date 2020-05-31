@@ -37,6 +37,16 @@ namespace Owlvey.Falcon.Core.Values
             }
             return result;
         }
+
+        public bool Contains(DateTime target) {
+            if (this.Start <= target && target <= this.End)
+            {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
         public IEnumerable<(DateTime start, DateTime end)> GetDatesIntervals()
         {
             var result = new List<(DateTime start, DateTime end)>();

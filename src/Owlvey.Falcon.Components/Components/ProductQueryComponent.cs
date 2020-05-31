@@ -499,8 +499,29 @@ namespace Owlvey.Falcon.Components
         #endregion
 
         #region Exports
-        
 
+        public async Task<MemoryStream> ExportAnnualAvailabilityInteractions(int productId)
+        {
+            var period = DatePeriodValue.ToYearFromStart(this._datetimeGateway.GetCurrentDateTime());
+            var stream = new MemoryStream();
+            using (var package = new ExcelPackage(stream))
+            {
+                var product = await this._dbContext.FullLoadProductWithSourceItems(productId, period.Start, period.End);
+                var agg = new AnnualAvailabilityInteractionsAggregate(product, this._datetimeGateway.GetCurrentDateTime());
+
+                var model = agg.Execute();
+
+                var serviceSheet = package.Workbook.Worksheets.Add("Services");
+                serviceSheet.Cells.LoadFromCollection(model.services, true);
+
+                var sourceSheet = package.Workbook.Worksheets.Add("Sources");
+                sourceSheet.Cells.LoadFromCollection(model.sources, true);
+
+                package.Save();
+            }
+            stream.Position = 0;
+            return stream;
+        }
         public async Task<MemoryStream> ExportItems(int productId, DatePeriodValue period)
         {
             var stream = new MemoryStream();

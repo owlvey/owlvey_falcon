@@ -19,8 +19,6 @@ namespace Owlvey.Falcon.API.Controllers
         private readonly ProductQueryComponent _productQueryService;
         private readonly ProductComponent _productService;
         private readonly ServiceQueryComponent _serviceQueryComponent;
-
-
         public ProductController(ProductQueryComponent productQueryService,
                                  ProductComponent productService,
                                  ServiceQueryComponent serviceQueryComponent)
@@ -248,6 +246,14 @@ namespace Owlvey.Falcon.API.Controllers
             return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
         }
 
+        [HttpGet("{id}/exports/availability/interactions")]
+        public async Task<IActionResult> ExportAnnualAvailabilityInteractions(int id) {
+            var stream = await this._productQueryService.ExportAnnualAvailabilityInteractions(id);
+
+            string excelName = $"owlvey-annual-availability-interactions-{DateTime.Now:yyyyMMdd}.xlsx";
+
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
+        }
 
         [HttpPost("{id}/imports/items")]
         [Authorize(Policy = "RequireAdminRole")]
