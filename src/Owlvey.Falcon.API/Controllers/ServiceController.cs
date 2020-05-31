@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Core.Models.Series;
 using Owlvey.Falcon.Core.Values;
 using Owlvey.Falcon.Models;
 
@@ -270,7 +271,7 @@ namespace Owlvey.Falcon.API.Controllers
         }
 
         [HttpGet("{id}/reports/daily/series")]
-        [ProducesResponseType(typeof(SeriesGetRp), 200)]
+        [ProducesResponseType(typeof(DatetimeSerieModel), 200)]
         public async Task<IActionResult> ReportSeries(int id, DateTime? start, DateTime? end)
         {
             if (!start.HasValue)
@@ -281,7 +282,7 @@ namespace Owlvey.Falcon.API.Controllers
             {
                 return this.BadRequest("end is required");
             }
-            var result = await this._serviceQueryService.GetDailySeriesById(id, start.Value, end.Value);
+            var result = await this._serviceQueryService.GetDailySeriesById(id, new DatePeriodValue(start.Value, end.Value));
 
             return this.Ok(result);
         }

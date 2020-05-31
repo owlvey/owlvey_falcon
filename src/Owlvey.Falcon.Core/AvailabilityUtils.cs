@@ -44,10 +44,26 @@ namespace Owlvey.Falcon.Core
         public static decimal MeasureBudget(decimal avaialbility, decimal slo) {
             return avaialbility - slo;
         }
+        public static decimal MeasureDebt(decimal availability, decimal slo) {
+            var budget = MeasureBudget(availability, slo);
+            if (budget >= 0) {
+                return 0;
+            }
+            return -1 * budget;
+        }
         public static decimal MeasureLatencyBudget(decimal latency, decimal slo) {
             // 2000 1000
             // 500 1000
             return slo - latency;
+        }
+        public static decimal MeasureLatencyDebt(decimal latency, decimal slo)
+        {
+            var budget = MeasureLatencyBudget(latency, slo);
+            if (budget <= 0)
+            {
+                return 0;
+            }
+            return budget;
         }
 
         public static int MeanTimeInMinutes(IEnumerable<int> input) {

@@ -83,4 +83,6 @@ namespace Owlvey.Falcon.Models
         public IList<MultiSerieItemGetRp> Series { get; set; } = new List<MultiSerieItemGetRp>();
         
     }
+
+    
 }

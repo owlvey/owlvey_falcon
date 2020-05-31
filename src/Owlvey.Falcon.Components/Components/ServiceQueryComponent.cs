@@ -23,6 +23,7 @@ using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using OfficeOpenXml.Table.PivotTable;
 using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
+using Owlvey.Falcon.Core.Models.Series;
 
 namespace Owlvey.Falcon.Components
 {
@@ -346,15 +347,14 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<FeatureGetListRp>>(rest);
         }
 
-        public async Task<MultiSeriesGetRp> GetDailySeriesById(int serviceId, DateTime start, 
-            DateTime end)
+        public async Task<DatetimeSerieModel> GetDailySeriesById(int serviceId, DatePeriodValue period)
         {
             var service = await this._dbContext.GetService(serviceId);
 
             var sourceIds = service.FeatureMap.SelectMany(c => c.Feature.Indicators)
                 .Select(c => c.SourceId).Distinct();
 
-            var sourceItems = await this._dbContext.GetSourceItems(sourceIds, start, end);
+            var sourceItems = await this._dbContext.GetSourceItems(sourceIds, period.Start, period.End);
 
             foreach (var map in service.FeatureMap)
             {
@@ -364,40 +364,47 @@ namespace Owlvey.Falcon.Components
                 }                
             }            
 
-            var result = new MultiSeriesGetRp
+            var result = new DatetimeSerieModel
             {
-                Start = start,
-                End = end,
+                Start = period.Start,
+                End = period.End,
                 Name = service.Name,
-                Avatar = service.Avatar,
-                SLO = service.AvailabilitySlo
+                Avatar = service.Avatar,                
             };
 
-            var aggregator = new ServiceDailyAggregate(service, new DatePeriodValue(start, end));
+            var aggregator = new ServiceDailyAggregate(service, period);
 
             var (availability, features) = aggregator.MeasureQuality();
 
-            result.Series.Add(new MultiSerieItemGetRp()
-            {
-                Name = "Availability",
-                Avatar = service.Avatar,
-                Items = availability.OrderBy(c => c.Date).Select(c => new SeriesItemGetRp(c.Date, c.Measure.Availability)).ToList()
-            });
+            result.Availability.AddItems(            
+                availability.OrderBy(c => c.Date).Select(c => (c.Date, c.Measure.Availability)).ToList()
+            );
 
-            result.Series.Add(new MultiSerieItemGetRp()
-            {
-                Name = "Latency",
-                Avatar = service.Avatar,
-                Items = availability.OrderBy(c => c.Date).Select(c => new SeriesItemGetRp(c.Date, c.Measure.Latency)).ToList()
-            });
+            result.Latency.AddItems(
+                availability.OrderBy(c => c.Date).Select(c => (c.Date, c.Measure.Availability)).ToList()
+            );
 
-            result.Series.Add(new MultiSerieItemGetRp()
-            {
-                Name = "Experience",
-                Avatar = service.Avatar,
-                Items = availability.OrderBy(c => c.Date).Select(c => new SeriesItemGetRp(c.Date, c.Measure.Experience)).ToList()
-            });
+            result.Experience.AddItems(
+                availability.OrderBy(c => c.Date).Select(c => (c.Date, c.Measure.Availability)).ToList()
+            );
 
+            foreach (var (feature, avaValues) in features)
+            {   
+                var pivotAvailability = new DatetimeSerieListModel(feature.Name, feature.Avatar);
+                pivotAvailability.AddItems( avaValues.OrderBy(c=>c.Date)
+                    .Select(c=> (c.Date,  QualityUtils.MeasureDebt( c.Measure.Availability, service.AvailabilitySlo))).ToList());
+                result.AvailabilityDetail.Add(pivotAvailability);
+
+                var pivotLatency = new DatetimeSerieListModel(feature.Name, feature.Avatar);
+                pivotLatency.AddItems(avaValues.OrderBy(c => c.Date)
+                    .Select(c => (c.Date, QualityUtils.MeasureLatencyDebt(c.Measure.Latency, service.LatencySlo))).ToList());
+                result.LatencyDetail.Add(pivotLatency);
+
+                var pivotExperience = new DatetimeSerieListModel(feature.Name, feature.Avatar);
+                pivotExperience.AddItems(avaValues.OrderBy(c => c.Date)
+                    .Select(c => (c.Date, QualityUtils.MeasureDebt(c.Measure.Experience, service.ExperienceSlo))).ToList());
+                result.ExperienceDetail.Add(pivotExperience);
+            }            
             return result;
         }
 
