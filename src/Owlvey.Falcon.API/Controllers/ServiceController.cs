@@ -226,13 +226,26 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok(model);
         }
 
-        
 
-        
+
+
         #endregion
 
         #region reports        
 
+
+        [HttpGet("reports/annual")]
+        [ProducesResponseType(typeof(AnnualServiceListRp), 200)]
+        public async Task<IActionResult> ReportAnnual(int productId, DateTime? start)
+        {
+            if (!start.HasValue)
+            {
+                return this.BadRequest("start is required");
+            }
+            var model = await this._serviceQueryService.GetAnnualServiceReport(productId, start.Value);
+            return this.Ok(model);
+        }
+        
 
         [HttpGet("reports/serviceGroup/annual")]
         [ProducesResponseType(typeof(AnnualServiceGroupListRp), 200)]

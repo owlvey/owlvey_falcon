@@ -77,6 +77,58 @@ namespace Owlvey.Falcon.Components
             return result;
         }
 
+        public async Task<AnnualServiceListRp> GetAnnualServiceReport(int productId, DateTime start) {
+            var result = new AnnualServiceListRp();
+            var period = DatePeriodValue.ToYearFromStart(start);
+            var product = await this._dbContext.FullLoadProductWithSourceItems(productId, period.Start, period.End);
+            var months = period.ToYearPeriods();
+            
+            var pivot = new Dictionary<ServiceEntity, List<ServiceQualityMeasureValue>>();
+            foreach (var monthperiod in months)
+            {
+                foreach (var service in product.Services)
+                {
+                    var measure = service.Measure(monthperiod);                    
+                    if (!pivot.ContainsKey(service))
+                    {
+                        pivot.Add(service, new List<ServiceQualityMeasureValue>());
+                    }
+                    pivot[service].Add(measure);
+                }
+            }
+            if (pivot.Count == 0) return result;
+            result.Availability = pivot.Select(c =>
+            {
+                var tmp = new MonthRp() {  Id = c.Key.Id.Value, Name = string.Format("{0} | SLO:{1}", c.Key.Name, c.Key.AvailabilitySlo)};
+                for (int i = 0; i < c.Value.Count; i++)
+                {
+                    tmp.SetMonthValue(i, c.Value[i].Availability);
+                }
+                return tmp;
+            }).ToList();
+
+            result.Latency = pivot.Select(c =>
+            {
+                var tmp = new MonthRp() { Id = c.Key.Id.Value, Name = string.Format("{0} | SLO:{1}", c.Key.Name, c.Key.LatencySlo) };
+                for (int i = 0; i < c.Value.Count; i++)
+                {
+                    tmp.SetMonthValue(i, c.Value[i].Latency);
+                }
+                return tmp;
+            }).ToList();
+
+            result.Experience = pivot.Select(c =>
+            {
+                var tmp = new MonthRp() { Id = c.Key.Id.Value, Name = string.Format("{0} | SLO:{1}", c.Key.Name, c.Key.ExperienceSlo) };
+                for (int i = 0; i < c.Value.Count; i++)
+                {
+                    tmp.SetMonthValue(i, c.Value[i].Experience);
+                }
+                return tmp;
+            }).ToList();
+            return result;
+        }
+
         public async Task<AnnualServiceGroupListRp> GetAnnualServiceGroupReport(int productId, DateTime start)
         {
             var result = new AnnualServiceGroupListRp();
@@ -381,11 +433,11 @@ namespace Owlvey.Falcon.Components
             );
 
             result.Latency.AddItems(
-                availability.OrderBy(c => c.Date).Select(c => (c.Date, c.Measure.Availability)).ToList()
+                availability.OrderBy(c => c.Date).Select(c => (c.Date, c.Measure.Latency)).ToList()
             );
 
             result.Experience.AddItems(
-                availability.OrderBy(c => c.Date).Select(c => (c.Date, c.Measure.Availability)).ToList()
+                availability.OrderBy(c => c.Date).Select(c => (c.Date, c.Measure.Experience)).ToList()
             );
 
             foreach (var (feature, avaValues) in features)

@@ -109,8 +109,9 @@ namespace Owlvey.Falcon.Models
 
     public class MonthRp
     {
+        public int Id { get; set; }
         public string Name { get; set; }
-        public int Count { get; set; }
+        public int Count { get; set; }        
         public decimal Jan { get; set; } = 1;
         public decimal Feb { get; set; } = 1;
         public decimal Mar { get; set; } = 1;
@@ -152,6 +153,15 @@ namespace Owlvey.Falcon.Models
         public IList<MultiSerieItemGetRp> Weekly { get; set; } = new List<MultiSerieItemGetRp>();
         
 
+    }
+
+    public class AnnualServiceListRp
+    {
+
+
+        public List<MonthRp> Availability { get; set; } = new List<MonthRp>();
+        public List<MonthRp> Latency { get; set; } = new List<MonthRp>();
+        public List<MonthRp> Experience { get; set; } = new List<MonthRp>();        
     }
     public class ServiceGroupListRp {
 
