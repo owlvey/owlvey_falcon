@@ -63,6 +63,14 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok(model);
         }
 
+        [HttpGet("{id}/anchor")]
+        [ProducesResponseType(typeof(SourceAnchorRp), 200)]
+        public async Task<IActionResult> GetSourceAnchor(int id)
+        {            
+            var model = await this._sourceComponent.GetAnchor(id);         
+            return this.Ok(model);
+        }
+
         [HttpPost]
         [ProducesResponseType(typeof(SourceGetRp), 200)]
         [ProducesResponseType(409)]

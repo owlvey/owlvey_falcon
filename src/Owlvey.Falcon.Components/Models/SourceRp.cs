@@ -22,8 +22,12 @@ namespace Owlvey.Falcon.Models
 
         public string GoodDefinition { get; set; }
         public string TotalDefinition { get; set; }
-    }    
-
+    }
+    public class SourceAnchorRp { 
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public DateTime Target { get; set; }
+    }
     public class SourceGetRp : SourceLitRp
     {
         public string CreatedBy { get; set; }

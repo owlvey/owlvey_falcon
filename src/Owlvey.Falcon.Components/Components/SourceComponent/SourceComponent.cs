@@ -136,6 +136,27 @@ namespace Owlvey.Falcon.Components
                 .SingleOrDefaultAsync(c => c.Id == id);
             return this._mapper.Map<SourceGetRp>(entity);
         }
+        public async Task<SourceAnchorRp> GetAnchor(int id) {
+            var entity = await this._dbContext.Sources
+                .SingleOrDefaultAsync(c => c.Id == id);
+                        
+            var item = this._dbContext.SourcesItems
+                .Where(c => c.SourceId == id)
+                .OrderByDescending(c => c.Target)
+                .Take(1).ToList();
+
+            var result = new SourceAnchorRp();
+            result.Id = entity.Id.Value;
+            result.Name = entity.Name;
+
+            if (item.Count() == 0){
+                result.Target = new DateTime(this._datetimeGateway.GetCurrentDateTime().Year, 1, 1);
+            }
+            else {
+                result.Target = item.ElementAt(0).Target;
+            }
+            return result;
+        }
         public async Task<SourceGetRp> GetByIdWithAvailability(int id, DateTime start, DateTime end)
         {
             var entity = await this._dbContext.Sources
