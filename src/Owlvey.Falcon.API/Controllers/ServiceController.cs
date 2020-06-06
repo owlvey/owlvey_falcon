@@ -301,7 +301,7 @@ namespace Owlvey.Falcon.API.Controllers
         }
 
         [HttpGet("reports/debt/daily/series")]
-        [ProducesResponseType(typeof(IEnumerable<MultiSerieItemGetRp>), 200)]
+        [ProducesResponseType(typeof(DatetimeSerieModel), 200)]
         public async Task<IActionResult> GetDailyServiceGroups(int productId, string group, DateTime? start, DateTime? end)
         {
             if (!start.HasValue || !end.HasValue)

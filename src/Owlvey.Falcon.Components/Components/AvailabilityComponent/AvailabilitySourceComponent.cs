@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using Owlvey.Falcon.Core.Entities;
 using Owlvey.Falcon.Components.Models;
+using Owlvey.Falcon.Repositories.Sources;
+using Owlvey.Falcon.Core.Aggregates;
 
 namespace Owlvey.Falcon.Components
 {
@@ -73,6 +75,20 @@ namespace Owlvey.Falcon.Components
             var entities = await this._dbContext.GetSourceItems(sourceId, period.Start, period.End);
             var result = this._mapper.Map<IEnumerable<InteractiveSourceItemGetRp>>(entities);
             return result;
+        }
+
+        public async Task<ScalabilitySourceGetRp> GetScalability(int sourceId, DatePeriodValue period) {            
+            var source = await this._dbContext.GetSourceWithItems(sourceId, period);
+            
+            var model = new ScalabilitySourceGetRp
+            {
+                Period = period,
+            };
+            var agg = new ScalabilityMeasureAggregate(source.SourceItems);
+            (model.DailyCorrelation, model.DailyTotal, model.DailyBad, model.DailyIntercept, 
+                model.DailySlope, model.DailyR2, model.DailyInteractions) = agg.Measure();
+            
+            return model;
         }
 
         public async Task<IEnumerable<ProportionSourceItemGetRp>> GetProportionItems(int sourceId, DatePeriodValue period)

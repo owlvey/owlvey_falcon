@@ -59,6 +59,7 @@ namespace Owlvey.Falcon.Models
         public string CreatedBy { get; set; }
         public DateTime CreatedOn { get; set; }
         public decimal Measure { get; set; }        
+        public double? Correlation { get; set; }
         public int References { get; set; }
     }
 

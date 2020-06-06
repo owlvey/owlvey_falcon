@@ -200,6 +200,7 @@ namespace Owlvey.Falcon.Components
                 var proportion= source.Measure();
                 var tmp = this._mapper.Map<SourceGetListRp>(source);
                 tmp.References = source.Indicators.Count();
+                tmp.Correlation = source.MeasureDailyCorrelation();
                 tmp.Measure = proportion.Value;                
                 items.Add(tmp);
             }

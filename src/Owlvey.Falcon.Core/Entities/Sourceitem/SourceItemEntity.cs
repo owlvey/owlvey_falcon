@@ -13,6 +13,11 @@ namespace Owlvey.Falcon.Core.Entities
         public virtual SourceEntity Source { get; set; }
                         
         public int? Good { get; set; }
+
+        [NotMapped]
+        public int? Bad { get {
+                return this.Total - this.Good;
+            } }
         
         public int? Total { get; set; }
     

@@ -13,7 +13,8 @@ namespace Owlvey.Falcon.Components
         public static void ConfigureMappers(IMapperConfigurationExpression cfg)
         {
             cfg.CreateMap<SourceEntity, SourceGetListRp>()
-                .ForMember(c => c.Measure, opt => opt.Ignore())                
+                .ForMember(c => c.Measure, opt => opt.Ignore())
+                .ForMember(c => c.Correlation, opt => opt.Ignore())
                 .ForMember(c => c.References, opt => opt.Ignore());
             cfg.CreateMap<SourceEntity, SourceGetRp>()
                 .ForMember(c => c.Total, opt => opt.Ignore())

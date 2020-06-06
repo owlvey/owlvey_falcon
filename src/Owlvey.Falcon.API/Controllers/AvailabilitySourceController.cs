@@ -60,6 +60,18 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok(model);
         }
 
+        [HttpGet("{id}/interaction/scalability")]
+        [ProducesResponseType(typeof(ScalabilitySourceGetRp), 200)]
+        public async Task<IActionResult> GetScalability(int id, 
+            DateTime? start, DateTime? end)
+        {            
+            var model = await this._sourceComponent.GetScalability(id, 
+                new DatePeriodValue(start, end));            
+            return this.Ok(model);
+        }
+
+
+
         [HttpGet("{id}/proportion/items")]
         [ProducesResponseType(typeof(IEnumerable<ProportionSourceItemGetRp>), 200)]
         public async Task<IActionResult> GetProportionsBySourceId(int id, DateTime? start, DateTime? end)

@@ -22,7 +22,10 @@ namespace Owlvey.Falcon.Components
                 .ForMember(m => m.Experience, ope => ope.Ignore())
                 .ForMember(m => m.Latency, ope => ope.Ignore())
                 .ForMember(m => m.AvailabilityErrorBudget, ope => ope.Ignore())
+                .ForMember(m => m.AvailabilityDebt, ope => ope.Ignore())
                 .ForMember(m => m.LatencyErrorBudget, ope => ope.Ignore())
+                .ForMember(m => m.LatencyDebt, ope => ope.Ignore())
+                .ForMember(m => m.ExperienceDebt, ope => ope.Ignore())
                 .ForMember(m => m.ExperienceErrorBudget, ope => ope.Ignore());
 
 

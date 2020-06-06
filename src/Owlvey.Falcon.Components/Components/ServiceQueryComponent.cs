@@ -24,6 +24,7 @@ using OfficeOpenXml.Table.PivotTable;
 using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
 using Owlvey.Falcon.Core.Models.Series;
+using OfficeOpenXml.FormulaParsing.Utilities;
 
 namespace Owlvey.Falcon.Components
 {
@@ -205,44 +206,33 @@ namespace Owlvey.Falcon.Components
             }).ToList();
 
 
-            var weeks = period.ToWeeksPeriods();
-            pivot = new Dictionary<string, List<(int count, decimal availability, decimal latency, decimal experience)>>();
-            foreach (var week in weeks)
+            var weeks = period.ToWeeksPeriods();            
+            var days = period.ToDaysPeriods();
+
+            var dayli_measures =  days.Select(date => ( date,  product.Services.Select(d => d.Measure(date)))).ToList();
+            foreach (var item in dayli_measures)
             {
-                var groupsReport = new List<(string name, int count, decimal availability, decimal latency, decimal experience)>();
-                foreach (var group in serviceGroups)
-                {
-                    var temp = new ServiceGroupListRp.ServiceGrouptem();                    
-                    var measures = group.Select(c => new { measure = c.Measure(week), 
-                        slo = c.AvailabilitySlo });
-                    groupsReport.Add((group.Key, group.Count(), 
-                            measures.Sum(c => c.measure.AvailabilityDebt),
-                            measures.Sum(c => c.measure.LatencyDebt),
-                            measures.Sum(c => c.measure.ExperienceDebt)));
-                }
-                foreach (var group in groupsReport)
-                {
-                    if (!pivot.ContainsKey(group.name))
-                    {
-                        pivot.Add(group.name, new List<(int count, decimal availability, decimal latency, decimal experience)>());
-                    }
-                    pivot[group.name].Add((group.count, group.availability, group.latency, group.experience));
-                }
+                result.Series.Availability.Items.Add(new DatetimeSerieItemModel(item.date.Start, item.Item2.Sum(c=>c.AvailabilityDebt)));
+                result.Series.Latency.Items.Add(new DatetimeSerieItemModel(item.date.Start, item.Item2.Sum(c => c.LatencyDebt)));
+                result.Series.Experience.Items.Add(new DatetimeSerieItemModel(item.date.Start, item.Item2.Sum(c => c.ExperienceDebt)));
+            }
+            
+            foreach (var item in serviceGroups)            
+            {
+                var measures_weeks = weeks.Select(week => (week, item.Select(c => c.Measure(week))));
                 
-            }                       
-                        
-            foreach (var item in serviceGroups)
-            {
-                var serie = new MultiSerieItemGetRp
-                {
-                    Name = item.Key
-                };
-                for (int i = 0; i < weeks.Count; i++) {
-                    serie.Items.Add(
-                        new SeriesItemGetRp(weeks[i].End, 
-                        pivot[item.Key][i].availability));
-                }                
-                result.Weekly.Add(serie);                
+                var temp = new DatetimeSerieListModel(item.Key);                
+                temp.Items.AddRange(measures_weeks.Select(c => new DatetimeSerieItemModel(c.week.Start, c.Item2.Sum(d => d.AvailabilityDebt))).ToList());
+                result.Series.AvailabilityDetail.Add(temp);
+
+                var tempLatency = new DatetimeSerieListModel(item.Key);
+                tempLatency.Items.AddRange(measures_weeks.Select(c => new DatetimeSerieItemModel(c.week.Start, c.Item2.Sum(d => d.LatencyDebt))).ToList());
+                result.Series.LatencyDetail.Add(tempLatency);
+
+                var tempExperience = new DatetimeSerieListModel(item.Key);
+                tempExperience.Items.AddRange(measures_weeks.Select(c => new DatetimeSerieItemModel(c.week.Start, c.Item2.Sum(d => d.ExperienceDebt))).ToList());
+                result.Series.ExperienceDetail.Add(tempExperience);
+
             }
             return result;
         }
@@ -301,20 +291,50 @@ namespace Owlvey.Falcon.Components
             return result;
         }
 
-        public async Task<IEnumerable<MultiSerieItemGetRp>> GetServiceGroupDailyErrorBudget(int productId, 
+        public async Task<DatetimeSerieModel> GetServiceGroupDailyErrorBudget(int productId, 
             DatePeriodValue period, string group) {
 
-            var result = new List<MultiSerieItemGetRp>();
             var product = await this._dbContext.FullLoadProductWithGroupAndSourceItems(productId, group, period.Start, period.End);
+
+            var result = new DatetimeSerieModel();
+            result.Start = period.Start;
+            result.End = period.End;
+            result.Name = product.Name;
             var days = period.ToDaysPeriods();
+
+            foreach (var item in days)
+            {
+                var temp = product.Services.Select(c => c.Measure(item));
+                result.Availability.Items.Add(new DatetimeSerieItemModel(item.Start, temp.Sum(c => c.AvailabilityDebt)));
+                result.Latency.Items.Add(new DatetimeSerieItemModel(item.Start, temp.Sum(c => c.LatencyDebt)));
+                result.Experience.Items.Add(new DatetimeSerieItemModel(item.Start, temp.Sum(c => c.ExperienceDebt)));
+            }
+
             foreach (var service in product.Services)
-            {                
-                result.Add(new MultiSerieItemGetRp()
+            {
+                var temp = new DatetimeSerieListModel()
                 {
-                     Name = service.Name,
-                     Avatar = service.Avatar,                       
-                     Items = days.Select(c => new SeriesItemGetRp(c.Start, service.Measure(c).AvailabilityDebt)).ToList()
-                });                
+                    Name = service.Name,
+                    Avatar = service.Avatar
+                };
+                temp.AddItems(days.Select(c => (c.Start, service.Measure(c).AvailabilityDebt)).ToList());                
+                result.AvailabilityDetail.Add(temp);
+
+                var tempL = new DatetimeSerieListModel()
+                {
+                    Name = service.Name,
+                    Avatar = service.Avatar
+                };
+                tempL.AddItems(days.Select(c => (c.Start, service.Measure(c).LatencyDebt)).ToList());
+                result.LatencyDetail.Add(tempL);
+
+                var tempE = new DatetimeSerieListModel()
+                {
+                    Name = service.Name,
+                    Avatar = service.Avatar
+                };
+                tempE.AddItems(days.Select(c => (c.Start, service.Measure(c).ExperienceDebt)).ToList());
+                result.ExperienceDetail.Add(tempE);
             }
             return result;            
         }

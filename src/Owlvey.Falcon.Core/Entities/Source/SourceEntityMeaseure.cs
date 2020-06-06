@@ -1,4 +1,5 @@
-﻿using Owlvey.Falcon.Core.Aggregates;
+﻿using MathNet.Numerics.Statistics;
+using Owlvey.Falcon.Core.Aggregates;
 using Owlvey.Falcon.Core.Values;
 using System;
 using System.Collections.Generic;
@@ -74,6 +75,34 @@ namespace Owlvey.Falcon.Core.Entities
             }
             else {
                 return this.MeasureAvailabilityExperience(period);
+            }
+        }
+        public double? MeasureDailyCorrelation(DatePeriodValue period = null) {
+            if (this.SourceItems.Count == 0) {
+                return 0;
+            }
+            if (this.Group == SourceGroupEnum.Latency || this.Kind != SourceKindEnum.Interaction){
+                return 0;
+            }
+            else {
+                
+                if (period == null ) {
+                    period = new DatePeriodValue(
+                        this.SourceItems.Min(c => c.Target),
+                        this.SourceItems.Max(c => c.Target)
+                        );
+                }
+
+                var groups = this.SourceItems.Where(c => c.Target >= period.Start && c.Target <= period.End)
+                    .GroupBy(c => c.Target.Date).OrderBy(c=>c.Key);
+
+                var totals = groups.Select(c => c.Sum(c => (double)c.Total.GetValueOrDefault())).ToArray();
+                var bad = groups.Select(c => c.Sum(c =>  
+                        (double)(c.Bad.GetValueOrDefault())
+                        )).ToArray();
+                var correlation = QualityUtils.MeasureCorrelation(totals, bad);
+                return correlation;               
+                
             }
         }
     }

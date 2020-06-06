@@ -83,8 +83,7 @@ namespace Owlvey.Falcon.API.Controllers
             var response = await this._sourceComponent.Create(resource);            
             return this.Created(Url.RouteUrl("GetSourceById", new { response.Id }), response);
         }
-
-        
+               
 
         [HttpDelete("{id}")]
         [ProducesResponseType(typeof(void), 200)]

@@ -9,6 +9,7 @@ using System.Text.Json.Serialization;
 using Owlvey.Falcon.Core.Values;
 using System.Linq.Expressions;
 using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Core.Models.Series;
 
 namespace Owlvey.Falcon.Models
 {
@@ -149,9 +150,8 @@ namespace Owlvey.Falcon.Models
         
         public List<MonthRp> Availability { get; set; } = new List<MonthRp>();
         public List<MonthRp> Latency { get; set; } = new List<MonthRp>();
-        public List<MonthRp> Experience { get; set; } = new List<MonthRp>();        
-        public IList<MultiSerieItemGetRp> Weekly { get; set; } = new List<MultiSerieItemGetRp>();
-        
+        public List<MonthRp> Experience { get; set; } = new List<MonthRp>();                        
+        public DatetimeSerieModel Series { get; set; } = new DatetimeSerieModel();
 
     }
 
@@ -199,13 +199,14 @@ namespace Owlvey.Falcon.Models
         public int FeaturesCount { get; set; }        
         public decimal Availability { get; set; }
         public decimal AvailabilityErrorBudget { get; set; }
+        public decimal AvailabilityDebt { get; set; }
         public decimal Latency { get; set; }
 
         public decimal LatencyErrorBudget { get; set; }
-
+        public decimal LatencyDebt { get; set; }
         public decimal Experience { get; set; }
         public decimal ExperienceErrorBudget { get; set; }
-        
+        public decimal ExperienceDebt { get; set; }        
 
         public void LoadMeasure(ServiceQualityMeasureValue measure) {            
             this.Availability = measure.Availability;
@@ -215,6 +216,9 @@ namespace Owlvey.Falcon.Models
             this.AvailabilityErrorBudget = measure.AvailabilityErrorBudget;
             this.LatencyErrorBudget = measure.LatencyErrorBudget;
             this.ExperienceErrorBudget = measure.ExperienceErrorBudget;
+            this.AvailabilityDebt = measure.AvailabilityDebt;
+            this.LatencyDebt = measure.LatencyDebt;
+            this.ExperienceDebt = measure.ExperienceDebt;
         }        
 
         public string Deploy { get; set; }        

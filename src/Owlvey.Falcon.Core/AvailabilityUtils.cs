@@ -1,4 +1,6 @@
-﻿using Owlvey.Falcon.Core.Values;
+﻿using MathNet.Numerics;
+using MathNet.Numerics.Statistics;
+using Owlvey.Falcon.Core.Values;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -107,6 +109,33 @@ namespace Owlvey.Falcon.Core
         public static decimal CalculateFailProportion(decimal total, decimal fail, decimal defaultValue = 1) {            
             return CalculateProportion(total, total - fail, defaultValue);
         }
+
+        internal static (double b0, double b1, double r2) LinealRegression(int[] xdata, int[] ydata) {
+            var x = xdata.Select(c => (double)c).ToArray();
+            var y = ydata.Select(c => (double)c).ToArray();
+            Tuple<double, double> p = Fit.Line(x, y);
+            double a = Math.Round(p.Item1, 5);
+            double b = Math.Round(p.Item2, 5);
+            var r2 = GoodnessOfFit.RSquared(xdata.Select(x => a + b * x), y);
+            return (a, b, Math.Round(r2, 4));
+        }
+        internal static double MeasureCorrelation(int[] totals, int[] goods)
+        {
+            var total = totals.Select(c => (double)c).ToArray();
+            var good = goods.Select(c => (double)c).ToArray();
+            return MeasureCorrelation(total, good);
+        }
+        internal static double MeasureCorrelation(double[] totals, double[] goods)
+        {
+            if (totals.Length <= 1 || goods.Length <= 1) {
+                return 0;
+            }
+            var result = Math.Round(Correlation.Pearson(totals, goods), 3);
+            if (double.IsNaN(result))
+                return 0;
+            return result;
+        }
+
         public static decimal CalculateProportion(decimal total, decimal good, decimal defaultValue = 1)
         {
             if (total == 0)

@@ -9,7 +9,7 @@ namespace Owlvey.Falcon.Core.Models.Series
         public string Name { get; set; }
         public string Avatar { get; set; }
 
-        public List<DatetimeSerieitemModel> Items { get; set; } = new List<DatetimeSerieitemModel>();
+        public List<DatetimeSerieItemModel> Items { get; set; } = new List<DatetimeSerieItemModel>();
 
         public DatetimeSerieListModel() { }
 
@@ -21,7 +21,7 @@ namespace Owlvey.Falcon.Core.Models.Series
         public void AddItems(IEnumerable<(DateTime target, decimal value)> target) {
             foreach (var item in target)
             {
-                this.Items.Add(new DatetimeSerieitemModel(item.target, item.value));
+                this.Items.Add(new DatetimeSerieItemModel(item.target, item.value));
             }
         }
     }
