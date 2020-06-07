@@ -4,9 +4,11 @@ using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Core;
 using Owlvey.Falcon.Core.Aggregates;
 using Owlvey.Falcon.Core.Entities;
+using Owlvey.Falcon.Core.Values;
 using Owlvey.Falcon.Gateways;
 using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Repositories;
+using Owlvey.Falcon.Repositories.Products;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,55 +47,47 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<SquadGetRp>(entity);
         }
 
-        public async Task<SquadGetDetailRp> GetSquadByIdWithAvailability(int id, DateTime start, DateTime end)
+        public async Task<SquadQualityGetRp> GetSquadByIdWithQuality(int id, DatePeriodValue period)
         {
             var entity = await this._dbContext.Squads                
                 .Include(c => c.Members).ThenInclude(c => c.User)
-                .Include(c => c.FeatureMaps)
-                        .ThenInclude(c => c.Feature)
-                        .ThenInclude(c => c.ServiceMaps)                                             
+                .Include(c => c.FeatureMaps).ThenInclude(c=>c.Feature)            
                 .SingleOrDefaultAsync(c => c.Id == id );
 
+            var members = await this._dbContext.Members.Include(c=>c.User)
+                .Where(c=>c.SquadId == id)
+                .ToListAsync();
             var validProducts = entity.FeatureMaps.Select(c => c.Feature.ProductId).Distinct();
 
-            var products = await this._dbContext.Products.Where(c => validProducts.Contains(c.Id.Value)).ToListAsync();
+            var products = new List<ProductEntity>();
 
-            var validServices = entity.FeatureMaps
-                .SelectMany(c => c.Feature.ServiceMaps)
-                .Select(c => c.ServiceId).Distinct();
-
-            var services = await this._dbContext.Services
-                .Include(c => c.FeatureMap)
-                .ThenInclude(c => c.Feature)
-                .ThenInclude(c => c.Indicators)
-                .ThenInclude(c => c.Source)
-                .Where(c => validServices.Contains(c.Id.Value)).ToListAsync();
-                        
-            var productIds = entity.FeatureMaps.Select(c => c.Feature.ProductId).Distinct().ToList();
-
-            var sourceItems =await  this._dbContext.GetSourceItemsByProduct(productIds, start, end);
-
-            foreach (var service in services)
+            foreach (var item in validProducts)
             {
-                service.Product = products.Single(c => c.Id == service.ProductId);
-                foreach (var feature in service.FeatureMap)
-                {
-                    feature.Feature.Product = products.Single(c => c.Id == feature.Feature.ProductId);
-                    foreach (var indicator in feature.Feature.Indicators)
-                    {
-                        indicator.Source.SourceItems = sourceItems.Where(c => c.SourceId == indicator.SourceId).ToList();
-                    }
-                }                
+                var tmp = await this._dbContext.FullLoadProductWithSourceItems(item, period.Start, period.End);
+                products.Add(tmp);
             }
-                        
-            var agg = new SquadPointsAggregate(entity);
-            var squadPonts = agg.MeasurePoints();
-
-            SquadGetDetailRp result = this._mapper.Map<SquadGetDetailRp>(entity);
-
-            foreach (var item in squadPonts)
+            foreach (var item in entity.FeatureMaps)
             {
-                
+                foreach (var product in products)
+                {
+                    var tmp =  product.Features.Where(c => c.Id == item.FeatureId).SingleOrDefault();
+                    if (tmp != null)
+                    {
+                        item.Feature = tmp;
+                        break;
+                    }
+                }
+            }
+                                    
+            var agg = new SquadPointsAggregate(entity);
+            var squadMeasures = agg.Measure();
+
+            var  result = this._mapper.Map<SquadQualityGetRp>(entity);
+                        
+            result.Members = this._mapper.Map<IEnumerable<UserGetListRp>>(members.Select(c => c.User).Distinct(new UserEntityCompare()));
+
+            foreach (var item in squadMeasures)
+            {                
                 var tmp = new FeatureBySquadRp()
                 {
                     Id = item.feature.Id.Value,
@@ -101,6 +95,7 @@ namespace Owlvey.Falcon.Components
                     Avatar = item.feature.Avatar,
                     CreatedBy = item.feature.CreatedBy,
                     CreatedOn = item.feature.CreatedOn,
+                    Debt = item.debt,
                     Quality = item.quality,
                     ProductId = item.product.Id.Value,
                     Product = item.product.Name,
@@ -108,15 +103,10 @@ namespace Owlvey.Falcon.Components
                     ServiceAvatar = item.service.Avatar,                    
                 };
                 tmp.Name = item.feature.Name;
-                tmp.SLO = item.service.AvailabilitySlo;
-                tmp.Service = item.service.Name;
-                tmp.Impact = QualityUtils.MeasureImpact(item.service.AvailabilitySlo);
-                tmp.Points = item.points;
-
-                result.Points += tmp.Points;
+                tmp.SLO = item.service.GetSLO();
+                tmp.Service = item.service.Name;                
                 result.Features.Add(tmp);
             }
-
             result.Features = result.Features.OrderBy(c => c.Service).ToList();
             return result;
         }
@@ -143,22 +133,21 @@ namespace Owlvey.Falcon.Components
 
         
         public async Task<IEnumerable<SquadGetListRp>> GetSquadsWithPoints(int customerId, 
-            DateTime start, 
-            DateTime end)
-        {
+            DatePeriodValue period)
+        {            
             var entities = await this._dbContext.Squads
                 .Include(c => c.Members)
                 .Where(c => c.Customer.Id.Equals(customerId)).ToListAsync();
             List<SquadGetListRp> result = new List<SquadGetListRp>();
             foreach (var squad in entities)
             {
-                var tmp = await this.GetSquadByIdWithAvailability(squad.Id.Value, start, end);
+                var tmp = await this.GetSquadByIdWithQuality(squad.Id.Value,  period);
                 
                 result.Add(new SquadGetListRp() {
                      Id = tmp.Id,
                      Name = tmp.Name,
                      Avatar = tmp.Avatar,
-                     Points = tmp.Points,
+                     Debt = tmp.Debt,
                      Features = tmp.Features.Count(),
                      Members = squad.Members.Count()
                 });

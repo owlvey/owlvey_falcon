@@ -85,6 +85,7 @@ namespace Owlvey.Falcon.Models
         public decimal Experience { get; set; }
         public int MapId { get; set; }
         
+        public DebtMeasureValue Debt { get; set; }
         public override void Read(FeatureEntity Entity){
             base.Read(Entity); 
 
@@ -124,11 +125,12 @@ namespace Owlvey.Falcon.Models
         public string Service { get; set; }
         public string ServiceAvatar { get; set; }
         public string Product { get; set; }
-        public int IndicatorsCount { get; set; }
-        public decimal SLO { get; set; }
-        public decimal Impact { get; set; }
-        public decimal Quality { get; set; }
-        public decimal Points { get; set; }
+
+        public SLOValue SLO { get; set; }
+        public DebtMeasureValue Debt { get; set; }
+        
+        public QualityMeasureValue Quality { get; set; }
+        
     }
 
     public class FeaturePostRp {

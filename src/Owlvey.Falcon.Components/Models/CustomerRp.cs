@@ -6,6 +6,7 @@ using System.Linq;
 using Owlvey.Falcon.Core;
 using Owlvey.Falcon.Core.Entities;
 using Newtonsoft.Json;
+using Owlvey.Falcon.Core.Values;
 
 namespace Owlvey.Falcon.Models
 {
@@ -21,16 +22,18 @@ namespace Owlvey.Falcon.Models
         public DateTime ModifiedOn { get; set; }
     }
 
-    public class CustomerGetRp : CustomerBaseRp {
-        public decimal Availability { get; set; }
-        public IEnumerable<ProductGetListRp> Products { get; set; } = new List<ProductGetListRp>();
+    public class CustomerGetRp : CustomerBaseRp {        
+        public ProductGetListRp Products { get; set; } 
     }
 
+    public class CustomerLiteRp : CustomerBaseRp { 
+    }
     public class CustomerGetListRp : CustomerBaseRp
     {
         public int ProductsCount { get; set; }
-        public decimal Availability { get; set; }
-        public List<ProductGetListRp> Products { get; set; }
+        public DebtMeasureValue Debt { get; set; } = new DebtMeasureValue();        
+        public DebtMeasureValue PreviousDebt { get; set; } = new DebtMeasureValue();
+        public DebtMeasureValue BeforeDebt { get; set; } = new DebtMeasureValue();
     }
 
     public class CustomerPostRp {

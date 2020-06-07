@@ -33,15 +33,16 @@ namespace Owlvey.Falcon.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("")]
-        [ProducesResponseType(typeof(IEnumerable<ProductGetListRp>), 200)]
-        public async Task<IActionResult> Get(int customerId)
+        [ProducesResponseType(typeof(ProductGetListRp), 200)]
+        public async Task<IActionResult> Get(int customerId, DateTime? start, DateTime? end)
         {            
-            var model = await this._productQueryService.GetProductsWithInformation(customerId);
+
+            var model = await this._productQueryService.GetProductsWithInformation(customerId, new DatePeriodValue(start, end));
             return this.Ok(model);
         }
 
         [HttpGet("lite")]
-        [ProducesResponseType(typeof(IEnumerable<ProductGetListRp>), 200)]
+        [ProducesResponseType(typeof(IEnumerable<ProductBaseRp>), 200)]
         public async Task<IActionResult> GetLite(int customerId)
         {
             var model = await this._productQueryService.GetProducts(customerId);

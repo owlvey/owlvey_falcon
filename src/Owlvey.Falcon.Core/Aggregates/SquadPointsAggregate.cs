@@ -2,6 +2,7 @@
 using Owlvey.Falcon.Core.Entities;
 using System.Linq;
 using System.Collections.Generic;
+using Owlvey.Falcon.Core.Values;
 
 namespace Owlvey.Falcon.Core.Aggregates
 {
@@ -13,23 +14,26 @@ namespace Owlvey.Falcon.Core.Aggregates
             this._squad = squad;
         }
 
-        public IEnumerable<(ProductEntity product, ServiceEntity service, FeatureEntity feature,
-            decimal quality,
-            decimal points)> MeasurePoints() {
+        public IEnumerable<
+            (
+                ProductEntity product, ServiceEntity service, FeatureEntity feature,
+                QualityMeasureValue quality,
+                DebtMeasureValue debt)> Measure() {
 
-            var result = new List<(ProductEntity product, ServiceEntity service, FeatureEntity feature, decimal availability, decimal points)>();
+            var result = new List<(ProductEntity product, 
+                ServiceEntity service, 
+                FeatureEntity feature,
+                QualityMeasureValue quality,
+                DebtMeasureValue debt)>();
 
             foreach (var featureMap in this._squad.FeatureMaps)
             {   
-                var quality = featureMap.Feature.Measure().Availability;
-
+                var quality = featureMap.Feature.Measure();
                 foreach (var serviceMap in featureMap.Feature.ServiceMaps)
-                {
+                {                    
                     var service = serviceMap.Service;
-                    var impact = QualityUtils.MeasureImpact(service.AvailabilitySlo);
-                    var points = QualityUtils.MeasurePoints(service.AvailabilitySlo, quality);
-
-                    result.Add( (service.Product, service, featureMap.Feature, quality, points) );
+                    var debt = quality.MeasureDebt(service.GetSLO());                    
+                    result.Add((service.Product, service, featureMap.Feature, quality, debt));
                 }
             }
             return result;

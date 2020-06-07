@@ -26,7 +26,7 @@ namespace Owlvey.Falcon.ComponentsTests
             });
 
             var result = await latency.GetByIdWithDetail(source.Id, OwlveyCalendar.year2019);
-            Assert.Equal(1, result.Latency);
+            Assert.Equal(101, result.Latency);
         }
     }
 }

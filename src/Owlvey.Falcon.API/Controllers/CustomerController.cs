@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Core.Values;
 using Owlvey.Falcon.Models;
 
 namespace Owlvey.Falcon.API.Controllers
@@ -30,7 +31,14 @@ namespace Owlvey.Falcon.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<CustomerGetListRp>), 200)]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(DateTime? start, DateTime? end)
+        {
+            var model = await this._customerQueryService.GetCustomersQuality(new Core.Values.DatePeriodValue(start, end));
+            return this.Ok(model);
+        }
+        [HttpGet("lite")]
+        [ProducesResponseType(typeof(IEnumerable<CustomerLiteRp>), 200)]
+        public async Task<IActionResult> GetLite(int customerId)
         {
             var model = await this._customerQueryService.GetCustomers();
             return this.Ok(model);
@@ -42,15 +50,25 @@ namespace Owlvey.Falcon.API.Controllers
         /// <param name="id">id</param>
         /// <returns></returns>
         [HttpGet("{id}", Name = "GetCustomerId")]
-        [ProducesResponseType(typeof(CustomerGetRp), 200)]
+        [ProducesResponseType(typeof(CustomerBaseRp), 200)]
         public async Task<IActionResult> GetById(int id)
         {
             CustomerGetRp model;            
             model = await this._customerQueryService.GetCustomerById(id);
             if (model == null)
-                return this.NotFound($"The Resource {id} doesn't exists.");
+                return this.NotFound($"The Resource {id} doesn't exists.");                        
 
-            model.Products = await this._productQueryComponent.GetProducts(id);           
+            return this.Ok(model);
+        }
+
+        [HttpGet("{id}/quality")]
+        [ProducesResponseType(typeof(CustomerGetRp), 200)]
+        public async Task<IActionResult> GetByIdQuality(int id, DateTime? start, DateTime? end)
+        {
+            CustomerGetRp model;
+            model = await this._customerQueryService.GetCustomerByIdWithQuality(id, new DatePeriodValue(start, end));
+            if (model == null)
+                return this.NotFound($"The Resource {id} doesn't exists.");
 
             return this.Ok(model);
         }
@@ -148,7 +166,7 @@ namespace Owlvey.Falcon.API.Controllers
         {
             if (start.HasValue && end.HasValue)
             {
-                GraphGetRp result = await this._customerQueryService.GetSquadsGraph(id, start.Value, end.Value);
+                GraphGetRp result = await this._customerQueryService.GetSquadsGraph(id, new DatePeriodValue(start.Value, end.Value));
                 return this.Ok(result);
             }
             else

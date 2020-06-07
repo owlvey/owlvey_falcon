@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Core.Values;
 using Owlvey.Falcon.Models;
 
 namespace Owlvey.Falcon.API.Controllers
@@ -31,7 +32,8 @@ namespace Owlvey.Falcon.API.Controllers
         {
             if (start.HasValue)
             {
-                var model = await this._squadQueryService.GetSquadsWithPoints(customerId, start.Value, end.Value);
+                var model = await this._squadQueryService.GetSquadsWithPoints(customerId, 
+                    new DatePeriodValue(start.Value, end.Value));
                 return this.Ok(model);
             }
             else {
@@ -48,23 +50,28 @@ namespace Owlvey.Falcon.API.Controllers
         /// <returns></returns>
         [HttpGet("{id}", Name = "GetSquadId")]
         [ProducesResponseType(typeof(SquadGetRp), 200)]
-        public async Task<IActionResult> GetById(int id, DateTime? start, DateTime? end)
+        public async Task<IActionResult> GetById(int id)
+        {            
+            var model = await this._squadQueryService.GetSquadById(id);
+            if (model == null)
+                return this.NotFound($"The Resource {id} doesn't exists.");
+
+            return this.Ok(model);            
+        }
+        [HttpGet("{id}/quality")]
+        [ProducesResponseType(typeof(SquadQualityGetRp), 200)]
+        public async Task<IActionResult> GetQualityById(int id, DateTime? start, DateTime? end)
         {
             if (start.HasValue)
             {
-                var model = await this._squadQueryService.GetSquadByIdWithAvailability(id, start.Value, end.Value);
+                var model = await this._squadQueryService.GetSquadByIdWithQuality(id, 
+                    new DatePeriodValue( start.Value, end.Value));
                 if (model == null)
                     return this.NotFound($"The Resource {id} doesn't exists.");
 
                 return this.Ok(model);
             }
-            else {
-                var model = await this._squadQueryService.GetSquadById(id);
-                if (model == null)
-                    return this.NotFound($"The Resource {id} doesn't exists.");
-
-                return this.Ok(model);
-            }            
+            return this.BadRequest();            
         }
 
         /// <summary>

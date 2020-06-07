@@ -63,6 +63,7 @@ namespace Owlvey.Falcon.Repositories.Products
 
             product.Features = await context.Features
                 .Include(c => c.Indicators)
+                .Include(c => c.Squads)
                 .Where(c => c.ProductId == productId).ToListAsync();
 
             foreach (var item in product.Services)

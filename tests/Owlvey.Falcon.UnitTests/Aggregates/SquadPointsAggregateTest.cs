@@ -42,7 +42,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                  }
             });
 
-            var result = squad.MeasurePoints();
+            var result = squad.Measure();
 
             Assert.NotEmpty(result);
 

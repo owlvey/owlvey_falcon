@@ -1,6 +1,8 @@
+using Owlvey.Falcon.Core.Values;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Text;
 
 namespace Owlvey.Falcon.Models
@@ -53,6 +55,17 @@ namespace Owlvey.Falcon.Models
         public IEnumerable<FeatureGetListRp> Features { get; set; } = new List<FeatureGetListRp>();
     }
 
+    public class SquadQualityGetRp : SquadBaseRp {
+        public IEnumerable<UserGetListRp> Members { get; set; } = new List<UserGetListRp>();
+        public List<FeatureBySquadRp> Features { get; set; } = new List<FeatureBySquadRp>();
+                
+        public DebtMeasureValue Debt {
+            get {
+                return new DebtMeasureValue(this.Features.Select(c=>c.Debt));
+            } 
+        }
+    }
+
     public class SquadGetDetailRp : SquadBaseRp
     {
         public decimal Points { get; set; }
@@ -62,7 +75,7 @@ namespace Owlvey.Falcon.Models
 
     public class SquadGetListRp : SquadBaseRp
     {
-        public decimal Points { get; set; }
+        public DebtMeasureValue Debt { get; set; }
         public int Features { get; set; }
         public int Members { get; set; }
     }

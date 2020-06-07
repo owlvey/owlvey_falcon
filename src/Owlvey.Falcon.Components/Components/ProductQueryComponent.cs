@@ -17,6 +17,7 @@ using Owlvey.Falcon.Repositories.Products;
 using Owlvey.Falcon.Repositories.Services;
 using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
 using Owlvey.Falcon.Core.Entities.Source;
+using System.Collections.Concurrent;
 
 namespace Owlvey.Falcon.Components
 {
@@ -135,67 +136,53 @@ namespace Owlvey.Falcon.Components
         /// Get All Product
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<ProductGetListRp>> GetProducts(int customerId)
+        public async Task<IEnumerable<ProductBaseRp>> GetProducts(int customerId)
         {
             var entities = await this._dbContext.Products.Where(c => c.Customer.Id == customerId).ToListAsync();
-            return this._mapper.Map<IEnumerable<ProductGetListRp>>(entities);
+            return this._mapper.Map<IEnumerable<ProductBaseRp>>(entities);
         }
-        public async Task<IEnumerable<ProductGetListRp>> GetProductsWithInformation(int customerId)
+        public async Task<ProductGetListRp> GetProductsWithInformation(int customerId, DatePeriodValue period)
         {
-            var products = await this._dbContext.Products.Where(c => c.CustomerId == customerId).ToListAsync(); 
+            var products = await this._dbContext.Products.Where(c => c.CustomerId == customerId).ToListAsync();
 
-            var services = await  this._dbContext.Services
-                .Include(c=>c.FeatureMap)
-                .Where(c => c.Product.CustomerId == customerId).ToListAsync();
+            var (before, previous) = period.CalculateBeforePreviousDates();
 
-            var features = await  this._dbContext.Features
-                .Include(c=>c.Indicators)                
-                .Include(c=>c.Squads)
-                .Where(c => c.Product.CustomerId == customerId).ToListAsync();
-
+            var targets = new List<ProductEntity>();
+            foreach (var item in products)
+            {
+                targets.Add(await this._dbContext.FullLoadProductWithSourceItems(item.Id.Value, before.Start, period.End));
+            }
+            
             var squads = await this._dbContext.Squads
                 .Include(c=>c.FeatureMaps)
                 .Where(c => c.CustomerId == customerId).ToListAsync();
-            
-            var sources = this._dbContext.Sources.Where(c => c.Product.CustomerId == customerId).ToList();
+
+            var features = targets.SelectMany(c => c.Features).Distinct(new FeatureEntityCompare());
 
             foreach (var squad in squads.SelectMany(c=>c.FeatureMaps))
             {
                 squad.Feature = features.Single(c => c.Id == squad.FeatureId);                
             }
 
-            foreach (var item in products)
-            {
-                item.Services = services.Where(c => c.ProductId == item.Id).ToList();
-                item.Features = features.Where(c => c.ProductId == item.Id).ToList();
-                item.Sources = new SourceCollection(sources.Where(c => c.ProductId == item.Id).ToList());
-
-                foreach (var service in item.Services)
+            foreach (var feature in targets.SelectMany(c=>c.Features))
+            {   
+                foreach (var target in feature.Squads)
                 {
-                    foreach (var map in service.FeatureMap)
-                    {
-                        map.Feature = features.Single(c => c.Id == map.FeatureId);
-                        foreach (var indicator in map.Feature.Indicators)
-                        {
-                            indicator.Source = sources.Single(c => c.Id == indicator.SourceId);
-                        }
-                        foreach (var target in map.Feature.Squads.ToList())
-                        {
-                            target.Squad = squads.Single(c => c.Id == target.SquadId);
-                        }
-                    }
-                }                
-
+                    target.Squad = squads.Single(c => c.Id == target.SquadId);
+                }
             }
 
-            List<ProductGetListRp> models = new List<ProductGetListRp>();
+            var models = new ProductGetListRp();
 
             foreach (var item in products)
             {
-                var tmp  = this._mapper.Map<ProductGetListRp>(item);
+                var tmp  = this._mapper.Map<ProductGetListItemRp>(item);
                 var agg = new FeatureOwnershipAggregate(squads, item.Features);
                 tmp.Ownership = agg.Measure().assigned;
-                models.Add(tmp);
+                tmp.Debt = item.Measure(period);
+                tmp.PreviousDebt = item.Measure(previous);
+                tmp.BeforeDebt = item.Measure(before);
+                models.Items.Add(tmp);
             }
 
             return models;

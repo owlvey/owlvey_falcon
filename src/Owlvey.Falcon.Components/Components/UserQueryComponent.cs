@@ -61,7 +61,7 @@ namespace Owlvey.Falcon.Components
                 foreach (var product in customer.Products)
                 {
                     if ( product.ValidateLeader(entity.Email)) {
-                        var temp = this._mapper.Map<ProductGetListRp>(product);                        
+                        var temp = this._mapper.Map<ProductGetListItemRp>(product);                        
                         result.Products.Add(temp);
                     }
 

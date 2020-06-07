@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using Owlvey.Falcon.Models;
+using Owlvey.Falcon.Core.Values;
 
 namespace Owlvey.Falcon.ComponentsTests
 {
@@ -81,8 +82,8 @@ namespace Owlvey.Falcon.ComponentsTests
 
             var squads = await squadQueryComponent.GetSquads(customer);
 
-            var result = await squadQueryComponent.GetSquadByIdWithAvailability(squads.First().Id,
-                OwlveyCalendar.StartJanuary2019, OwlveyCalendar.EndJuly2019);
+            var result = await squadQueryComponent.GetSquadByIdWithQuality(squads.First().Id,
+                new DatePeriodValue(OwlveyCalendar.StartJanuary2019, OwlveyCalendar.EndJuly2019));
             
             Assert.NotEmpty(result.Features);
         }
@@ -95,12 +96,13 @@ namespace Owlvey.Falcon.ComponentsTests
                 OwlveyCalendar.January201903, 
                 OwlveyCalendar.January201905);
             
-            var points = await squadQueryComponent.GetSquadByIdWithAvailability(
-                squad, 
+            var points = await squadQueryComponent.GetSquadByIdWithQuality(
+                squad,                 
+                new DatePeriodValue(
                 OwlveyCalendar.January201903, 
-                OwlveyCalendar.January201905);
+                OwlveyCalendar.January201905));
 
-            Assert.Equal(-114.41m, points.Points); 
+            Assert.Equal(0.191m, points.Debt.Availability); 
         }
 
         [Fact]

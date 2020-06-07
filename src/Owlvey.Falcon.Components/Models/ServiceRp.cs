@@ -51,8 +51,7 @@ namespace Owlvey.Falcon.Models
         public decimal LatencySLO { get; set; }
         public decimal ExperienceSLO { get; set; }
         public string Avatar { get; set; }
-        public string Leaders { get; set; }
-        public string Aggregation { get; set; }
+        public string Leaders { get; set; }        
         public string Group { get; set; }
     }
 

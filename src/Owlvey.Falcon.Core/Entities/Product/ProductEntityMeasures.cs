@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Owlvey.Falcon.Core.Values;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,6 +8,14 @@ namespace Owlvey.Falcon.Core.Entities
 {
     public partial class ProductEntity 
     {
+        public DebtMeasureValue Measure(DatePeriodValue period = null) {
+            var measure = new DebtMeasureValue();
+            foreach (var service in this.Services)
+            {
+                measure.Add(service.Measure(period));
+            }
+            return measure;
+        }
         public (decimal coverage, int total, int assigned) MeasureCoverage()
         {
             var features = this.Features;

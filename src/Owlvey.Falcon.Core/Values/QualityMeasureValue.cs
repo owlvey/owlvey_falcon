@@ -41,6 +41,14 @@ namespace Owlvey.Falcon.Core.Values
         {
             
         }
-
+        public DebtMeasureValue MeasureDebt(SLOValue slo)
+        {
+            return new DebtMeasureValue()
+            {
+                Availability = QualityUtils.MeasureDebt(this.Availability, slo.Availability),
+                Latency = QualityUtils.MeasureDebt(this.Latency, slo.Latency),
+                Experience = QualityUtils.MeasureDebt(this.Experience, slo.Experience)
+            };
+        }
     }
 }

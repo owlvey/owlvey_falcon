@@ -17,6 +17,7 @@ namespace Owlvey.Falcon.Components
                 .ForMember(c => c.Availability, opt => opt.Ignore())                
                 .ForMember(c => c.Latency, opt => opt.Ignore())
                 .ForMember(c => c.Experience, opt => opt.Ignore())
+                .ForMember(c => c.Debt, opt => opt.Ignore())
                 .ForMember(c => c.MapId, opt => opt.MapFrom(d => d.ServiceMapId))
                 .ForMember(c => c.ServiceCount, opt => opt.Ignore())                
                 .ForMember(c => c.Product, opt => opt.MapFrom(c=> c.Product == null ? "": c.Product.Name));
@@ -25,6 +26,7 @@ namespace Owlvey.Falcon.Components
                 .ForMember(c => c.IndicatorsCount, opt => opt.MapFrom(d => d.Indicators.Count))
                 .ForMember(c => c.Availability, opt => opt.Ignore())                
                 .ForMember(c => c.Experience, opt => opt.Ignore())
+                .ForMember(c => c.Debt, opt => opt.Ignore())
                 .ForMember(c => c.Latency, opt => opt.Ignore())
                 .ForMember(c => c.MapId, opt => opt.MapFrom(d=>d.ServiceMapId))
                 .ForMember(c => c.Sequence, opt => opt.Ignore())                

@@ -15,7 +15,7 @@ namespace Owlvey.Falcon.Components
             cfg.CreateMap<SquadEntity, SquadGetListRp>()
                 .ForMember(d => d.Features, m => m.Ignore())
                 .ForMember(d => d.Members, m => m.MapFrom(c=>c.Members.Count()))
-                .ForMember(d => d.Points, m => m.Ignore());
+                .ForMember(d => d.Debt, m => m.Ignore());
             cfg.CreateMap<SquadEntity, SquadGetRp>()
                 .ForMember(d=>d.Members, m=> m.MapFrom(c=>c.Members.Select(d=>d.User)))
                 .ForMember(d => d.Features, m => m.MapFrom(c => c.FeatureMaps.Select(d => d.Feature)));
@@ -26,6 +26,13 @@ namespace Owlvey.Falcon.Components
                 .ForMember(d => d.Features, m => m.Ignore());
 
             cfg.CreateMap<SquadEntity, SquadMigrationRp>();
+
+            cfg.CreateMap<SquadEntity, SquadQualityGetRp>()
+                .ForMember(d => d.Features, m => m.Ignore())
+                .ForMember(d => d.Members, m => m.Ignore())
+                .ForMember(d => d.Debt, m => m.Ignore()); 
+
+            
 
         }
     }

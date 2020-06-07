@@ -15,6 +15,8 @@ using System.IO;
 using OfficeOpenXml;
 using System.Data;
 using Owlvey.Falcon.Core;
+using Owlvey.Falcon.Core.Values;
+using Owlvey.Falcon.Repositories.Products;
 
 namespace Owlvey.Falcon.Components
 {
@@ -22,12 +24,14 @@ namespace Owlvey.Falcon.Components
     {
         private readonly FalconDbContext _dbContext;
         private readonly SquadQueryComponent _squadQueryComponent;
+        private readonly ProductQueryComponent _productQueryComponent;
         public CustomerQueryComponent(FalconDbContext dbContext, IMapper mapper,
             IDateTimeGateway dateTimeGateway, IUserIdentityGateway identityService,
             SquadQueryComponent squadQueryComponent,
-            ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityService, configuration)
+            ConfigurationComponent configuration, ProductQueryComponent productQueryComponent) : base(dateTimeGateway, mapper, identityService, configuration)
         {
             this._squadQueryComponent = squadQueryComponent;
+            this._productQueryComponent = productQueryComponent;
             this._dbContext = dbContext;
         }
 
@@ -42,9 +46,22 @@ namespace Owlvey.Falcon.Components
                 return null;
 
             var result = this._mapper.Map<CustomerGetRp>(entity);            
-
             return result;
-        }        
+        }
+
+        public async Task<CustomerGetRp> GetCustomerByIdWithQuality(int id, DatePeriodValue period)
+        {
+            var entities = await this._dbContext.Customers.Where(c => c.Id.Equals(id)).ToListAsync();
+
+            var entity = entities.FirstOrDefault();
+
+            if (entity == null)
+                return null;
+
+            var result = this._mapper.Map<CustomerGetRp>(entity);
+            result.Products = await this._productQueryComponent.GetProductsWithInformation(id, period);
+            return result;
+        }
 
         public async Task<CustomerGetRp> GetCustomerByName(string name)
         {
@@ -58,30 +75,58 @@ namespace Owlvey.Falcon.Components
         /// Get All Customer
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<CustomerGetListRp>> GetCustomers()
+        public async Task<IEnumerable<CustomerLiteRp>> GetCustomers()
         {
             var entities = await this._dbContext.Customers.Include(c=>c.Products).ToListAsync();
 
-            var result = this._mapper.Map<IEnumerable<CustomerGetListRp>>(entities);
+
+
+
+            var result = this._mapper.Map<IEnumerable<CustomerLiteRp>>(entities);
 
             return result;
-        }   
-    
+        }
 
-        public async Task<GraphGetRp> GetSquadsGraph(int customerId, DateTime start, DateTime end)
+        public async Task<IEnumerable<CustomerGetListRp>> GetCustomersQuality(DatePeriodValue period)
+        {
+            var entities = await this._dbContext.Customers.Include(c => c.Products).ToListAsync();
+            var result = new List<CustomerGetListRp>();            
+            foreach (var customer in entities)
+            {
+                var t = this._mapper.Map<CustomerGetListRp>(customer);                
+                var temp = await this._productQueryComponent.GetProductsWithInformation(customer.Id.Value, period);
+                t.Debt.Add(temp.Debt);
+                t.PreviousDebt.Add(temp.PreviousDebt);
+                t.BeforeDebt.Add(temp.BeforeDebt);                
+                result.Add(t);
+            }
+            return result;
+        }
+
+
+        public async Task<GraphGetRp> GetSquadsGraph(int customerId, DatePeriodValue period)
         {
             GraphGetRp result = new GraphGetRp();
-            var root = await this.GetCustomerById(customerId);
+            var root = await this._dbContext.Customers.Include(c=>c.Products).Where(c=>c.Id == customerId).SingleOrDefaultAsync();
+            var temp = new List<ProductEntity>();
+            foreach (var item in root.Products)
+            {
+                var p = await this._dbContext.FullLoadProductWithSourceItems(item.Id.Value, period.Start, period.End);
+                temp.Add(p);
+            }
+            root.Products = temp;
+
             result.Name = root.Name;
-            result.Id = root.Id;
+            result.Id = root.Id.Value;
             result.Avatar = root.Avatar;
             
             var squads = await this._dbContext.Squads.Where(c => c.Customer.Id.Equals(customerId)).ToListAsync();
-            var squadsDetail = new List<SquadGetDetailRp>();
+            var squadsDetail = new List<SquadQualityGetRp>();
 
             foreach (var item in squads)
             {
-                var detail = await this._squadQueryComponent.GetSquadByIdWithAvailability(item.Id.Value, start, end);
+                var detail = await this._squadQueryComponent.GetSquadByIdWithQuality(item.Id.Value, 
+                    period);
                 squadsDetail.Add(detail);
             }                       
 
@@ -92,7 +137,7 @@ namespace Owlvey.Falcon.Components
                     Id = string.Format("squad_{0}", node.Id),
                     Avatar = node.Avatar,
                     Name = node.Name,
-                    Value = node.Points,
+                    Value = node.Debt.Availability,
                     Group = "squads",                    
                 };
                 result.Nodes.Add(snode);
@@ -108,7 +153,7 @@ namespace Owlvey.Falcon.Components
                             Id = feature_id,
                             Avatar = feature.Avatar,
                             Name = feature.Name,
-                            Value = feature.Quality,
+                            Value = feature.Debt.Availability,
                             Group = string.Format("features_{0}", feature.Product),                            
                         };
                         result.Nodes.Add(fnode);
@@ -120,7 +165,7 @@ namespace Owlvey.Falcon.Components
                         {
                             From = snode.Id,
                             To = fnode.Id,
-                            Value = feature.Points
+                            Value = feature.Debt.Availability
                         };
                         result.Edges.Add(fedge);
                     }

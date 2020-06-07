@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using System.Linq;
 using Owlvey.Falcon.Core.Aggregates;
+using Owlvey.Falcon.Core.Values;
 
 namespace Owlvey.Falcon.Core.Entities
 {
@@ -37,6 +38,9 @@ namespace Owlvey.Falcon.Core.Entities
         [Required]
         public decimal LatencySlo { get; set; }
 
+        public SLOValue GetSLO (){
+            return new SLOValue(this);
+        }
         [Required]
         public string Avatar { get; set; }
 

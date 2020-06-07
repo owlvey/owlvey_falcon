@@ -1,6 +1,8 @@
+using Owlvey.Falcon.Core.Values;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Text;
 
 namespace Owlvey.Falcon.Models
@@ -30,7 +32,43 @@ namespace Owlvey.Falcon.Models
         public IEnumerable<ServiceGetListRp> Services { get; set; } = new List<ServiceGetListRp>();
     }
 
-    public class ProductGetListRp : ProductBaseRp
+    public class ProductGetListRp  {
+
+        public DebtMeasureValue Debt { get {
+                return new DebtMeasureValue() { 
+                     Availability = this.Items.Sum(c => c.Debt.Availability),
+                     Latency = this.Items.Sum(c => c.Debt.Latency),
+                     Experience = this.Items.Sum(c => c.Debt.Experience)
+                };
+            }
+        }
+        public DebtMeasureValue PreviousDebt
+        {
+            get
+            {
+                return new DebtMeasureValue()
+                {
+                    Availability = this.Items.Sum(c => c.PreviousDebt.Availability),
+                    Latency = this.Items.Sum(c => c.PreviousDebt.Latency),
+                    Experience = this.Items.Sum(c => c.PreviousDebt.Experience)
+                };
+            }
+        }
+        public DebtMeasureValue BeforeDebt
+        {
+            get
+            {
+                return new DebtMeasureValue()
+                {
+                    Availability = this.Items.Sum(c => c.BeforeDebt.Availability),
+                    Latency = this.Items.Sum(c => c.BeforeDebt.Latency),
+                    Experience = this.Items.Sum(c => c.BeforeDebt.Experience)
+                };
+            }
+        }
+        public List<ProductGetListItemRp> Items { get; set; } = new List<ProductGetListItemRp>();
+    }
+    public class ProductGetListItemRp : ProductBaseRp
     {
         public int ServicesCount { get; set; }
         public int FeaturesCount { get; set; }
@@ -39,6 +77,10 @@ namespace Owlvey.Falcon.Models
         public decimal Coverage { get; set; }
         public decimal Ownership { get; set; }
         public decimal Utilization { get; set; }
+
+        public DebtMeasureValue Debt { get; set; }
+        public DebtMeasureValue PreviousDebt { get; set; }
+        public DebtMeasureValue BeforeDebt { get; set; }
     }
 
     public class ProductPostRp {
