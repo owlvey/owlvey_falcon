@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Core.Values;
 using Owlvey.Falcon.Models;
 
 namespace Owlvey.Falcon.API.Controllers
@@ -39,7 +40,8 @@ namespace Owlvey.Falcon.API.Controllers
             object model = null;            
             if (start.HasValue && end.HasValue)
             {
-                model = await this._featureQueryService.GetFeaturesWithQuality(productId, start.Value, end.Value);
+                model = await this._featureQueryService.GetFeaturesWithQuality(productId, 
+                     new  DatePeriodValue(start.Value, end.Value));
             }
             else
             {

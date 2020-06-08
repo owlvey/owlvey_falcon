@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Owlvey.Falcon.Repositories.Services;
 using Owlvey.Falcon.Core.Values;
+using Owlvey.Falcon.Repositories.Products;
 
 namespace Owlvey.Falcon.Components
 {
@@ -91,6 +92,7 @@ namespace Owlvey.Falcon.Components
             var model = this._mapper.Map<FeatureQualityGetRp>(feature);
             var measure = feature.Measure();
             model.LoadQuality(measure);
+            model.Debt = feature.MeasureDebt();
             foreach (var indicator in feature.Indicators)
             {                
                 var tmp = this._mapper.Map<IndicatorAvailabilityGetListRp>(indicator);                
@@ -107,14 +109,7 @@ namespace Owlvey.Falcon.Components
             }
 
             model.Incidents = this._mapper.Map<List<IncidentGetListRp>>(await this._dbContext.GetIncidentsByFeature(feature.Id.Value));
-
-            if (model.Incidents.Count() > 0)
-            {
-                model.MTTM = DateTimeUtils.FormatTimeToInMinutes(model.Incidents.Average(c => c.TTM));
-                model.MTTE = DateTimeUtils.FormatTimeToInMinutes(model.Incidents.Average(c => c.TTE));
-                model.MTTD = DateTimeUtils.FormatTimeToInMinutes(model.Incidents.Average(c => c.TTD));
-                model.MTTF = DateTimeUtils.FormatTimeToInMinutes(model.Incidents.Average(c => c.TTF));
-            }
+                        
             return model;
         }
 
@@ -140,33 +135,22 @@ namespace Owlvey.Falcon.Components
         }
 
         public async Task<IEnumerable<FeatureAvailabilityGetListRp>> GetFeaturesWithQuality(int productId,
-            DateTime start, DateTime end)
+            DatePeriodValue period)
         {
             var result = new List<FeatureAvailabilityGetListRp>();
 
-            var entities = await this._dbContext.Features
-                .Include(c => c.ServiceMaps)
-                .Include(c => c.IncidentMap).ThenInclude(c => c.Incident)
-                .Include(c => c.Indicators).ThenInclude(c => c.Source)
-                .Include(c=> c.Squads)
-                .Where(c => c.Product.Id.Value.Equals(productId)).ToListAsync();
+            var product =  await this._dbContext.FullLoadProductWithSourceItems(productId, period.Start, period.End);                                   
 
-            var sources = entities.SelectMany(c => c.Indicators).Select(c => c.SourceId).Distinct().ToList();
-            var sourceItems = await this._dbContext.GetSourceItems(sources, start, end);
-
-            foreach (var feature in entities)
-            {
-                foreach (var indicator in feature.Indicators)
-                {                    
-                    indicator.Source.SourceItems = sourceItems.Where(c=>c.SourceId == indicator.SourceId).ToList();
-                }
+            foreach (var feature in product.Features)
+            {                
                 var tmp = this._mapper.Map<FeatureAvailabilityGetListRp>(feature);                
                 var measure = feature.Measure();                                
                 tmp.Availability = measure.Availability;
                 tmp.Experience = measure.Experience;
                 tmp.Latency = measure.Latency;
                 tmp.Squads = feature.Squads.Count();                                
-                tmp.ServiceCount = feature.ServiceMaps.Count();                
+                tmp.ServiceCount = feature.ServiceMaps.Count();
+                tmp.Debt = feature.MeasureDebt();                
                 result.Add(tmp);
             }
             return result.OrderBy(c => c.Availability).ToList();

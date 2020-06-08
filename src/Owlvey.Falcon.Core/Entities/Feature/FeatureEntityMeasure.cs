@@ -3,11 +3,18 @@ using Owlvey.Falcon.Core.Values;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace Owlvey.Falcon.Core.Entities
 {
     public partial class FeatureEntity 
     {
+        public DebtMeasureValue MeasureDebt(DatePeriodValue period = null) {
+            var measure = this.Measure(period);
+            var result = new DebtMeasureValue();
+            result.AddRange(this.ServiceMaps.Select(c => measure.MeasureDebt(c.Service.GetSLO())).ToList());
+            return result;            
+        }
         public QualityMeasureValue Measure(DatePeriodValue period = null)
         {
             var result = new List<decimal>();

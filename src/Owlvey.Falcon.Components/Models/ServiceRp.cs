@@ -27,19 +27,7 @@ namespace Owlvey.Falcon.Models
         public decimal ExperienceSLO { get; set; }        
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
-        public int MTTD { get; set; }
-        public int MTTE { get; set; }
-        public int MTTF { get; set; }
-        public int MTTM { get {
-                return this.MTTD + this.MTTE + this.MTTF;
-            }
-        }
-        public string MTTMS {
-            get {
-                return DateTimeUtils.FormatTimeToInMinutes(this.MTTM);
-            }
-        }
-
+        
         public string Group { get; set; }
     }
 

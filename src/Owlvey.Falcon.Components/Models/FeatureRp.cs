@@ -62,10 +62,8 @@ namespace Owlvey.Falcon.Models
             this.Latency = quality.Latency;
             this.Experience = quality.Experience;
         }
-        public string MTTM { get; set; }
-        public string MTTE { get; set; }
-        public string MTTD { get; set; }
-        public string MTTF { get; set; }
+        public DebtMeasureValue Debt { get; set; } = new DebtMeasureValue();
+        
         public List<IndicatorAvailabilityGetListRp> Indicators { get; set; } = new List<IndicatorAvailabilityGetListRp>();
         public List<SquadGetListRp> Squads { get; set; } = new List<SquadGetListRp>();
         public List<IncidentGetListRp> Incidents { get; set; } = new List<IncidentGetListRp>();
@@ -109,6 +107,9 @@ namespace Owlvey.Falcon.Models
         public decimal Experience { get; set; }
         public decimal Latency { get; set; }        
         public int Squads { get; set; }
+
+        public DebtMeasureValue Debt { get; set; } = new DebtMeasureValue();
+
     }
 
     public class SequenceFeatureGetListRp : FeatureGetListRp {        
