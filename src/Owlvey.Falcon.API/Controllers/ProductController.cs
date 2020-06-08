@@ -165,14 +165,45 @@ namespace Owlvey.Falcon.API.Controllers
 
         #region graph
 
-        [HttpGet("{id}/reports/graph")]
+        [HttpGet("{id}/reports/graph/availability")]
         [ProducesResponseType(typeof(GraphGetRp), 200)]
-        public async Task<IActionResult> GetGraph(int id, DateTime? start, DateTime? end)
+        public async Task<IActionResult> GetGraphAvailability(int id, DateTime? start, DateTime? end)
         {
             DatePeriodValue period = new DatePeriodValue(start.Value, end.Value);
             if (period.IsValid())
             {
-                GraphGetRp result = await this._productQueryService.GetGraph(id, period);
+                GraphGetRp result = await this._productQueryService.GetGraphAvailability(id, period);
+                return this.Ok(result);
+            }
+            else
+            {
+                return this.BadRequest();
+            }
+        }
+
+        [HttpGet("{id}/reports/graph/latency")]
+        [ProducesResponseType(typeof(GraphGetRp), 200)]
+        public async Task<IActionResult> GetGraphLatency(int id, DateTime? start, DateTime? end)
+        {
+            DatePeriodValue period = new DatePeriodValue(start.Value, end.Value);
+            if (period.IsValid())
+            {
+                GraphGetRp result = await this._productQueryService.GetGraphLatency(id, period);
+                return this.Ok(result);
+            }
+            else
+            {
+                return this.BadRequest();
+            }
+        }
+        [HttpGet("{id}/reports/graph/experience")]
+        [ProducesResponseType(typeof(GraphGetRp), 200)]
+        public async Task<IActionResult> GetGraphExperience(int id, DateTime? start, DateTime? end)
+        {
+            DatePeriodValue period = new DatePeriodValue(start.Value, end.Value);
+            if (period.IsValid())
+            {
+                GraphGetRp result = await this._productQueryService.GetGraphExperience(id, period);
                 return this.Ok(result);
             }
             else

@@ -61,7 +61,7 @@ namespace Owlvey.Falcon.Components
         }
 
 
-        public async Task<GraphGetRp> GetGraph(int productId, DatePeriodValue period)
+        public async Task<GraphGetRp> GetGraphAvailability(int productId, DatePeriodValue period)
         {
 
             GraphGetRp result = new GraphGetRp();
@@ -81,20 +81,20 @@ namespace Owlvey.Falcon.Components
             };
             result.Nodes.Add(node);
             */
+
             foreach (var service in product.Services)
             {
-                var measure = service.Measure();
+                var measure = service.Measure();                
                 var snode = new GraphNode
                 {
                     Id = string.Format("service_{0}", service.Id),
                     Avatar = service.Avatar,
                     Name = string.Format("{0} [ {1} | {2} ]", service.Name,
                         Math.Round(service.AvailabilitySlo, 2),
-                        Math.Round(measure.Availability, 2)),
+                        Math.Round(measure.Availability, 2)),                    
                     Value = measure.Availability,
                     Group = "services",
-                    Slo = service.AvailabilitySlo,
-                    Importance = QualityUtils.MeasureImpact(service.AvailabilitySlo),
+                    Slo = service.AvailabilitySlo,                    
                     Budget = measure.AvailabilityErrorBudget
                 };
                 
@@ -121,7 +121,7 @@ namespace Owlvey.Falcon.Components
                     {
                         From = snode.Id,
                         To = fnode.Id,
-                        Value =  fnode.Value - service.AvailabilitySlo,
+                        Value = QualityUtils.MeasureBudget(fnode.Value, service.AvailabilitySlo),
                         Tags = new Dictionary<string, object>() {
                             { "Availability", fnode.Value }
                         }
@@ -132,6 +132,121 @@ namespace Owlvey.Falcon.Components
             return result;
         }
 
+        public async Task<GraphGetRp> GetGraphLatency(int productId, DatePeriodValue period)
+        {
+
+            GraphGetRp result = new GraphGetRp();
+            var product = await this._dbContext.FullLoadProductWithSourceItems(productId, period.Start, period.End);
+            result.Name = product.Name;
+            result.Id = product.Id.Value;
+            result.Avatar = product.Avatar;
+            foreach (var service in product.Services)
+            {
+                var measure = service.Measure();
+                var snode = new GraphNode
+                {
+                    Id = string.Format("service_{0}", service.Id),
+                    Avatar = service.Avatar,
+                    Name = string.Format("{0} [ {1} | {2} ]", service.Name,
+                        Math.Round(service.LatencySlo, 2),
+                        Math.Round(measure.Latency, 2)),
+                    Value = measure.Latency,
+                    Group = "services",
+                    Slo = service.LatencySlo,                    
+                    Budget = measure.LatencyErrorBudget
+                };
+
+                result.Nodes.Add(snode);
+
+                foreach (var map in service.FeatureMap)
+                {
+                    var featureMeasure = map.Feature.Measure();
+                    var Id = string.Format("feature_{0}", map.Feature.Id);
+                    var fnode = result.Nodes.SingleOrDefault(c => c.Id == Id);
+                    if (fnode == null)
+                    {
+                        fnode = new GraphNode
+                        {
+                            Id = Id,
+                            Avatar = map.Feature.Avatar,
+                            Name = map.Feature.Name,
+                            Value = featureMeasure.Latency,
+                            Group = "features"
+                        };
+                        result.Nodes.Add(fnode);
+                    }
+                    var fedge = new GraphEdge()
+                    {
+                        From = snode.Id,
+                        To = fnode.Id,
+                        Value = QualityUtils.MeasureBudget(fnode.Value, service.LatencySlo),
+                        Tags = new Dictionary<string, object>() {
+                            { "Latency", fnode.Value }
+                        }
+                    };
+                    result.Edges.Add(fedge);
+                }
+            }
+            return result;
+        }
+
+        public async Task<GraphGetRp> GetGraphExperience(int productId, DatePeriodValue period)
+        {
+
+            GraphGetRp result = new GraphGetRp();
+            var product = await this._dbContext.FullLoadProductWithSourceItems(productId, period.Start, period.End);
+            result.Name = product.Name;
+            result.Id = product.Id.Value;
+            result.Avatar = product.Avatar;
+            foreach (var service in product.Services)
+            {
+                var measure = service.Measure();
+                var snode = new GraphNode
+                {
+                    Id = string.Format("service_{0}", service.Id),
+                    Avatar = service.Avatar,
+                    Name = string.Format("{0} [ {1} | {2} ]", service.Name,
+                        Math.Round(service.ExperienceSlo, 2),
+                        Math.Round(measure.Experience, 2)),
+                    Value = measure.Experience,
+                    Group = "services",
+                    Slo = service.ExperienceSlo,                    
+                    Budget = measure.ExperienceErrorBudget
+                };
+
+                result.Nodes.Add(snode);
+
+                foreach (var map in service.FeatureMap)
+                {
+                    var featureMeasure = map.Feature.Measure();
+                    var Id = string.Format("feature_{0}", map.Feature.Id);
+                    var fnode = result.Nodes.SingleOrDefault(c => c.Id == Id);
+                    if (fnode == null)
+                    {
+                        fnode = new GraphNode
+                        {
+                            Id = Id,
+                            Avatar = map.Feature.Avatar,
+                            Name = map.Feature.Name,
+                            Value = featureMeasure.Experience,
+                            Group = "features"
+                        };
+                        result.Nodes.Add(fnode);
+                    }
+                    var fedge = new GraphEdge()
+                    {
+                        From = snode.Id,
+                        To = fnode.Id,
+                        Value = QualityUtils.MeasureBudget(fnode.Value, service.ExperienceSlo),
+                        Tags = new Dictionary<string, object>() {
+                            { "Latency", fnode.Value }
+                        }
+                    };
+                    result.Edges.Add(fedge);
+                }
+            }
+            return result;
+        }
         /// <summary>
         /// Get All Product
         /// </summary>
