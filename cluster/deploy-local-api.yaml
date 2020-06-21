@@ -1,0 +1,26 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:    
+    tier: backend   
+  name: deploy-backend
+  namespace: owlvey
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      key: owlvey-api-pod
+  template:
+    metadata:
+      labels:
+        key: owlvey-api-pod
+    spec:
+      containers:
+        - name: owlvey-api
+          image: localhost:48700/owlvey/api:latest
+          ports:
+            - containerPort: 80
+
+        
+        
+      

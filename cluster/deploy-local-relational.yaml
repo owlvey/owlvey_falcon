@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: owlvey
+    tier: state
+  name: deploy-state
+  namespace: owlvey
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+        key: owlvey-relational-pod
+  template:
+    metadata:
+      labels:
+        key: owlvey-relational-pod
+    spec:
+      containers:
+        - name: db
+          image: localhost:48700/owlvey/relational:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 1433
+          env:
+            - name: "SA_PASSWORD"
+              value: "TheFalcon123"
+            - name: "ACCEPT_EULA"
+              value: "Y"
+            - name: "ASPNETCORE_ENVIRONMENT"
+              value: "docker"
+            - name: "MSSQL_PID"
+              value: "Express"
