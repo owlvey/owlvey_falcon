@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  service-api:
+        build:
+          context: ../.
+          dockerfile: ./containers/api/Dockerfile
+        image: owlvey/api
+ 

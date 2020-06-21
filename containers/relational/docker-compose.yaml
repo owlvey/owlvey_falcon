@@ -1,0 +1,7 @@
+version: '3.8'
+services:
+  service-relational:
+        build:
+          context: ./../../.
+          dockerfile: ./containers/relational/Dockerfile
+        image: owlvey/relational 

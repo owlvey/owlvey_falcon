@@ -341,3 +341,4 @@ BuildReports/
 
 /src/Owlvey.Falcon.Components/Migrations
 
+/infrastructure/api/app

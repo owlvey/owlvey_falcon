@@ -148,8 +148,9 @@ CREATE TABLE [ServiceEntity] (
     [ModifiedBy] nvarchar(max) NOT NULL,
     [Name] nvarchar(450) NOT NULL,
     [Description] nvarchar(max) NULL,
-    [Slo] decimal(5,3) NOT NULL,
-    [Aggregation] int NOT NULL,
+    [AvailabilitySlo] decimal(5,3) NOT NULL,
+    [ExperienceSlo] decimal(5,3) NOT NULL,
+    [LatencySlo] decimal(12,3) NOT NULL,
     [Avatar] nvarchar(max) NOT NULL,
     [Leaders] nvarchar(max) NULL,
     [Group] nvarchar(max) NOT NULL,
@@ -174,7 +175,9 @@ CREATE TABLE [SourceEntity] (
     [Description] nvarchar(max) NULL,
     [Kind] int NOT NULL,
     [Group] int NOT NULL,
+    [Percentile] decimal(18,2) NOT NULL,
     [ProductId] int NOT NULL,
+    [Latency] decimal(18,2) NOT NULL,
     CONSTRAINT [PK_SourceEntity] PRIMARY KEY ([Id]),
     CONSTRAINT [FK_SourceEntity_ProductEntity_ProductId] FOREIGN KEY ([ProductId]) REFERENCES [ProductEntity] ([Id]) ON DELETE CASCADE
 );
@@ -265,9 +268,10 @@ CREATE TABLE [SourceItemEntity] (
     [ModifiedOn] datetime2 NOT NULL,
     [ModifiedBy] nvarchar(max) NOT NULL,
     [SourceId] int NOT NULL,
-    [Good] int NOT NULL,
-    [Total] int NOT NULL,
+    [Good] int NULL,
+    [Total] int NULL,
     [Target] datetime2 NOT NULL,
+    [Measure] decimal(18,2) NOT NULL,
     CONSTRAINT [PK_SourceItemEntity] PRIMARY KEY ([Id]),
     CONSTRAINT [FK_SourceItemEntity_SourceEntity_SourceId] FOREIGN KEY ([SourceId]) REFERENCES [SourceEntity] ([Id]) ON DELETE CASCADE
 );
@@ -374,7 +378,7 @@ CREATE INDEX [IX_SquadFeatureEntity_SquadId] ON [SquadFeatureEntity] ([SquadId])
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20200502230905_InitialCreate', N'3.1.0');
+VALUES (N'20200617193330_InitialCreate', N'3.1.0');
 
 GO
 
