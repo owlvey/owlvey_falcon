@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-state
+  namespace: owlvey
+spec:  
+  type: ClusterIP
+  selector:
+    key: owlvey-relational-pod
+  ports:
+    - name: api
+      protocol: TCP      
+      port: 48100
+      targetPort: 1433 
