@@ -1,0 +1,15 @@
+
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: owlvey-ingress-state
+  namespace: owlvey
+spec:
+  entryPoints:
+    - tcpep
+  routes:
+    - match: HostSNI(`*`)
+      kind: Rule
+      services:
+        - name: service-state
+          port: 48100     
