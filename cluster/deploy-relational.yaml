@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: db
-          image: localhost:48700/owlvey/relational:latest
+          image: owlvey/relational:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 1433
