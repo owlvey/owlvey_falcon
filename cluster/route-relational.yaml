@@ -12,4 +12,4 @@ spec:
       kind: Rule
       services:
         - name: service-state
-          port: 48100     
+          port: 48203     
