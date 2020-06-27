@@ -4,4 +4,4 @@ services:
         build:
           context: ./../../.
           dockerfile: ./containers/relational/Dockerfile
-        image: owlvey/relational 
+        image: registry/relational 

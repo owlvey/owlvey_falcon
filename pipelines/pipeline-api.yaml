@@ -1,0 +1,40 @@
+name: $(Build.BuildId)_$(Date:yyyyMMdd)_$(Rev:.r)
+stages:
+- stage: commit
+  jobs:    
+  - job:    
+    pool:
+      vmImage: 'ubuntu-latest'        
+    steps:
+    - checkout: self            
+    - task: Bash@3
+      displayName: replace commmit artifactory
+      inputs:
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
+        targetType: 'inline'
+        script: |
+          sed -i -e 's/registry/owlveydevcommit/g' ./containers/relational/docker-compose.yaml          
+    - task: DockerCompose@0
+      displayName: Build 
+      inputs:
+        containerregistrytype: 'Container Registry'
+        dockerRegistryEndpoint: 'OwlveyDevopsDocker'
+        dockerComposeFile: './containers/api/docker-compose.yaml'
+        action: 'Build services'        
+        qualifyImageNames: true                
+        additionalImageTags: 'V0.0.$(Build.BuildId)'
+       
+    - task: DockerCompose@0
+      displayName: Publish
+      inputs:
+        containerregistrytype: 'Container Registry'
+        dockerRegistryEndpoint: 'OwlveyDevopsDocker'
+        dockerComposeFile: './containers/api/docker-compose.yaml'
+        action: Push services
+        qualifyImageNames: true
+        includeLatestTag: true        
+        additionalImageTags: 'V0.0.$(Build.BuildId)'
+        
+    
+        
+ 
