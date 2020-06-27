@@ -34,7 +34,4 @@ stages:
         qualifyImageNames: true
         includeLatestTag: true        
         additionalImageTags: 'V0.0.$(Build.BuildId)'
-        
-    
-        
- 
+       
