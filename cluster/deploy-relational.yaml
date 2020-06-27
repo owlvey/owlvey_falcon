@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: db
-          image: owlvey/relational:latest
+          image: owlveydevcommit/relational:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 1433
