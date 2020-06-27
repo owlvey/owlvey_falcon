@@ -13,7 +13,7 @@ stages:
         workingDirectory: '$(System.DefaultWorkingDirectory)'
         targetType: 'inline'
         script: |
-          sed -i -e 's/registry/owlveydevcommit/g' ./containers/relational/docker-compose.yaml          
+          sed -i -e 's/registry/owlveydevcommit/g' ./containers/api/docker-compose.yaml          
     - task: DockerCompose@0
       displayName: Build 
       inputs:
