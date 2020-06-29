@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:    
+    tier: backend     
+  name: owlvey-backend-local-deployment
+  namespace: owlvey
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      key: owlvey-api-pod
+  template:
+    metadata:
+      labels:
+        key: owlvey-api-pod
+    spec:
+      containers:
+        - name: owlvey-api
+          image: localhost:48700/owlveydevcommit/api:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          env:
+            - name: "ASPNETCORE_ENVIRONMENT"
+              value: "k8s"
+          
+
+        
+        
+      

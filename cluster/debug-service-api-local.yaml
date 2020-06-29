@@ -10,6 +10,7 @@ spec:
     - protocol: TCP
       port: 48100
       targetPort: 5000
+
 ---
 apiVersion: v1
 kind: Endpoints
