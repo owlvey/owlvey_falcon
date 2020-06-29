@@ -59,7 +59,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "api", "api", "{906B5B66-D0C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3. Gateways", "3. Gateways", "{55162B70-50DB-45CC-9E3E-E90236CE6A3E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Owlvey.Falcon.Repositories", "src\Owlvey.Falcon.Repositories\Owlvey.Falcon.Repositories.csproj", "{57C339B5-6627-4F90-A95A-367571E3871F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Owlvey.Falcon.Repositories", "src\Owlvey.Falcon.Repositories\Owlvey.Falcon.Repositories.csproj", "{57C339B5-6627-4F90-A95A-367571E3871F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cluster", "cluster", "{65DBA647-042F-419E-A375-45D26DD6B115}"
+	ProjectSection(SolutionItems) = preProject
+		cluster\deploy-api.yaml = cluster\deploy-api.yaml
+		cluster\deploy-relational.yaml = cluster\deploy-relational.yaml
+		cluster\service-api-local.yaml = cluster\service-api-local.yaml
+		cluster\service-api.yaml = cluster\service-api.yaml
+		cluster\service-relational.yaml = cluster\service-relational.yaml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
