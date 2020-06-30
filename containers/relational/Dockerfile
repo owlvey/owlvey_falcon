@@ -1,5 +1,5 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 as builder
-
+    ENV ASPNETCORE_ENVIRONMENT=prod
     RUN dotnet tool install --global dotnet-ef         
     ENV PATH="$PATH:/root/.dotnet/tools"
     WORKDIR /build/    
@@ -11,9 +11,11 @@ FROM mcr.microsoft.com/dotnet/core/sdk:3.1 as builder
     
     RUN rm -r ./Migrations    
 
-    RUN dotnet ef migrations add InitialCreate
+    RUN dotnet ef migrations add InitialCreate -c FalconDbContext
 
     RUN dotnet ef migrations script -c FalconDbContext -o /build/artifactory/falcondb.sql 
+
+    RUN cat /build/artifactory/falcondb.sql
 
     RUN ls /build/artifactory
 

@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: owlvey-api
-          image: localhost:48700/owlveydevcommit/api:latest
+          image: localhost:48700/registry/api:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 80
