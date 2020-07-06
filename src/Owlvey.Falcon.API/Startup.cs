@@ -121,7 +121,7 @@ namespace Owlvey.Falcon.API
             app.UseMetricServer();
 
             app.UseStaticFiles();
-
+            app.UseHttpMetrics();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
