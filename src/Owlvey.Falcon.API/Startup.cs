@@ -19,6 +19,7 @@ using Owlvey.Falcon.Gateways;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.Features;
 using System.Text;
+using Prometheus;
 
 namespace Owlvey.Falcon.API
 {
@@ -116,6 +117,8 @@ namespace Owlvey.Falcon.API
             IConfiguration configuration, FalconDbContext dbContext, IDateTimeGateway dateTimeGateway)
         {
             LogRequestHeaders(app, app.ApplicationServices.GetService<ILoggerFactory>());
+
+            app.UseMetricServer();
 
             app.UseStaticFiles();
 
