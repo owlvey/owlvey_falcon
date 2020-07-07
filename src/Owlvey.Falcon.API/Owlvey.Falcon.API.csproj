@@ -62,6 +62,16 @@
 
 
   <ItemGroup>
+    <Content Remove="appsettings.virtual.json" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <None Include="appsettings.virtual.json" />
+  </ItemGroup>
+
+
+  <ItemGroup>
     <ProjectReference Include="..\Owlvey.Falcon.Components\Owlvey.Falcon.Components.csproj" />
     <ProjectReference Include="..\Owlvey.Falcon.Repositories\Owlvey.Falcon.Repositories.csproj" />
   </ItemGroup>

@@ -12,3 +12,5 @@ spec:
       protocol: TCP      
       port: 48203
       targetPort: 1433 
+
+

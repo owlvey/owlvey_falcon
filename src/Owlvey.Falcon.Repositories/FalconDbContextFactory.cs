@@ -47,7 +47,8 @@ namespace Owlvey.Falcon.Repositories
             }
             else
             {
-                builder.UseSqlServer(connectionString);
+                builder.UseSqlServer(connectionString).AddInterceptors(new OwlveyCommandInterceptor())
+                    ;
             }
             
             return new FalconDbContext(builder.Options);
