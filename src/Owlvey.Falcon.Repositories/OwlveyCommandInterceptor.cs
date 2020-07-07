@@ -14,7 +14,7 @@ namespace Owlvey.Falcon.Repositories
         private void MeasureElapsed(DateTimeOffset startTime) {
 
             var anchor = DateTimeOffset.Now;
-            if (startTime < anchor) {
+            if (startTime > anchor) {
                 return;
             }
             var elapsed = anchor.Subtract(startTime);
