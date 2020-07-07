@@ -7,11 +7,17 @@ namespace Owlvey.Falcon.Repositories
 {
     public static class RepositoryMetrics
     {
-        public static readonly Histogram RelationAccessDuration = Metrics
-                    .CreateHistogram("owlvey_relational_access_duration_ms", 
-                                     "Histogram of relational processing durations.",
-                                     configuration: new HistogramConfiguration() {
-                                          
+        public static readonly Summary RelationAccessDuration = Metrics
+                    .CreateSummary("owlvey_relational_access_duration_ms", 
+                                     "Summary of relational processing durations.",
+                                     configuration: new SummaryConfiguration() {
+                                         Objectives = new[]
+                                        {
+                                            new QuantileEpsilonPair(0.5, 0.05),
+                                            new QuantileEpsilonPair(0.9, 0.05),
+                                            new QuantileEpsilonPair(0.95, 0.01),
+                                            new QuantileEpsilonPair(0.99, 0.005),
+                                        }
                                      }
         );
     }
