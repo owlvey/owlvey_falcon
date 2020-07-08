@@ -21,6 +21,8 @@ using Microsoft.AspNetCore.Http.Features;
 using System.Text;
 using Prometheus;
 using Microsoft.AspNetCore.Diagnostics;
+using Prometheus.DotNetRuntime;
+using System;
 
 namespace Owlvey.Falcon.API
 {
@@ -118,6 +120,16 @@ namespace Owlvey.Falcon.API
             IConfiguration configuration, FalconDbContext dbContext, IDateTimeGateway dateTimeGateway)
         {
             LogRequestHeaders(app, app.ApplicationServices.GetService<ILoggerFactory>());
+
+            IDisposable collector = DotNetRuntimeStatsBuilder
+                                    .Customize()
+                                    .WithContentionStats()
+                                    .WithJitStats()
+                                    .WithThreadPoolSchedulingStats()
+                                    .WithThreadPoolStats()
+                                    .WithGcStats()                                    
+                                    .StartCollecting();
+
 
             app.UseMetricServer();
 
