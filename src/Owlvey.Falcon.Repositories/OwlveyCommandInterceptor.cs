@@ -18,7 +18,7 @@ namespace Owlvey.Falcon.Repositories
                 return;
             }
             var elapsed = anchor.Subtract(startTime);
-            RepositoryMetrics.RelationAccessDuration.Observe(elapsed.TotalMilliseconds);
+            RepositoryMetrics.RelationalAccessDuration.Observe(elapsed.TotalMilliseconds);
         }
 
         public override DbDataReader ReaderExecuted(DbCommand command, CommandExecutedEventData eventData, DbDataReader result)

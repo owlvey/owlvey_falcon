@@ -20,6 +20,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.Features;
 using System.Text;
 using Prometheus;
+using Microsoft.AspNetCore.Diagnostics;
 
 namespace Owlvey.Falcon.API
 {
@@ -122,8 +123,10 @@ namespace Owlvey.Falcon.API
 
             app.UseStaticFiles();
             app.UseHttpMetrics();
+
+                        
             if (env.IsDevelopment())
-            {
+            {                                
                 app.UseDeveloperExceptionPage();
             }
             else
@@ -133,6 +136,21 @@ namespace Owlvey.Falcon.API
                 //app.UseHttpsRedirection();
                 app.UseDeveloperExceptionPage();
             }
+            app.Use(async (context, next) =>
+            {
+                try
+                {
+                    await next.Invoke();
+                }
+                catch (System.Exception)
+                {
+                    WebMetrics.ExceptionCounter.Inc(1);
+                    throw;
+                }               
+                
+            });
+
+
 
             app.UseAuthentication();
 

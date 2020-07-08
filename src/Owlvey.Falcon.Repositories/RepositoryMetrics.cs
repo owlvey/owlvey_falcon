@@ -6,8 +6,8 @@ using System.Text;
 namespace Owlvey.Falcon.Repositories
 {
     public static class RepositoryMetrics
-    {
-        public static readonly Summary RelationAccessDuration = Metrics
+    {        
+        public static readonly Summary RelationalAccessDuration = Metrics
                     .CreateSummary("owlvey_relational_access_duration_ms", 
                                      "Summary of relational processing durations.",
                                      configuration: new SummaryConfiguration() {

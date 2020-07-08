@@ -21,5 +21,12 @@ namespace Owlvey.Falcon.API.Controllers
             var response = new HealthGetRp();
             return this.Ok(response);
         }
+        [AllowAnonymous]
+        [HttpGet("error")]
+        [ProducesResponseType(typeof(HealthGetRp), 200)]
+        public async Task<IActionResult> GetError()
+        {
+            throw new Exception(string.Format("error at {0}", DateTime.Now));
+        }
     }
 }
