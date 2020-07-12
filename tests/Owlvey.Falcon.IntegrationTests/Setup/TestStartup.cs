@@ -125,66 +125,10 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
 
             // Setup Default Data
             app.UseAuthentication();
-
-            var customer = new Core.Entities.CustomerEntity
-            {
-                Id = 9999,
-                Name = "Default Customer",
-                Avatar = "Default",
-                CreatedBy = "test",
-                CreatedOn = DateTime.UtcNow,
-                ModifiedBy = "test",
-                ModifiedOn = DateTime.UtcNow,                
-                Products = new List<Core.Entities.ProductEntity> {
-                    new Core.Entities.ProductEntity{
-                        Id = 9999,
-                        Description= "Default Product",
-                        Name = "Default Product",
-                        CreatedBy = "test",
-                        Avatar="default",
-                        CreatedOn = DateTime.UtcNow,
-                        ModifiedBy = "test",
-                        ModifiedOn = DateTime.UtcNow,
-                        Features = new List<Core.Entities.FeatureEntity> {
-                            new FeatureEntity{
-                                Id = 9999,
-                                Description= "Default Feature",
-                                Name = "Default Feature",
-                                Avatar = "default",
-                                CreatedBy = "test",
-                                CreatedOn = DateTime.UtcNow,
-                                ModifiedBy = "test",
-                                ModifiedOn = DateTime.UtcNow,
-                            }
-                        },
-                        Services = new List<ServiceEntity>{
-                            new ServiceEntity{
-                                 Id = 9999,
-                                Description= "Default Service",
-                                Name = "Default Service",                                
-                                AvailabilitySlo = 99,
-                                Avatar = "default",
-                                CreatedBy = "test",
-                                CreatedOn = DateTime.UtcNow,
-                                ModifiedBy = "test",
-                                ModifiedOn = DateTime.UtcNow,
-                                Group = "Default"
-                            }
-                        }
-                    }
-                }
-            };
-            customer.Squads = new List<SquadEntity> {
-                SquadEntity.Factory.Create("Default Squad", dateTimeGateway.GetCurrentDateTime(), "user", customer)
-            };
             
-            dbContext.Customers.Add(customer);
-
-            var user = UserEntity.Factory.Create("test", dateTimeGateway.GetCurrentDateTime(), "user@falcon.com");
-            user.Id = 9999;
-            dbContext.Users.Add(user);
-            
-            dbContext.SaveChanges();
+            //var user = UserEntity.Factory.Create("test", dateTimeGateway.GetCurrentDateTime(), "user@falcon.com");
+            //user.Id = 9999;
+            //dbContext.Users.Add(user);                       
 
         }
 

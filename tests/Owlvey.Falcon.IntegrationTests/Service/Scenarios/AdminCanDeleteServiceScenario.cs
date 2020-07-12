@@ -14,7 +14,7 @@ using Xunit;
 
 namespace Owlvey.Falcon.IntegrationTests.Service.Scenarios
 {
-    public class AdminCanDeleteServiceScenario : AuthenticatedScenario, IDisposable
+    public class AdminCanDeleteServiceScenario : DefaultScenarioBase, IDisposable
     {        
         public AdminCanDeleteServiceScenario(HttpClient client): base(client)
         {            
@@ -28,7 +28,7 @@ namespace Owlvey.Falcon.IntegrationTests.Service.Scenarios
         {
             representation = Builder<ServicePostRp>.CreateNew()
                                  .With(x => x.Name = $"{Guid.NewGuid()}")                                 
-                                 .With(x => x.ProductId = KeyConstants.ProductId)                                 
+                                 .With(x => x.ProductId = this.DefaultProductId)                                 
                                  .Build();
         }
 

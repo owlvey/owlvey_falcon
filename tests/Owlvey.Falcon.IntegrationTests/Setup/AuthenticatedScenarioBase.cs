@@ -9,7 +9,7 @@ using TestStack.BDDfy;
 
 namespace Owlvey.Falcon.IntegrationTests.Setup
 {
-    public class AuthenticatedScenario: BaseScenario
+    public class AuthenticatedScenarioBase: BaseScenario
     {
         public object GetAdminToken()
         {
@@ -34,10 +34,10 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
             return data;
         }
         protected readonly HttpClient _client;                
-        public AuthenticatedScenario(HttpClient client) {
+        public AuthenticatedScenarioBase(HttpClient client) {
             _client = client;
         }
-        [Given("Login", Order = -1)]
+        [Given("Authenticated user", Order = -100)]
         public void on_login()
         {
 
@@ -66,5 +66,7 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
                 _client.SetToken("Bearer", token["access_token"]);
             }
         }
+
+        
     }
 }

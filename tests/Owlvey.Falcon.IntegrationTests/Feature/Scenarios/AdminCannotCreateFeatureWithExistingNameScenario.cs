@@ -13,7 +13,7 @@ using Xunit;
 
 namespace Owlvey.Falcon.IntegrationTests.Feature.Scenarios
 {
-    public class AdminCannotCreateFeatureWithExistingNameScenario : AuthenticatedScenario, IDisposable
+    public class AdminCannotCreateFeatureWithExistingNameScenario : DefaultScenarioBase, IDisposable
     {        
         public AdminCannotCreateFeatureWithExistingNameScenario(HttpClient client): base(client)
         {
@@ -28,7 +28,7 @@ namespace Owlvey.Falcon.IntegrationTests.Feature.Scenarios
         {
             representation = Builder<FeaturePostRp>.CreateNew()
                                 .With(x => x.Name = KeyConstants.FeatureName)                                
-                                .With(x => x.ProductId = KeyConstants.ProductId)
+                                .With(x => x.ProductId = this.DefaultProductId)
                                 .Build();
         }
 

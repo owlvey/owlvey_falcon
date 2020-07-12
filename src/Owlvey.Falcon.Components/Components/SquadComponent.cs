@@ -158,20 +158,7 @@ namespace Owlvey.Falcon.Components
                 result.AddNotFound($"The Resource {id} doesn't exists.");
                 return result;
             }
-
-            // Validate if the resource exists.
-            if (!squad.Name.Equals(model.Name, StringComparison.InvariantCultureIgnoreCase))
-            {
-
-                var customer = await this._dbContext.Customers.Include(c=> c.Squads).SingleAsync(c => c.Id.Equals(squad.Customer.Id));
-
-                if (customer.Squads.Any(c => c.Name.Equals(model.Name)))
-                {
-                    result.AddConflict($"The Resource {model.Name} has already been taken.");
-                    return result;
-                }
-            }
-
+           
             squad.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, model.Name, model.Description, model.Avatar, model.Leaders);
 
             this._dbContext.Update(squad);

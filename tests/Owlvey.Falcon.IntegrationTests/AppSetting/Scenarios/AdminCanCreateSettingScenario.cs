@@ -12,7 +12,7 @@ using Xunit;
 
 namespace Owlvey.Falcon.IntegrationTests.AppSetting.Scenarios
 {
-    public class AdminCanCreateSettingScenario : AuthenticatedScenario, IDisposable
+    public class AdminCanCreateSettingScenario : AuthenticatedScenarioBase, IDisposable
     {
         
         public AdminCanCreateSettingScenario(HttpClient client): base(client)

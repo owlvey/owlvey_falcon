@@ -13,7 +13,7 @@ using Xunit;
 
 namespace Owlvey.Falcon.IntegrationTests.Service.Scenarios
 {
-    public class AdminCannotCreateServiceWithExistingNameScenario : AuthenticatedScenario, IDisposable
+    public class AdminCannotCreateServiceWithExistingNameScenario : DefaultScenarioBase, IDisposable
     {        
         public AdminCannotCreateServiceWithExistingNameScenario(HttpClient client): base(client)
         {
@@ -28,7 +28,7 @@ namespace Owlvey.Falcon.IntegrationTests.Service.Scenarios
         {
             representation = Builder<ServicePostRp>.CreateNew()
                                 .With(x => x.Name = KeyConstants.ServiceName)                                
-                                .With(x => x.ProductId = KeyConstants.ProductId)                                
+                                .With(x => x.ProductId = this.DefaultProductId)                                
                                 .Build();
         }
 

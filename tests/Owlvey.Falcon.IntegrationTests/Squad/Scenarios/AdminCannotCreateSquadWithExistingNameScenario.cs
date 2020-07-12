@@ -13,7 +13,7 @@ using Xunit;
 
 namespace Owlvey.Falcon.IntegrationTests.Squad.Scenarios
 {
-    public class AdminCannotCreateSquadWithExistingNameScenario : AuthenticatedScenario, IDisposable
+    public class AdminCannotCreateSquadWithExistingNameScenario : DefaultScenarioBase, IDisposable
     {        
         public AdminCannotCreateSquadWithExistingNameScenario(HttpClient client) : base(client)
         {
@@ -28,7 +28,7 @@ namespace Owlvey.Falcon.IntegrationTests.Squad.Scenarios
         {
             representation = Builder<SquadPostRp>.CreateNew()
                                    .With(x => x.Name = KeyConstants.SquadName)                                   
-                                   .With(x => x.CustomerId = KeyConstants.CustomerId)
+                                   .With(x => x.CustomerId = this.DefaultCustomerId)
                                    .Build();
         }
 

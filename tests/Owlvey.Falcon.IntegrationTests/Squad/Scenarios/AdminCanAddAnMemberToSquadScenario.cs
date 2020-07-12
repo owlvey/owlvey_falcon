@@ -14,7 +14,7 @@ using Xunit;
 
 namespace Owlvey.Falcon.IntegrationTests.Squad.Scenarios
 {
-    public class AdminCanAddAnMemberToSquadScenario : AuthenticatedScenario, IDisposable
+    public class AdminCanAddAnMemberToSquadScenario : DefaultScenarioBase, IDisposable
     {
         
         public AdminCanAddAnMemberToSquadScenario(HttpClient client) : base(client)
@@ -32,7 +32,7 @@ namespace Owlvey.Falcon.IntegrationTests.Squad.Scenarios
         {
             representation = Builder<SquadPostRp>.CreateNew()
                                  .With(x => x.Name = $"{Guid.NewGuid()}")                                 
-                                 .With(x => x.CustomerId = KeyConstants.CustomerId)
+                                 .With(x => x.CustomerId = this.DefaultCustomerId)
                                  .Build();
         }
 
@@ -51,7 +51,7 @@ namespace Owlvey.Falcon.IntegrationTests.Squad.Scenarios
         public void then_update()
         {
             var memberPost = new MemberPostRp();
-            memberPost.UserId = KeyConstants.UserId;
+            memberPost.UserId = this.DefaultMemberId;
             memberPost.SquadId = squadId;
 
             var jsonContent = HttpClientExtension.ParseModelToHttpContent(memberPost);

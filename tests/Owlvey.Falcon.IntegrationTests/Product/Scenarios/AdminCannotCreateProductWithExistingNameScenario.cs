@@ -13,7 +13,7 @@ using Xunit;
 
 namespace Owlvey.Falcon.IntegrationTests.Product.Scenarios
 {
-    public class AdminCannotCreateProductWithExistingNameScenario : AuthenticatedScenario, IDisposable
+    public class AdminCannotCreateProductWithExistingNameScenario : DefaultScenarioBase, IDisposable
     {        
         public AdminCannotCreateProductWithExistingNameScenario(HttpClient client): base(client)
         {
@@ -28,7 +28,7 @@ namespace Owlvey.Falcon.IntegrationTests.Product.Scenarios
         {
             representation = Builder<ProductPostRp>.CreateNew()
                                  .With(x => x.Name = KeyConstants.ProductName)
-                                 .With(x => x.CustomerId = KeyConstants.CustomerId)
+                                 .With(x => x.CustomerId = this.DefaultCustomerId)
                                  .Build();
         }
 

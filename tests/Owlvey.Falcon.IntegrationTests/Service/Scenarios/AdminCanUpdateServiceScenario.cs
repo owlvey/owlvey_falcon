@@ -14,7 +14,7 @@ using Xunit;
 
 namespace Owlvey.Falcon.IntegrationTests.Service.Scenarios
 {
-    public class AdminCanUpdateServiceScenario : AuthenticatedScenario, IDisposable
+    public class AdminCanUpdateServiceScenario : DefaultScenarioBase, IDisposable
     {        
         public AdminCanUpdateServiceScenario(HttpClient client): base(client)
         {
@@ -30,7 +30,7 @@ namespace Owlvey.Falcon.IntegrationTests.Service.Scenarios
         {
             representation = Builder<ServicePostRp>.CreateNew()
                                  .With(x => x.Name = $"{Guid.NewGuid()}")                                 
-                                 .With(x => x.ProductId = KeyConstants.ProductId)                                 
+                                 .With(x => x.ProductId = this.DefaultProductId)                                 
                                  .Build();
         }
 

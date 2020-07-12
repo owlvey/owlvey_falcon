@@ -14,7 +14,7 @@ using Xunit;
 
 namespace Owlvey.Falcon.IntegrationTests.Squad.Scenarios
 {
-    public class AdminCanDeleteSquadScenario : AuthenticatedScenario, IDisposable
+    public class AdminCanDeleteSquadScenario : DefaultScenarioBase, IDisposable
     {        
         public AdminCanDeleteSquadScenario(HttpClient client): base(client)
         {
@@ -29,7 +29,7 @@ namespace Owlvey.Falcon.IntegrationTests.Squad.Scenarios
         {
             representation = Builder<SquadPostRp>.CreateNew()
                                  .With(x => x.Name = $"{Guid.NewGuid()}")                                 
-                                 .With(x => x.CustomerId = KeyConstants.CustomerId)
+                                 .With(x => x.CustomerId = this.DefaultCustomerId)
                                  .Build();
         }
 

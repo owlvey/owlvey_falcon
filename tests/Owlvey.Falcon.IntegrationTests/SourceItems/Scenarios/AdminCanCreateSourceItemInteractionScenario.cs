@@ -14,7 +14,7 @@ using Xunit;
 
 namespace Owlvey.Falcon.IntegrationTests.SourceItems.Scenarios
 {
-    public class AdminCanCreateSourceItemInteractionScenario : AuthenticatedScenario, IDisposable
+    public class AdminCanCreateSourceItemInteractionScenario : AuthenticatedScenarioBase, IDisposable
     {        
         private CustomerGetRp Customer;
         private ProductGetRp Product;
