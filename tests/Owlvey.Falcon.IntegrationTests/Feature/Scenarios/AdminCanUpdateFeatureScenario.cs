@@ -46,13 +46,14 @@ namespace Owlvey.Falcon.IntegrationTests.Feature.Scenarios
         [Then("The Feature was updated")]
         public void then_update()
         {
-            var representationPut = new FeaturePutRp();
-            representationPut.Name = NewValue;
+            var representationPut = new FeaturePutRp();            
             representationPut.Description = NewValue;
 
             var jsonContent = HttpClientExtension.ParseModelToHttpContent(representationPut);
             var responsePut = _client.PutAsync(NewResourceLocation, jsonContent).Result;
-            Assert.Equal(StatusCodes.Status200OK, (int)responsePut.StatusCode);
+
+            
+            Assert.True(StatusCodes.Status200OK == (int)responsePut.StatusCode, responsePut.Content.ReadAsStringAsync().Result);
         }
 
         [AndThen("Admin send the request for get new Feature")]
@@ -63,7 +64,7 @@ namespace Owlvey.Falcon.IntegrationTests.Feature.Scenarios
 
             var FeatureRepresentation = HttpClientExtension.ParseHttpContentToModel<FeatureGetRp>(responseGet.Content);
 
-            Assert.Equal(FeatureRepresentation.Name, NewValue);
+            Assert.Equal(FeatureRepresentation.Description, NewValue);
         }
 
         public void Dispose()

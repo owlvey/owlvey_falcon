@@ -46,8 +46,7 @@ namespace Owlvey.Falcon.IntegrationTests.Product.Scenarios
         [Then("The Product was updated")]
         public void then_update()
         {
-            var representationPut = new ProductPutRp();
-            representationPut.Name = NewValue;
+            var representationPut = new ProductPutRp();            
             representationPut.Description = NewValue;
 
             var jsonContent = HttpClientExtension.ParseModelToHttpContent(representationPut);
@@ -62,8 +61,7 @@ namespace Owlvey.Falcon.IntegrationTests.Product.Scenarios
             Assert.Equal((int)responseGet.StatusCode, StatusCodes.Status200OK);
 
             var ProductRepresentation = HttpClientExtension.ParseHttpContentToModel<ProductGetRp>(responseGet.Content);
-
-            Assert.Equal(ProductRepresentation.Name, NewValue);
+                        
             Assert.Equal(ProductRepresentation.Description, NewValue);
         }
 

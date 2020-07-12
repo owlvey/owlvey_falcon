@@ -222,8 +222,7 @@ namespace Owlvey.Falcon.Models
     }
 
     public class ServicePutRp
-    {
-        [Required]
+    {        
         public string Name { get; set; }        
         public decimal? AvailabilitySlo { get; set; }
         public decimal? LatencySlo { get; set; }

@@ -47,7 +47,7 @@ namespace Owlvey.Falcon.IntegrationTests.Service.Scenarios
         public void then_update()
         {
             var representationPut = new ServicePutRp();
-            representationPut.Name = NewValue;
+            representationPut.Description = NewValue;
             
             var jsonContent = HttpClientExtension.ParseModelToHttpContent(representationPut);
             var responsePut = _client.PutAsync(NewResourceLocation, jsonContent).Result;
@@ -62,7 +62,7 @@ namespace Owlvey.Falcon.IntegrationTests.Service.Scenarios
 
             var ServiceRepresentation = HttpClientExtension.ParseHttpContentToModel<ServiceGetRp>(responseGet.Content);
 
-            Assert.Equal(ServiceRepresentation.Name, NewValue);
+            Assert.Equal(ServiceRepresentation.Description, NewValue);
         }
 
         public void Dispose()

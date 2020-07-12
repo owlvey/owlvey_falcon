@@ -142,13 +142,9 @@ namespace Owlvey.Falcon.Models
     }
 
     public class FeaturePutRp
-    {
-        [Required]
-        public string Name { get; set; }
-        [Required]
+    {        
+        public string Name { get; set; }        
         public string Description { get; set; }
-        public string Avatar { get; set; }
-        public decimal? MTTD { get; set; }
-        public decimal? MTTR { get; set; }
+        public string Avatar { get; set; }        
     }
 }
