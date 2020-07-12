@@ -338,7 +338,7 @@ BuildReports/
 
 /artifactory
 *.xml
-
+/logs
 /src/Owlvey.Falcon.Components/Migrations
 
 /infrastructure/api/app

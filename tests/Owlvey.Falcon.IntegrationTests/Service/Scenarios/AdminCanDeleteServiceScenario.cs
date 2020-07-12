@@ -14,13 +14,10 @@ using Xunit;
 
 namespace Owlvey.Falcon.IntegrationTests.Service.Scenarios
 {
-    public class AdminCanDeleteServiceScenario : BaseScenario, IDisposable
-    {
-        private readonly HttpClient _client;
-        public AdminCanDeleteServiceScenario(HttpClient client)
-        {
-            _client = client;
-            _client.SetFakeBearerToken(this.GetAdminToken());
+    public class AdminCanDeleteServiceScenario : AuthenticatedScenario, IDisposable
+    {        
+        public AdminCanDeleteServiceScenario(HttpClient client): base(client)
+        {            
         }
 
         private ServicePostRp representation;

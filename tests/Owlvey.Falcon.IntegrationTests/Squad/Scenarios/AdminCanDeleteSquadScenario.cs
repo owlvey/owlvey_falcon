@@ -14,13 +14,11 @@ using Xunit;
 
 namespace Owlvey.Falcon.IntegrationTests.Squad.Scenarios
 {
-    public class AdminCanDeleteSquadScenario : BaseScenario, IDisposable
-    {
-        private readonly HttpClient _client;
-        public AdminCanDeleteSquadScenario(HttpClient client)
+    public class AdminCanDeleteSquadScenario : AuthenticatedScenario, IDisposable
+    {        
+        public AdminCanDeleteSquadScenario(HttpClient client): base(client)
         {
-            _client = client;
-            _client.SetFakeBearerToken(this.GetAdminToken());
+        
         }
 
         private SquadPostRp representation;

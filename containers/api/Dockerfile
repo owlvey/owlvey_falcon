@@ -4,6 +4,8 @@ COPY ./ .
 RUN ls -l
 RUN apt-get -y update
 RUN apt-get -y install dnsutils
+RUN apt-get -y install vim
+ 
 RUN dotnet build Owlvey.Falcon.sln -v:q
 RUN dotnet publish src/Owlvey.Falcon.API -c Release -v:q
 RUN ls src/Owlvey.Falcon.API/bin/Release/netcoreapp3.1

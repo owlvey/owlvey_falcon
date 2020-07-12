@@ -14,13 +14,11 @@ using Xunit;
 
 namespace Owlvey.Falcon.IntegrationTests.Feature.Scenarios
 {
-    public class AdminCanDeleteFeatureScenario : BaseScenario, IDisposable
-    {
-        private readonly HttpClient _client;
-        public AdminCanDeleteFeatureScenario(HttpClient client)
+    public class AdminCanDeleteFeatureScenario : AuthenticatedScenario, IDisposable
+    {        
+        public AdminCanDeleteFeatureScenario(HttpClient client): base(client)
         {
-            _client = client;
-            _client.SetFakeBearerToken(this.GetAdminToken());
+            
         }
 
         private FeaturePostRp representation;
