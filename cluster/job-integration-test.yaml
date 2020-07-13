@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: owlvey-api-integration-test-job
+  namespace: owlvey
+spec:
+  ttlSecondsAfterFinished: 300
+  template:
+    metadata:
+      labels:
+        key: owlvey-api-integration-test-job
+    spec:      
+      containers:
+      - name: api-integration-test
+        image: localhost:48700/registry/api-integration-test:latest        
+        imagePullPolicy: Always
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", "echo Hello from the postStart handler"]
+          preStop:
+            exec:
+              command: ["/bin/sh","-c","echo Bye from the postStart handler"]
+        env:
+          - name: "NETCORE_ENVIRONMENT"
+            value: "k8s"
+          - name: "OWLVEY_API_HOST"
+            value: "http://service-api:48100"
+          - name: "OWLVEY_IDENTITY_HOST"
+            value: "http://service-identity:48100"          
+      restartPolicy: Never
+  backoffLimit: 0 # retries

@@ -39,7 +39,7 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
         }
         public static bool IsDevelopment()
         {
-            var environment = Environment.GetEnvironmentVariable("NETCORE_ENVIRONMENT") ?? "Development";
+            var environment = Environment.GetEnvironmentVariable("NETCORE_ENVIRONMENT") ?? "Developmenta";
             return environment == "Development";
         }
         public static string APIHost()

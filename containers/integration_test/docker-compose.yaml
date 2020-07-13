@@ -1,0 +1,9 @@
+version: '3.8'
+services:
+  service-api:
+        build:
+          context: ./../../.
+          dockerfile: ./containers/integration_test/Dockerfile
+        image: registry/api-integration-test
+  
+ 
