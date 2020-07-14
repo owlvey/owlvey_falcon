@@ -1,7 +1,6 @@
 # docker run --name api-integration-test --rm localhost:48700/registry/api-integration-test:latest
 # docker run --name api-integration-test --rm --entrypoint dotnet localhost:48700/registry/api-integration-test:latest test
 
-
 kubectl delete -f ./cluster/job-integration-test.yaml 
 
 kubectl apply -f ./cluster/job-integration-test.yaml 
