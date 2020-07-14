@@ -7,6 +7,7 @@ using StructureMap;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Text;
@@ -39,7 +40,7 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
         }
         public static bool IsDevelopment()
         {
-            var environment = Environment.GetEnvironmentVariable("NETCORE_ENVIRONMENT") ?? "Developmenta";
+            var environment = Environment.GetEnvironmentVariable("NETCORE_ENVIRONMENT") ?? "Development";
             return environment == "Development";
         }
         public static string APIHost()
@@ -66,10 +67,23 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
                 services.AddSingleton<HttpClient>(client);                
             }
             else {
-                HttpClient client = new HttpClient
+                /*
+                var proxy = new WebProxy
                 {
-                    BaseAddress = new Uri(APIHost())
+                    Address = new Uri($"http://localhost:46100"),
+                    BypassProxyOnLocal = false,
+                    UseDefaultCredentials = false,                                       
                 };
+                HttpClientHandler handler = new HttpClientHandler
+                {
+                    Proxy = proxy
+                };
+                */
+                HttpClient client = new HttpClient()
+                {
+                    BaseAddress = new Uri(APIHost())                    
+                };
+                
                 services.AddSingleton<HttpClient>(client);
                 
             }

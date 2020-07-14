@@ -1,0 +1,1 @@
+kubectl cp owlvey/owlvey-state-local-deployment-f4b9c95c4-ww7x5:/falcondb.sql ./falcondb.sql

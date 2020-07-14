@@ -12,7 +12,7 @@ spec:
     spec:      
       containers:
       - name: api-integration-test
-        image: localhost:48700/registry/api-integration-test:latest        
+        image: owlveydevcommit/api-integration-test:latest        
         imagePullPolicy: Always
         lifecycle:
           postStart:

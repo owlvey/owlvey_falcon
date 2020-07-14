@@ -1,0 +1,8 @@
+tail -f /proc/<pid>/fd/1
+
+
+tail -f /proc/702/fd/1
+
+
+
+kubectl cp owlvey/owlvey-backend-local-deployment-c5f9765b5-nfbk2:/app/logs ./logs
