@@ -15,6 +15,6 @@ docker-compose build
 
 popd
 
-docker tag registry/api-integration-test localhost:48700/registry/api-integration-test
-docker push localhost:48700/registry/api-integration-test
+docker tag registry/api-integration-test localhost:5000/registry/api-integration-test
+docker push localhost:5000/registry/api-integration-test
 
