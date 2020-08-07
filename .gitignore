@@ -346,3 +346,5 @@ BuildReports/
 
 /logs
 
+/cluster/logging/logs
+

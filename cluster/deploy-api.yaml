@@ -6,7 +6,7 @@ metadata:
   name: owlvey-backend-local-deployment
   namespace: owlvey
 spec:
-  replicas: 2
+  replicas: 5
   selector:
     matchLabels:
       key: owlvey-api-pod
