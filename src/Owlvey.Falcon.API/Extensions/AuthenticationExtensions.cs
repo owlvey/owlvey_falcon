@@ -39,7 +39,7 @@ namespace Owlvey.Falcon.API.Extensions
                 options.Audience = authenticationOptions.Value.ApiName;
                 options.TokenValidationParameters.ValidIssuers = new[] { 
                     authenticationOptions.Value.Authority,
-                    "http://identity.owlvey.com:48100"
+                    "http://identity.owlvey.com:30701" 
                 };
                 
                 options.SecurityTokenValidators.Clear();
