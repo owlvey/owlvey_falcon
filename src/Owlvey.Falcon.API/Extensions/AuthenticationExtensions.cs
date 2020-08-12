@@ -41,6 +41,7 @@ namespace Owlvey.Falcon.API.Extensions
                     authenticationOptions.Value.Authority,
                     "http://identity.owlvey.com:48100"
                 };
+                
                 options.SecurityTokenValidators.Clear();
                 options.RequireHttpsMetadata = false;
                 options.SecurityTokenValidators.Add(new JwtSecurityTokenHandler
