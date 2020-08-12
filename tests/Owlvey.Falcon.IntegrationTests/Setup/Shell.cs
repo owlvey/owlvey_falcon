@@ -47,7 +47,12 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
         {
             var environment = Environment.GetEnvironmentVariable("OWLVEY_API_HOST") ?? "http://api.owlvey.com:30701";
             return environment;
-        }        
+        }
+        public static string IdentityHost()
+        {
+            var environment = Environment.GetEnvironmentVariable("OWLVEY_IDENTITY_HOST") ?? "http://identity.owlvey.com:30701";
+            return environment;
+        }
         private void Init()
         {
             var services = new ServiceCollection();                                          
