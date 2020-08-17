@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace Apankura.Api.Controllers
 {
     [ApiController]
+    [AllowAnonymous]
     [Route("apankura")]
     public class ApankuraController : ControllerBase
     {        
