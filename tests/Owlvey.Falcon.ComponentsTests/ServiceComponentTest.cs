@@ -10,6 +10,20 @@ namespace Owlvey.Falcon.ComponentsTests
 {
     public class ServiceComponentTest
     {
+        [Fact]
+        public async Task ServiceCreateSuccess(){
+            var container = ComponentTestFactory.BuildContainer();
+            var (customerId, productId, serviceId, featureId, _, _) = await ComponentTestFactory.BuildCustomerWithSquad(container, OwlveyCalendar.StartJanuary2019, OwlveyCalendar.EndJanuary2019);
+
+            var serviceComponent = container.GetInstance<ServiceComponent>();
+            var serviceQueryComponent = container.GetInstance<ServiceQueryComponent>();
+
+            var result = await serviceComponent.CreateService(new Models.ServicePostRp(){
+                 Name = "test" , ProductId = productId                
+            });
+            Assert.Equal(result.SLAValue.Availability, 0.99m);
+            Assert.Equal(result.SLAValue.Latency, 1000m);
+        }
 
 
         [Fact]
@@ -75,13 +89,15 @@ namespace Owlvey.Falcon.ComponentsTests
             Assert.NotEmpty(services);
 
             await serviceComponent.UpdateService(serviceInstance.Id, new Models.ServicePutRp() {
-                 Name = "change",
-                 Description = "change",
-                 AvailabilitySlo = 0.95m,
+                Name = "change",
+                Description = "change",
+                AvailabilitySlo = 0.95m,
                 LatencySlo = 2000m,
                 ExperienceSlo = 0.95m,
                 Avatar = "http://change.org",
-                 Group = "change group"
+                Group = "change group",
+                AvailabilitySLA = 0.8m,
+                LatencySLA = 800m
             });
 
             var serviceDetail = await serviceQueryComponent.GetServiceById(serviceInstance.Id);
@@ -92,6 +108,8 @@ namespace Owlvey.Falcon.ComponentsTests
             Assert.Equal("change", serviceDetail.Description);
             Assert.Equal("http://change.org", serviceDetail.Avatar);
             Assert.Equal(0.95m, serviceDetail.AvailabilitySLO);            
+            Assert.Equal(0.8m, serviceDetail.SLAValue.Availability);            
+            Assert.Equal(800m, serviceDetail.SLAValue.Latency);            
         }
 
 

@@ -9,7 +9,7 @@ using Owlvey.Falcon.Repositories;
 namespace Owlvey.Falcon.Repositories.Migrations
 {
     [DbContext(typeof(FalconDbContext))]
-    [Migration("20200817230916_InitialCreate")]
+    [Migration("20200818204536_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -457,6 +457,9 @@ namespace Owlvey.Falcon.Repositories.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<decimal>("AvailabilitySla")
+                        .HasColumnType("TEXT");
+
                     b.Property<decimal>("AvailabilitySlo")
                         .HasColumnType("decimal(5,3)");
 
@@ -480,6 +483,9 @@ namespace Owlvey.Falcon.Repositories.Migrations
 
                     b.Property<string>("Group")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("LatencySla")
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("LatencySlo")

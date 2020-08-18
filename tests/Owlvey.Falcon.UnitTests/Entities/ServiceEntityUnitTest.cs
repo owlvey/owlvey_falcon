@@ -36,8 +36,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
         {
             var createdBy = Guid.NewGuid().ToString("n");
             var name = string.Empty;
-            var description = string.Empty;
-            decimal slo = 0;
+            var description = string.Empty;            
             var (_, product) = TestDataFactory.BuildCustomerProduct();
 
             Assert.Throws<InvalidStateException>(() =>

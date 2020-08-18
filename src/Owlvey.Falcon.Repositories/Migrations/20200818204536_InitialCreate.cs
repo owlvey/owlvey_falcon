@@ -218,6 +218,8 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     AvailabilitySlo = table.Column<decimal>(type: "decimal(5,3)", nullable: false),
                     ExperienceSlo = table.Column<decimal>(type: "decimal(5,3)", nullable: false),
                     LatencySlo = table.Column<decimal>(type: "decimal(12,3)", nullable: false),
+                    AvailabilitySla = table.Column<decimal>(nullable: false),
+                    LatencySla = table.Column<decimal>(nullable: false),
                     Avatar = table.Column<string>(nullable: false),
                     Leaders = table.Column<string>(nullable: true),
                     Group = table.Column<string>(nullable: false),

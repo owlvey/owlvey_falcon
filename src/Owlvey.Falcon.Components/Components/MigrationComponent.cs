@@ -479,10 +479,16 @@ namespace Owlvey.Falcon.Components
                     var description = servicesSheet.Cells[row, 8].GetValue<string>();
                     var avatar = servicesSheet.Cells[row, 9].GetValue<string>();
                     var leaders = servicesSheet.Cells[row, 10].GetValue<string>();
+                    var slaValue =  new SLAValue(
+                        servicesSheet.Cells[row, 11].GetValue<decimal>(),
+                        servicesSheet.Cells[row, 12].GetValue<decimal>()                        
+                    );
                     
                     await this._serviceComponent.CreateOrUpdate(
                         organizations.Single(c=>c.Name == organization),product, name,
-                        description, avatar, availabilitySlo, latencySlo, experienceSlo, leaders, group);
+                        description, avatar, availabilitySlo, latencySlo, experienceSlo,
+                        slaValue,
+                        leaders, group);
                 }
 
                 var services = await this._dbContext.Services.ToListAsync();

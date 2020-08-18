@@ -455,6 +455,9 @@ namespace Owlvey.Falcon.Repositories.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<decimal>("AvailabilitySla")
+                        .HasColumnType("TEXT");
+
                     b.Property<decimal>("AvailabilitySlo")
                         .HasColumnType("decimal(5,3)");
 
@@ -478,6 +481,9 @@ namespace Owlvey.Falcon.Repositories.Migrations
 
                     b.Property<string>("Group")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("LatencySla")
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("LatencySlo")

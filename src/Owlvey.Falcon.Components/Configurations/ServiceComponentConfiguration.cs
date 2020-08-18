@@ -17,6 +17,7 @@ namespace Owlvey.Falcon.Components
                 .ForMember(m => m.Availability, ope => ope.Ignore())
                 .ForMember(m => m.Experience, ope => ope.Ignore())
                 .ForMember(m => m.Latency, ope => ope.Ignore())
+                .ForMember(m => m.SLAValue, ope =>  ope.MapFrom(c=>c.GetSLA()) )
                 .ForMember(m => m.AvailabilityErrorBudget, ope => ope.Ignore())
                 .ForMember(m => m.AvailabilityDebt, ope => ope.Ignore())
                 .ForMember(m => m.LatencyErrorBudget, ope => ope.Ignore())
@@ -29,7 +30,9 @@ namespace Owlvey.Falcon.Components
                 .ForMember(m => m.Features, ope=> ope.Ignore())                
                 .ForMember(m => m.PreviousAvailability, ope => ope.Ignore())
                 .ForMember(m => m.PreviousLatency, ope => ope.Ignore())
-                .ForMember(m => m.PreviousExperience, ope => ope.Ignore())
+                .ForMember(m => m.PreviousExperience, ope => ope.Ignore())                
+
+                .ForMember(m => m.SLAValue, ope => ope.MapFrom(d=> d.GetSLA()))                
 
                 .ForMember(m => m.BeforeAvailability, ope => ope.Ignore())
                 .ForMember(m => m.BeforeLatency, ope => ope.Ignore())
@@ -46,8 +49,9 @@ namespace Owlvey.Falcon.Components
             cfg.CreateMap<ServiceEntity, ServiceMigrateRp>()                
                 .ForMember(m => m.AvailabilitySLO, ope => ope.Ignore())
                 .ForMember(m => m.ExperienceSLO, ope => ope.Ignore())
-                .ForMember(m => m.LatencySLO, ope => ope.Ignore());
-
+                .ForMember(m => m.LatencySLO, ope => ope.Ignore())
+                .ForMember(m => m.AvailabilitySLA, ope =>  ope.MapFrom(c=>c.AvailabilitySla)) 
+                .ForMember(m => m.LatencySLA, ope =>  ope.MapFrom(c=>c.LatencySla));
         }
     }
 }

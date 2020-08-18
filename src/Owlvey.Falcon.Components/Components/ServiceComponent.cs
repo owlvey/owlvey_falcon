@@ -32,6 +32,7 @@ namespace Owlvey.Falcon.Components
             decimal availabilitySlo,
             decimal latencySlo,
             decimal experienceSlo,
+            SLAValue slaValue,
             string leaders,
             string group)
         {
@@ -47,7 +48,7 @@ namespace Owlvey.Falcon.Components
 
            
             entity.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, 
-                name, availabilitySlo, latencySlo, experienceSlo, description, avatar, leaders, group);
+                name, availabilitySlo, latencySlo, experienceSlo, slaValue, description, avatar, leaders, group);
 
             this._dbContext.Services.Update(entity);
             await this._dbContext.SaveChangesAsync();
@@ -124,6 +125,7 @@ namespace Owlvey.Falcon.Components
                 model.AvailabilitySlo,
                 model.LatencySlo,
                 model.ExperienceSlo,
+                new SLAValue(model.AvailabilitySLA, model.LatencySLA),
                 model.Description, 
                 model.Avatar, model.Leaders, model.Group);
 

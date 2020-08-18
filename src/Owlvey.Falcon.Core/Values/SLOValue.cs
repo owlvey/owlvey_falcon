@@ -12,10 +12,10 @@ namespace Owlvey.Falcon.Core.Values
         public decimal Experience { get; protected set; }
 
         public SLOValue() { }
-        public SLOValue(ServiceEntity service) {
-            this.Availability = service.AvailabilitySlo;
-            this.Latency = service.LatencySlo;
-            this.Experience = service.ExperienceSlo;
+        public SLOValue(decimal availability, decimal latency, decimal experience) {
+            this.Availability = availability;
+            this.Latency = latency;
+            this.Experience = experience;
         }
     }
 }
