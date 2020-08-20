@@ -2,7 +2,8 @@ name: Build API Image
 
 on:
   push:
-    branches: [ develop ]    
+    branches: 
+    - 'develop/**'
 
 jobs:    
     build:      
