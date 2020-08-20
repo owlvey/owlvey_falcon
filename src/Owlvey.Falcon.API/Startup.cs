@@ -18,6 +18,11 @@ using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Gateways;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.Features;
+using System.Text;
+using Prometheus;
+using Microsoft.AspNetCore.Diagnostics;
+using Prometheus.DotNetRuntime;
+using System;
 
 namespace Owlvey.Falcon.API
 {
@@ -39,7 +44,21 @@ namespace Owlvey.Falcon.API
             Configuration = builder.Build();
             Environment = environment;
         }
-
+        public static void LogRequestHeaders(IApplicationBuilder app,
+         ILoggerFactory loggerFactory)
+        {
+            var logger = loggerFactory.CreateLogger("app.headers");
+            app.Use(async (context, next) =>
+            {
+                var builder = new StringBuilder("\n");
+                foreach (var header in context.Request.Headers)
+                {
+                    builder.AppendLine($"{header.Key}:{header.Value}");
+                }
+                logger.LogWarning(builder.ToString());
+                await next.Invoke();
+            });
+        }
         public IHostingEnvironment Environment { get; private set;  }
 
         public IConfiguration Configuration { get; private set; }
@@ -100,11 +119,26 @@ namespace Owlvey.Falcon.API
             ILoggerFactory loggerFactory, IOptions<SwaggerAppOptions> swaggerOptions,
             IConfiguration configuration, FalconDbContext dbContext, IDateTimeGateway dateTimeGateway)
         {
+            LogRequestHeaders(app, app.ApplicationServices.GetService<ILoggerFactory>());
+
+            IDisposable collector = DotNetRuntimeStatsBuilder
+                                    .Customize()
+                                    .WithContentionStats()
+                                    .WithJitStats()
+                                    .WithThreadPoolSchedulingStats()
+                                    .WithThreadPoolStats()
+                                    .WithGcStats()                                    
+                                    .StartCollecting();
+
+
+            app.UseMetricServer();
 
             app.UseStaticFiles();
+            app.UseHttpMetrics();
 
+                        
             if (env.IsDevelopment())
-            {
+            {                                
                 app.UseDeveloperExceptionPage();
             }
             else
@@ -114,6 +148,21 @@ namespace Owlvey.Falcon.API
                 //app.UseHttpsRedirection();
                 app.UseDeveloperExceptionPage();
             }
+            app.Use(async (context, next) =>
+            {
+                try
+                {
+                    await next.Invoke();
+                }
+                catch (System.Exception)
+                {
+                    WebMetrics.ExceptionCounter.Inc(1);
+                    throw;
+                }               
+                
+            });
+
+
 
             app.UseAuthentication();
 

@@ -14,13 +14,11 @@ using Xunit;
 
 namespace Owlvey.Falcon.IntegrationTests.Product.Scenarios
 {
-    public class AdminCanDeleteProductScenario : BaseScenario, IDisposable
-    {
-        private readonly HttpClient _client;
-        public AdminCanDeleteProductScenario(HttpClient client)
+    public class AdminCanDeleteProductScenario : DefaultScenarioBase, IDisposable
+    {        
+        public AdminCanDeleteProductScenario(HttpClient client): base(client)
         {
-            _client = client;
-            _client.SetFakeBearerToken(this.GetAdminToken());
+            
         }
 
         private ProductPostRp representation;
@@ -31,7 +29,7 @@ namespace Owlvey.Falcon.IntegrationTests.Product.Scenarios
         {
             representation = Builder<ProductPostRp>.CreateNew()
                                  .With(x => x.Name = $"{Guid.NewGuid()}")                                 
-                                 .With(x => x.CustomerId = KeyConstants.CustomerId)
+                                 .With(x => x.CustomerId = this.DefaultCustomerId)
                                  .Build();
         }
 

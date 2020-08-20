@@ -109,17 +109,6 @@ namespace Owlvey.Falcon.Components
                 return result;
             }
 
-            // Validate if the resource exists.
-            if (!feature.Name.Equals(model.Name, StringComparison.InvariantCultureIgnoreCase))
-            {
-                var product = await this._dbContext.Products.Include(c => c.Features).SingleAsync(c => c.Id.Equals(feature.Product.Id));
-
-                if (product.Features.Any(c => c.Name.Equals(model.Name)))
-                {
-                    result.AddConflict($"The Resource {model.Name} has already been taken.");
-                    return result;
-                }
-            }
                                     
             feature.Update(this._datetimeGateway.GetCurrentDateTime(),
                 createdBy, model.Name,

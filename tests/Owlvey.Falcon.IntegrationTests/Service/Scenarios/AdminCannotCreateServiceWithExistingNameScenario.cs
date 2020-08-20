@@ -13,13 +13,11 @@ using Xunit;
 
 namespace Owlvey.Falcon.IntegrationTests.Service.Scenarios
 {
-    public class AdminCannotCreateServiceWithExistingNameScenario : BaseScenario, IDisposable
-    {
-        private readonly HttpClient _client;
-        public AdminCannotCreateServiceWithExistingNameScenario(HttpClient client)
+    public class AdminCannotCreateServiceWithExistingNameScenario : DefaultScenarioBase, IDisposable
+    {        
+        public AdminCannotCreateServiceWithExistingNameScenario(HttpClient client): base(client)
         {
-            _client = client;
-            _client.SetFakeBearerToken(this.GetAdminToken());
+            
         }
 
         private ServicePostRp representation;
@@ -30,7 +28,7 @@ namespace Owlvey.Falcon.IntegrationTests.Service.Scenarios
         {
             representation = Builder<ServicePostRp>.CreateNew()
                                 .With(x => x.Name = KeyConstants.ServiceName)                                
-                                .With(x => x.ProductId = KeyConstants.ProductId)                                
+                                .With(x => x.ProductId = this.DefaultProductId)                                
                                 .Build();
         }
 

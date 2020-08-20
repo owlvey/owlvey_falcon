@@ -32,6 +32,7 @@ namespace Owlvey.Falcon.Components
             decimal availabilitySlo,
             decimal latencySlo,
             decimal experienceSlo,
+            SLAValue slaValue,
             string leaders,
             string group)
         {
@@ -47,7 +48,7 @@ namespace Owlvey.Falcon.Components
 
            
             entity.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, 
-                name, availabilitySlo, latencySlo, experienceSlo, description, avatar, leaders, group);
+                name, availabilitySlo, latencySlo, experienceSlo, slaValue, description, avatar, leaders, group);
 
             this._dbContext.Services.Update(entity);
             await this._dbContext.SaveChangesAsync();
@@ -119,24 +120,12 @@ namespace Owlvey.Falcon.Components
                 result.AddNotFound($"The Resource {id} doesn't exists.");
                 return result;
             }
-
-            // Validate if the resource exists.
-            if (!service.Name.Equals(model.Name, StringComparison.InvariantCultureIgnoreCase))
-            {
-                var product = await this._dbContext.Products.Include(c => c.Services).SingleAsync(c => c.Id.Equals(service.Product.Id));
-
-                if (product.Services.Any(c => c.Name.Equals(model.Name)))
-                {
-                    result.AddConflict($"The Resource {model.Name} has already been taken.");
-                    return result;
-                }
-            }
-
-                        
+        
             service.Update(this._datetimeGateway.GetCurrentDateTime(), createdBy, model.Name, 
                 model.AvailabilitySlo,
                 model.LatencySlo,
                 model.ExperienceSlo,
+                new SLAValue(model.AvailabilitySLA, model.LatencySLA),
                 model.Description, 
                 model.Avatar, model.Leaders, model.Group);
 

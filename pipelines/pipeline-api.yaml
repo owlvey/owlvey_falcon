@@ -6,14 +6,15 @@ stages:
     pool:
       vmImage: 'ubuntu-latest'        
     steps:
-    - checkout: self            
+    - checkout: self
+    - script: git checkout develop            
     - task: Bash@3
       displayName: replace commmit artifactory
       inputs:
         workingDirectory: '$(System.DefaultWorkingDirectory)'
         targetType: 'inline'
         script: |
-          sed -i -e 's/registry/owlveydevcommit/g' ./containers/relational/docker-compose.yaml          
+          sed -i -e 's/registry/owlveydevcommit/g' ./containers/api/docker-compose.yaml          
     - task: DockerCompose@0
       displayName: Build 
       inputs:
@@ -34,7 +35,4 @@ stages:
         qualifyImageNames: true
         includeLatestTag: true        
         additionalImageTags: 'V0.0.$(Build.BuildId)'
-        
-    
-        
- 
+       

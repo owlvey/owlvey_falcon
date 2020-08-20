@@ -38,9 +38,20 @@ namespace Owlvey.Falcon.Core.Entities
         [Required]
         public decimal LatencySlo { get; set; }
 
+        [Required]
+        public decimal AvailabilitySla {get; set;}
+
+        [Required]
+        public decimal LatencySla { get; set; }
+
         public SLOValue GetSLO (){
-            return new SLOValue(this);
+            return new SLOValue( this.AvailabilitySlo, this.LatencySlo, this.ExperienceSlo);
         }
+
+        public SLAValue GetSLA (){
+            return new SLAValue( this.AvailabilitySla, this.LatencySla);
+        }
+
         [Required]
         public string Avatar { get; set; }
 
@@ -69,6 +80,7 @@ namespace Owlvey.Falcon.Core.Entities
             decimal? availabilitySlo,
             decimal? latencySlo,
             decimal? experienceSlo,
+            SLAValue slaValue,
             string description, string avatar,
             string leaders, string group)
         {
@@ -82,6 +94,12 @@ namespace Owlvey.Falcon.Core.Entities
             this.ModifiedBy = modifiedBy;            
             this.ModifiedOn = on;
             this.Group = string.IsNullOrWhiteSpace(group) ? this.Group : group;
+
+            if (slaValue != null){
+                this.AvailabilitySla = slaValue.Availability ?? this.AvailabilitySla;
+                this.LatencySla = slaValue.Latency ?? this.LatencySla;
+            }
+
             this.Validate();
         }
 

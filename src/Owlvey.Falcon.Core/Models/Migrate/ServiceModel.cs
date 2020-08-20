@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Owlvey.Falcon.Core.Entities;
 
 namespace Owlvey.Falcon.Core.Models.Migrate
@@ -16,6 +15,9 @@ namespace Owlvey.Falcon.Core.Models.Migrate
         public string Description { get; set; }
         public string Avatar { get; set; }
         public string Leaders { get; set; }
+        public decimal AvailabilitySLA { get; set; }
+        public decimal LatencySLA { get; set; }
+
         
 
         public void Load(string organization, string product, ServiceEntity entity)
@@ -28,6 +30,8 @@ namespace Owlvey.Falcon.Core.Models.Migrate
             this.AvailabilitySlo = entity.AvailabilitySlo;
             this.ExperienceSlo = entity.ExperienceSlo;
             this.LatencySlo = entity.LatencySlo;
+            this.AvailabilitySLA = entity.AvailabilitySla;
+            this.LatencySLA = entity.LatencySla;            
             this.Leaders = entity.Leaders;
             this.Organization = organization;
             this.Product = product;            
@@ -43,6 +47,5 @@ namespace Owlvey.Falcon.Core.Models.Migrate
             }
             return result;
         }
-
     }
 }

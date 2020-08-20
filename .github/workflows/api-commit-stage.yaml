@@ -19,5 +19,5 @@ jobs:
           run: |
             docker tag registry/api owlveydevcommit/api:latest
             docker tag registry/api owlveydevcommit/api:${{ github.sha }}                  
-            docker push owlveydevcommit/k8ssite
+            docker push owlveydevcommit/api
     

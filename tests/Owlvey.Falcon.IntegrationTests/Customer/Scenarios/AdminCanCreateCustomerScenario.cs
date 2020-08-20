@@ -13,13 +13,11 @@ using Xunit;
 
 namespace Owlvey.Falcon.IntegrationTests.Customer.Scenarios
 {
-    public class AdminCanCreateCustomerScenario : BaseScenario, IDisposable
-    {
-        private readonly HttpClient _client;
-        public AdminCanCreateCustomerScenario(HttpClient client)
+    public class AdminCanCreateCustomerScenario : AuthenticatedScenarioBase, IDisposable
+    {        
+        public AdminCanCreateCustomerScenario(HttpClient client): base(client)
         {
-            _client = client;
-            _client.SetFakeBearerToken(this.GetAdminToken());
+            
         }
 
         private CustomerPostRp representation;

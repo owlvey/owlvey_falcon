@@ -13,13 +13,11 @@ using Xunit;
 
 namespace Owlvey.Falcon.IntegrationTests.Feature.Scenarios
 {
-    public class AdminCannotCreateFeatureWithExistingNameScenario : BaseScenario, IDisposable
-    {
-        private readonly HttpClient _client;
-        public AdminCannotCreateFeatureWithExistingNameScenario(HttpClient client)
+    public class AdminCannotCreateFeatureWithExistingNameScenario : DefaultScenarioBase, IDisposable
+    {        
+        public AdminCannotCreateFeatureWithExistingNameScenario(HttpClient client): base(client)
         {
-            _client = client;
-            _client.SetFakeBearerToken(this.GetAdminToken());
+            
         }
 
         private FeaturePostRp representation;
@@ -30,7 +28,7 @@ namespace Owlvey.Falcon.IntegrationTests.Feature.Scenarios
         {
             representation = Builder<FeaturePostRp>.CreateNew()
                                 .With(x => x.Name = KeyConstants.FeatureName)                                
-                                .With(x => x.ProductId = KeyConstants.ProductId)
+                                .With(x => x.ProductId = this.DefaultProductId)
                                 .Build();
         }
 
@@ -44,6 +42,7 @@ namespace Owlvey.Falcon.IntegrationTests.Feature.Scenarios
         [Then("The Feature was acepted")]
         public void then_created()
         {
+            
             Assert.Equal(StatusCodes.Status201Created, (int)responsePost.StatusCode);
             
         }

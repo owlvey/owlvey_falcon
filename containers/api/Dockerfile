@@ -2,6 +2,11 @@ FROM mcr.microsoft.com/dotnet/core/sdk:3.1 as builder
 WORKDIR /build/
 COPY ./ .
 RUN ls -l
+RUN apt-get -y update
+RUN apt-get -y install dnsutils
+RUN apt-get -y install vim
+RUN apt-get install -y procps
+
 RUN dotnet build Owlvey.Falcon.sln -v:q
 RUN dotnet publish src/Owlvey.Falcon.API -c Release -v:q
 RUN ls src/Owlvey.Falcon.API/bin/Release/netcoreapp3.1

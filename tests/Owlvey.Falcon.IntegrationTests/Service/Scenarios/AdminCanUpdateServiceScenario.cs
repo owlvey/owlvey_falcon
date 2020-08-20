@@ -14,13 +14,11 @@ using Xunit;
 
 namespace Owlvey.Falcon.IntegrationTests.Service.Scenarios
 {
-    public class AdminCanUpdateServiceScenario : BaseScenario, IDisposable
-    {
-        private readonly HttpClient _client;
-        public AdminCanUpdateServiceScenario(HttpClient client)
+    public class AdminCanUpdateServiceScenario : DefaultScenarioBase, IDisposable
+    {        
+        public AdminCanUpdateServiceScenario(HttpClient client): base(client)
         {
-            _client = client;
-            _client.SetFakeBearerToken(this.GetAdminToken());
+     
         }
 
         private ServicePostRp representation;
@@ -32,7 +30,7 @@ namespace Owlvey.Falcon.IntegrationTests.Service.Scenarios
         {
             representation = Builder<ServicePostRp>.CreateNew()
                                  .With(x => x.Name = $"{Guid.NewGuid()}")                                 
-                                 .With(x => x.ProductId = KeyConstants.ProductId)                                 
+                                 .With(x => x.ProductId = this.DefaultProductId)                                 
                                  .Build();
         }
 
@@ -49,7 +47,7 @@ namespace Owlvey.Falcon.IntegrationTests.Service.Scenarios
         public void then_update()
         {
             var representationPut = new ServicePutRp();
-            representationPut.Name = NewValue;
+            representationPut.Description = NewValue;
             
             var jsonContent = HttpClientExtension.ParseModelToHttpContent(representationPut);
             var responsePut = _client.PutAsync(NewResourceLocation, jsonContent).Result;
@@ -64,7 +62,7 @@ namespace Owlvey.Falcon.IntegrationTests.Service.Scenarios
 
             var ServiceRepresentation = HttpClientExtension.ParseHttpContentToModel<ServiceGetRp>(responseGet.Content);
 
-            Assert.Equal(ServiceRepresentation.Name, NewValue);
+            Assert.Equal(ServiceRepresentation.Description, NewValue);
         }
 
         public void Dispose()

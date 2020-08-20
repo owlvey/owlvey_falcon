@@ -24,7 +24,8 @@ namespace Owlvey.Falcon.Models
         public int ProductId { get; set; }
         public decimal AvailabilitySLO { get; set; }
         public decimal LatencySLO { get; set; }
-        public decimal ExperienceSLO { get; set; }        
+        public decimal ExperienceSLO { get; set; }    
+        public SLAValue SLAValue {get;set;}    
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         
@@ -41,6 +42,9 @@ namespace Owlvey.Falcon.Models
         public string Avatar { get; set; }
         public string Leaders { get; set; }        
         public string Group { get; set; }
+
+        public decimal AvailabilitySLA {get;set;}
+        public decimal LatencySLA {get;set;}
     }
 
     public class ServiceGetRp : ServiceBaseRp {
@@ -48,8 +52,7 @@ namespace Owlvey.Falcon.Models
         
         public decimal Availability { get; set; }
         public decimal Latency { get; set; }
-        public decimal Experience { get; set; }
-
+        public decimal Experience { get; set; }        
         public decimal PreviousAvailability { get; set; }
         public decimal PreviousLatency { get; set; }
         public decimal PreviousExperience { get; set; }
@@ -222,12 +225,14 @@ namespace Owlvey.Falcon.Models
     }
 
     public class ServicePutRp
-    {
-        [Required]
+    {        
         public string Name { get; set; }        
         public decimal? AvailabilitySlo { get; set; }
         public decimal? LatencySlo { get; set; }
         public decimal? ExperienceSlo { get; set; }
+
+        public decimal? AvailabilitySLA {get;set;}
+        public decimal? LatencySLA {get;set;}
         public string Avatar { get; set; }
         public string Description { get; set; }        
         public string Group { get; set; }

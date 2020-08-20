@@ -12,3 +12,18 @@ spec:
       protocol: TCP      
       port: 48100
       targetPort: 80 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-api-backdoor
+  namespace: owlvey
+spec:  
+  type: ClusterIP
+  selector:
+    key: owlvey-api-pod
+  ports:
+    - name: api
+      protocol: TCP      
+      port: 48100
+      targetPort: 80 

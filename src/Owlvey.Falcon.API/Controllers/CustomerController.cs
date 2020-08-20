@@ -142,22 +142,9 @@ namespace Owlvey.Falcon.API.Controllers
         [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Delete(int id)
         {
-            if (!this.ModelState.IsValid)
-                return this.BadRequest(this.ModelState);
+            await this._customerService.DeleteCustomer(id);           
 
-            var response = await this._customerService.DeleteCustomer(id);
-
-            if (response.HasNotFounds())
-            {
-                return this.NotFound(response.GetNotFounds());
-            }
-
-            if (response.HasConflicts())
-            {
-                return this.Conflict(response.GetConflicts());
-            }
-
-            return this.NoContent();
+            return this.Ok();
         }
 
         [HttpGet("{id}/squads/reports/graph")]

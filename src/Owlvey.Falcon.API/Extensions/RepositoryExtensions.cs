@@ -32,7 +32,7 @@ namespace Owlvey.Falcon.IoC
                                maxRetryCount: 3,
                                maxRetryDelay: TimeSpan.FromSeconds(30),
                                errorNumbersToAdd: null);
-                           })
+                           }).AddInterceptors(new OwlveyCommandInterceptor())
                 );
             }
 

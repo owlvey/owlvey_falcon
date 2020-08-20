@@ -65,39 +65,29 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<CustomerGetRp>(entity);
         }
 
-        public async Task<BaseComponentResultRp> DeleteCustomer(int id)
+        public async Task DeleteCustomer(int id)
         {
-            var result = new BaseComponentResultRp();
-            var modifiedBy = this._identityService.GetIdentity();
-            this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
-            var customer = await this._dbContext.Customers.SingleAsync(c=>c.Id == id);
-            var services = await this._dbContext.Services.Where(c => c.Product.CustomerId == id).ToListAsync();
-            var features = await this._dbContext.Features.Where(c => c.Product.CustomerId == id).ToListAsync();
+            var customer = await this._dbContext.Customers.SingleOrDefaultAsync(c => c.Id == id);
+            if (customer != null) {
+                var modifiedBy = this._identityService.GetIdentity();
+                this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;                
+                var services = await this._dbContext.Services.Where(c => c.Product.CustomerId == id).ToListAsync();
+                var features = await this._dbContext.Features.Where(c => c.Product.CustomerId == id).ToListAsync();
 
-                       
-            if (customer == null)
-            {
-                result.AddNotFound($"The Resource {id} doesn't exists.");
-                return result;
+                foreach (var service in services)
+                {
+                    await this._dbContext.RemoveService(service.Id.Value);
+                }
+
+                foreach (var feature in features)
+                {
+                    await this._dbContext.RemoveFeature(feature.Id.Value);
+                }
+
+                this._dbContext.Customers.Remove(customer);
+
+                await this._dbContext.SaveChangesAsync();
             }
-
-            foreach (var service in services)
-            {
-                await this._dbContext.RemoveService(service.Id.Value);
-            }
-
-            foreach (var feature in features)
-            {
-                await this._dbContext.RemoveFeature(feature.Id.Value);
-            }
-
-            
-            this._dbContext.Customers.Remove(customer);
-
-            await this._dbContext.SaveChangesAsync();
-             
-
-            return result;
         }
         
         public async Task<BaseComponentResultRp> UpdateCustomer(int id, CustomerPutRp model)

@@ -378,7 +378,7 @@ CREATE INDEX [IX_SquadFeatureEntity_SquadId] ON [SquadFeatureEntity] ([SquadId])
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20200617193330_InitialCreate', N'3.1.0');
+VALUES (N'20200630023256_InitialCreate', N'3.1.0');
 
 GO
 

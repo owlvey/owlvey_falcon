@@ -14,16 +14,13 @@ using Xunit;
 
 namespace Owlvey.Falcon.IntegrationTests.SourceItems.Scenarios
 {
-    public class AdminCanCreateSourceItemInteractionScenario : BaseScenario, IDisposable
-    {
-        private readonly HttpClient _client;
+    public class AdminCanCreateSourceItemInteractionScenario : AuthenticatedScenarioBase, IDisposable
+    {        
         private CustomerGetRp Customer;
         private ProductGetRp Product;
         private SourceGetRp Source;
-        public AdminCanCreateSourceItemInteractionScenario(HttpClient client)
-        {
-            _client = client;
-            _client.SetFakeBearerToken(this.GetAdminToken());
+        public AdminCanCreateSourceItemInteractionScenario(HttpClient client): base(client)
+        {            
         }
 
         [Given("Admin creates customer and product")]

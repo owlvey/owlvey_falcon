@@ -57,14 +57,7 @@ namespace Owlvey.Falcon.IntegrationTests.Squad.Stories
         {
             this._scenario = this._container.GetInstance<AdminCanDeleteSquadScenario>();
             this._scenario.BDDfy();
-        }
-
-        [Fact]
-        public void admin_can_update_squad()
-        {
-            this._scenario = this._container.GetInstance<AdminCanUpdateSquadScenario>();
-            this._scenario.BDDfy();
-        }
+        }        
 
         public void Dispose()
         {

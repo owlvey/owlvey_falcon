@@ -1,3 +1,4 @@
+using GST.Fake.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,6 +7,7 @@ using StructureMap;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Text;
@@ -36,24 +38,55 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
             }
 
         }
-
+        public static bool IsDevelopment()
+        {
+            var environment = Environment.GetEnvironmentVariable("NETCORE_ENVIRONMENT") ?? "Development";
+            return environment == "Development";
+        }
+        public static string APIHost()
+        {
+            var environment = Environment.GetEnvironmentVariable("OWLVEY_API_HOST") ?? "http://api.owlvey.com:30701";
+            return environment;
+        }
+        public static string IdentityHost()
+        {
+            var environment = Environment.GetEnvironmentVariable("OWLVEY_IDENTITY_HOST") ?? "http://identity.owlvey.com:30701";
+            return environment;
+        }
         private void Init()
         {
-            var services = new ServiceCollection();
-
-            // add TestServer Client
-            var builder = new WebHostBuilder()
-                .UseContentRoot(Directory.GetCurrentDirectory())                
+            var services = new ServiceCollection();                                          
+            if (IsDevelopment())
+            {
+                // add TestServer Client
+                var builder = new WebHostBuilder()
+                .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseStartup<TestStartup>();
-
-
-            this.Server = new TestServer(builder);
-            var client = this.Server.CreateClient();
-
-            
-            services.AddSingleton<HttpClient>(client);
-
-            // add StructureMap
+                this.Server = new TestServer(builder);
+                var client = this.Server.CreateClient();                
+                services.AddSingleton<HttpClient>(client);                
+            }
+            else {
+                /*
+                var proxy = new WebProxy
+                {
+                    Address = new Uri($"http://localhost:46100"),
+                    BypassProxyOnLocal = false,
+                    UseDefaultCredentials = false,                                       
+                };
+                HttpClientHandler handler = new HttpClientHandler
+                {
+                    Proxy = proxy
+                };
+                */
+                HttpClient client = new HttpClient()
+                {
+                    BaseAddress = new Uri(APIHost())                    
+                };
+                
+                services.AddSingleton<HttpClient>(client);
+                
+            }
             this.Container.Configure(config =>
             {
                 config.Scan(sp =>
@@ -63,7 +96,6 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
                 });
                 config.Populate(services);
             });
-            
         }
 
         public void Dispose()

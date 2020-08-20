@@ -13,13 +13,11 @@ using Xunit;
 
 namespace Owlvey.Falcon.IntegrationTests.AppSetting.Scenarios
 {
-    public class AdminCanUpdateSettingScenario : BaseScenario, IDisposable
-    {
-        private readonly HttpClient _client;
-        public AdminCanUpdateSettingScenario(HttpClient client)
+    public class AdminCanUpdateSettingScenario : AuthenticatedScenarioBase, IDisposable
+    {        
+        public AdminCanUpdateSettingScenario(HttpClient client) : base(client)
         {
-            _client = client;
-            _client.SetFakeBearerToken(this.GetAdminToken());
+            
         }
 
         private AppSettingPostRp representation;

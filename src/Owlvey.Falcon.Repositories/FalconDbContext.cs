@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Owlvey.Falcon.Core;
 using System.Threading;
+using Prometheus;
 
 namespace Owlvey.Falcon.Repositories
 {
@@ -16,9 +17,11 @@ namespace Owlvey.Falcon.Repositories
         public FalconDbContext(DbContextOptions options) :
            base(options)
         {
-
+                
         }
         
+
+
         public DbSet<AppSettingEntity> AppSettings { get; set; }
         public DbSet<SquadEntity> Squads { get; set; }
         public DbSet<SquadFeatureEntity> SquadFeatures { get; set; }        
@@ -159,11 +162,12 @@ namespace Owlvey.Falcon.Repositories
         
         public override int SaveChanges()
         {            
-            return base.SaveChanges(); 
+             return base.SaveChanges();                            
         }
+        
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {   
-            return base.SaveChangesAsync(cancellationToken);
+        {       
+            return base.SaveChangesAsync(cancellationToken);        
         }
 
         public async Task<ICollection<SourceItemEntity>> GetSourceItems(int sourceId,

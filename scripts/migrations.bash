@@ -1,3 +1,6 @@
+
+dotnet tool install --global dotnet-ef
+
 rm -rf ./../src/Owlvey.Falcon.Repositories/Migrations
 
 rm ./../src/Owlvey.Falcon.Api/FalconDb.db

@@ -1,0 +1,23 @@
+name: Build DB Image
+
+on:
+  push:
+    branches: [ master ]    
+
+jobs:    
+    build:      
+      name: Build 
+      runs-on: ubuntu-latest
+      steps:        
+        - uses: actions/checkout@v2                           
+        - name: docker compose build                  
+          working-directory: ./containers/relational
+          run: docker-compose build
+        - name: docker login
+          run: docker login -u="${{ secrets.DOCKER_USERNAME }}" -p="${{ secrets.DOCKER_PASSWORD }}"
+        - name: docker tag
+          run: |
+            docker tag registry/relational owlvey/relational:latest
+            docker tag registry/relational owlvey/relational:${{ github.sha }}                  
+            docker push owlvey/relational
+    

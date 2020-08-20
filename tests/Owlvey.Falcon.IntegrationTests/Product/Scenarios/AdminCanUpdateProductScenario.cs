@@ -14,13 +14,11 @@ using Xunit;
 
 namespace Owlvey.Falcon.IntegrationTests.Product.Scenarios
 {
-    public class AdminCanUpdateProductScenario : BaseScenario, IDisposable
-    {
-        private readonly HttpClient _client;
-        public AdminCanUpdateProductScenario(HttpClient client)
+    public class AdminCanUpdateProductScenario : DefaultScenarioBase, IDisposable
+    {        
+        public AdminCanUpdateProductScenario(HttpClient client): base(client)
         {
-            _client = client;
-            _client.SetFakeBearerToken(this.GetAdminToken());
+            
         }
 
         private ProductPostRp representation;
@@ -32,7 +30,7 @@ namespace Owlvey.Falcon.IntegrationTests.Product.Scenarios
         {
             representation = Builder<ProductPostRp>.CreateNew()
                                  .With(x => x.Name = $"{Guid.NewGuid()}")                                 
-                                 .With(x => x.CustomerId = KeyConstants.CustomerId)
+                                 .With(x => x.CustomerId = this.DefaultCustomerId)
                                  .Build();
         }
 
@@ -48,8 +46,7 @@ namespace Owlvey.Falcon.IntegrationTests.Product.Scenarios
         [Then("The Product was updated")]
         public void then_update()
         {
-            var representationPut = new ProductPutRp();
-            representationPut.Name = NewValue;
+            var representationPut = new ProductPutRp();            
             representationPut.Description = NewValue;
 
             var jsonContent = HttpClientExtension.ParseModelToHttpContent(representationPut);
@@ -64,8 +61,7 @@ namespace Owlvey.Falcon.IntegrationTests.Product.Scenarios
             Assert.Equal((int)responseGet.StatusCode, StatusCodes.Status200OK);
 
             var ProductRepresentation = HttpClientExtension.ParseHttpContentToModel<ProductGetRp>(responseGet.Content);
-
-            Assert.Equal(ProductRepresentation.Name, NewValue);
+                        
             Assert.Equal(ProductRepresentation.Description, NewValue);
         }
 

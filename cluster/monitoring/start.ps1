@@ -1,0 +1,1 @@
+kubectl get pods -n owlvey -l key=owlvey-api-pod
