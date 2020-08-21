@@ -12,8 +12,6 @@ namespace Owlvey.Falcon.Components
         public static void ConfigureMappers(IMapperConfigurationExpression cfg)
         {
             cfg.CreateMap<SourceItemEntity, SourceItemGetListRp>();
-
-            cfg.CreateMap<InteractiveSourceItemGetRp, InteractiveSourceItemGetRp>();
             cfg.CreateMap<ProportionSourceItemGetRp, ProportionSourceItemGetRp>();
 
             cfg.CreateMap<DayPointValue, SeriesItemGetRp>()

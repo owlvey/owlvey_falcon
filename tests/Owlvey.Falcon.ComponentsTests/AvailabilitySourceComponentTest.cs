@@ -34,7 +34,7 @@ namespace Owlvey.Falcon.ComponentsTests
             var container = ComponentTestFactory.BuildContainer();
             var (_, product) = await ComponentTestFactory.BuildCustomerProduct(container);
             var component = container.GetInstance<SourceComponent>();
-            var availability = container.GetInstance<AvailabilitySourceComponent>();
+            var availability = container.GetInstance<SourceItemComponent>();
 
             SourceGetListRp source = await component.Create(new Models.SourcePostRp()
             {
@@ -52,7 +52,7 @@ namespace Owlvey.Falcon.ComponentsTests
             });
 
 
-            var result = await availability.GetInteractionItems(source.Id, OwlveyCalendar.year2019);
+            var result = await availability.GetAvailabilityItems(source.Id, OwlveyCalendar.year2019);
             Assert.NotEmpty(result);
 
         }

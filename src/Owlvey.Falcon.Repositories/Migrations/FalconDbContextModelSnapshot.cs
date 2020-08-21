@@ -577,9 +577,6 @@ namespace Owlvey.Falcon.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Kind")
-                        .HasColumnType("INTEGER");
-
                     b.Property<decimal>("Latency")
                         .HasColumnType("TEXT");
 

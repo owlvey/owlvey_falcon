@@ -32,17 +32,8 @@ namespace Owlvey.Falcon.Components
 
         public static void ConfigureMappers(IMapperConfigurationExpression cfg)
         {
-            cfg.CreateMap<SourceEntity, Models.ProportionSourceGetRp>()
-                .ForMember(c => c.Proportion, opt => opt.Ignore())
-                .ForMember(c => c.Features, opt => opt.Ignore());
-            cfg.CreateMap<SourceEntity, Models.InteractionSourceGetRp>()
-                .ForMember(c => c.Proportion, opt => opt.Ignore())
-                .ForMember(c => c.Total, opt => opt.Ignore())
-                .ForMember(c => c.Good, opt => opt.Ignore())
-                .ForMember(c => c.Features, opt => opt.Ignore());
-
+           
             cfg.CreateMap<SourceItemEntity, SourceItemBaseRp>();
-            cfg.CreateMap<SourceItemEntity, InteractiveSourceItemGetRp>(); 
             cfg.CreateMap<SourceItemEntity, ProportionSourceItemGetRp>();
 
 

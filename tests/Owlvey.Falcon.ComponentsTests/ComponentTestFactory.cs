@@ -73,10 +73,6 @@ namespace Owlvey.Falcon.ComponentsTests
                 SourceItemComponentConfiguration.ConfigureMappers(cfg);
                 SquadFeatureComponentConfiguration.ConfigureMappers(cfg);                
                 IndicatorComponentConfiguration.ConfigureMappers(cfg);
-
-                LatencySourceComponent.ConfigureMappers(cfg);
-                AvailabilitySourceComponent.ConfigureMappers(cfg);
-                ExperienceSourceComponent.ConfigureMappers(cfg);
                 SourceComponent.ConfigureMappers(cfg);
             });
             configuration.AssertConfigurationIsValid();

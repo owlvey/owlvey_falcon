@@ -21,7 +21,7 @@ namespace Owlvey.Falcon.API.Controllers
         }        
 
         [HttpGet("{id}", Name = "GetBySourceItemId")]
-        [ProducesResponseType(typeof(InteractiveSourceItemGetRp), 200)]
+        [ProducesResponseType(typeof(SourceItemGetListRp), 200)]
         public async Task<IActionResult> GetBySourceItemId(int id)
         {
             var model = await this._sourceItemComponent.GetById(id);
@@ -29,7 +29,7 @@ namespace Owlvey.Falcon.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [ProducesResponseType(typeof(InteractiveSourceItemGetRp), 200)]
+        [ProducesResponseType(typeof(SourceItemGetListRp), 200)]
         [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> DeleteSourceItem(int id)
         {
@@ -38,7 +38,7 @@ namespace Owlvey.Falcon.API.Controllers
         }
 
         [HttpDelete()]
-        [ProducesResponseType(typeof(InteractiveSourceItemGetRp), 200)]
+        [ProducesResponseType(typeof(SourceItemGetListRp), 200)]
         [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> DeleteAllSourceItems(int sourceId)
         {
@@ -64,19 +64,58 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok(model);
         }
 
-        [HttpGet("interactions")]
-        [ProducesResponseType(typeof(IEnumerable<InteractionSourceItemGetListRp>), 200)]
-        public async Task<IActionResult> GetInteractionsBySourceId(int? sourceId, DateTime? start, DateTime? end)
+        
+
+        [HttpPost("latency")]
+        [Authorize(Policy = "RequireAdminRole")]
+        [ProducesResponseType(typeof(IEnumerable<SourceItemBaseRp>), 200)]
+        public async Task<IActionResult> PostLatencyItem([FromBody]SourceItemLatencyPostRp model)
+        {
+            var result = await this._sourceItemComponent.CreateLatency(model);
+            return this.Ok(result);
+        }
+
+   
+
+        [HttpGet("latency/items")]
+        [ProducesResponseType(typeof(IEnumerable<LatencySourceItemGetRp>), 200)]
+        public async Task<IActionResult> GetLatencyItems(int id, DateTime? start, DateTime? end)
+        {
+            IEnumerable<LatencySourceItemGetRp> model = new List<LatencySourceItemGetRp>();
+            if (start.HasValue && end.HasValue)
+            {
+                model = await this._sourceItemComponent.GetLatencyItems(id, new DatePeriodValue(start, end));
+            }
+            return this.Ok(model);
+        }
+
+        [HttpPost("experience/items")]
+        [Authorize(Policy = "RequireAdminRole")]
+        [ProducesResponseType(typeof(IEnumerable<SourceItemBaseRp>), 200)]
+        public async Task<IActionResult> PostProportion([FromBody]SourceItemExperiencePostRp model)
+        {
+            var result = await this._sourceItemComponent.CreateExperienceItem(model);
+            return this.Ok(result);
+        }
+
+
+        [HttpPost("availability/items")]
+        [Authorize(Policy = "RequireAdminRole")]
+        [ProducesResponseType(typeof(IEnumerable<SourceItemBaseRp>), 200)]
+        public async Task<IActionResult> PostAvailability([FromBody]SourceItemAvailabilityPostRp model)
+        {
+            var result = await this._sourceItemComponent.CreateAvailabilityItem(model);
+            return this.Ok(result);
+        }
+
+        [HttpGet("{id}/scalability")]
+        [ProducesResponseType(typeof(ScalabilitySourceGetRp), 200)]
+        public async Task<IActionResult> GetScalability(int id, 
+            DateTime? start, DateTime? end)
         {            
-            if (sourceId.HasValue && start.HasValue && end.HasValue)
-            {
-                var model = await this._sourceItemComponent.GetInteractionsBySourceIdAndDateRange(sourceId.Value, start.Value, end.Value);
-                return this.Ok(model);
-            }            
-            else
-            {
-                return this.BadRequest();
-            }            
+            var model = await this._sourceItemComponent.GetScalability(id, 
+                new DatePeriodValue(start, end));            
+            return this.Ok(model);
         }
 
     }

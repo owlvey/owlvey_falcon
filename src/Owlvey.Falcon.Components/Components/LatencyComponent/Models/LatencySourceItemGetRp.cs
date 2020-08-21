@@ -9,4 +9,16 @@ namespace Owlvey.Falcon.Components.Models
     {
         public decimal Measure { get; set; }
     }
+    public class AvailabilitySourceItemGetRp: SourceItemBaseRp
+    {
+        public decimal Measure { get; set; }
+        public decimal Total {get;set;}
+        public decimal Good {get;set;}
+    }
+    public class ExperienceSourceItemGetRp: SourceItemBaseRp
+    {
+        public decimal Measure { get; set; }
+        public decimal Total {get;set;}
+        public decimal Good {get;set;}
+    }
 }
