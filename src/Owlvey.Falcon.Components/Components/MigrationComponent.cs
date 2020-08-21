@@ -600,46 +600,46 @@ namespace Owlvey.Falcon.Components
                     var total = sourceItemsSheet.Cells[row, 5].GetValue<int>();
                     var target = DateTime.Parse(sourceItemsSheet.Cells[row, 6].GetValue<string>());
                     var measure = sourceItemsSheet.Cells[row, 7].GetValue<decimal>();
+                    var group = sourceItemsSheet.Cells[row, 8].GetValue<string>();
 
                     var sourceTarget = sources.Single(c => c.Name == source && c.Product.Name == product && c.Product.Customer.Name == organization);
 
-                    if (sourceTarget.Group == SourceGroupEnum.Availability || sourceTarget.Group == SourceGroupEnum.Experience)
-                    {
-                        if (sourceTarget.Kind == SourceKindEnum.Interaction)
+                    var targetGroup = sourceTarget.ParseGroup(group);
+
+                    if (targetGroup == SourceGroupEnum.Availability) {
+                        sourceItems.Add((sourceTarget, new SourceItemAvailabilityPostRp()
                         {
-                            sourceItems.Add((sourceTarget, new SourceItemInteractionPostRp()
-                            {
-                                SourceId = sourceTarget.Id.Value,
-                                Start = target,
-                                End = target,
-                                Good = good,
-                                Total = total
-                            }));
-                        }
-                        else
-                        {
-                            sourceItems.Add((sourceTarget, new SourceItemProportionPostRp()
-                            {
-                                SourceId = sourceTarget.Id.Value,
-                                Start = target,
-                                End = target,
-                                Proportion = measure,
-                            })); ;
-                        }
-                    }
-                    else if (sourceTarget.Group == SourceGroupEnum.Latency)
-                    {
-                        sourceItems.Add((sourceTarget, new LatencySourceItemPostRp()
-                        {
-                            SourceId = sourceTarget.Id.Value,
+                            SourceId = sourceTarget.Id.Value,                            
                             Start = target,
                             End = target,
-                            Latency = measure,
+                            Good = good,
+                            Total = total,
+                            Measure = measure
                         }));
                     }
-                    else {
-                        throw new ApplicationException("source is not supported");
+                    if (targetGroup == SourceGroupEnum.Latency)
+                    {
+                        sourceItems.Add((sourceTarget, new SourceItemLatencyPostRp()
+                        {
+                            SourceId = sourceTarget.Id.Value,                            
+                            Start = target,
+                            End = target,                            
+                            Measure = measure
+                        }));
                     }
+                    if (targetGroup == SourceGroupEnum.Experience)
+                    {
+                        sourceItems.Add((sourceTarget, new SourceItemExperiencePostRp()
+                        {
+                            SourceId = sourceTarget.Id.Value,                            
+                            Start = target,
+                            End = target,
+                            Good = good,
+                            Total = total,
+                            Measure = measure
+                        }));
+                    }
+                    
                 }
 
                 var groups = sourceItems.GroupBy(c => c.Item1, new SourceEntityComparer());

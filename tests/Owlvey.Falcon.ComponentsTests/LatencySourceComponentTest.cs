@@ -16,17 +16,15 @@ namespace Owlvey.Falcon.ComponentsTests
             var container = ComponentTestFactory.BuildContainer();
             var (_, product) = await ComponentTestFactory.BuildCustomerProduct(container);
             var component = container.GetInstance<SourceComponent>();
-            var latency = container.GetInstance<LatencySourceComponent>();
+                                  
 
             Models.SourceGetListRp source = await component.Create(new Models.SourcePostRp()
             {
                 Name = "test",
-                ProductId = product, Group = Core.Entities.SourceGroupEnum.Latency,
-                Kind = Core.Entities.SourceKindEnum.MiliSeconds
+                ProductId = product,                 
             });
-
-            var result = await latency.GetByIdWithDetail(source.Id, OwlveyCalendar.year2019);
-            Assert.Equal(101, result.Latency);
+            var result = await component.GetByIdWithDetail(source.Id, OwlveyCalendar.year2019);
+            Assert.Equal(101, result.Quality.Latency);
         }
     }
 }

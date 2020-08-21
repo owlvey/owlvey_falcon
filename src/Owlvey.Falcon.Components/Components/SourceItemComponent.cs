@@ -28,33 +28,38 @@ namespace Owlvey.Falcon.Components
         }
 
 
-        public async Task<IEnumerable<SourceItemGetListRp>> CreateProportion(SourceItemProportionPostRp model) {
-
-            var createdBy = this._identityService.GetIdentity();
-            var source = await this._dbContext.Sources.SingleAsync(c => c.Id == model.SourceId);
-
-            var entities = SourceEntity.Factory.CreateProportionFromRange(source,model.Start, model.End, model.Proportion,
-                this._datetimeGateway.GetCurrentDateTime(), createdBy);
-
-            foreach (var item in entities)
+        private IEnumerable<SourceItemEntity> CreateFromPostRp(SourceEntity source, SourceItemPostRp model, DateTime on, string createdBy) {
+            if (model is SourceItemAvailabilityPostRp ava)
             {
-                this._dbContext.SourcesItems.Add(item);
+                return SourceEntity.Factory.CreateItemsFromRange(source, model.Start,
+                    model.End, ava.Good, ava.Total, ava.Measure, on, createdBy,
+                    SourceGroupEnum.Availability);
             }
-            await this._dbContext.SaveChangesAsync();
-
-            var entitiess = this._dbContext.SourcesItems.Where(c => c.SourceId == source.Id).ToList(); 
-
-            return this._mapper.Map<IEnumerable<SourceItemGetListRp>>(entities);             
-        }        
-        
-        public async Task<IEnumerable<SourceItemGetListRp>> Create(SourceItemInteractionPostRp model)
+            else if (model is SourceItemLatencyPostRp latency)
+            {
+                return SourceEntity.Factory.CreateItemsFromRangeByMeasure(source, model.Start,
+                    model.End, latency.Measure, on, createdBy,
+                    SourceGroupEnum.Latency);
+            }
+            else if (model is SourceItemExperiencePostRp experience)
+            {
+                return SourceEntity.Factory.CreateItemsFromRange(source, model.Start,
+                    model.End, experience.Good, experience.Total, 
+                    experience.Measure, on, createdBy,
+                    SourceGroupEnum.Experience);
+            }
+            else {
+                throw new ApplicationException("type is not valid");
+            }
+        }
+        public async Task<IEnumerable<SourceItemGetListRp>> Create(SourceItemPostRp model)
         {
-            
             var createdBy = this._identityService.GetIdentity();
             var on = this._datetimeGateway.GetCurrentDateTime();
             var source = await this._dbContext.Sources.SingleAsync(c => c.Id == model.SourceId);
+            List<SourceItemEntity> range = new List<SourceItemEntity>();
 
-            var range = SourceEntity.Factory.CreateInteractionsFromRange(source, model.Start, model.End, model.Good, model.Total, on, createdBy);
+            range.AddRange(this.CreateFromPostRp(source, model, on, createdBy));
             
             foreach (var item in range)
             {
@@ -69,45 +74,15 @@ namespace Owlvey.Falcon.Components
 
             var createdBy = this._identityService.GetIdentity();
             int period = 0;
+            var on = this._datetimeGateway.GetCurrentDateTime();
+            
             foreach (var model in sourceItems)
             {
-                var interaction = model as SourceItemInteractionPostRp;
-                if (interaction != null)
+                var range = this.CreateFromPostRp( source, model, on, createdBy );
+                foreach (var item in range)
                 {
-                    var range = SourceEntity.Factory.CreateInteractionsFromRange(source, interaction.Start,
-                                interaction.End, interaction.Good, interaction.Total,
-                                this._datetimeGateway.GetCurrentDateTime(), createdBy);                    
-                    foreach (var item in range)
-                    {
-                        this._dbContext.SourcesItems.Add(item);
-                        period += 1;
-                    }
-                }
-                var proportion = model as SourceItemProportionPostRp;
-                if (proportion != null)
-                {
-                    var range = SourceEntity.Factory.CreateProportionFromRange(source,
-                        proportion.Start, proportion.End, proportion.Proportion, 
-                                this._datetimeGateway.GetCurrentDateTime(), createdBy);
-                    
-                    foreach (var item in range)
-                    {
-                        this._dbContext.SourcesItems.Add(item);
-                        period += 1;
-                    }
-                }
-                var latency = model as LatencySourceItemPostRp;
-                if (latency != null)
-                {
-                    var range = SourceEntity.Factory.CreateLatencyFromRange(source,
-                        latency.Start, latency.End, latency.Latency,
-                                this._datetimeGateway.GetCurrentDateTime(), createdBy);
-
-                    foreach (var item in range)
-                    {
-                        this._dbContext.SourcesItems.Add(item);
-                        period += 1;
-                    }
+                    this._dbContext.SourcesItems.Add(item);
+                    period += 1;
                 }
 
                 if (period > 1000) {                    

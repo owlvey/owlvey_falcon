@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Repositories;
 using Xunit;
 
@@ -27,6 +28,25 @@ namespace Owlvey.Falcon.ComponentsTests
                 ProductId = product
             });
             Assert.Equal(result.Id, result2.Id);
+        }
+
+
+        [Fact]
+        public async Task SourceCreation()
+        {
+            var container = ComponentTestFactory.BuildContainer();
+
+            var (_, product) = await ComponentTestFactory.BuildCustomerProduct(container);
+
+            var component = container.GetInstance<SourceComponent>();
+
+            var result = await component.Create(new Models.SourcePostRp()
+            {
+                Name = "test",
+                ProductId = product                 
+            });
+
+            Assert.Equal("test", result.Name);
         }
 
         [Fact]
@@ -92,7 +112,7 @@ namespace Owlvey.Falcon.ComponentsTests
             });
             var testSource = await component.GetByName(product, "test");
 
-            var item = await sourceItemComponent.Create(new Models.SourceItemInteractionPostRp() {
+            var item = await sourceItemComponent.Create(new SourceItemAvailabilityPostRp() {
                  SourceId = testSource.Id,  Total = 1000, Good = 800,
                  Start = OwlveyCalendar.January201904,
                  End = OwlveyCalendar.January201906
@@ -103,6 +123,21 @@ namespace Owlvey.Falcon.ComponentsTests
 
             result = await component.GetByProductIdWithAvailability(product, OwlveyCalendar.January201905, OwlveyCalendar.January201907);
             Assert.NotEmpty(result.Items);
+
+        }
+
+        [Fact]
+        public async void SourcesByProduct() {
+            //GetByProductIdWithAvailability
+            var container = ComponentTestFactory.BuildContainer();
+
+            var data = await ComponentTestFactory.BuildCustomerWithSquad(container, OwlveyCalendar.StartJanuary2017, OwlveyCalendar.EndDecember2019);
+
+            var sourceComponent = container.GetInstance<SourceComponent>();
+
+            var result = await sourceComponent.GetByProductIdWithAvailability(data.productId, OwlveyCalendar.StartJanuary2017, OwlveyCalendar.EndDecember2019);
+
+            Assert.Equal(1, result.Items.Count);
 
         }
 

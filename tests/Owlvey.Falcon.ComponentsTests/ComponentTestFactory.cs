@@ -242,13 +242,13 @@ namespace Owlvey.Falcon.ComponentsTests
                 ServiceId = service.Id
             });
 
-            var source = await sourceComponent.Create(new Models.SourcePostRp()
+            var source = await sourceComponent.Create(new SourcePostRp()
             {
                 Name = "test source",
                 ProductId = product
             });
 
-            await sourceItemComponent.Create(new Models.SourceItemInteractionPostRp()
+            await sourceItemComponent.Create(new SourceItemAvailabilityPostRp()
             {
                 SourceId = source.Id,
                 Start = start,
@@ -259,9 +259,9 @@ namespace Owlvey.Falcon.ComponentsTests
 
             await indicatorComponent.Create(feature.Id, source.Id);
 
-            var squad = await squadComponent.CreateSquad(new Models.SquadPostRp() { Name = "test", CustomerId = customer });
+            var squad = await squadComponent.CreateSquad(new SquadPostRp() { Name = "test", CustomerId = customer });
 
-            await featureComponent.RegisterSquad(new Models.SquadFeaturePostRp() { FeatureId = feature.Id, SquadId = squad.Id });
+            await featureComponent.RegisterSquad(new SquadFeaturePostRp() { FeatureId = feature.Id, SquadId = squad.Id });
 
             return (customer, product, service.Id, feature.Id, source.Id, squad.Id);
         }

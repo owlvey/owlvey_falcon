@@ -20,12 +20,12 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
 
             var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, "test");
 
-            var sourceItemA = SourceEntity.Factory.CreateInteractionsFromRange(source,
+            var sourceItemA = SourceEntity.Factory.CreateItemsFromRange(source,
                 OwlveyCalendar.StartJanuary2019, OwlveyCalendar.EndJanuary2019,
-                900, 1200, DateTime.Now, "test");            
-            var sourceItemB = SourceEntity.Factory.CreateInteraction(source,
+                900, 1200, DateTime.Now, "test", SourceGroupEnum.Availability);            
+            var sourceItemB = SourceEntity.Factory.CreateItem(source,
                 TDF.OwlveyCalendar.StartJanuary2019,
-                900, 1200, DateTime.Now, "test");
+                900, 1200, DateTime.Now, "test", SourceGroupEnum.Availability);
 
             foreach (var item in sourceItemA)
             {
@@ -42,7 +42,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var availabilities = aggregate.MeasureAvailability();
 
             Assert.Equal(31, availabilities.Count());
-            Assert.Equal(0.751m, availabilities.First().Measure.Availability);
+            Assert.Equal(0.76m, availabilities.First().Measure.Availability);
         }
 
         [Fact]
@@ -53,12 +53,11 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
 
             var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, "test");
 
-            var sourceItemA = SourceEntity.Factory.CreateInteraction(source,
-                OwlveyCalendar.January201905,                
-                900, 1200, DateTime.Now, "test");
-            var sourceItemB = SourceEntity.Factory.CreateInteraction(source,                
+            var sourceItemA = SourceEntity.Factory.CreateItem(source,
+                OwlveyCalendar.January201905, 900, 1200, DateTime.Now, "test", SourceGroupEnum.Availability);
+            var sourceItemB = SourceEntity.Factory.CreateItem(source,                
                 OwlveyCalendar.EndJanuary2019,
-                900, 1200, DateTime.Now, "test");
+                900, 1200, DateTime.Now, "test", SourceGroupEnum.Availability);
 
             source.SourceItems.Add(sourceItemA);
             source.SourceItems.Add(sourceItemB);

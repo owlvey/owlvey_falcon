@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Models;
 using Xunit;
 
 namespace Owlvey.Falcon.ComponentsTests
@@ -17,7 +18,7 @@ namespace Owlvey.Falcon.ComponentsTests
             var sourceComponent = container.GetInstance<SourceComponent>();
             var itemComponent = container.GetInstance<SourceItemComponent>();
             
-            await itemComponent.Create(new Models.SourceItemInteractionPostRp()
+            await itemComponent.Create(new SourceItemAvailabilityPostRp()
             {
                 SourceId = source,
                 Start = OwlveyCalendar.January201905,
@@ -39,7 +40,7 @@ namespace Owlvey.Falcon.ComponentsTests
             var sourceComponent = container.GetInstance<SourceComponent>();
             var itemComponent = container.GetInstance<SourceItemComponent>();
 
-            await itemComponent.Create(new Models.SourceItemInteractionPostRp()
+            await itemComponent.Create(new SourceItemAvailabilityPostRp()
             {
                 SourceId = source,
                 Start = OwlveyCalendar.January201905,
@@ -70,7 +71,7 @@ namespace Owlvey.Falcon.ComponentsTests
 
             var itemComponent = container.GetInstance<SourceItemComponent>();
 
-            await itemComponent.Create(new Models.SourceItemInteractionPostRp()
+            await itemComponent.Create(new SourceItemAvailabilityPostRp()
             {
                  SourceId = source.Id,
                  Start = DateTime.Now,
@@ -102,7 +103,7 @@ namespace Owlvey.Falcon.ComponentsTests
             });
             var testSource = await component.GetByName(product, "test");
 
-            var item = await sourceItemComponent.Create(new Models.SourceItemInteractionPostRp()
+            var item = await sourceItemComponent.Create(new SourceItemAvailabilityPostRp()
             {
                 SourceId = testSource.Id,
                 Total = 1000,

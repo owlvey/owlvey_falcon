@@ -41,7 +41,7 @@ namespace Owlvey.Falcon.Core.Aggregates
                     var measure = indicator.Source.Measure(period);
                     if (measure.HasData) 
                         temporal.Add(new DayMeasureValue(period.Start, 
-                            new QualityMeasureValue(measure.Value)));
+                            new QualityMeasureValue(measure.Availability)));
                 }
                 indicatorResult.Add( (indicator, temporal ));
             }

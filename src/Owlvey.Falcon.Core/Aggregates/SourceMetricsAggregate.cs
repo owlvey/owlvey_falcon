@@ -14,51 +14,17 @@ namespace Owlvey.Falcon.Core.Aggregates
         public SourceMetricsAggregate(IEnumerable<SourceEntity> sources) {
             this.Sources = sources;
         }
-        public (decimal availability, int availabilityTotal, int availabilityGood, decimal availabilityInteractions, decimal latency, decimal experience) Execute() {
-            var availabilityMeasures = new List<MeasureValue>();
-            int availabilityInteractionTotal = 0;
-            int availabilityInteractionGood = 0;
-            foreach (var source in this.Sources.Where(c=>c.Group == SourceGroupEnum.Availability))
-            {
-                //TODO trabajar outliers
-                var measure = source.Measure();
-                if (measure.HasData && measure.Value > 0) {
-                    availabilityMeasures.Add(measure);                    
-                    if (source.Kind == SourceKindEnum.Interaction) {
-                        availabilityInteractionTotal += (source.SourceItems.Sum(c => c.Total.GetValueOrDefault()));
-                        availabilityInteractionGood += (source.SourceItems.Sum(c => c.Good.GetValueOrDefault()));
-                    }
-                }                
-            }
-            var availabilityInteraction = QualityUtils.CalculateProportion(availabilityInteractionTotal, availabilityInteractionGood);
-            var availability = QualityUtils.CalculateAverage(availabilityMeasures.Select(c=>c.Value));
+        public QualityMeasureValue Execute() {
 
-            var latencyMeasures = new List<MeasureValue>();
-            foreach (var source in this.Sources.Where(c => c.Group == SourceGroupEnum.Latency))
-            {
-                //TODO trabajar outliers
-                var measure = source.Measure();
-                if (measure.HasData && measure.Value > 0)
-                {
-                    latencyMeasures.Add(measure);
-                }
-            }
-            var latency = QualityUtils.CalculateAverage(latencyMeasures.Select(c => c.Value));
+            var temp = new List<QualityMeasureValue>();
 
-            var experienceMeasures = new List<MeasureValue>();
-            foreach (var source in this.Sources.Where(c => c.Group == SourceGroupEnum.Latency))
+            
+            foreach (var source in this.Sources)
             {
-                //TODO trabajar outliers
-                var measure = source.Measure();
-                if (measure.HasData && measure.Value > 0)
-                {
-                    latencyMeasures.Add(measure);
-                }
-            }
-            var experience = QualityUtils.CalculateAverage(experienceMeasures.Select(c => c.Value));
-
-            return (availability, availabilityInteractionTotal, availabilityInteractionGood,
-                availabilityInteraction, latency, experience);
+                temp.Add(source.Measure());            
+            }            
+            
+            return QualityMeasureValue.Merge(temp); 
         }
 
     }

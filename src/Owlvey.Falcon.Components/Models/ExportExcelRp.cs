@@ -1,5 +1,6 @@
 ﻿using Owlvey.Falcon.Core;
 using Owlvey.Falcon.Core.Entities;
+using Owlvey.Falcon.Core.Values;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -29,7 +30,10 @@ namespace Owlvey.Falcon.Models
         public int SourceId { get; set; }
         public string Feature { get; set; }        
         public string Source { get; set; }
-        public decimal SourceMeasure { get; set; }
+        public decimal Availability { get; set; }
+        public decimal Latency { get; set; }
+
+        public decimal Experience { get; set; }
 
         public ExportExcelFeatureDetailRp() { }
 
@@ -39,8 +43,11 @@ namespace Owlvey.Falcon.Models
             this.FeatureId = feature.Id.Value;
             this.SourceId = indicator.SourceId;
             this.Feature = feature.Name;
-            this.Source = indicator.Source.Name;            
-            this.SourceMeasure = indicator.Source.Measure().Value;
+            this.Source = indicator.Source.Name;
+            var measure = indicator.Source.Measure();
+            this.Availability = measure.Availability;
+            this.Experience = measure.Experience;
+            this.Latency = measure.Latency;
         }
     }
      
@@ -49,15 +56,19 @@ namespace Owlvey.Falcon.Models
         public string Source { get; set; }
         public string Description { get; set; }
         public string Kind { get; set; }                         
-        public decimal Quality { get; set; }
+        public decimal Availability { get; set; }
+        public decimal Latency { get; set; }
+        public decimal Experience { get; set; }
         public string GoodDefinition { get; set; }
         public string TotalDefinition { get; set; }
         public ExportExcelSourceRp() { }
         public ExportExcelSourceRp(SourceEntity source) {
             this.SourceId = source.Id.Value;
             this.Source = source.Name;
-            this.Kind = source.Kind.ToString();
-            this.Quality = source.Measure().Value;            
+            var quality = source.Measure();
+            this.Availability = quality.Availability;
+            this.Experience = quality.Experience;
+            this.Latency = quality.Latency;
             this.TotalDefinition = source.TotalDefinition;
             this.GoodDefinition = source.GoodDefinition;
             this.Description = source.Description;            

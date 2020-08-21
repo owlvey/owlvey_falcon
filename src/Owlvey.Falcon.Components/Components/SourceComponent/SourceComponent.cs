@@ -67,8 +67,7 @@ namespace Owlvey.Falcon.Components
             if (entity == null)
             {
                 var productEntity = await this._dbContext.Products.Where(c => c.CustomerId == customer.Id && c.Name == product).SingleAsync();
-                entity = SourceEntity.Factory.Create(productEntity, name, this._datetimeGateway.GetCurrentDateTime(),
-                    createdBy, (SourceKindEnum)Enum.Parse(typeof(SourceKindEnum), kind), parseGroup);                
+                entity = SourceEntity.Factory.Create(productEntity, name, this._datetimeGateway.GetCurrentDateTime(), createdBy);                
             }
             entity.Update(name, avatar, good, total, this._datetimeGateway.GetCurrentDateTime(),
                     createdBy, tags, description);
@@ -95,8 +94,7 @@ namespace Owlvey.Falcon.Components
                 if (entity == null)
                 {                    
                     entity = SourceEntity.Factory.Create(product, model.Name,
-                        this._datetimeGateway.GetCurrentDateTime(), createdBy,
-                        model.Kind, model.Group);
+                        this._datetimeGateway.GetCurrentDateTime(), createdBy);
                     await this._dbContext.AddAsync(entity);
                     await this._dbContext.SaveChangesAsync();
                 }
@@ -172,11 +170,8 @@ namespace Owlvey.Falcon.Components
 
                 var ids = sourceItems.Select(c => c.Id).ToList();
                 
-                entity.SourceItems = sourceItems;                
-                var measure = entity.Measure();                
-                result.Quality = measure.Value;
-                result.Total = entity.SourceItems.Sum(c=> c.Total.GetValueOrDefault());
-                result.Good = entity.SourceItems.Sum(c => c.Good.GetValueOrDefault());                
+                entity.SourceItems = sourceItems;                                
+                result.Quality = entity.Measure();                
                 result.Features = entity.FeaturesToDictionary();
             }            
             return result;
@@ -201,17 +196,20 @@ namespace Owlvey.Falcon.Components
                 var tmp = this._mapper.Map<SourceGetListRp>(source);
                 tmp.References = source.Indicators.Count();
                 tmp.Correlation = source.MeasureDailyCorrelation();
-                tmp.Measure = proportion.Value;                
+                tmp.Measure = proportion;                
                 items.Add(tmp);
             }
             var model = new SourcesGetRp();
-            model.Items = items.OrderBy(c => c.Measure).ToList();
-            var agg = new  SourceMetricsAggregate(entities);
-            (model.Availability, 
-                model.AvailabilityInteractionsTotal,
-                model.AvailabilityInteractionsGood,
-                model.AvailabilityInteractions, 
-                model.Latency, model.Experience) = agg.Execute();
+            model.Items = items.ToList();
+            var agg = new  SourceMetricsAggregate(entities);            
+                
+            var quality = agg.Execute();
+            model.Availability = quality.Availability;
+            model.Experience = quality.Experience;
+            model.Latency = quality.Latency;
+            model.AvailabilityInteractionsTotal = quality.Total;
+            model.AvailabilityInteractionsGood = quality.Good;
+
             return model;            
         }
 
@@ -221,8 +219,27 @@ namespace Owlvey.Falcon.Components
             var targets = entities.Select(c => c.Source).ToList();
             return this._mapper.Map<IEnumerable<SourceGetListRp>>(targets);
         }
+        public async Task<SourceGetRp> GetByIdWithDetail(int id, DatePeriodValue period)
+        {
+            var entity = await this._dbContext.Sources
+              .Include(c => c.Indicators)
+              .ThenInclude(c => c.Feature)
+              .SingleOrDefaultAsync(c => c.Id == id);
 
-        
+            var result = this._mapper.Map<SourceGetRp>(entity);
+            if (entity != null)
+            {
+                var sourceItems = await this._dbContext.GetSourceItems(entity.Id.Value, period.Start, period.End);
+
+                var ids = sourceItems.Select(c => c.Id).ToList();
+
+                entity.SourceItems = sourceItems;                
+                result.Quality = entity.Measure();
+                result.Features = entity.FeaturesToDictionary();
+            }
+            return result;
+        }
+
         public async Task<SeriesGetRp> GetDailySeriesById(int sourceId,
             DatePeriodValue period) {                                   
             var source = await this._dbContext.Sources.SingleAsync(c => c.Id == sourceId);

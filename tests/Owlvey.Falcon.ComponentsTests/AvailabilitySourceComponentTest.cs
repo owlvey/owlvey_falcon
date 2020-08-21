@@ -1,4 +1,5 @@
 ﻿using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,20 +17,15 @@ namespace Owlvey.Falcon.ComponentsTests
             var container = ComponentTestFactory.BuildContainer();
             var (_, product) = await ComponentTestFactory.BuildCustomerProduct(container);
             var component = container.GetInstance<SourceComponent>();
-            var availability = container.GetInstance<AvailabilitySourceComponent>();
-
-            Models.SourceGetListRp source = await component.Create(new Models.SourcePostRp()
+            
+            SourceGetListRp source = await component.Create(new Models.SourcePostRp()
             {
                 Name = "test",
-                ProductId = product,
-                Group = Core.Entities.SourceGroupEnum.Availability,
-                Kind = Core.Entities.SourceKindEnum.Interaction
+                ProductId = product,                                
             });
 
-            var result = await availability.GetInteractionById(source.Id, OwlveyCalendar.year2019);
-            Assert.Equal(1, result.Proportion);
-
-
+            var result = await component.GetByIdWithDetail(source.Id, OwlveyCalendar.year2019);
+            Assert.Equal(1, result.Quality.Availability);
         }
 
         [Fact]
@@ -40,15 +36,13 @@ namespace Owlvey.Falcon.ComponentsTests
             var component = container.GetInstance<SourceComponent>();
             var availability = container.GetInstance<AvailabilitySourceComponent>();
 
-            Models.SourceGetListRp source = await component.Create(new Models.SourcePostRp()
+            SourceGetListRp source = await component.Create(new Models.SourcePostRp()
             {
                 Name = "test",
-                ProductId = product,
-                Group = Core.Entities.SourceGroupEnum.Availability,
-                Kind = Core.Entities.SourceKindEnum.Interaction
+                ProductId = product,                                
             });
 
-            await availability.CreateInteraction(new Models.SourceItemInteractionPostRp()
+            await availability.CreateAvailabilityItem(new SourceItemAvailabilityPostRp()
             {
                 Start = OwlveyCalendar.StartJanuary2019,
                 End = OwlveyCalendar.EndJanuary2019,

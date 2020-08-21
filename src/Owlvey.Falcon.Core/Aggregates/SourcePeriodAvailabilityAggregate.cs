@@ -27,7 +27,7 @@ namespace Owlvey.Falcon.Core.Aggregates
                 var measure = this.Source.Measure(item);
                 if (measure.HasData) {
                     result.Add(new DayMeasureValue(item.Start, 
-                        new QualityMeasureValue(measure.Value) ));
+                        new QualityMeasureValue(measure.Availability) ));
                 }    
             }
             return result;

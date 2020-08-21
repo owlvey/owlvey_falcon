@@ -49,9 +49,7 @@ namespace Owlvey.Falcon.IntegrationTests.Common
             int productId = product.Id;
             var representation = Builder<SourcePostRp>.CreateNew()
                      .With(x => x.Name = $"{Guid.NewGuid()}")
-                     .With(x => x.ProductId = productId)
-                     .With(x => x.Kind =  Core.Entities.SourceKindEnum.Interaction)
-                     .With(x => x.Group =  Core.Entities.SourceGroupEnum.Availability)
+                     .With(x => x.ProductId = productId)                     
                      .Build();
 
             var jsonContent = HttpClientExtension.ParseModelToHttpContent(representation);

@@ -37,9 +37,7 @@ namespace Owlvey.Falcon.Core.Aggregates
                         foreach (var indicator in map.Feature.Indicators)
                         {
                             var target = indicator.Source.SourceItems
-                                .Where(c => 
-                                c.Source.Group == SourceGroupEnum.Availability &&
-                                c.Source.Kind == SourceKindEnum.Interaction && period.Contains(c.Target))
+                                .Where(c => period.Contains(c.Target))
                                 .ToList();
 
                             good += target.Sum(c => c.Good.GetValueOrDefault());
@@ -51,7 +49,7 @@ namespace Owlvey.Falcon.Core.Aggregates
                 servicesResult.Add(temp);
             }
 
-            foreach (var source in this.Product.Sources.Where(c=>c.Group == SourceGroupEnum.Availability && c.Kind == SourceKindEnum.Interaction))
+            foreach (var source in this.Product.Sources)
             {
                 var temp = new AnnualAvailabilityInteractionsItemModel(source.Id.Value, source.Name);
                 foreach (var period in periods)

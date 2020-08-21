@@ -577,9 +577,6 @@ namespace Owlvey.Falcon.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Group")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("Kind")
                         .HasColumnType("INTEGER");
 
@@ -634,6 +631,9 @@ namespace Owlvey.Falcon.Repositories.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("Good")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Group")
                         .HasColumnType("INTEGER");
 
                     b.Property<decimal>("Measure")

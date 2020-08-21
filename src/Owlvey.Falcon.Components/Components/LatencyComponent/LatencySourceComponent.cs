@@ -31,27 +31,7 @@ namespace Owlvey.Falcon.Components
             cfg.CreateMap<SourceItemEntity, LatencySourceItemGetRp>();                
         }
 
-        public async Task<LatencySourceGetRp> GetByIdWithDetail(int id, DatePeriodValue period) {
-
-            var entity = await this._dbContext.Sources
-              .Include(c => c.Indicators)
-              .ThenInclude(c => c.Feature)
-              .SingleOrDefaultAsync(c => c.Id == id);
-
-            var result = this._mapper.Map<LatencySourceGetRp>(entity);
-            if (entity != null)
-            {
-                var sourceItems = await this._dbContext.GetSourceItems(entity.Id.Value, period.Start, period.End);
-
-                var ids = sourceItems.Select(c => c.Id).ToList();                
-
-                entity.SourceItems = sourceItems;
-                var measure = entity.Measure();
-                result.Latency = measure.Value;                
-                result.Features = entity.FeaturesToDictionary();
-            }
-            return result;
-        }
+    
 
         public async Task<LatencySourceGetRp> GetById(int id)
         {
@@ -75,13 +55,15 @@ namespace Owlvey.Falcon.Components
             return result;
         }
 
-        public async Task<IEnumerable<SourceItemBaseRp>> CreateLatency(LatencySourceItemPostRp model)
+        public async Task<IEnumerable<SourceItemBaseRp>> CreateLatency(SourceItemLatencyPostRp model)
         {
             var createdBy = this._identityService.GetIdentity();
             var on = this._datetimeGateway.GetCurrentDateTime();
             var source = await this._dbContext.Sources.SingleAsync(c => c.Id == model.SourceId);
 
-            var range = SourceEntity.Factory.CreateLatencyFromRange(source, model.Start, model.End, model.Latency, on, createdBy);
+            var range = SourceEntity.Factory.CreateItemsFromRangeByMeasure(source, model.Start, 
+                model.End, model.Measure, on, createdBy,
+                SourceGroupEnum.Latency);
 
             foreach (var item in range)
             {

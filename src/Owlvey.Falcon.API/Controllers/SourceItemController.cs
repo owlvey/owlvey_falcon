@@ -18,38 +18,7 @@ namespace Owlvey.Falcon.API.Controllers
         public SourceItemController(SourceItemComponent sourceItemComponent)
         {
             this._sourceItemComponent = sourceItemComponent;
-        }
-        
-        [HttpPost]
-        [ProducesResponseType(typeof(void), 200)]
-        [ProducesResponseType(409)]
-        [ProducesResponseType(401)]
-        [ProducesResponseType(400)]
-        [Authorize(Policy = "RequireAdminRole")]
-        public async Task<IActionResult> Post([FromBody]SourceItemInteractionPostRp model)
-        {
-            if (!this.ModelState.IsValid)
-            {
-                return this.BadRequest(this.ModelState);
-            }            
-            var response = await this._sourceItemComponent.Create(model);            
-            return this.Ok(response);
-        }
-
-        
-
-        [HttpPost("proportion")]
-        [ProducesResponseType(typeof(InteractiveSourceItemGetRp), 200)]
-        [Authorize(Policy = "RequireAdminRole")]
-        public async Task<IActionResult> PostProportion([FromBody]SourceItemProportionPostRp model)
-        {            
-            if (!this.ModelState.IsValid)
-            {
-                return this.BadRequest(this.ModelState);
-            }
-            var response = await this._sourceItemComponent.CreateProportion(model);
-            return this.Ok(response); 
-        }
+        }        
 
         [HttpGet("{id}", Name = "GetBySourceItemId")]
         [ProducesResponseType(typeof(InteractiveSourceItemGetRp), 200)]
@@ -107,8 +76,7 @@ namespace Owlvey.Falcon.API.Controllers
             else
             {
                 return this.BadRequest();
-            }
-            
+            }            
         }
 
     }

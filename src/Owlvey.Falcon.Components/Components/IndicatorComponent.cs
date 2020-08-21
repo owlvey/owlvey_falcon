@@ -112,28 +112,7 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<IndicatorGetListRp>>(entity);
         }
 
-        
-        public async Task<IEnumerable<IndicatorAvailabilityGetListRp>> GetByFeatureWithAvailability(int featureId, DateTime start, DateTime end)
-        {
-            var entities = await this._dbContext.Indicators
-                .Include(c => c.Feature)
-                .Include(c => c.Source).Where(c => c.Feature.Id == featureId).ToListAsync();
-
-            var sourceIds = entities.Select(c => c.SourceId).Distinct().ToList();
-
-            var sourceitems = await this._dbContext.GetSourceItems(sourceIds, start, end); 
-
-            var result = new List<IndicatorAvailabilityGetListRp>();
-            foreach (var item in entities)
-            {
-                item.Source.SourceItems = sourceitems.Where(c => c.SourceId == item.SourceId).ToList();
-                var measure = item.Source.Measure();                
-                var tmp = this._mapper.Map<IndicatorAvailabilityGetListRp>(item);
-                tmp.Measure = measure.Value;
-                result.Add(tmp);
-            }
-            return result;
-        }
+       
 
         public async Task<IndicatorGetRp> GetById(int id)
         {

@@ -41,8 +41,7 @@ namespace Owlvey.Falcon.UnitTests
         public static SourceEntity BuildSource(ProductEntity product, string name = "/owlvey", DateTime? on = null, string createdBy = "test") {
 
             on = on ?? DateTime.Now;
-            var entity = SourceEntity.Factory.Create(product, name, on.Value, createdBy,
-                 SourceKindEnum.Interaction, SourceGroupEnum.Availability);
+            var entity = SourceEntity.Factory.Create(product, name, on.Value, createdBy);
             return entity;
         }
 
@@ -108,7 +107,7 @@ namespace Owlvey.Falcon.UnitTests
             var start = new DateTime(2019, 01, 01);            
             foreach (var item in results)
             {
-                SourceEntity.Factory.CreateInteraction(item, start, 900, 1000, DateTime.Now, "test");
+                SourceEntity.Factory.CreateItem(item, start, 900, 1000, DateTime.Now, "test", SourceGroupEnum.Availability);
             }
             return results;
         }
@@ -142,11 +141,11 @@ namespace Owlvey.Falcon.UnitTests
                 
                 var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, Guid.NewGuid().ToString());
 
-                var sourceItem = SourceEntity.Factory.CreateInteraction(source, OwlveyCalendar.StartJanuary2019,
-                    900, 1200, DateTime.Now, "test");                
+                var sourceItem = SourceEntity.Factory.CreateItem(source, OwlveyCalendar.StartJanuary2019,
+                    900, 1200, DateTime.Now, "test", SourceGroupEnum.Availability);                
 
-                var sourceItemA = SourceEntity.Factory.CreateInteraction(source, 
-                    OwlveyCalendar.EndJanuary2019, 900, 1200, DateTime.Now, "test");
+                var sourceItemA = SourceEntity.Factory.CreateItem(source, 
+                    OwlveyCalendar.EndJanuary2019, 900, 1200, DateTime.Now, "test", SourceGroupEnum.Availability);
 
                 source.SourceItems.Add(sourceItem);
                 source.SourceItems.Add(sourceItemA);

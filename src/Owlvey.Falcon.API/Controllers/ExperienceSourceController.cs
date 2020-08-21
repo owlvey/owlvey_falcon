@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Owlvey.Falcon.API.Controllers
 {
-    [Route("sources/experience")]
+    [Route("sourceItems/experience")]
     public class ExperienceSourceController : BaseController
     {
         private ExperienceSourceComponent _sourceComponent;
@@ -19,34 +19,7 @@ namespace Owlvey.Falcon.API.Controllers
         {
             this._sourceComponent = sourceComponent;
         }
-        [HttpGet("{id}/proportion")]
-        [ProducesResponseType(typeof(ProportionSourceGetRp), 200)]
-        public async Task<IActionResult> GetProportionById(int id, DateTime? start, DateTime? end)
-        {
-            ProportionSourceGetRp model = null;
-            if (end.HasValue)
-            {
-                model = await this._sourceComponent.GetProprotionById(id, new DatePeriodValue(start.Value, end.Value));
-            }
-            if (model == null)
-                return this.NotFound($"The Resource {id} doesn't exists.");
-
-            return this.Ok(model);
-        }
-        [HttpGet("{id}/interaction")]
-        [ProducesResponseType(typeof(InteractionSourceGetRp), 200)]
-        public async Task<IActionResult> GetInteractionById(int id, DateTime? start, DateTime? end)
-        {
-            InteractionSourceGetRp model = null;
-            if (end.HasValue)
-            {
-                model = await this._sourceComponent.GetInteractionById(id, new DatePeriodValue(start.Value, end.Value));
-            }
-            if (model == null)
-                return this.NotFound($"The Resource {id} doesn't exists.");
-
-            return this.Ok(model);
-        }
+        
 
         [HttpGet("{id}/interaction/items")]
         [ProducesResponseType(typeof(IEnumerable<InteractiveSourceItemGetRp>), 200)]
@@ -72,21 +45,12 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok(model);
         }
 
-        [HttpPost("interaction/items")]
+        [HttpPost("items")]
         [Authorize(Policy = "RequireAdminRole")]
         [ProducesResponseType(typeof(IEnumerable<SourceItemBaseRp>), 200)]
-        public async Task<IActionResult> Post([FromBody]SourceItemInteractionPostRp model)
+        public async Task<IActionResult> PostProportion([FromBody]SourceItemExperiencePostRp model)
         {
-            var result = await this._sourceComponent.CreateInteraction(model);
-            return this.Ok(result);
-        }
-
-        [HttpPost("proportion/items")]
-        [Authorize(Policy = "RequireAdminRole")]
-        [ProducesResponseType(typeof(IEnumerable<SourceItemBaseRp>), 200)]
-        public async Task<IActionResult> PostProportion([FromBody]SourceItemProportionPostRp model)
-        {
-            var result = await this._sourceComponent.CreateProportion(model);
+            var result = await this._sourceComponent.CreateItem(model);
             return this.Ok(result);
         }
 

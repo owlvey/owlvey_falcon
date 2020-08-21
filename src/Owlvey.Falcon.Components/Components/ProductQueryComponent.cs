@@ -512,7 +512,7 @@ namespace Owlvey.Falcon.Components
                 result.Sources.Add(new SourceGetListRp()
                 {
                     Id = source.Id.Value,
-                    Measure = measure.Value,                    
+                    Measure = measure,                    
                     Avatar = source.Avatar,
                     CreatedBy = source.CreatedBy,
                     CreatedOn = source.CreatedOn.Value,
@@ -590,7 +590,8 @@ namespace Owlvey.Falcon.Components
             result.Services = result.Services.OrderBy(c => c.Availability).ToList();
             result.SLOFail = sloFails;
             result.SLOProportion = QualityUtils.CalculateFailProportion(product.Services.Count, sloFails);
-            result.SourceStats = new StatsValue(result.Sources.Select(c => c.Measure));            
+            //TODO: change
+            //result.SourceStats = new StatsValue(result.Sources.Select(c => c.Measure));            
             result.FeaturesStats = new StatsValue(result.Features.Select(c => c.Availability));
             result.FeaturesCoverage = QualityUtils.CalculateProportion(product.Features.Count,
                 squadsData.Select(c=>c.FeatureId).Distinct().Count());

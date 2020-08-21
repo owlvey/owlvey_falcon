@@ -39,11 +39,11 @@ namespace Owlvey.Falcon.IntegrationTests.SourceItems.Scenarios
         {
             int sourceId = this.Source.Id;
             var period = DataSeedUtil.JanuaryPeriod();
-            var representation = Builder<SourceItemProportionPostRp>.CreateNew()
+            var representation = Builder<SourceItemAvailabilityPostRp>.CreateNew()
                      .With(x => x.SourceId = sourceId)
                      .With(x => x.Start = period.start)
                      .With(x => x.End = period.end)
-                     .With(x => x.Proportion = 0.9m)                     
+                     .With(x => x.Measure = 0.9m)                     
                      .Build();
 
             var jsonContent = HttpClientExtension.ParseModelToHttpContent(representation);

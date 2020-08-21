@@ -23,12 +23,7 @@ namespace Owlvey.Falcon.Core.Entities
         
         public string Avatar { get; set; }
 
-        public string Description { get; set; }        
-        
-        [Required]
-        public SourceKindEnum Kind { get; set; }
-        [Required]
-        public SourceGroupEnum Group { get; set; }
+        public string Description { get; set; }                
 
         public decimal Percentile { get; set; } = 0.95m;
 
@@ -73,15 +68,20 @@ namespace Owlvey.Falcon.Core.Entities
             this.ModifiedBy = modifiedBy;
         }
 
-        public SourceItemEntity AddSourceItem(int good, int total, DateTime target, DateTime on, string createdBy)
+        public SourceItemEntity AddSourceItem(int good, int total, DateTime target, DateTime on, string createdBy, SourceGroupEnum group)
         {
-            var result = SourceEntity.Factory.CreateInteraction(this, target, good, total, on, createdBy);
+            
+            var result = Factory.CreateItem(this, target, good, total, on, createdBy, group);
             this.SourceItems.Add(result);
             return result;
         }
 
         public Dictionary<string, int> FeaturesToDictionary() {
             return this.Indicators.ToDictionary(d => d.Feature.Name, c => c.Feature.Id.Value); 
+        }
+
+        public SourceGroupEnum ParseGroup(string value) {
+            return (SourceGroupEnum)Enum.Parse(typeof(SourceGroupEnum), value);
         }
 
 

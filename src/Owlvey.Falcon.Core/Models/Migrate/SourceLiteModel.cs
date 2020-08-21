@@ -21,11 +21,9 @@ namespace Owlvey.Falcon.Core.Models.Migrate
         {            
             this.Name = entity.Name;
             this.Avatar = entity.Avatar;
-            this.Description = entity.Description;
-            this.Group = entity.Group.ToString();
+            this.Description = entity.Description;            
             this.GoodDefinition = entity.GoodDefinition;
-            this.TotalDefinition = entity.TotalDefinition;
-            this.Kind = entity.Kind.ToString();
+            this.TotalDefinition = entity.TotalDefinition;            
             this.Percentile = entity.Percentile;
         }
         public static IEnumerable<SourceLiteModel> Load(IEnumerable<SourceEntity> entities)

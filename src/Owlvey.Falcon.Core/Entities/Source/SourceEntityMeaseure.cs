@@ -15,11 +15,12 @@ namespace Owlvey.Falcon.Core.Entities
             IEnumerable<SourceItemEntity> data;
             if (period != null)
             {
-                data = this.SourceItems.Where(c => c.Target >= period.Start && c.Target <= period.End);
+                data = this.SourceItems.Where(c => c.Group == SourceGroupEnum.Latency &&
+                                                   c.Target >= period.Start && c.Target <= period.End);
             }
             else
             {
-                data = this.SourceItems;
+                data = this.SourceItems.Where(c=>c.Group == SourceGroupEnum.Latency);
             }
             if (data.Count() == 0)
             {
@@ -29,61 +30,60 @@ namespace Owlvey.Falcon.Core.Entities
             return new MeasureValue(proportion);
         }
 
-        private MeasureValue MeasureAvailabilityExperience(DatePeriodValue period = null)
+        private MeasureValue MeasureExperience(DatePeriodValue period = null)
         {
             IEnumerable<SourceItemEntity> data;
             if (period != null)
             {
-                data = this.SourceItems.Where(c => c.Target >= period.Start && c.Target <= period.End);
+                data = this.SourceItems.Where(c => c.Group == SourceGroupEnum.Experience && c.Target >= period.Start && c.Target <= period.End);
             }
             else
             {
-                data = this.SourceItems;
+                data = this.SourceItems.Where(c => c.Group == SourceGroupEnum.Experience);
             }
             if (data.Count() == 0)
             {
-                if (this.Kind == SourceKindEnum.Interaction)
-                {
-                    return new InteractionMeasureValue(1, 0, 0, false);
-                }
-                else {
-                    return new MeasureValue(1, false);
-                }
-                
+                return new InteractionMeasureValue(1, 0, 0, false);
             }
-
-            if (this.Kind == SourceKindEnum.Interaction)
+            var good = data.Select(c => c.Good.GetValueOrDefault()).Sum();
+            var total = data.Select(c => c.Total.GetValueOrDefault()).Sum();
+            var measure = QualityUtils.CalculateAverage(data.Select(c => c.Measure));
+            return new InteractionMeasureValue(measure, total, good);            
+        }
+        private MeasureValue MeasureAvailability(DatePeriodValue period = null)
+        {
+            IEnumerable<SourceItemEntity> data;
+            if (period != null)
             {
-                var temp = data.OfType<SourceItemEntity>().ToList();
-                var good = temp.Select(c => c.Good.GetValueOrDefault()).Sum();
-                var total = temp.Select(c => c.Total.GetValueOrDefault()).Sum();
-                var proportion = QualityUtils.CalculateProportion(total, good);
-                return new InteractionMeasureValue(proportion, total, good);
+                data = this.SourceItems.Where(c => c.Group == SourceGroupEnum.Availability &&  c.Target >= period.Start && c.Target <= period.End);
             }
             else
             {
-                var proportion = QualityUtils.CalculateAverage(data.Select(c => c.Measure));
-                return new MeasureValue(proportion);
+                data = this.SourceItems.Where(c=> c.Group == SourceGroupEnum.Availability);
             }
+            if (data.Count() == 0)
+            {                
+                 return new InteractionMeasureValue(1, 0, 0, false);
+            }
+            var good = data.Select(c => c.Good.GetValueOrDefault()).Sum();
+            var total = data.Select(c => c.Total.GetValueOrDefault()).Sum();            
+            var measure = QualityUtils.CalculateAverage(data.Select(c => c.Measure));
+            return new InteractionMeasureValue(measure, total, good);
         }
 
-        public MeasureValue Measure(DatePeriodValue period = null)
+        public QualityMeasureValue Measure(DatePeriodValue period = null)
         {
-            if (this.Group == SourceGroupEnum.Latency)
-            {
-                return this.MeasureLatency(period);
-            }
-            else {
-                return this.MeasureAvailabilityExperience(period);
-            }
+            
+            return new QualityMeasureValue(
+                this.MeasureAvailability(period), 
+                this.MeasureLatency(period), 
+                this.MeasureExperience(period));
+            
         }
         public double? MeasureDailyCorrelation(DatePeriodValue period = null) {
             if (this.SourceItems.Count == 0) {
                 return 0;
-            }
-            if (this.Group == SourceGroupEnum.Latency || this.Kind != SourceKindEnum.Interaction){
-                return 0;
-            }
+            }            
             else {
                 
                 if (period == null ) {

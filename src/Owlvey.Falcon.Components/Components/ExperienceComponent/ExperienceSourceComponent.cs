@@ -26,51 +26,7 @@ namespace Owlvey.Falcon.Components
         public static void ConfigureMappers(IMapperConfigurationExpression cfg)
         {
             
-        }
-
-        public async Task<ProportionSourceGetRp> GetProprotionById(int id, DatePeriodValue period)
-        {
-            var entity = await this._dbContext.Sources
-              .Include(c => c.Indicators)
-              .ThenInclude(c => c.Feature)
-              .SingleOrDefaultAsync(c => c.Id == id);
-
-            var result = this._mapper.Map<ProportionSourceGetRp>(entity);
-            if (entity != null)
-            {
-                var sourceItems = await this._dbContext.GetSourceItems(entity.Id.Value, period.Start, period.End);
-                var ids = sourceItems.Select(c => c.Id).ToList();                                
-                entity.SourceItems = sourceItems;
-                var measure = entity.Measure();
-                result.Proportion = measure.Value;
-                result.Features = entity.FeaturesToDictionary();
-            }
-            return result;
-        }
-
-        public async Task<InteractionSourceGetRp> GetInteractionById(int id, DatePeriodValue period)
-        {
-            var entity = await this._dbContext.Sources
-              .Include(c => c.Indicators)
-              .ThenInclude(c => c.Feature)
-              .SingleOrDefaultAsync(c => c.Id == id);
-
-            var result = this._mapper.Map<InteractionSourceGetRp>(entity);
-            if (entity != null)
-            {
-                var sourceItems = await this._dbContext.GetSourceItems(entity.Id.Value, period.Start, period.End);
-                var ids = sourceItems.Select(c => c.Id).ToList();
-                entity.SourceItems = sourceItems;
-                var measure = (InteractionMeasureValue)entity.Measure();
-                result.Proportion = measure.Value;
-                result.Good = measure.Good;
-                result.Total = measure.Total;
-                result.Features = entity.FeaturesToDictionary();
-            }
-            return result;
-        }
-
-
+        }        
         public async Task<IEnumerable<InteractiveSourceItemGetRp>> GetInteractionItems(int sourceId, DatePeriodValue period)
         {
             var entities = await this._dbContext.GetSourceItems(sourceId, period.Start, period.End);
@@ -85,13 +41,17 @@ namespace Owlvey.Falcon.Components
             return result;
         }
 
-        public async Task<IEnumerable<SourceItemBaseRp>> CreateInteraction(SourceItemInteractionPostRp model)
+        public async Task<IEnumerable<SourceItemBaseRp>> CreateItem(SourceItemExperiencePostRp model)
         {
             var createdBy = this._identityService.GetIdentity();
             var on = this._datetimeGateway.GetCurrentDateTime();
             var source = await this._dbContext.Sources.SingleAsync(c => c.Id == model.SourceId);
 
-            var range = SourceEntity.Factory.CreateInteractionsFromRange(source, model.Start, model.End, model.Good, model.Total, on, createdBy);
+            var range = SourceEntity.Factory.CreateItemsFromRange(source, model.Start, 
+                model.End, 
+                model.Good, 
+                model.Total, null, 
+                on, createdBy,  SourceGroupEnum.Experience );
 
             foreach (var item in range)
             {
@@ -100,24 +60,7 @@ namespace Owlvey.Falcon.Components
 
             await this._dbContext.SaveChangesAsync();
             return this._mapper.Map<IEnumerable<SourceItemBaseRp>>(range);
-        }
-
-        public async Task<IEnumerable<SourceItemBaseRp>> CreateProportion(SourceItemProportionPostRp model)
-        {
-            var createdBy = this._identityService.GetIdentity();
-            var on = this._datetimeGateway.GetCurrentDateTime();
-            var source = await this._dbContext.Sources.SingleAsync(c => c.Id == model.SourceId);
-
-            var range = SourceEntity.Factory.CreateProportionFromRange(source, model.Start, model.End, model.Proportion, on, createdBy);
-
-            foreach (var item in range)
-            {
-                this._dbContext.SourcesItems.Add(item);
-            }
-
-            await this._dbContext.SaveChangesAsync();
-            return this._mapper.Map<IEnumerable<SourceItemBaseRp>>(range);
-        }
+        }        
 
         public async Task<BaseComponentResultRp> Update(int sourceId, SourcePutRp model)
         {

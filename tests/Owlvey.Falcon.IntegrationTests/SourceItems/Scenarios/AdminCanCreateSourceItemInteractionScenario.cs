@@ -36,7 +36,7 @@ namespace Owlvey.Falcon.IntegrationTests.SourceItems.Scenarios
         {
             int sourceId = this.Source.Id;
             var period = DataSeedUtil.JanuaryPeriod();
-            var representation = Builder<SourceItemInteractionPostRp>.CreateNew()
+            var representation = Builder<SourceItemAvailabilityPostRp>.CreateNew()
                      .With(x => x.SourceId = sourceId)
                      .With(x => x.Start = period.start)
                      .With(x => x.End = period.end)

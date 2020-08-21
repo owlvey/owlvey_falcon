@@ -19,14 +19,14 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
 
             var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, "/api/customer");
 
-            var sourceItem = SourceEntity.Factory.CreateInteraction(source,
+            var sourceItem = SourceEntity.Factory.CreateItem(source,
                 OwlveyCalendar.StartJanuary2019,
-                900, 1200, DateTime.Now, "test");
+                900, 1200, DateTime.Now, "test", SourceGroupEnum.Availability);
 
             var indicatorA = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, "/api/customer");
 
-            var sourceItemA = SourceEntity.Factory.CreateInteraction(source, 
-                OwlveyCalendar.EndJanuary2019, 900, 1200, DateTime.Now, "test");
+            var sourceItemA = SourceEntity.Factory.CreateItem(source, 
+                OwlveyCalendar.EndJanuary2019, 900, 1200, DateTime.Now, "test", SourceGroupEnum.Availability);
 
             source.SourceItems.Add(sourceItem);
             indicator.Source = source;

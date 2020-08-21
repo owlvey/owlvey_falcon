@@ -15,15 +15,15 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var (_, product, _, feature) = TestDataFactory.BuildCustomerProductServiceFeature();
             var source = TestDataFactory.BuildSource(product);
 
-            var sourceItemA = SourceEntity.Factory.CreateInteractionsFromRange(source,
+            var sourceItemA = SourceEntity.Factory.CreateItemsFromRange(source,
                 OwlveyCalendar.January201903,
                 OwlveyCalendar.January201905,
-                900, 1000, DateTime.Now, "test");
+                900, 1000, DateTime.Now, "test", SourceGroupEnum.Availability);
 
-            var sourceItemB = SourceEntity.Factory.CreateInteractionsFromRange(source,
+            var sourceItemB = SourceEntity.Factory.CreateItemsFromRange(source,
                 OwlveyCalendar.January201908,
                 OwlveyCalendar.January201910,
-                800, 1000, DateTime.Now, "test");
+                800, 1000, DateTime.Now, "test", SourceGroupEnum.Availability);
 
 
             foreach (var item in sourceItemA)
@@ -54,10 +54,10 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var (_, product, _, feature) = TestDataFactory.BuildCustomerProductServiceFeature();
             var source = TestDataFactory.BuildSource(product);
 
-            var sourceItemA = SourceEntity.Factory.CreateInteractionsFromRange(source,
+            var sourceItemA = SourceEntity.Factory.CreateItemsFromRange(source,
                 OwlveyCalendar.January201908,
                 OwlveyCalendar.January201914,
-                900, 1000, DateTime.Now, "test");
+                900, 1000, DateTime.Now, "test", SourceGroupEnum.Availability);
 
             foreach (var item in sourceItemA)
             {
@@ -84,10 +84,10 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var (_, product, _, feature) = TestDataFactory.BuildCustomerProductServiceFeature();
             var source = TestDataFactory.BuildSource(product);
 
-            var sourceItemA = SourceEntity.Factory.CreateInteractionsFromRange(source,
+            var sourceItemA = SourceEntity.Factory.CreateItemsFromRange(source,
                 OwlveyCalendar.January201908,
                 OwlveyCalendar.January201914,
-                900, 1000, DateTime.Now, "test");
+                900, 1000, DateTime.Now, "test", SourceGroupEnum.Availability);
 
             foreach (var item in sourceItemA)
             {
@@ -114,13 +114,13 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
 
             var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, "test");
 
-            var sourceItemA = SourceEntity.Factory.CreateInteractionsFromRange(source,
+            var sourceItemA = SourceEntity.Factory.CreateItemsFromRange(source,
                 OwlveyCalendar.StartJanuary2019,
                 OwlveyCalendar.EndJanuary2019,
-                900, 1200, DateTime.Now, "test");
-            var sourceItemB = SourceEntity.Factory.CreateInteractionsFromRange(source,
+                900, 1200, DateTime.Now, "test", SourceGroupEnum.Availability);
+            var sourceItemB = SourceEntity.Factory.CreateItemsFromRange(source,
                 OwlveyCalendar.StartJanuary2019, OwlveyCalendar.EndJanuary2019,
-                900, 1200, DateTime.Now, "test");
+                900, 1200, DateTime.Now, "test", SourceGroupEnum.Availability);
 
             foreach (var item in sourceItemA)
             {
@@ -151,10 +151,10 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
 
             var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, "test");
 
-            var sourceItemA = SourceEntity.Factory.CreateInteractionsFromRange(source,
+            var sourceItemA = SourceEntity.Factory.CreateItemsFromRange(source,
                 OwlveyCalendar.StartJuly2019,
                 OwlveyCalendar.EndJuly2019,
-                3900223, 3911869, DateTime.Now, "test");
+                3900223, 3911869, DateTime.Now, "test", SourceGroupEnum.Availability);
 
             foreach (var item in sourceItemA)
             {

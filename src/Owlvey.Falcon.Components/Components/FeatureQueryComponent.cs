@@ -96,7 +96,7 @@ namespace Owlvey.Falcon.Components
             foreach (var indicator in feature.Indicators)
             {                
                 var tmp = this._mapper.Map<IndicatorAvailabilityGetListRp>(indicator);                
-                tmp.Measure = indicator.Source.Measure().Value;                
+                tmp.Measure = indicator.Source.Measure().Availability;                
                 model.Indicators.Add(tmp);
             }
 

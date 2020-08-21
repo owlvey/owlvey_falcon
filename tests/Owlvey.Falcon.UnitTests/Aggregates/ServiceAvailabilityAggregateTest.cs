@@ -13,7 +13,8 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         public void AvailabilityAggregateSuccess() {
 
             var sourceEntity = new SourceEntity() { };
-            sourceEntity.AddSourceItem(800, 1000, OwlveyCalendar.January201903, DateTime.Now, "test");
+            sourceEntity.AddSourceItem(800, 1000, OwlveyCalendar.January201903, DateTime.Now, "test",
+                 SourceGroupEnum.Availability);
 
 
             var entity = new ServiceEntity()

@@ -253,7 +253,6 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     Avatar = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     Kind = table.Column<int>(nullable: false),
-                    Group = table.Column<int>(nullable: false),
                     Percentile = table.Column<decimal>(nullable: false),
                     ProductId = table.Column<int>(nullable: false),
                     Latency = table.Column<decimal>(nullable: false)
@@ -433,6 +432,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     ModifiedBy = table.Column<string>(nullable: false),
                     SourceId = table.Column<int>(nullable: false),
                     Good = table.Column<int>(nullable: true),
+                    Group = table.Column<int>(nullable: false),
                     Total = table.Column<int>(nullable: true),
                     Target = table.Column<DateTime>(nullable: false),
                     Measure = table.Column<decimal>(nullable: false)

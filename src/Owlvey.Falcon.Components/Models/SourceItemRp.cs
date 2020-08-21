@@ -62,21 +62,31 @@ namespace Owlvey.Falcon.Models
         public DateTime End { get; set; }        
     }
 
-    public class SourceItemInteractionPostRp: SourceItemPostRp
-    {        
+    public class SourceItemAvailabilityPostRp : SourceItemPostRp
+    {
+
         [Required]
         public int Good { get; set; }
         [Required]
-        public int Total { get; set; }        
-     
+        public int Total { get; set; }
+        [Required]
+        public decimal Measure { get; set; }
+    }
+    public class SourceItemExperiencePostRp : SourceItemPostRp
+    {        
+
+        [Required]
+        public int Good { get; set; }
+        [Required]
+        public int Total { get; set; }
+        [Required]
+        public decimal Measure { get; set; }
     }
 
-
-    
-    public class SourceItemProportionPostRp : SourceItemPostRp
-    {
+    public class SourceItemLatencyPostRp : SourceItemPostRp
+    {        
         [Required]
-        public decimal Proportion { get; set; }
+        public decimal Measure { get; set; }
     }
 
     public class SourceItemPutRp

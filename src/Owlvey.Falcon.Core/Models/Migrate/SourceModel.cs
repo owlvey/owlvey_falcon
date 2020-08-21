@@ -10,8 +10,7 @@ namespace Owlvey.Falcon.Core.Models.Migrate
         public string Product { get; set; }
         public string Name { get; set; }
         public string Avatar { get; set; }
-        public string Description { get; set; }
-        public string Group { get; set; }
+        public string Description { get; set; }        
         public string GoodDefinition { get; set; }
         public string TotalDefinition { get; set; }
         public string Kind { get; set; }
@@ -24,11 +23,9 @@ namespace Owlvey.Falcon.Core.Models.Migrate
             this.Product = product;
             this.Name = entity.Name;
             this.Avatar = entity.Avatar;
-            this.Description = entity.Description;
-            this.Group = entity.Group.ToString();
+            this.Description = entity.Description;            
             this.GoodDefinition = entity.GoodDefinition;
-            this.TotalDefinition = entity.TotalDefinition;
-            this.Kind = entity.Kind.ToString();
+            this.TotalDefinition = entity.TotalDefinition;            
             this.Percentile = entity.Percentile;
         }
         public static IEnumerable<SourceModel> Load(string organization, string product, IEnumerable<SourceEntity> entities)

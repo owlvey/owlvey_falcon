@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Owlvey.Falcon.API.Controllers
 {
-    [Route("sources/latency")]
+    [Route("sourceItems/latency")]
     public class LatencySourceController : BaseController
     {
         private LatencySourceComponent _sourceComponent;
@@ -19,25 +19,7 @@ namespace Owlvey.Falcon.API.Controllers
         {
             this._sourceComponent = sourceComponent;
         }
-
-
-        [HttpGet("{id}")]
-        [ProducesResponseType(typeof(LatencySourceGetRp), 200)]
-        public async Task<IActionResult> GetById(int id, DateTime? start, DateTime? end)
-        {
-            LatencySourceGetRp model = null;
-            if (end.HasValue)
-            {
-                model = await this._sourceComponent.GetByIdWithDetail(id, new DatePeriodValue(start.Value, end.Value));
-            }
-            else {
-                model = await this._sourceComponent.GetById(id);
-            }
-            if (model == null)
-                return this.NotFound($"The Resource {id} doesn't exists.");
-
-            return this.Ok(model);
-        }
+       
 
         [HttpGet("{id}/items")]
         [ProducesResponseType(typeof(IEnumerable<LatencySourceItemGetRp>), 200)]
@@ -50,10 +32,10 @@ namespace Owlvey.Falcon.API.Controllers
             }
             return this.Ok(model);
         }
-        [HttpPost("items")]
+        [HttpPost("")]
         [Authorize(Policy = "RequireAdminRole")]
         [ProducesResponseType(typeof(IEnumerable<SourceItemBaseRp>), 200)]
-        public async Task<IActionResult> Post([FromBody]LatencySourceItemPostRp model)
+        public async Task<IActionResult> Post([FromBody]SourceItemLatencyPostRp model)
         {
             var result = await this._sourceComponent.CreateLatency(model);
             return this.Ok(result);

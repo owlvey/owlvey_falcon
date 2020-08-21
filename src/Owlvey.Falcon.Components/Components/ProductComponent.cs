@@ -221,46 +221,45 @@ namespace Owlvey.Falcon.Components
                     var total = sourceItemsSheet.Cells[row, 3].GetValue<int>();
                     var target = DateTime.Parse(sourceItemsSheet.Cells[row, 4].GetValue<string>());
                     var measure = sourceItemsSheet.Cells[row, 5].GetValue<decimal>();
-                    var sourceTarget = sources.SingleOrDefault(c => c.Name == source);
+                    var groupValue = sourceItemsSheet.Cells[row, 6].GetValue<string>();
+                    var sourceTarget = sources.SingleOrDefault(c => c.Name == source);                    
+                    var targetGroup = sourceTarget.ParseGroup(groupValue);
                     if (sourceTarget != null)
                     {
-                        if (sourceTarget.Group == SourceGroupEnum.Availability || sourceTarget.Group == SourceGroupEnum.Experience)
-                        {
-                            if (sourceTarget.Kind == SourceKindEnum.Interaction)
-                            {
-                                sourceItems.Add((sourceTarget, new SourceItemInteractionPostRp()
-                                {
-                                    SourceId = sourceTarget.Id.Value,
-                                    Start = target,
-                                    End = target,
-                                    Good = good,
-                                    Total = total
-                                }));
-                            }
-                            else
-                            {
-                                sourceItems.Add((sourceTarget, new SourceItemProportionPostRp()
-                                {
-                                    SourceId = sourceTarget.Id.Value,
-                                    Start = target,
-                                    End = target,
-                                    Proportion = measure
-                                }));
-                            }
-                        }
-                        else if (sourceTarget.Group == SourceGroupEnum.Latency)
-                        {
-                            sourceItems.Add((sourceTarget, new LatencySourceItemPostRp()
+                        if (targetGroup == SourceGroupEnum.Availability) {
+                            sourceItems.Add((sourceTarget, new SourceItemAvailabilityPostRp()
                             {
                                 SourceId = sourceTarget.Id.Value,
                                 Start = target,
                                 End = target,
-                                Latency = measure
+                                Good = good,
+                                Total = total,
+                                Measure = measure
                             }));
                         }
-                        else {
-                            throw new ApplicationException("source group is not supported");
+                        if (targetGroup == SourceGroupEnum.Latency)
+                        {
+                            sourceItems.Add((sourceTarget, new SourceItemLatencyPostRp()
+                            {
+                                SourceId = sourceTarget.Id.Value,
+                                Start = target,
+                                End = target,                                
+                                Measure = measure
+                            }));
                         }
+                        if (targetGroup == SourceGroupEnum.Experience)
+                        {
+                            sourceItems.Add((sourceTarget, new SourceItemExperiencePostRp()
+                            {
+                                SourceId = sourceTarget.Id.Value,
+                                Start = target,
+                                End = target,
+                                Good = good,
+                                Total = total,
+                                Measure = measure
+                            }));
+                        }
+
                     }
                     else {
                         logs.Add(" source not found " + source);
