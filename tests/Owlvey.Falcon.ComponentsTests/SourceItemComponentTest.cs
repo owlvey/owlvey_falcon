@@ -18,7 +18,7 @@ namespace Owlvey.Falcon.ComponentsTests
             var sourceComponent = container.GetInstance<SourceComponent>();
             var itemComponent = container.GetInstance<SourceItemComponent>();
             
-            await itemComponent.Create(new SourceItemAvailabilityPostRp()
+            await itemComponent.CreateAvailabilityItem(new SourceItemAvailabilityPostRp()
             {
                 SourceId = source,
                 Start = OwlveyCalendar.January201905,
@@ -40,7 +40,7 @@ namespace Owlvey.Falcon.ComponentsTests
             var sourceComponent = container.GetInstance<SourceComponent>();
             var itemComponent = container.GetInstance<SourceItemComponent>();
 
-            await itemComponent.Create(new SourceItemAvailabilityPostRp()
+            await itemComponent.CreateAvailabilityItem(new SourceItemAvailabilityPostRp()
             {
                 SourceId = source,
                 Start = OwlveyCalendar.January201905,
@@ -71,7 +71,7 @@ namespace Owlvey.Falcon.ComponentsTests
 
             var itemComponent = container.GetInstance<SourceItemComponent>();
 
-            await itemComponent.Create(new SourceItemAvailabilityPostRp()
+            await itemComponent.CreateAvailabilityItem(new SourceItemAvailabilityPostRp()
             {
                  SourceId = source.Id,
                  Start = DateTime.Now,
@@ -103,7 +103,7 @@ namespace Owlvey.Falcon.ComponentsTests
             });
             var testSource = await component.GetByName(product, "test");
 
-            var item = await sourceItemComponent.Create(new SourceItemAvailabilityPostRp()
+            var item = await sourceItemComponent.CreateAvailabilityItem(new SourceItemAvailabilityPostRp()
             {
                 SourceId = testSource.Id,
                 Total = 1000,

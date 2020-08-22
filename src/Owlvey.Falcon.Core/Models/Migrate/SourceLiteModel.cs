@@ -11,8 +11,15 @@ namespace Owlvey.Falcon.Core.Models.Migrate
         public string Avatar { get; set; }
         public string Description { get; set; }
         public string Group { get; set; }
-        public string GoodDefinition { get; set; }
-        public string TotalDefinition { get; set; }
+        public string GoodDefinitionAvailability { get; set; }
+        public string TotalDefinitionAvailability { get; set; }
+
+        public string GoodDefinitionLatency { get; set; }
+        public string TotalDefinitionLatency { get; set; }
+
+        public string GoodDefinitionExperience { get; set; }
+        public string TotalDefinitionExperience { get; set; }
+
         public string Kind { get; set; }
 
         public decimal Percentile { get; set; }
@@ -22,8 +29,15 @@ namespace Owlvey.Falcon.Core.Models.Migrate
             this.Name = entity.Name;
             this.Avatar = entity.Avatar;
             this.Description = entity.Description;            
-            this.GoodDefinition = entity.GoodDefinition;
-            this.TotalDefinition = entity.TotalDefinition;            
+            this.GoodDefinitionAvailability = entity.GoodDefinitionAvailability;
+            this.TotalDefinitionAvailability = entity.TotalDefinitionAvailability;
+
+            this.GoodDefinitionLatency= entity.GoodDefinitionLatency;
+            this.TotalDefinitionLatency = entity.TotalDefinitionLatency;
+
+            this.GoodDefinitionExperience = entity.GoodDefinitionExperience;
+            this.TotalDefinitionExperience = entity.TotalDefinitionExperience;
+
             this.Percentile = entity.Percentile;
         }
         public static IEnumerable<SourceLiteModel> Load(IEnumerable<SourceEntity> entities)

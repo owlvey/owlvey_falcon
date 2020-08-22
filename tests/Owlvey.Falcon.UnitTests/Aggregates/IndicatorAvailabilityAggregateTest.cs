@@ -34,7 +34,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             
             source.SourceItems.Add(sourceItemB);
 
-            var aggregate = new SourceDailyAvailabilityAggregate(indicator.Source,                
+            var aggregate = new SourceDailyAggregate(indicator.Source,                
                 new Core.Values.DatePeriodValue(
                 OwlveyCalendar.StartJanuary2019,
                 OwlveyCalendar.EndJanuary2019));
@@ -62,7 +62,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             source.SourceItems.Add(sourceItemA);
             source.SourceItems.Add(sourceItemB);
 
-            var aggregate = new SourceDailyAvailabilityAggregate(indicator.Source,                
+            var aggregate = new SourceDailyAggregate(indicator.Source,                
                 new Core.Values.DatePeriodValue(
                 OwlveyCalendar.StartJanuary2019,
                 OwlveyCalendar.EndJanuary2019));
@@ -81,7 +81,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
 
             var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, "test");
             
-            var aggregate = new SourceDailyAvailabilityAggregate(
+            var aggregate = new SourceDailyAggregate(
                 indicator.Source,                
                 new Core.Values.DatePeriodValue(
                 OwlveyCalendar.StartJanuary2019,

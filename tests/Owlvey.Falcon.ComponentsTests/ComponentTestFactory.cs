@@ -37,7 +37,7 @@ namespace Owlvey.Falcon.ComponentsTests
         public static DateTime StartJuly2019 = new DateTime(2019, 07, 1);
         public static DateTime EndJuly2019 = new DateTime(2019, 07, 31);
         public static DatePeriodValue year2019 = new DatePeriodValue(StartJanuary2019, EndDecember2019);
-
+        public static DatePeriodValue january2019 = new DatePeriodValue(StartJanuary2019, EndJanuary2019);
     }
     public static class ComponentTestFactory
     {
@@ -244,7 +244,7 @@ namespace Owlvey.Falcon.ComponentsTests
                 ProductId = product
             });
 
-            await sourceItemComponent.Create(new SourceItemAvailabilityPostRp()
+            await sourceItemComponent.CreateAvailabilityItem(new SourceItemAvailabilityPostRp()
             {
                 SourceId = source.Id,
                 Start = start,

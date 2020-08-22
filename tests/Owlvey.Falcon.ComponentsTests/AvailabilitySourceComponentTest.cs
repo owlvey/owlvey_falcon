@@ -34,7 +34,7 @@ namespace Owlvey.Falcon.ComponentsTests
             var container = ComponentTestFactory.BuildContainer();
             var (_, product) = await ComponentTestFactory.BuildCustomerProduct(container);
             var component = container.GetInstance<SourceComponent>();
-            var availability = container.GetInstance<SourceItemComponent>();
+            var sourceItems = container.GetInstance<SourceItemComponent>();
 
             SourceGetListRp source = await component.Create(new Models.SourcePostRp()
             {
@@ -42,7 +42,24 @@ namespace Owlvey.Falcon.ComponentsTests
                 ProductId = product,                                
             });
 
-            await availability.CreateAvailabilityItem(new SourceItemAvailabilityPostRp()
+            await sourceItems.CreateAvailabilityItem(new SourceItemAvailabilityPostRp()
+            {
+                Start = OwlveyCalendar.StartJanuary2019,
+                End = OwlveyCalendar.EndJanuary2019,
+                Good = 800,
+                Total = 1000,
+                SourceId = source.Id
+            });
+
+            await sourceItems.CreateLatencyItem(new SourceItemLatencyPostRp()
+            {
+                Start = OwlveyCalendar.StartJanuary2019,
+                End = OwlveyCalendar.EndJanuary2019,
+                Measure = 1200,
+                SourceId = source.Id
+            });
+
+            await sourceItems.CreateExperienceItem(new SourceItemExperiencePostRp()
             {
                 Start = OwlveyCalendar.StartJanuary2019,
                 End = OwlveyCalendar.EndJanuary2019,
@@ -52,8 +69,14 @@ namespace Owlvey.Falcon.ComponentsTests
             });
 
 
-            var result = await availability.GetAvailabilityItems(source.Id, OwlveyCalendar.year2019);
+            var result = await sourceItems.GetAvailabilityItems(source.Id, OwlveyCalendar.year2019);
             Assert.NotEmpty(result);
+
+            var latency_result = await sourceItems.GetLatencyItems(source.Id, OwlveyCalendar.year2019);
+            Assert.NotEmpty(latency_result);
+
+            var experience_result = await sourceItems.GetExperienceItems(source.Id, OwlveyCalendar.year2019);
+            Assert.NotEmpty(experience_result);
 
         }
     }

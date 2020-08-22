@@ -59,8 +59,14 @@ namespace Owlvey.Falcon.Models
         public decimal Availability { get; set; }
         public decimal Latency { get; set; }
         public decimal Experience { get; set; }
-        public string GoodDefinition { get; set; }
-        public string TotalDefinition { get; set; }
+        public string GoodDefinitionAvailability { get; set; }
+        public string TotalDefinitionAvailability { get; set; }
+
+        public string GoodDefinitionLatency { get; set; }
+        public string TotalDefinitionLatency { get; set; }
+
+        public string GoodDefinitionExperience { get; set; }
+        public string TotalDefinitionExperience { get; set; }
         public ExportExcelSourceRp() { }
         public ExportExcelSourceRp(SourceEntity source) {
             this.SourceId = source.Id.Value;
@@ -69,8 +75,14 @@ namespace Owlvey.Falcon.Models
             this.Availability = quality.Availability;
             this.Experience = quality.Experience;
             this.Latency = quality.Latency;
-            this.TotalDefinition = source.TotalDefinition;
-            this.GoodDefinition = source.GoodDefinition;
+            this.TotalDefinitionAvailability = source.TotalDefinitionAvailability;
+            this.GoodDefinitionAvailability = source.GoodDefinitionAvailability;
+
+            this.TotalDefinitionLatency = source.TotalDefinitionLatency;
+            this.GoodDefinitionLatency = source.GoodDefinitionLatency;
+
+            this.TotalDefinitionExperience = source.TotalDefinitionExperience;
+            this.GoodDefinitionExperience = source.GoodDefinitionExperience;
             this.Description = source.Description;            
         }
     }

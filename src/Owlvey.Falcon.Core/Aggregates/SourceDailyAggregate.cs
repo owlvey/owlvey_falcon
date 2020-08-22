@@ -6,12 +6,12 @@ using Owlvey.Falcon.Core.Values;
 
 namespace Owlvey.Falcon.Core.Aggregates
 {
-    public class SourceDailyAvailabilityAggregate
+    public class SourceDailyAggregate
     {
         private readonly SourceEntity Source;
         private readonly DatePeriodValue Period;
 
-        public SourceDailyAvailabilityAggregate(SourceEntity source, DatePeriodValue period)
+        public SourceDailyAggregate(SourceEntity source, DatePeriodValue period)
         {            
             this.Source = source;
             this.Period = period;
@@ -21,13 +21,13 @@ namespace Owlvey.Falcon.Core.Aggregates
         public IEnumerable<DayMeasureValue> MeasureAvailability()
         {            
             var result = new List<DayMeasureValue>();
-
             foreach (var item in this.Period.GetDatesPeriods())
             {                
                 var measure = this.Source.Measure(item);
                 if (measure.HasData) {
                     result.Add(new DayMeasureValue(item.Start, 
-                        new QualityMeasureValue(measure.Availability) ));
+                        new QualityMeasureValue(measure.Availability,
+                        measure.Latency, measure.Experience)));
                 }    
             }
             return result;

@@ -18,10 +18,7 @@ namespace Owlvey.Falcon.Models
 
    
 
-    public class ProportionSourceItemGetRp : SourceItemBaseRp
-    {   
-        public decimal Measure { get; set; }        
-    }
+    
 
     public class SourceItemMigrationRp {
         public string Product { get; set; }

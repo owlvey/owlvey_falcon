@@ -18,6 +18,7 @@ using System.IO;
 using OfficeOpenXml;
 using Owlvey.Falcon.Core.Models.Migrate;
 using Owlvey.Falcon.Components.Models;
+using Owlvey.Falcon.Core.Values;
 
 namespace Owlvey.Falcon.Components
 {
@@ -203,7 +204,11 @@ namespace Owlvey.Falcon.Components
                     var percentile = sourceSheet.Cells[row, 8].GetValue<decimal>();                    
                     if (!sources.Exists(c=>c.Name == name)) {                        
                         await this._sourceComponent.CreateOrUpdate(product.Customer, product.Name,
-                            name, null, avatar, goodDefinition, totalDefinition, description, kind, group, percentile);
+                            name, null, avatar,
+                            new DefinitionValue(goodDefinition, totalDefinition),
+                            new DefinitionValue(goodDefinition, totalDefinition),
+                            new DefinitionValue(goodDefinition, totalDefinition),
+                            description, percentile);
                     }                    
                 }
 

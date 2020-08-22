@@ -64,32 +64,34 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok(model);
         }
 
-        
-
+        #region latency
         [HttpPost("latency")]
         [Authorize(Policy = "RequireAdminRole")]
         [ProducesResponseType(typeof(IEnumerable<SourceItemBaseRp>), 200)]
         public async Task<IActionResult> PostLatencyItem([FromBody]SourceItemLatencyPostRp model)
         {
-            var result = await this._sourceItemComponent.CreateLatency(model);
+            var result = await this._sourceItemComponent.CreateLatencyItem(model);
             return this.Ok(result);
         }
 
-   
 
-        [HttpGet("latency/items")]
+
+        [HttpGet("latency")]
         [ProducesResponseType(typeof(IEnumerable<LatencySourceItemGetRp>), 200)]
-        public async Task<IActionResult> GetLatencyItems(int id, DateTime? start, DateTime? end)
+        public async Task<IActionResult> GetLatencyItems(int sourceId, DateTime? start, DateTime? end)
         {
             IEnumerable<LatencySourceItemGetRp> model = new List<LatencySourceItemGetRp>();
             if (start.HasValue && end.HasValue)
             {
-                model = await this._sourceItemComponent.GetLatencyItems(id, new DatePeriodValue(start, end));
+                model = await this._sourceItemComponent.GetLatencyItems(sourceId, new DatePeriodValue(start, end));
             }
             return this.Ok(model);
         }
+        #endregion
 
-        [HttpPost("experience/items")]
+        #region Experience
+
+        [HttpPost("experience")]
         [Authorize(Policy = "RequireAdminRole")]
         [ProducesResponseType(typeof(IEnumerable<SourceItemBaseRp>), 200)]
         public async Task<IActionResult> PostProportion([FromBody]SourceItemExperiencePostRp model)
@@ -98,8 +100,23 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok(result);
         }
 
+        [HttpGet("experience")]
+        [ProducesResponseType(typeof(IEnumerable<LatencySourceItemGetRp>), 200)]
+        public async Task<IActionResult> GetExperienceItems(int sourceId, DateTime? start, DateTime? end)
+        {
+            IEnumerable<ExperienceSourceItemGetRp> model = new List<ExperienceSourceItemGetRp>();
+            if (start.HasValue && end.HasValue)
+            {
+                model = await this._sourceItemComponent.GetExperienceItems(sourceId, new DatePeriodValue(start, end));
+            }
+            return this.Ok(model);
+        }
 
-        [HttpPost("availability/items")]
+        #endregion
+
+        #region availability
+
+        [HttpPost("availability")]
         [Authorize(Policy = "RequireAdminRole")]
         [ProducesResponseType(typeof(IEnumerable<SourceItemBaseRp>), 200)]
         public async Task<IActionResult> PostAvailability([FromBody]SourceItemAvailabilityPostRp model)
@@ -107,6 +124,23 @@ namespace Owlvey.Falcon.API.Controllers
             var result = await this._sourceItemComponent.CreateAvailabilityItem(model);
             return this.Ok(result);
         }
+
+        [HttpGet("availability")]
+        [ProducesResponseType(typeof(IEnumerable<LatencySourceItemGetRp>), 200)]
+        public async Task<IActionResult> GetAvailabilityItems(int sourceId, DateTime? start, DateTime? end)
+        {
+            IEnumerable<AvailabilitySourceItemGetRp> model = new List<AvailabilitySourceItemGetRp>();
+            if (start.HasValue && end.HasValue)
+            {
+                model = await this._sourceItemComponent.GetAvailabilityItems(sourceId, new DatePeriodValue(start, end));
+            }
+            return this.Ok(model);
+        }
+
+        #endregion
+
+
+
 
         [HttpGet("{id}/scalability")]
         [ProducesResponseType(typeof(ScalabilitySourceGetRp), 200)]

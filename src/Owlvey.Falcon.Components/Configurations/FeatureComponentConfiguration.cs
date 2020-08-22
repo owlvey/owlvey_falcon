@@ -36,9 +36,7 @@ namespace Owlvey.Falcon.Components
 
             cfg.CreateMap<FeatureEntity, FeatureAvailabilityGetListRp>()
                 .ForMember(c => c.IndicatorsCount, opt => opt.MapFrom(d => d.Indicators.Count))
-                .ForMember(c => c.Availability, opt => opt.Ignore())                
-                .ForMember(c => c.Experience, opt => opt.Ignore())
-                .ForMember(c => c.Latency, opt => opt.Ignore())                
+                .ForMember(c => c.Quality, opt => opt.Ignore())                                
                 .ForMember(c => c.Squads, opt => opt.Ignore())
                 .ForMember(c => c.Debt, opt => opt.Ignore())
                 .ForMember(c => c.ServiceCount, opt => opt.Ignore())                                

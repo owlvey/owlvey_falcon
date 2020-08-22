@@ -178,6 +178,15 @@ namespace Owlvey.Falcon.Repositories
             result = await this.SourcesItems.Where(c => c.SourceId == sourceId && c.Target >= start && c.Target <= end).ToListAsync();                        
             return result;
         }
+        public async Task<ICollection<SourceItemEntity>> GetSourceItems(int sourceId, SourceGroupEnum group,
+            DateTime start, DateTime end)
+        {
+            start = start.Date;
+            end = end.Date;
+            List<SourceItemEntity> result = new List<SourceItemEntity>();
+            result = await this.SourcesItems.Where(c => c.SourceId == sourceId && c.Group == group &&  c.Target >= start && c.Target <= end).ToListAsync();
+            return result;
+        }
 
         public async Task<ICollection<SourceItemEntity>> GetSourceItems(IEnumerable<int> sources,
             DateTime start, DateTime end)

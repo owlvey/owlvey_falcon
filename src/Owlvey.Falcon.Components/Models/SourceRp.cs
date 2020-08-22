@@ -7,42 +7,51 @@ using System.Text.Json.Serialization;
 
 namespace Owlvey.Falcon.Models
 {
-    public class SourceLitRp
+    public class SourceLiteRp
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Tags { get; set; } = "";
         public string Avatar { get; set; }
         public string Description { get; set; }
-        public string GoodDefinition { get; set; }
-        public string TotalDefinition { get; set; }
+        public string CreatedBy { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public decimal Percentile { get; set; }
+        public DefinitionValue AvailabilityDefinition { get; set; }
+        public DefinitionValue LatencyDefinition { get; set; }
+        public DefinitionValue ExperienceDefinition { get; set; }
     }
     public class SourceAnchorRp { 
         public int Id { get; set; }
         public string Name { get; set; }
         public DateTime Target { get; set; }
     }
-    public class SourceGetRp : SourceLitRp
-    {
-        public string CreatedBy { get; set; }
-        public DateTime CreatedOn { get; set; }
+    public class SourceGetRp : SourceLiteRp
+    {        
         public QualityMeasureValue Quality { get; set; }        
         public Dictionary<string, int> Features  { get; set; } = new Dictionary<string, int>();
         public Dictionary<string, decimal> Clues { get; set; } = new Dictionary<string, decimal>();
+        public IEnumerable<DayMeasureValue> Daily { get; set; } = new List<DayMeasureValue>();
     }
 
 
     public class SourceMigrateRp {
         public string ProductName { get; set; }
         public string Name { get; set; }
-        public string Tags { get; set; } = "";        
-        public string GoodDefinition { get; set; }
-        public string TotalDefinition { get; set; }        
+        public string Tags { get; set; } = "";
+        public string GoodDefinitionAvailability { get; set; }
+        public string TotalDefinitionAvailability { get; set; }
+
+        public string GoodDefinitionLatency { get; set; }
+        public string TotalDefinitionLatency { get; set; }
+
+        public string GoodDefinitionExperience { get; set; }
+        public string TotalDefinitionExperience { get; set; }
         public string Avatar { get; set; }
         public string Description { get; set; }        
     }
 
-    public class SourceGetListRp : SourceLitRp
+    public class SourceGetListRp : SourceLiteRp
     {
         public string CreatedBy { get; set; }
         public DateTime CreatedOn { get; set; }
@@ -79,8 +88,35 @@ namespace Owlvey.Falcon.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public string Avatar { get; set; }
-        public string GoodDefinition { get; set; }
-        public string TotalDefinition { get; set; }
+        public string AvailabilityGoodDefinition { get; set; }
+        public string AvailabilityTotalDefinition { get; set; }
+
+        public DefinitionValue AvailabilityDefinition {
+            get {
+                return new DefinitionValue(this.AvailabilityGoodDefinition, this.AvailabilityTotalDefinition);
+            }
+        }
+
+        public string LatencyGoodDefinition { get; set; }
+        public string LatencyTotalDefinition { get; set; }
+        public DefinitionValue LatencyDefinition
+        {
+            get
+            {
+                return new DefinitionValue(this.LatencyGoodDefinition, this.LatencyTotalDefinition);
+            }
+        }
+        public string ExperienceGoodDefinition  { get; set; }
+        public string ExperienceTotalDefinition { get; set; }
+        public DefinitionValue ExperienceDefinition
+        {
+            get
+            {
+                return new DefinitionValue(this.ExperienceGoodDefinition, this.ExperienceTotalDefinition);
+            }
+        }
+        [Required]
         public decimal Percentile { get; set; }
+        public string Tags { get; set; }
     }
 }

@@ -68,7 +68,8 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<FeatureGetListRp>>(entities);
         }
 
-        public async Task<FeatureQualityGetRp> GetFeatureByIdWithAvailability(int id, DateTime start, DateTime end)
+        public async Task<FeatureQualityGetRp> GetFeatureByIdWithQuality(int id, 
+            DatePeriodValue period)
         {
             var feature = await this._dbContext.Features
                 .Include(c => c.Squads).ThenInclude(c => c.Squad)
@@ -85,7 +86,7 @@ namespace Owlvey.Falcon.Components
 
             foreach (var indicator in feature.Indicators)
             {
-                var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, start, end);
+                var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, period.Start, period.End);
                 indicator.Source.SourceItems = sourceItems;
             }
                         
@@ -95,8 +96,8 @@ namespace Owlvey.Falcon.Components
             model.Debt = feature.MeasureDebt();
             foreach (var indicator in feature.Indicators)
             {                
-                var tmp = this._mapper.Map<IndicatorAvailabilityGetListRp>(indicator);                
-                tmp.Measure = indicator.Source.Measure().Availability;                
+                var tmp = this._mapper.Map<IndicatorDetailRp>(indicator);                
+                tmp.Measure = indicator.Source.Measure();                
                 model.Indicators.Add(tmp);
             }
 
@@ -143,17 +144,14 @@ namespace Owlvey.Falcon.Components
 
             foreach (var feature in product.Features)
             {                
-                var tmp = this._mapper.Map<FeatureAvailabilityGetListRp>(feature);                
-                var measure = feature.Measure();                                
-                tmp.Availability = measure.Availability;
-                tmp.Experience = measure.Experience;
-                tmp.Latency = measure.Latency;
+                var tmp = this._mapper.Map<FeatureAvailabilityGetListRp>(feature);
+                tmp.Quality  = feature.Measure();                                                 
                 tmp.Squads = feature.Squads.Count();                                
                 tmp.ServiceCount = feature.ServiceMaps.Count();
                 tmp.Debt = feature.MeasureDebt();                
                 result.Add(tmp);
             }
-            return result.OrderBy(c => c.Availability).ToList();
+            return result.OrderBy(c => c.Quality.Availability).ToList();
         }
 
 

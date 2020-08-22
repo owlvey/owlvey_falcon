@@ -62,7 +62,8 @@ namespace Owlvey.Falcon.API.Controllers
             object model = null;
             if (end.HasValue)
             {
-                model = await this._featureQueryService.GetFeatureByIdWithAvailability(id, start.Value,  end.Value);
+                model = await this._featureQueryService.GetFeatureByIdWithQuality(id, 
+                    new DatePeriodValue( start.Value,  end.Value));
             }
             else {
                 model = await this._featureQueryService.GetFeatureById(id);

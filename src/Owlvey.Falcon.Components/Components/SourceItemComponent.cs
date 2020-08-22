@@ -54,7 +54,7 @@ namespace Owlvey.Falcon.Components
                 throw new ApplicationException("type is not valid");
             }
         }
-        public async Task<IEnumerable<SourceItemBaseRp>> CreateLatency(SourceItemLatencyPostRp model)
+        public async Task<IEnumerable<SourceItemBaseRp>> CreateLatencyItem(SourceItemLatencyPostRp model)
         {
             var createdBy = this._identityService.GetIdentity();
             var on = this._datetimeGateway.GetCurrentDateTime();
@@ -82,7 +82,8 @@ namespace Owlvey.Falcon.Components
             var range = SourceEntity.Factory.CreateItemsFromRange(source, model.Start, 
                 model.End, 
                 model.Good, 
-                model.Total, null, 
+                model.Total, 
+                model.Measure, 
                 on, createdBy,  SourceGroupEnum.Experience );
 
             foreach (var item in range)
@@ -135,40 +136,24 @@ namespace Owlvey.Falcon.Components
 
         public async Task<IEnumerable<LatencySourceItemGetRp>> GetLatencyItems(int sourceId, DatePeriodValue period)
         {
-            var entities = await this._dbContext.GetSourceItems(sourceId, period.Start, period.End);
+            var entities = await this._dbContext.GetSourceItems(sourceId, SourceGroupEnum.Latency, period.Start, period.End);
             var result = this._mapper.Map<IEnumerable<LatencySourceItemGetRp>>(entities);
             return result;
         }
         public async Task<IEnumerable<ExperienceSourceItemGetRp>> GetExperienceItems(int sourceId, DatePeriodValue period)
         {
-            var entities = await this._dbContext.GetSourceItems(sourceId, period.Start, period.End);
+            var entities = await this._dbContext.GetSourceItems(sourceId, SourceGroupEnum.Experience, period.Start, period.End);
             var result = this._mapper.Map<IEnumerable<ExperienceSourceItemGetRp>>(entities);
             return result;
         }
         public async Task<IEnumerable<AvailabilitySourceItemGetRp>> GetAvailabilityItems(int sourceId, DatePeriodValue period)
         {
-            var entities = await this._dbContext.GetSourceItems(sourceId, period.Start, period.End);
+            IEnumerable<SourceItemEntity> entities = await this._dbContext.GetSourceItems(sourceId, SourceGroupEnum.Availability, period.Start, period.End);
             var result = this._mapper.Map<IEnumerable<AvailabilitySourceItemGetRp>>(entities);
             return result;
         }
 
-        public async Task<IEnumerable<SourceItemGetListRp>> Create(SourceItemPostRp model)
-        {
-            var createdBy = this._identityService.GetIdentity();
-            var on = this._datetimeGateway.GetCurrentDateTime();
-            var source = await this._dbContext.Sources.SingleAsync(c => c.Id == model.SourceId);
-            List<SourceItemEntity> range = new List<SourceItemEntity>();
-
-            range.AddRange(this.CreateFromPostRp(source, model, on, createdBy));
-            
-            foreach (var item in range)
-            {
-                this._dbContext.SourcesItems.Add(item);
-            }
-
-            await this._dbContext.SaveChangesAsync();
-            return this._mapper.Map<IEnumerable<SourceItemGetListRp>>(range);
-        }
+       
         public async Task BulkInsert(SourceEntity source, 
             IEnumerable<SourceItemPostRp> sourceItems) {
 

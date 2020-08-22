@@ -15,6 +15,7 @@ using Newtonsoft.Json;
 using Owlvey.Falcon.Core.Aggregates;
 using Owlvey.Falcon.Core;
 using Owlvey.Falcon.Components.Models;
+using Owlvey.Falcon.Core.Values;
 
 namespace Owlvey.Falcon.Components
 {
@@ -359,8 +360,13 @@ namespace Owlvey.Falcon.Components
                 var percentile = source.Cells[row, 10].GetValue<decimal>();
                 if (product != null && name != null)
                 {
+                    //TODO: Work
                     await this._sourceComponent.CreateOrUpdate(customer,
-                        product, name, tags, avatar, good, total, description, kind, group, percentile);
+                        product, name, tags, avatar,
+                        new DefinitionValue(good, total),
+                        new DefinitionValue(good, total),
+                        new DefinitionValue(good, total),
+                        description, percentile);
                 }
             }
         }
@@ -544,9 +550,14 @@ namespace Owlvey.Falcon.Components
                     var total = sourcesSheet.Cells[row, 8].GetValue<string>();
                     var kind = sourcesSheet.Cells[row, 9].GetValue<string>();
                     var percentile = sourcesSheet.Cells[row, 10].GetValue<decimal>();
+                    //TODO work
                     await this._sourceComponent.CreateOrUpdate(
-                        organizations.Single(c => c.Name == organization), product, name, string.Empty, avatar, good, total, 
-                        description, kind, group, percentile);                        
+                        organizations.Single(c => c.Name == organization), product, name, 
+                        string.Empty, avatar, 
+                        new DefinitionValue(good, total),
+                        new DefinitionValue(good, total),
+                        new DefinitionValue(good, total),
+                        description, percentile);                        
                 }
 
                 var sources = await this._dbContext.Sources.ToListAsync();

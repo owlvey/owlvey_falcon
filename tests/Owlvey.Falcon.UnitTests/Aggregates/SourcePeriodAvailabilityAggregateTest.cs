@@ -36,7 +36,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                 source.SourceItems.Add(item);
             }                                   
 
-            var aggregate = new SourceDailyAvailabilityAggregate(source,
+            var aggregate = new SourceDailyAggregate(source,
                 new Core.Values.DatePeriodValue(
                 OwlveyCalendar.January201906,
                 OwlveyCalendar.January201920));
@@ -65,7 +65,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             }
 
             
-            var aggregate = new SourceDailyAvailabilityAggregate(source,
+            var aggregate = new SourceDailyAggregate(source,
                 new Core.Values.DatePeriodValue(
                 OwlveyCalendar.January201905,
                 OwlveyCalendar.January201910));
@@ -94,7 +94,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                 source.SourceItems.Add(item);
             }            
 
-            var aggregate = new SourceDailyAvailabilityAggregate(source,
+            var aggregate = new SourceDailyAggregate(source,
                 new Core.Values.DatePeriodValue(
                 OwlveyCalendar.January201910,
                 OwlveyCalendar.January201920));
@@ -132,7 +132,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                 source.SourceItems.Add(item);
             }            
 
-            var aggregate = new SourceDailyAvailabilityAggregate(source,                
+            var aggregate = new SourceDailyAggregate(source,                
                 new Core.Values.DatePeriodValue(
                 OwlveyCalendar.StartJanuary2019,
                 OwlveyCalendar.EndJanuary2019));
@@ -161,7 +161,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                 source.SourceItems.Add(item);
             }            
 
-            var aggregate = new SourceDailyAvailabilityAggregate(source,
+            var aggregate = new SourceDailyAggregate(source,
                 new Core.Values.DatePeriodValue(
                 OwlveyCalendar.StartJuly2019,
                 OwlveyCalendar.EndJuly2019));

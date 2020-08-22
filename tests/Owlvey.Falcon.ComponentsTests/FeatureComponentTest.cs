@@ -4,6 +4,8 @@ using Owlvey.Falcon.Components;
 using Xunit;
 using System.Linq;
 using Owlvey.Falcon.Repositories;
+using Owlvey.Falcon.Models;
+using Owlvey.Falcon.Core.Values;
 
 namespace Owlvey.Falcon.ComponentsTests
 {
@@ -93,6 +95,68 @@ namespace Owlvey.Falcon.ComponentsTests
 
             Assert.NotEmpty(features);
         }
+
+
+        [Fact]
+        public async Task FeatureDetail()
+        {
+            var container = ComponentTestFactory.BuildContainer();
+            var (customer, product) = await ComponentTestFactory.BuildCustomerProduct(container, defaultValues: true);
+
+            var sourceComponent = container.GetInstance<SourceComponent>();
+            var sourceItemComponent = container.GetInstance<SourceItemComponent>();
+            var featureComponent = container.GetInstance<FeatureComponent>();
+            var indicatorComponent = container.GetInstance<IndicatorComponent>();
+            var featureQueryComponent = container.GetInstance<FeatureQueryComponent>();
+
+            var feature = await featureComponent.CreateFeature(new FeaturePostRp() { 
+                Name = "test",  ProductId = product  });
+
+            var source = await sourceComponent.Create(new SourcePostRp() { Name = "testSource", ProductId = product });
+
+            await sourceItemComponent.CreateAvailabilityItem(new SourceItemAvailabilityPostRp() { 
+                  Start = OwlveyCalendar.January201903,
+                  End= OwlveyCalendar.January201903,
+                  SourceId = source.Id, 
+                  Total = 1000, 
+                  Good = 800
+            });
+
+            await sourceItemComponent.CreateLatencyItem(new SourceItemLatencyPostRp()
+            {
+                Start = OwlveyCalendar.January201903,
+                End = OwlveyCalendar.January201903,
+                SourceId = source.Id,
+                Measure = 1500                
+            });
+
+            await sourceItemComponent.CreateExperienceItem(new SourceItemExperiencePostRp()
+            {
+                Start = OwlveyCalendar.January201903,
+                End = OwlveyCalendar.January201903,
+                SourceId = source.Id,
+                Measure = 0.9m
+            });
+
+            await indicatorComponent.Create(feature.Id, source.Id);
+
+            var featureResult = await featureQueryComponent.GetFeatureByIdWithQuality(feature.Id, OwlveyCalendar.january2019); 
+                        
+            Assert.NotEmpty(featureResult.Indicators);
+            Assert.Equal(0.8m, featureResult.Availability);
+            Assert.Equal(0.8m, featureResult.Indicators.First().Measure.Availability);
+            
+            Assert.Equal(1000, featureResult.Indicators.First().Measure.Total);
+            Assert.Equal(800, featureResult.Indicators.First().Measure.Good);
+
+            Assert.Equal(1500m, featureResult.Latency);
+            Assert.Equal(1500m, featureResult.Indicators.First().Measure.Latency);
+
+            Assert.Equal(0.9m, featureResult.Experience);
+            Assert.Equal(0.9m, featureResult.Indicators.First().Measure.Experience);
+        }
+
+
         [Fact]
         public async Task FeatureMaintenanceSquadSucces() {
 
@@ -125,7 +189,8 @@ namespace Owlvey.Falcon.ComponentsTests
                 SquadId = squad.Id
             });
 
-            var detail = await featureQueryComponent.GetFeatureByIdWithAvailability(feature.Id, OwlveyCalendar.January201903, OwlveyCalendar.January201906);
+            var detail = await featureQueryComponent.GetFeatureByIdWithQuality(feature.Id, 
+                new DatePeriodValue( OwlveyCalendar.January201903, OwlveyCalendar.January201906));
 
             Assert.NotEmpty(detail.Squads);
 

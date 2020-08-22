@@ -64,7 +64,7 @@ namespace Owlvey.Falcon.Models
         }
         public DebtMeasureValue Debt { get; set; } = new DebtMeasureValue();
         
-        public List<IndicatorAvailabilityGetListRp> Indicators { get; set; } = new List<IndicatorAvailabilityGetListRp>();
+        public List<IndicatorDetailRp> Indicators { get; set; } = new List<IndicatorDetailRp>();
         public List<SquadGetListRp> Squads { get; set; } = new List<SquadGetListRp>();
         public List<IncidentGetListRp> Incidents { get; set; } = new List<IncidentGetListRp>();
         public List<ServiceGetListRp> Services { get; set; } = new List<ServiceGetListRp>();
@@ -103,9 +103,7 @@ namespace Owlvey.Falcon.Models
         public string Product { get; set; }
         public int IndicatorsCount { get; set; }
         public int ServiceCount { get; set; }
-        public decimal Availability { get; set; }        
-        public decimal Experience { get; set; }
-        public decimal Latency { get; set; }        
+        public QualityMeasureValue Quality { get; set; }                
         public int Squads { get; set; }
 
         public DebtMeasureValue Debt { get; set; } = new DebtMeasureValue();

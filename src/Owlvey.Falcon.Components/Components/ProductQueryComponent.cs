@@ -516,8 +516,9 @@ namespace Owlvey.Falcon.Components
                     Avatar = source.Avatar,
                     CreatedBy = source.CreatedBy,
                     CreatedOn = source.CreatedOn.Value,
-                    GoodDefinition = source.GoodDefinition,
-                    TotalDefinition = source.TotalDefinition,
+                    AvailabilityDefinition = source.AvailabilityDefinition,
+                    LatencyDefinition = source.LatencyDefinition,
+                    ExperienceDefinition = source.ExperienceDefinition,
                     Name = source.Name
                 });                
             }

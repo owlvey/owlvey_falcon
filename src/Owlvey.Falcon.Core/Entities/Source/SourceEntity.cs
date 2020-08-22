@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.InteropServices.ComTypes;
+using Owlvey.Falcon.Core.Values;
+using System.Threading.Tasks;
+using Owlvey.Falcon.Models;
 
 namespace Owlvey.Falcon.Core.Entities
 {
@@ -16,11 +19,46 @@ namespace Owlvey.Falcon.Core.Entities
         public string Tags { get; set; }
 
         [Required]
-        public string GoodDefinition { get; set; }
+        public string GoodDefinitionAvailability { get; set; }
 
         [Required]
-        public string TotalDefinition { get; set; }
-        
+        public string TotalDefinitionAvailability { get; set; }
+
+        public DefinitionValue AvailabilityDefinition
+        {
+            get {
+                return new DefinitionValue(this.GoodDefinitionAvailability, this.TotalDefinitionAvailability);
+            }
+        }
+
+        [Required]
+        public string GoodDefinitionLatency { get; set; }
+
+        [Required]
+        public string TotalDefinitionLatency { get; set; }
+
+        public DefinitionValue LatencyDefinition
+        {
+            get
+            {
+                return new DefinitionValue(this.GoodDefinitionLatency, this.TotalDefinitionLatency);
+            }
+        }
+
+        [Required]
+        public string GoodDefinitionExperience { get; set; }
+
+        [Required]
+        public string TotalDefinitionExperience { get; set; }
+
+        public DefinitionValue ExperienceDefinition
+        {
+            get
+            {
+                return new DefinitionValue(this.GoodDefinitionExperience, this.TotalDefinitionExperience);
+            }
+        }
+
         public string Avatar { get; set; }
 
         public string Description { get; set; }                
@@ -36,31 +74,27 @@ namespace Owlvey.Falcon.Core.Entities
         public virtual ICollection<SourceItemEntity> SourceItems { get; set; } = new List<SourceItemEntity>();
 
         public decimal Latency { get; set; }
-                
-        public virtual void Update(
-            string name, string avatar,
-            string goodDefinition, string totalDefinition,            
-            DateTime on, string modifiedBy, string tags, string description)
-        {
-            this.Name = string.IsNullOrWhiteSpace(name) ? this.Name : name;
-            this.Avatar = string.IsNullOrWhiteSpace(avatar) ? this.Avatar : avatar;
-            this.GoodDefinition = string.IsNullOrWhiteSpace(goodDefinition) ? this.GoodDefinition : goodDefinition;
-            this.TotalDefinition = string.IsNullOrWhiteSpace(totalDefinition) ? this.TotalDefinition : totalDefinition;
-            this.Description = string.IsNullOrWhiteSpace(description) ? this.Description : description;
-            this.ModifiedOn = on;
-            this.Tags = tags ?? this.Tags;
-            this.ModifiedBy = modifiedBy;            
-        }
-
+    
         public virtual void Update(
          string name, string avatar,
-         string goodDefinition, string totalDefinition,
-         DateTime on, string modifiedBy, string tags, string description, decimal percentile)
+         DefinitionValue availabilityDefinition,
+         DefinitionValue latencyDefinition,
+         DefinitionValue experienceDefinition,
+         DateTime on, string modifiedBy, 
+         string tags, string description, decimal percentile)
         {
             this.Name = string.IsNullOrWhiteSpace(name) ? this.Name : name;
             this.Avatar = string.IsNullOrWhiteSpace(avatar) ? this.Avatar : avatar;
-            this.GoodDefinition = string.IsNullOrWhiteSpace(goodDefinition) ? this.GoodDefinition : goodDefinition;
-            this.TotalDefinition = string.IsNullOrWhiteSpace(totalDefinition) ? this.TotalDefinition : totalDefinition;
+
+            this.GoodDefinitionAvailability = availabilityDefinition.GetGoodDefinition(this.GoodDefinitionAvailability);
+            this.TotalDefinitionAvailability = availabilityDefinition.GetTotalDefinition(this.TotalDefinitionAvailability);
+
+            this.GoodDefinitionLatency = latencyDefinition.GetGoodDefinition(this.GoodDefinitionAvailability);
+            this.TotalDefinitionLatency = latencyDefinition.GetTotalDefinition(this.TotalDefinitionAvailability);
+
+            this.GoodDefinitionExperience = experienceDefinition.GetGoodDefinition(this.GoodDefinitionAvailability);
+            this.TotalDefinitionExperience = experienceDefinition.GetTotalDefinition(this.TotalDefinitionAvailability);
+
             this.Description = string.IsNullOrWhiteSpace(description) ? this.Description : description;
             this.ModifiedOn = on;
             this.Percentile = percentile;
@@ -84,6 +118,9 @@ namespace Owlvey.Falcon.Core.Entities
             return (SourceGroupEnum)Enum.Parse(typeof(SourceGroupEnum), value);
         }
 
-
+        public IEnumerable<DayMeasureValue> GetDailySeries(DatePeriodValue period) {
+            var items = new SourceDailyAggregate(this, period).MeasureAvailability();
+            return items; 
+        }
     }
 }

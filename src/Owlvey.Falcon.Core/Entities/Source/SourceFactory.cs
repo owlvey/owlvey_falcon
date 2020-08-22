@@ -120,12 +120,23 @@ namespace Owlvey.Falcon.Core.Entities
             public static SourceEntity Create(ProductEntity product,  
                 string name, DateTime on, string user)
             {
-                string goodDefinition = "e.g. successful requests, as measured from the laod balancer metrics, Any HTTP status othen than 500-599 is considered successful.";
-                string totalDefinition = "e.g. All requests measured from the load balancer.";
+                string goodDefinitionAvailability = "e.g. successful requests, as measured from the laod balancer metrics, Any HTTP status othen than 500-599 is considered successful.";
+                string totalDefinitionAvailability = "e.g. All requests measured from the load balancer.";
+
+                string goodDefinitionLatency = "e.g.  request that return in minus specific time";
+                string totalDefinitionLatency = "e.g. All requests measured from the load balancer.";
+
+                string goodDefinitionExperience = "e.g. successful requests, as measured from the laod balancer metrics, means application errors ";
+                string totalDefinitionExperience = "e.g. All requests measured from the load balancer.";
+
                 SourceEntity entity = new SourceEntity();                                
                 entity.Name = name;
-                entity.GoodDefinition = goodDefinition;
-                entity.TotalDefinition = totalDefinition;
+                entity.GoodDefinitionAvailability = goodDefinitionAvailability;
+                entity.TotalDefinitionAvailability = totalDefinitionAvailability;
+                entity.GoodDefinitionLatency = goodDefinitionLatency;
+                entity.TotalDefinitionLatency = totalDefinitionLatency;
+                entity.GoodDefinitionExperience = goodDefinitionExperience;
+                entity.TotalDefinitionExperience = totalDefinitionExperience;
                 entity.CreatedBy = user;
                 entity.ModifiedBy = user;
                 entity.CreatedOn = on;

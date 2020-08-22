@@ -12,13 +12,24 @@ namespace Owlvey.Falcon.Components.Models
     public class AvailabilitySourceItemGetRp: SourceItemBaseRp
     {
         public decimal Measure { get; set; }
-        public decimal Total {get;set;}
-        public decimal Good {get;set;}
+        public int Total {get;set;}
+        public int Good {get;set;}
+        public int Delta { get {
+                return this.Total - this.Good;
+            } 
+        }
     }
     public class ExperienceSourceItemGetRp: SourceItemBaseRp
     {
         public decimal Measure { get; set; }
-        public decimal Total {get;set;}
-        public decimal Good {get;set;}
+        public int Total {get;set;}
+        public int Good {get;set;}
+        public int Delta
+        {
+            get
+            {
+                return this.Total - this.Good;
+            }
+        }
     }
 }

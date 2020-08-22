@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Owlvey.Falcon.Core.Aggregates;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -34,10 +35,12 @@ namespace Owlvey.Falcon.Core.Values
             this.Experience = experience;
         }
 
-        public QualityMeasureValue(MeasureValue availability, MeasureValue latency, MeasureValue experience)
+        public QualityMeasureValue(InteractionMeasureValue availability, MeasureValue latency, MeasureValue experience)
         {
             this.HasData = availability.HasData || experience.HasData || latency.HasData;
             this.Availability = availability.Value;
+            this.Total = availability.Total;
+            this.Good = availability.Good;
             this.Latency = latency.Value;            
             this.Experience = experience.Value;
         }

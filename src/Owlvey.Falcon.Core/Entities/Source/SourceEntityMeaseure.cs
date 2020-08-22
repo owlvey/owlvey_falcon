@@ -50,7 +50,7 @@ namespace Owlvey.Falcon.Core.Entities
             var measure = QualityUtils.CalculateAverage(data.Select(c => c.Measure));
             return new InteractionMeasureValue(measure, total, good);            
         }
-        private MeasureValue MeasureAvailability(DatePeriodValue period = null)
+        private InteractionMeasureValue MeasureAvailability(DatePeriodValue period = null)
         {
             IEnumerable<SourceItemEntity> data;
             if (period != null)

@@ -1,4 +1,5 @@
 ﻿using Owlvey.Falcon.Core.Entities;
+using Owlvey.Falcon.Core.Values;
 using System;
 using System.Text.Json.Serialization;
 
@@ -35,9 +36,9 @@ namespace Owlvey.Falcon.Models
         
     }
 
-    public class IndicatorAvailabilityGetListRp : IndicatorGetListRp
+    public class IndicatorDetailRp : IndicatorGetListRp
     {
-        public decimal Measure { get; set; }        
+        public QualityMeasureValue Measure { get; set; }        
     }
 
     public class IndicatorPostRp

@@ -23,7 +23,7 @@ namespace Owlvey.Falcon.Components
                 .ForMember(m => m.Description, opt => opt.MapFrom(src => src.Source.Description))                
                 .ForMember(c => c.Source, opt => opt.MapFrom(d => d.Source.Name));
 
-            cfg.CreateMap<IndicatorEntity, IndicatorAvailabilityGetListRp>()
+            cfg.CreateMap<IndicatorEntity, IndicatorDetailRp>()
                 .ForMember(m => m.Description, opt => opt.MapFrom(src => src.Source.Description))                
                 .ForMember(c => c.Measure, opt => opt.Ignore())                
                 .ForMember(c => c.Source, opt => opt.MapFrom(d => d.Source.Name));
