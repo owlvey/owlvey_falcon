@@ -2,7 +2,6 @@
 using Owlvey.Falcon.Core.Models.Migrate;
 using System.Linq;
 using System.Collections.Generic;
-using System.Text;
 using Owlvey.Falcon.Core.Entities.Source;
 
 namespace Owlvey.Falcon.Core.Aggregates

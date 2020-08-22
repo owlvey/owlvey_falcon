@@ -16,6 +16,8 @@ using Owlvey.Falcon.Core.Aggregates;
 using Owlvey.Falcon.Core;
 using Owlvey.Falcon.Components.Models;
 using Owlvey.Falcon.Core.Values;
+using Owlvey.Falcon.Core.Models.Migrate;
+using Owlvey.Falcon.Builders;
 
 namespace Owlvey.Falcon.Components
 {
@@ -380,6 +382,8 @@ namespace Owlvey.Falcon.Components
         public async Task<IEnumerable<string>> Restore(MemoryStream input) {
 
             var logs = new List<string>();            
+            var createdBy = this._identityService.GetIdentity();
+            var createdOn = this._datetimeGateway.GetCurrentDateTime();
 
             var previous = await this._dbContext.Customers.ToListAsync();
             foreach (var item in previous)
@@ -538,29 +542,14 @@ namespace Owlvey.Falcon.Components
 
                 var sourcesSheet = package.Workbook.Worksheets["Sources"];
 
-                for (int row = 2; row <= sourcesSheet.Dimension.Rows; row++)
-                {
-                    var organization = sourcesSheet.Cells[row, 1].GetValue<string>();
-                    var product = sourcesSheet.Cells[row, 2].GetValue<string>();
-                    var name = sourcesSheet.Cells[row, 3].GetValue<string>();
-                    var avatar = sourcesSheet.Cells[row, 4].GetValue<string>();
-                    var description = sourcesSheet.Cells[row, 5].GetValue<string>();
-                    var group = sourcesSheet.Cells[row, 6].GetValue<string>();
-                    var good = sourcesSheet.Cells[row, 7].GetValue<string>();
-                    var total = sourcesSheet.Cells[row, 8].GetValue<string>();
-                    var kind = sourcesSheet.Cells[row, 9].GetValue<string>();
-                    var percentile = sourcesSheet.Cells[row, 10].GetValue<decimal>();
-                    //TODO work
-                    await this._sourceComponent.CreateOrUpdate(
-                        organizations.Single(c => c.Name == organization), product, name, 
-                        string.Empty, avatar, 
-                        new DefinitionValue(good, total),
-                        new DefinitionValue(good, total),
-                        new DefinitionValue(good, total),
-                        description, percentile);                        
-                }
+                var sourcesInstances = SourceModel.Build(organizations, createdOn, createdBy, 
+                    new SheetRowAdapter(sourcesSheet));                 
+
+                await this._dbContext.Sources.AddRangeAsync(sourcesInstances);
+                await this._dbContext.SaveChangesAsync();
 
                 var sources = await this._dbContext.Sources.ToListAsync();
+
                 foreach (var item in sources)
                 {
                     item.Product = products.Single(c => c.Id == item.ProductId);
@@ -598,66 +587,8 @@ namespace Owlvey.Falcon.Components
                 }
 
                 var sourceItemsSheet = package.Workbook.Worksheets["SourceItems"];
-
-                var sourceItems= new List<(SourceEntity, SourceItemPostRp)>();
-                
-
-                for (int row = 2; row <= sourceItemsSheet.Dimension.Rows; row++)
-                {
-                    var organization = sourceItemsSheet.Cells[row, 1].GetValue<string>();
-                    var product = sourceItemsSheet.Cells[row, 2].GetValue<string>();
-                    var source = sourceItemsSheet.Cells[row, 3].GetValue<string>();
-                    var good = sourceItemsSheet.Cells[row, 4].GetValue<int>();
-                    var total = sourceItemsSheet.Cells[row, 5].GetValue<int>();
-                    var target = DateTime.Parse(sourceItemsSheet.Cells[row, 6].GetValue<string>());
-                    var measure = sourceItemsSheet.Cells[row, 7].GetValue<decimal>();
-                    var group = sourceItemsSheet.Cells[row, 8].GetValue<string>();
-
-                    var sourceTarget = sources.Single(c => c.Name == source && c.Product.Name == product && c.Product.Customer.Name == organization);
-
-                    var targetGroup = sourceTarget.ParseGroup(group);
-
-                    if (targetGroup == SourceGroupEnum.Availability) {
-                        sourceItems.Add((sourceTarget, new SourceItemAvailabilityPostRp()
-                        {
-                            SourceId = sourceTarget.Id.Value,                            
-                            Start = target,
-                            End = target,
-                            Good = good,
-                            Total = total,
-                            Measure = measure
-                        }));
-                    }
-                    if (targetGroup == SourceGroupEnum.Latency)
-                    {
-                        sourceItems.Add((sourceTarget, new SourceItemLatencyPostRp()
-                        {
-                            SourceId = sourceTarget.Id.Value,                            
-                            Start = target,
-                            End = target,                            
-                            Measure = measure
-                        }));
-                    }
-                    if (targetGroup == SourceGroupEnum.Experience)
-                    {
-                        sourceItems.Add((sourceTarget, new SourceItemExperiencePostRp()
-                        {
-                            SourceId = sourceTarget.Id.Value,                            
-                            Start = target,
-                            End = target,
-                            Good = good,
-                            Total = total,
-                            Measure = measure
-                        }));
-                    }
-                    
-                }
-
-                var groups = sourceItems.GroupBy(c => c.Item1, new SourceEntityComparer());
-                foreach (var item in groups)
-                {
-                    await this._sourceItemComponent.BulkInsert(item.Key, item.Select(c => c.Item2).ToList());
-                }
+                var sourceItems = SourceItemModel.Build(organizations, createdOn, createdBy, new SheetRowAdapter(sourceItemsSheet));
+                await this._sourceItemComponent.BulkInsert(sourceItems);                            
             }
 
             return logs;

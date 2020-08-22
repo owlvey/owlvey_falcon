@@ -1,3 +1,6 @@
+namespace Owlvey.Falcon.Core.Entities
+{
+}
 public class RiskWeightEntity {
 
     public int Id { get; set; }

@@ -1,3 +1,6 @@
+namespace Owlvey.Falcon.Core.Entities
+{
+}
 public class SecurityRiskEntity {
     public decimal LikeHood {get ; set ;}
     public decimal Impact {get; set;}

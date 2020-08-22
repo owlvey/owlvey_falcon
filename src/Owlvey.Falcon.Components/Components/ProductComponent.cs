@@ -19,6 +19,8 @@ using OfficeOpenXml;
 using Owlvey.Falcon.Core.Models.Migrate;
 using Owlvey.Falcon.Components.Models;
 using Owlvey.Falcon.Core.Values;
+using Owlvey.Falcon.Builders;
+using Owlvey.Falcon.Core.Entities.Source;
 
 namespace Owlvey.Falcon.Components
 {
@@ -182,6 +184,9 @@ namespace Owlvey.Falcon.Components
 
         public async Task<IEnumerable<string>> ImportsItems(int productId, MemoryStream input)
         {
+
+            var createdOn = this._datetimeGateway.GetCurrentDateTime();
+            var createdBy = this._identityService.GetIdentity();
             var product = await this._dbContext.Products.Include(c=>c.Customer)
                 .Where(c => c.Id == productId).SingleAsync();
 
@@ -189,93 +194,27 @@ namespace Owlvey.Falcon.Components
 
             var sources =  this._dbContext.Sources.Where(c => c.ProductId == productId).ToList();
 
+            var productInstance = await this._dbContext.Products.Include( c=>c.Customer)
+                    .Where(e => e.Id == productId).SingleAsync();
+
             using (var package = new ExcelPackage(input))
             {
                 var sourceSheet = package.Workbook.Worksheets["Sources"];
-                for (int row = 2; row <= sourceSheet.Dimension.Rows; row++)
-                {                    
-                    var name = sourceSheet.Cells[row, 1].GetValue<string>();
-                    var avatar = sourceSheet.Cells[row, 2].GetValue<string>();
-                    var description = sourceSheet.Cells[row, 3].GetValue<string>();
-                    var group = sourceSheet.Cells[row, 4].GetValue<string>();
-                    var goodDefinition = sourceSheet.Cells[row, 5].GetValue<string>();
-                    var totalDefinition = sourceSheet.Cells[row, 6].GetValue<string>();
-                    var kind = sourceSheet.Cells[row, 7].GetValue<string>();
-                    var percentile = sourceSheet.Cells[row, 8].GetValue<decimal>();                    
-                    if (!sources.Exists(c=>c.Name == name)) {                        
-                        await this._sourceComponent.CreateOrUpdate(product.Customer, product.Name,
-                            name, null, avatar,
-                            new DefinitionValue(goodDefinition, totalDefinition),
-                            new DefinitionValue(goodDefinition, totalDefinition),
-                            new DefinitionValue(goodDefinition, totalDefinition),
-                            description, percentile);
-                    }                    
+                var sourcesInstances = SourceLiteModel.Build(productInstance, createdOn, createdBy, 
+                new  Builders.SheetRowAdapter( sourceSheet));                
+                foreach (var item in sourcesInstances){
+                    if (!sources.Exists(c=>c.Name == item.Name)) {                        
+                        this._dbContext.Sources.Add(item);                        
+                    }   
                 }
-
-                // reload sources 
-                sources = this._dbContext.Sources.Where(c => c.ProductId == productId).ToList();
-
+                await this._dbContext.SaveChangesAsync();
+                productInstance.Sources = new SourceCollection(await this._dbContext.Sources.Where(c=>c.ProductId == productId).ToListAsync());
+                                  
                 var sourceItemsSheet = package.Workbook.Worksheets["SourceItems"];
-
-                var sourceItems = new List<(SourceEntity, SourceItemPostRp)>();
-
-                for (int row = 2; row <= sourceItemsSheet.Dimension.Rows; row++)
-                {                    
-                    var source = sourceItemsSheet.Cells[row, 1].GetValue<string>();
-                    var good = sourceItemsSheet.Cells[row, 2].GetValue<int>();
-                    var total = sourceItemsSheet.Cells[row, 3].GetValue<int>();
-                    var target = DateTime.Parse(sourceItemsSheet.Cells[row, 4].GetValue<string>());
-                    var measure = sourceItemsSheet.Cells[row, 5].GetValue<decimal>();
-                    var groupValue = sourceItemsSheet.Cells[row, 6].GetValue<string>();
-                    var sourceTarget = sources.SingleOrDefault(c => c.Name == source);                    
-                    var targetGroup = sourceTarget.ParseGroup(groupValue);
-                    if (sourceTarget != null)
-                    {
-                        if (targetGroup == SourceGroupEnum.Availability) {
-                            sourceItems.Add((sourceTarget, new SourceItemAvailabilityPostRp()
-                            {
-                                SourceId = sourceTarget.Id.Value,
-                                Start = target,
-                                End = target,
-                                Good = good,
-                                Total = total,
-                                Measure = measure
-                            }));
-                        }
-                        if (targetGroup == SourceGroupEnum.Latency)
-                        {
-                            sourceItems.Add((sourceTarget, new SourceItemLatencyPostRp()
-                            {
-                                SourceId = sourceTarget.Id.Value,
-                                Start = target,
-                                End = target,                                
-                                Measure = measure
-                            }));
-                        }
-                        if (targetGroup == SourceGroupEnum.Experience)
-                        {
-                            sourceItems.Add((sourceTarget, new SourceItemExperiencePostRp()
-                            {
-                                SourceId = sourceTarget.Id.Value,
-                                Start = target,
-                                End = target,
-                                Good = good,
-                                Total = total,
-                                Measure = measure
-                            }));
-                        }
-
-                    }
-                    else {
-                        logs.Add(" source not found " + source);
-                    }                    
-                }
-
-                var groups = sourceItems.GroupBy(c => c.Item1, new SourceEntityComparer());
-                foreach (var item in groups)
-                {
-                    await this._sourceItemComponent.BulkInsert(item.Key, item.Select(c => c.Item2).ToList());
-                }
+                var sourceItems = SourceItemLiteModel.Build(productInstance, createdOn, createdBy, 
+                    new SheetRowAdapter(sourceItemsSheet));
+                
+                await this._sourceItemComponent.BulkInsert(sourceItems);                
             }
 
             return logs;

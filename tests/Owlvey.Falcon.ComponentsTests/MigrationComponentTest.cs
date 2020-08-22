@@ -1,20 +1,13 @@
 ﻿using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using Owlvey.Falcon.Components;
-using Owlvey.Falcon.Repositories;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace Owlvey.Falcon.ComponentsTests
 {
     public class MigrationComponentTest
-    {
-        //TODO CHANGE
-        //[Fact]
+    {        
+        [Fact]
         public async Task ExporImport()
         {            
             
@@ -50,9 +43,31 @@ namespace Owlvey.Falcon.ComponentsTests
             await productComponent.ImportsItems(result.Id, stream);
         }
                 
+        [Fact]
+        public async Task Backup(){
+            #region   Components
 
-        //TODO CHANGE
-        //[Fact]
+            var container = ComponentTestFactory.BuildContainer();
+            var customerComponet = container.GetInstance<CustomerComponent>();
+            var customerQueryComponet = container.GetInstance<CustomerQueryComponent>();
+            var productQueryComponent = container.GetInstance<ProductQueryComponent>();
+            var squadQueryComponent = container.GetInstance<SquadQueryComponent>();
+            var sourceComponent = container.GetInstance<SourceComponent>();
+            var migrationComponent = container.GetInstance<MigrationComponent>();
+            var serviceComponent = container.GetInstance<ServiceQueryComponent>();
+            var featureComponent = container.GetInstance<FeatureQueryComponent>();
+            var sourceItemComponent = container.GetInstance<SourceItemComponent>();
+
+            #endregion
+            var result = await customerComponet.CreateCustomer(new Models.CustomerPostRp()
+            {
+                Name = "test",  Default = true   
+            });            
+            var stream = await migrationComponent.Backup(true);
+            
+        }
+        
+        [Fact]
         public async Task BackupRestore() {
             
             #region   Components
@@ -126,9 +141,6 @@ namespace Owlvey.Falcon.ComponentsTests
             
             var features = await featureComponent.GetFeatures(customer_target.Id);
             Assert.NotEmpty(features);      
-            
-
         }
-
     }
 }

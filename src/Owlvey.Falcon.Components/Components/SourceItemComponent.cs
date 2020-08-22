@@ -154,22 +154,13 @@ namespace Owlvey.Falcon.Components
         }
 
        
-        public async Task BulkInsert(SourceEntity source, 
-            IEnumerable<SourceItemPostRp> sourceItems) {
-
-            var createdBy = this._identityService.GetIdentity();
-            int period = 0;
-            var on = this._datetimeGateway.GetCurrentDateTime();
+        public async Task BulkInsert(IEnumerable<SourceItemEntity> sourceItems) {
             
+            int period = 0;                        
             foreach (var model in sourceItems)
-            {
-                var range = this.CreateFromPostRp( source, model, on, createdBy );
-                foreach (var item in range)
-                {
-                    this._dbContext.SourcesItems.Add(item);
-                    period += 1;
-                }
-
+            {   
+                this._dbContext.SourcesItems.Add(model);
+                period += 1;                
                 if (period > 1000) {                    
                     await this._dbContext.SaveChangesAsync();
                     period = 0;
