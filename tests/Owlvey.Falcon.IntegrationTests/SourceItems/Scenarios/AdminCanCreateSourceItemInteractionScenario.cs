@@ -45,7 +45,7 @@ namespace Owlvey.Falcon.IntegrationTests.SourceItems.Scenarios
                      .Build();
 
             var jsonContent = HttpClientExtension.ParseModelToHttpContent(representation);
-            var responsePost = this._client.PostAsync($"/sourceItems", jsonContent).Result;
+            var responsePost = this._client.PostAsync($"/sourceItems/availability", jsonContent).Result;
             Assert.Equal(StatusCodes.Status200OK, (int)responsePost.StatusCode);            
         }
 

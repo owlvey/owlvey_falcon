@@ -1,55 +1,70 @@
+using System;
+
 namespace Owlvey.Falcon.Core.Entities
 {
-}
-public class SecurityRiskEntity {
-    public decimal LikeHood {get ; set ;}
-    public decimal Impact {get; set;}
+    public partial class SecurityRiskEntity : BaseEntity
+    {
+        public int SourceId { get; set; }
+        public SourceEntity Source { get; set; } 
 
-    public int SourceId { get; set; }
+        public int SecurityThreatId { get; set; }        
+        public SecurityThreatEntity SecurityThreat { get; set; }
 
-    public int ThreatId {get; set; }
+        #region Likehood 
 
-    #region Likehood 
-    
-    #region threat agent factors
-    public int AgentSkillLevel { get; set; }
-    public int Motive { get; set; }
-    public int Opportunity { get; set; }
-    public int Size {get; set; }
-    
-    #endregion 
+        #region threat agent factors
+        public int AgentSkillLevel { get; set; } = 1;
+        public int Motive { get; set; } = 1;
+        public int Opportunity { get; set; } = 1;
+        public int Size { get; set; } = 1;
 
-    #region vulnerability factors
-    public int EasyDiscovery {get; set;}
-    public int EasyExploit {get;set;}
-    public int Awareness {get;set;}
-    public int IntrusionDetection {get; set;}
+        #endregion
 
-    #endregion
+        #region vulnerability factors
+        public int EasyDiscovery { get; set; } = 1;
+        public int EasyExploit { get; set; } = 1;
+        public int Awareness { get; set; } = 1;
+        public int IntrusionDetection { get; set; } = 1;
 
-    #endregion 
-    
-    #region Impact
+        #endregion
 
-    #region Technical Impact
-    public int LossConfidentiality { get; set; }
-    public int LossIntegrity {get; set;}
-    public int LossAvailability {get;set;}
-    public int LossAccountability {get;set;}
-    #endregion 
+        #endregion
 
-    #region Business Impact
+        #region Impact
 
-    public int FinancialDamage { get; set; }
-    public int ReputationDamage { get; set; }
-    public int NonCompliance { get; set; }
-    public int PrivacyViolation { get; set; }
-    
-    #endregion
-    #endregion 
-    public decimal Risk { 
-        get{
-            return LikeHood * Impact;
+        #region Technical Impact
+        public int LossConfidentiality { get; set; } = 1;
+        public int LossIntegrity { get; set; } = 1;
+        public int LossAvailability { get; set; } = 1;
+        public int LossAccountability { get; set; } = 1;
+        #endregion
+
+        #region Business Impact
+
+        public int FinancialDamage { get; set; } = 1;
+        public int ReputationDamage { get; set; } = 1;
+        public int NonCompliance { get; set; } = 1;
+        public int PrivacyViolation { get; set; } = 1;
+
+        #endregion
+        #endregion
+
+        public decimal LikeHood { get; set; } 
+        public decimal Impact { get; set; } 
+
+        public decimal Risk
+        {
+            get
+            {
+                return LikeHood * Impact;
+            }
+        }
+
+        public void Update(DateTime on, string ModifiedBy, int AgentSkillLevel) {
+            this.AgentSkillLevel = AgentSkillLevel;
+            this.ModifiedOn = on;
+            this.ModifiedBy = ModifiedBy;
+
         }
     }
 }

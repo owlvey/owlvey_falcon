@@ -60,6 +60,19 @@ namespace Owlvey.Falcon.IntegrationTests.Common
             var responseRepresentation = HttpClientExtension.ParseHttpContentToModel<SourceGetRp>(responseGet.Content);
             return responseRepresentation;
         }
+
+        internal static SecurityThreatGetRp CreateSecurityThreat(in HttpClient client)
+        {            
+            var representation = Builder<SecurityThreatPostRp>.CreateNew()
+                     .With(x => x.Name = $"{Guid.NewGuid()}")                     
+                     .Build();
+
+            var jsonContent = HttpClientExtension.ParseModelToHttpContent(representation);
+            var responsePost = client.PostAsync($"/risks/security/threats", jsonContent).Result;
+            Assert.Equal(StatusCodes.Status200OK, (int)responsePost.StatusCode);
+            var responseRepresentation = HttpClientExtension.ParseHttpContentToModel<SecurityThreatGetRp>(responsePost.Content);
+            return responseRepresentation;
+        }
         internal static (DateTime start, DateTime end) JanuaryPeriod() {
             return (new DateTime(2019, 1, 1), new DateTime(2019, 1, 31));
         }

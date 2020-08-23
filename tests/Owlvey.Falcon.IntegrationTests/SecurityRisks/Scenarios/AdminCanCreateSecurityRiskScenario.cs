@@ -12,57 +12,54 @@ using System.Text;
 using TestStack.BDDfy;
 using Xunit;
 
-
-namespace Owlvey.Falcon.IntegrationTests.SourceItems.Scenarios
-{    
-    public class AdminCanCreateSourceItemProportionScenario : AuthenticatedScenarioBase, IDisposable
+namespace Owlvey.Falcon.IntegrationTests.SecurityThreats.Scenarios
+{
+    public class AdminCanCreateSecurityRiskScenario : AuthenticatedScenarioBase, IDisposable
     {
-        
         private CustomerGetRp Customer;
         private ProductGetRp Product;
         private SourceGetRp Source;
-        public AdminCanCreateSourceItemProportionScenario(HttpClient client) : base(client)
+        private SecurityThreatGetRp Threat;
+        public AdminCanCreateSecurityRiskScenario(HttpClient client) : base(client)
         {
-            
-        }                
+        }
 
-        [Given("Admin creates customer and product")]
+        [Given("Admin creates threat")]
         public void given_information()
         {
             this.Customer = DataSeedUtil.CreateCustomer(this._client);
             this.Product = DataSeedUtil.CreateProduct(this._client, this.Customer);
             this.Source = DataSeedUtil.CreateSource(this._client, this.Product);
+            this.Threat = DataSeedUtil.CreateSecurityThreat(this._client);
         }
 
-        [When("Admin saves new source items")]
+        [When("Admin send post")]
         public void when_send_request()
-        {
-            int sourceId = this.Source.Id;
-            var period = DataSeedUtil.JanuaryPeriod();
-            var representation = Builder<SourceItemAvailabilityPostRp>.CreateNew()
-                     .With(x => x.SourceId = sourceId)
-                     .With(x => x.Start = period.start)
-                     .With(x => x.End = period.end)
-                     .With(x => x.Measure = 0.9m)                     
+        {               
+            var representation = Builder<SecurityRiskPost>.CreateNew()
+                     .With(x => x.SourceId = this.Source.Id)
+                     .With(x => x.ThreatId = this.Threat.Id)
                      .Build();
 
             var jsonContent = HttpClientExtension.ParseModelToHttpContent(representation);
-            var responsePost = this._client.PostAsync($"/sourceItems/availability", jsonContent).Result;
+            var responsePost = this._client.PostAsync($"/risks/security", jsonContent).Result;
             Assert.Equal(StatusCodes.Status200OK, (int)responsePost.StatusCode);
         }
 
         [Then("Admin verifies source items created")]
         public void then_created()
         {
-            var responseGet = this._client.GetAsync($"/sourceItems?sourceId={this.Source.Id}").Result;
+            var responseGet = this._client.GetAsync($"/risks/security").Result;
             Assert.Equal(StatusCodes.Status200OK, (int)responseGet.StatusCode);
-            var responseRepresentation = HttpClientExtension.ParseHttpContentToModel<IEnumerable<SourceItemGetListRp>>(responseGet.Content);
-            Assert.Equal(31, responseRepresentation.Count());
+            var responseRepresentation = HttpClientExtension.ParseHttpContentToModel<IEnumerable<SecurityThreatGetRp>>(responseGet.Content);
+            Assert.NotEmpty(responseRepresentation);
         }
 
         public void Dispose()
         {
 
         }
+
+
     }
 }

@@ -12,7 +12,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -31,7 +31,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -46,11 +46,32 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SecurityThreatEntity",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CreatedOn = table.Column<DateTime>(nullable: false),
+                    CreatedBy = table.Column<string>(nullable: false),
+                    ModifiedOn = table.Column<DateTime>(nullable: false),
+                    ModifiedBy = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
+                    Avatar = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    Reference = table.Column<string>(nullable: true),
+                    Tags = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SecurityThreatEntity", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserEntity",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -70,7 +91,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -97,7 +118,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -124,7 +145,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -149,7 +170,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -176,7 +197,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -208,7 +229,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -241,7 +262,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -276,7 +297,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -306,7 +327,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -336,7 +357,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -366,7 +387,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -396,7 +417,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -424,11 +445,59 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SecurityRiskEntity",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CreatedOn = table.Column<DateTime>(nullable: false),
+                    CreatedBy = table.Column<string>(nullable: false),
+                    ModifiedOn = table.Column<DateTime>(nullable: false),
+                    ModifiedBy = table.Column<string>(nullable: false),
+                    SourceId = table.Column<int>(nullable: false),
+                    SecurityThreatId = table.Column<int>(nullable: false),
+                    AgentSkillLevel = table.Column<int>(nullable: false),
+                    Motive = table.Column<int>(nullable: false),
+                    Opportunity = table.Column<int>(nullable: false),
+                    Size = table.Column<int>(nullable: false),
+                    EasyDiscovery = table.Column<int>(nullable: false),
+                    EasyExploit = table.Column<int>(nullable: false),
+                    Awareness = table.Column<int>(nullable: false),
+                    IntrusionDetection = table.Column<int>(nullable: false),
+                    LossConfidentiality = table.Column<int>(nullable: false),
+                    LossIntegrity = table.Column<int>(nullable: false),
+                    LossAvailability = table.Column<int>(nullable: false),
+                    LossAccountability = table.Column<int>(nullable: false),
+                    FinancialDamage = table.Column<int>(nullable: false),
+                    ReputationDamage = table.Column<int>(nullable: false),
+                    NonCompliance = table.Column<int>(nullable: false),
+                    PrivacyViolation = table.Column<int>(nullable: false),
+                    LikeHood = table.Column<decimal>(nullable: false),
+                    Impact = table.Column<decimal>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SecurityRiskEntity", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SecurityRiskEntity_SecurityThreatEntity_SecurityThreatId",
+                        column: x => x.SecurityThreatId,
+                        principalTable: "SecurityThreatEntity",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SecurityRiskEntity_SourceEntity_SourceId",
+                        column: x => x.SourceId,
+                        principalTable: "SourceEntity",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SourceItemEntity",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -456,7 +525,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -541,6 +610,16 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_SecurityRiskEntity_SecurityThreatId",
+                table: "SecurityRiskEntity",
+                column: "SecurityThreatId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SecurityRiskEntity_SourceId",
+                table: "SecurityRiskEntity",
+                column: "SourceId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ServiceEntity_ProductId_Name",
                 table: "ServiceEntity",
                 columns: new[] { "ProductId", "Name" },
@@ -611,6 +690,9 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 name: "MemberEntity");
 
             migrationBuilder.DropTable(
+                name: "SecurityRiskEntity");
+
+            migrationBuilder.DropTable(
                 name: "ServiceMapEntity");
 
             migrationBuilder.DropTable(
@@ -624,6 +706,9 @@ namespace Owlvey.Falcon.Repositories.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserEntity");
+
+            migrationBuilder.DropTable(
+                name: "SecurityThreatEntity");
 
             migrationBuilder.DropTable(
                 name: "ServiceEntity");

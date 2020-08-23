@@ -20,7 +20,7 @@ namespace Owlvey.Falcon.Core.Entities
         public CustomerEntity Customer { get; set; }
 
         public int CustomerId { get; set; }
-
+        
         public virtual ICollection<ServiceEntity> Services { get; set; } = new List<ServiceEntity>();
         public virtual ICollection<FeatureEntity> Features { get; set; } = new List<FeatureEntity>();
         public virtual SourceCollection Sources { get; set; } = new SourceCollection();

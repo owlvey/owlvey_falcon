@@ -51,6 +51,17 @@ namespace Owlvey.Falcon.Repositories
 
         public DbSet<ClueEntity> Clues { get; set; }
 
+        #region Security  Risk
+
+        public DbSet<SecurityRiskEntity> SecurityRisks { get; set; }
+        public DbSet<SecurityThreatEntity> SecurityThreats { get; set; }
+                        
+        #endregion
+
+        #region Reliability Risk
+
+        #endregion
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             foreach (IMutableEntityType entity in modelBuilder.Model.GetEntityTypes())

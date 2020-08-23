@@ -57,7 +57,10 @@ namespace Owlvey.Falcon.IoC
 
             services.AddTransient<CacheComponent>();
 
-            services.AddTransient<ConfigurationComponent>(); 
+            services.AddTransient<ConfigurationComponent>();
+
+            services.AddTransient<SecurityRiskComponent>();
+
             // Gateways
             services.AddTransient<IDateTimeGateway, DateTimeGateway>();
 
@@ -80,6 +83,7 @@ namespace Owlvey.Falcon.IoC
                 SquadFeatureComponentConfiguration.ConfigureMappers(cfg);
                 IndicatorComponentConfiguration.ConfigureMappers(cfg);
                 SourceComponent.ConfigureMappers(cfg);
+                SecurityRiskComponent.ConfigureMappers(cfg);
             });
 
             IMapper mapper = mapperCfg.CreateMapper();

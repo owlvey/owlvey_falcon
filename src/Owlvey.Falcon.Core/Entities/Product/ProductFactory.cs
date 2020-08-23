@@ -25,7 +25,7 @@ namespace Owlvey.Falcon.Core.Entities
                 var anchorSLI = AnchorEntity.Factory.Create("sample", on, user, entity);                
                 entity.Anchors.Add(anchorSLI);                                
                 entity.Validate();
-                entity.Customer = customer;
+                entity.Customer = customer;                
                 customer.Products.Add(entity);
 
 
