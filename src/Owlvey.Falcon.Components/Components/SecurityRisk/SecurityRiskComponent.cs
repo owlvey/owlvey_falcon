@@ -24,8 +24,8 @@ namespace Owlvey.Falcon.Components
         private readonly FalconDbContext _dbContext;
 
         public SecurityRiskComponent(FalconDbContext dbContext,
-            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway,
-            IMapper mapper, ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityService, configuration)
+            IUserIdentityGateway identityGateway, IDateTimeGateway dateTimeGateway,
+            IMapper mapper, ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityGateway, configuration)
         {
             this._dbContext = dbContext;
         }
@@ -49,7 +49,7 @@ namespace Owlvey.Falcon.Components
         }
         public async Task<SecurityRiskGetRp> Create(SecurityRiskPost model)
         {
-            var modifiedBy = this._identityService.GetIdentity();
+            var modifiedBy = this._identityGateway.GetIdentity();
             var modifiedOn = this._datetimeGateway.GetCurrentDateTime();
             var item = SecurityRiskEntity.Factory.Create(
                 model.SourceId, 
@@ -63,7 +63,7 @@ namespace Owlvey.Falcon.Components
         }
         public async Task<SecurityRiskGetRp> UpdateRisk(int id, SecurityRiskPut model)
         {
-            var modifiedBy = this._identityService.GetIdentity();
+            var modifiedBy = this._identityGateway.GetIdentity();
             var modifiedOn = this._datetimeGateway.GetCurrentDateTime();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
 
@@ -97,7 +97,7 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<SecurityThreatGetRp>(item);
         }
         public async Task<SecurityThreatGetRp> CreateThreat(SecurityThreatPostRp model) {
-            var modifiedBy = this._identityService.GetIdentity();
+            var modifiedBy = this._identityGateway.GetIdentity();
             var modifiedOn = this._datetimeGateway.GetCurrentDateTime();
             var item = SecurityThreatEntity.Create(model.Name, modifiedBy, modifiedOn);
             this._dbContext.Add(item);
@@ -106,14 +106,14 @@ namespace Owlvey.Falcon.Components
         }
         public async Task<SecurityThreatGetRp> UpdateThreat(int id, SecurityThreatPutRp model)
         {
-            var modifiedBy = this._identityService.GetIdentity();
+            var modifiedBy = this._identityGateway.GetIdentity();
             var modifiedOn = this._datetimeGateway.GetCurrentDateTime();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
 
             var item = this._dbContext.SecurityThreats.Where(c => c.Id == id).SingleOrDefault();
             if (item != null)
             {
-                item.Update(modifiedOn, modifiedBy, model.Name);
+                item.Update(modifiedOn, modifiedBy, model.Name, model.Description, model.Tags, model.Reference);
                 await this._dbContext.SaveChangesAsync();
             }
             return this._mapper.Map<SecurityThreatGetRp>(item);

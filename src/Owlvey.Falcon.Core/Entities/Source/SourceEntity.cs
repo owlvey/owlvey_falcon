@@ -3,11 +3,8 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.InteropServices.ComTypes;
+
 using Owlvey.Falcon.Core.Values;
-using System.Threading.Tasks;
-using Owlvey.Falcon.Models;
 
 namespace Owlvey.Falcon.Core.Entities
 {

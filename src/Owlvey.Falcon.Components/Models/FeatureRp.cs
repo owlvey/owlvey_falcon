@@ -46,7 +46,7 @@ namespace Owlvey.Falcon.Models
         public List<IndicatorGetListRp> Indicators { get; set; } = new List<IndicatorGetListRp>();
         public List<SquadGetListRp> Squads { get; set; } = new List<SquadGetListRp>();
         public List<IncidentGetListRp> Incidents { get; set; } = new List<IncidentGetListRp>();
-        public List<ServiceGetListRp> Services { get; set; } = new List<ServiceGetListRp>();
+        public List<JourneyGetListRp> Journeys { get; set; } = new List<JourneyGetListRp>();
     }
 
     public class FeatureQualityGetRp : FeatureBaseRp
@@ -67,7 +67,7 @@ namespace Owlvey.Falcon.Models
         public List<IndicatorDetailRp> Indicators { get; set; } = new List<IndicatorDetailRp>();
         public List<SquadGetListRp> Squads { get; set; } = new List<SquadGetListRp>();
         public List<IncidentGetListRp> Incidents { get; set; } = new List<IncidentGetListRp>();
-        public List<ServiceGetListRp> Services { get; set; } = new List<ServiceGetListRp>();
+        public List<JourneyGetListRp> Journeys { get; set; } = new List<JourneyGetListRp>();
     }
 
     public class FeatureGetListRp : FeatureBaseRp
@@ -76,7 +76,7 @@ namespace Owlvey.Falcon.Models
         public DateTime? CreatedOn { get; set; }        
         public string Product { get; set; }
         public int IndicatorsCount { get; set; }
-        public int ServiceCount { get; set; }
+        public int JourneyCount { get; set; }
         public decimal Availability { get; set; }        
         public decimal Latency { get; set; }
 
@@ -102,7 +102,7 @@ namespace Owlvey.Falcon.Models
         public DateTime? CreatedOn { get; set; }        
         public string Product { get; set; }
         public int IndicatorsCount { get; set; }
-        public int ServiceCount { get; set; }
+        public int JourneyCount { get; set; }
         public QualityMeasureValue Quality { get; set; }                
         public int Squads { get; set; }
 
@@ -120,9 +120,9 @@ namespace Owlvey.Falcon.Models
     {
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
-        public int ServiceId { get; set; }
-        public string Service { get; set; }
-        public string ServiceAvatar { get; set; }
+        public int JourneyId { get; set; }
+        public string Journey { get; set; }
+        public string JourneyAvatar { get; set; }
         public string Product { get; set; }
 
         public SLOValue SLO { get; set; }

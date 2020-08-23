@@ -12,14 +12,14 @@ namespace Owlvey.Falcon.Components
 {
     public class CacheComponent
     {
-        public const string ServiceComponentGetServicesAvailability = "ServiceComponentGetServicesAvailability";
+        public const string JourneyComponentGetJourneysAvailability = "JourneyComponentGetJourneysAvailability";
         public const string FeatureComponentGetFeaturesAvailability = "FeatureComponentGetFeaturesAvailability";
         public const string OWLVEY_LAST_MODIFIED = "owlvey_last_modified";
         private static IMemoryCache _cache = new MemoryCache( new MemoryCacheOptions() { });
 
         private static Dictionary<string, List<string>> Dependencies = new Dictionary<string, List<string>>() {
             {
-                CacheComponent.ServiceComponentGetServicesAvailability , new List<string>()
+                CacheComponent.JourneyComponentGetJourneysAvailability , new List<string>()
             }
         };
 
@@ -34,8 +34,8 @@ namespace Owlvey.Falcon.Components
 
             var customer = await this.DbContext.Customers.OrderByDescending(c => c.ModifiedOn ).FirstOrDefaultAsync();
             var product = await this.DbContext.Products.OrderByDescending(c => c.ModifiedOn).FirstOrDefaultAsync();
-            var service = await this.DbContext.Services.OrderByDescending(c => c.ModifiedOn).FirstOrDefaultAsync(); 
-            var serviceMap = await this.DbContext.ServiceMaps.OrderByDescending(c => c.ModifiedOn).FirstOrDefaultAsync();
+            var journey = await this.DbContext.Journeys.OrderByDescending(c => c.ModifiedOn).FirstOrDefaultAsync(); 
+            var journeyMap = await this.DbContext.JourneyMaps.OrderByDescending(c => c.ModifiedOn).FirstOrDefaultAsync();
             var feature = await this.DbContext.Features.OrderByDescending(c => c.ModifiedOn).FirstOrDefaultAsync();
             var indicator = await this.DbContext.Indicators.OrderByDescending(c => c.ModifiedOn).FirstOrDefaultAsync();
             var source = await this.DbContext.Sources.OrderByDescending(c => c.ModifiedOn).FirstOrDefaultAsync();
@@ -46,8 +46,8 @@ namespace Owlvey.Falcon.Components
             var dates = new List<DateTime?>();            
             dates.Add(customer?.ModifiedOn ?? DateTime.MinValue);
             dates.Add(product?.ModifiedOn ?? DateTime.MinValue);
-            dates.Add(service?.ModifiedOn ?? DateTime.MinValue);
-            dates.Add(serviceMap?.ModifiedOn ?? DateTime.MinValue);
+            dates.Add(journey?.ModifiedOn ?? DateTime.MinValue);
+            dates.Add(journeyMap?.ModifiedOn ?? DateTime.MinValue);
             dates.Add(feature?.ModifiedOn ?? DateTime.MinValue);
             dates.Add(indicator?.ModifiedOn ?? DateTime.MinValue);
             dates.Add(source?.ModifiedOn ?? DateTime.MinValue);

@@ -13,7 +13,7 @@ namespace Owlvey.Falcon.Core.Entities
         public DebtMeasureValue MeasureDebt(DatePeriodValue period = null) {
             var measure = this.Measure(period);
             var result = new DebtMeasureValue();
-            result.AddRange(this.ServiceMaps.Select(c => measure.MeasureDebt(c.Service.GetSLO())).ToList());
+            result.AddRange(this.JourneyMaps.Select(c => measure.MeasureDebt(c.Journey.GetSLO())).ToList());
             return result;            
         }
         public QualityMeasureValue Measure(DatePeriodValue period = null)

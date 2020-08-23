@@ -10,7 +10,7 @@ namespace Owlvey.Falcon.IntegrationTests.Constants
     {   
         public static string ProductName { get; set; } = "Default Product";
         public static string FeatureName { get; set; } = "Default Feature";
-        public static string ServiceName { get; set; } = "Default Service";
+        public static string JourneyName { get; set; } = "Default Journey";
         public static string SquadName { get; set; } = "Default Squad";
         
         public static string UserEmail { get; set; } = "user@falcon.com";

@@ -12,8 +12,8 @@ namespace Owlvey.Falcon.Core.Models.Migrate
         public ICollection<AnchorModel> Anchors { get; protected set; } = new List<AnchorModel>();
         public ICollection<MemberModel> Members { get; protected set; } =  new List<MemberModel>();
         public ICollection<ProductModel> Products { get; protected set; } = new List<ProductModel>();
-        public ICollection<ServiceModel> Services { get; protected set; } = new List<ServiceModel>();
-        public ICollection<ServiceMapModel> ServiceMaps { get; protected set; } = new List<ServiceMapModel>();
+        public ICollection<JourneyModel> Journeys { get; protected set; } = new List<JourneyModel>();
+        public ICollection<JourneyMapModel> JourneyMaps { get; protected set; } = new List<JourneyMapModel>();
         public ICollection<FeatureModel> Features { get; protected set; } = new List<FeatureModel>();
         public ICollection<SquadFeatureModel> SquadFeatures { get; protected set; } = new List<SquadFeatureModel>();
         public ICollection<IndicatorModel> Indicators { get; protected set; } = new List<IndicatorModel>();
@@ -68,20 +68,20 @@ namespace Owlvey.Falcon.Core.Models.Migrate
                 this.Anchors.Add(item);
             }
         }
-        public void AddServices(string organization, string product, IEnumerable<ServiceEntity> services)
+        public void AddJourneys(string organization, string product, IEnumerable<JourneyEntity> journeys)
         {
-            var items = ServiceModel.Load(organization,  product, services);
+            var items = JourneyModel.Load(organization,  product, journeys);
             foreach (var item in items)
             {
-                this.Services.Add(item);
+                this.Journeys.Add(item);
             }
         }
-        public void AddServiceMaps(string organization, string product, string service, IEnumerable<ServiceMapEntity> maps)
+        public void AddJourneyMaps(string organization, string product, string journey, IEnumerable<JourneyMapEntity> maps)
         {
-            var items = ServiceMapModel.Load(organization, product, service, maps);
+            var items = JourneyMapModel.Load(organization, product, journey, maps);
             foreach (var item in items)
             {
-                this.ServiceMaps.Add(item);
+                this.JourneyMaps.Add(item);
             }
         }
 

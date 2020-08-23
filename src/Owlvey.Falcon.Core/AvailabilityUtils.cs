@@ -33,7 +33,7 @@ namespace Owlvey.Falcon.Core
             return Math.Floor( (minutes * budget) / 100m);
         }
 
-        public static string BudgetToAction(ServiceQualityMeasureValue measure) {
+        public static string BudgetToAction(JourneyQualityMeasureValue measure) {
             if (measure.AvailabilityErrorBudget > 0 && measure.LatencyErrorBudget > 0 && measure.ExperienceErrorBudget > 0)
             {
                 return "innovate";                

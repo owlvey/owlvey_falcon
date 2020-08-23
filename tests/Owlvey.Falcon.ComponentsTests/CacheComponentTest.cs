@@ -10,7 +10,7 @@ namespace Owlvey.Falcon.ComponentsTests
     public class CacheComponentTest
     {
         [Fact]
-        public void CacheServicesSuccess() {
+        public void CacheSuccess() {
             var container = ComponentTestFactory.BuildContainer();
             var cache = container.GetInstance<CacheComponent>();
             var modified = cache.GetLastModified();

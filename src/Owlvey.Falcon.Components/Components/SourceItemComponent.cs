@@ -23,8 +23,8 @@ namespace Owlvey.Falcon.Components
         public SourceItemComponent(FalconDbContext dbContext, 
             IDateTimeGateway dataTimeGateway, 
             IMapper mapper, 
-            IUserIdentityGateway identityService,
-            ConfigurationComponent configuration) : base(dataTimeGateway, mapper, identityService, configuration)
+            IUserIdentityGateway identityGateway,
+            ConfigurationComponent configuration) : base(dataTimeGateway, mapper, identityGateway, configuration)
         {
             this._dbContext = dbContext;            
         }
@@ -56,7 +56,7 @@ namespace Owlvey.Falcon.Components
         }
         public async Task<IEnumerable<SourceItemBaseRp>> CreateLatencyItem(SourceItemLatencyPostRp model)
         {
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             var on = this._datetimeGateway.GetCurrentDateTime();
             var source = await this._dbContext.Sources.SingleAsync(c => c.Id == model.SourceId);
 
@@ -75,7 +75,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<IEnumerable<SourceItemBaseRp>> CreateExperienceItem(SourceItemExperiencePostRp model)
         {
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             var on = this._datetimeGateway.GetCurrentDateTime();
             var source = await this._dbContext.Sources.SingleAsync(c => c.Id == model.SourceId);
 
@@ -111,7 +111,7 @@ namespace Owlvey.Falcon.Components
         }
         public async Task<IEnumerable<SourceItemBaseRp>> CreateAvailabilityItem(SourceItemAvailabilityPostRp model)
         {
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             var on = this._datetimeGateway.GetCurrentDateTime();
             var source = await this._dbContext.Sources.SingleAsync(c => c.Id == model.SourceId);
 

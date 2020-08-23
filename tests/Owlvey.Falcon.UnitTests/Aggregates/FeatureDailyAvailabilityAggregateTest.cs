@@ -16,7 +16,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         [Fact]
         public void MeasureFeatureAvailability() {
 
-            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductServiceFeature();
+            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductJourneyFeature();
             var source = TestDataFactory.BuildSource(product);
             var sourceA = TestDataFactory.BuildSource(product);
 
@@ -56,7 +56,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         [Fact]
         public void MeasureFeatureAvailabilityEmpyIndicators()
         {
-            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductServiceFeature();
+            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductJourneyFeature();
             
             var aggregate = new FeatureDailyAvailabilityAggregate(feature, 
                 new DatePeriodValue( OwlveyCalendar.StartJanuary2017, OwlveyCalendar.EndJanuary2017));

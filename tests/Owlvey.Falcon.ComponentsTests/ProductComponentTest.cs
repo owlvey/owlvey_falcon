@@ -95,20 +95,20 @@ namespace Owlvey.Falcon.ComponentsTests
             var indicatorComponent = container.GetInstance<IndicatorComponent>();
             var featureQueryComponent = container.GetInstance<FeatureQueryComponent>();
             var sourceComponent = container.GetInstance<SourceComponent>();
-            var serviceComponent = container.GetInstance<ServiceComponent>();
+            var journeyComponent = container.GetInstance<JourneyComponent>();
             var productComponent = container.GetInstance<ProductComponent>();
             var productQueryComponent = container.GetInstance<ProductQueryComponent>();
-            var serviceQueryComponent = container.GetInstance<ServiceQueryComponent>();
+            var journeyQueryComponent = container.GetInstance<JourneyQueryComponent>();
             var data = await ComponentTestFactory.BuildCustomerWithSquad(container,
                 OwlveyCalendar.January201903, OwlveyCalendar.January201905);
             
             await productComponent.DeleteProduct(data.productId);
 
-            var service = await productQueryComponent.GetProductById(data.productId);
-            Assert.Null(service);
+            var journey = await productQueryComponent.GetProductById(data.productId);
+            Assert.Null(journey);
             var feature = await featureQueryComponent.GetFeatureById(data.featureId);
             Assert.Null(feature);
-            var map = dbcontext.ServiceMaps.Where(c => c.ServiceId == data.serviceId).ToList();
+            var map = dbcontext.JourneyMaps.Where(c => c.JourneyId == data.journeyId).ToList();
             Assert.Empty(map);
         }
 
@@ -122,7 +122,7 @@ namespace Owlvey.Falcon.ComponentsTests
 
             var product = (await productQueryComponent.GetProducts(customerId)).ElementAt(0);            
 
-            var result = await productQueryComponent.GetDailyServiceSeriesById(product.Id, 
+            var result = await productQueryComponent.GetDailyJourneysSeriesById(product.Id, 
                 new DatePeriodValue( OwlveyCalendar.StartJanuary2019,
                 OwlveyCalendar.January201910));
 
@@ -192,7 +192,7 @@ namespace Owlvey.Falcon.ComponentsTests
         }
 
         [Fact]
-        public async Task ServiceGroupDashboard()
+        public async Task JourneyGroupDashboard()
         {
             var container = ComponentTestFactory.BuildContainer();
             var customerId = await ComponentTestFactory.BuildCustomer(container);
@@ -205,7 +205,7 @@ namespace Owlvey.Falcon.ComponentsTests
                 Name = "test"
             });
 
-            var result = await productQueryComponent.GetServiceGroupDashboard(product.Id, OwlveyCalendar.January201903,
+            var result = await productQueryComponent.GetJourneyGroupDashboard(product.Id, OwlveyCalendar.January201903,
                 OwlveyCalendar.EndJuly2019);
 
             Assert.NotNull(result); 

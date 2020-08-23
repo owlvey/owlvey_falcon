@@ -11,17 +11,17 @@ namespace Owlvey.Falcon.Core.Aggregates
         private IEnumerable<CustomerEntity> Customers;        
         private IEnumerable<SourceEntity> Sources;
         private IEnumerable<SourceItemEntity> SourceItems;
-        private IEnumerable<ServiceEntity> Services;
+        private IEnumerable<JourneyEntity> Journeys;
         private IEnumerable<FeatureEntity> Features;
         private IEnumerable<UserEntity> Users;
         public BackupAggregate(
             IEnumerable<UserEntity> users,
             IEnumerable<CustomerEntity> customers,
-            IEnumerable<ServiceEntity> services,
+            IEnumerable<JourneyEntity> journeys,
             IEnumerable<FeatureEntity> features,
             IEnumerable<SourceEntity> sources,
             IEnumerable<SourceItemEntity> sourceItems) {
-            this.Services = services;
+            this.Journeys = journeys;
             this.Features = features; 
             this.Customers = customers;
             this.SourceItems = sourceItems;
@@ -44,12 +44,12 @@ namespace Owlvey.Falcon.Core.Aggregates
                 foreach (var product in customer.Products)
                 {
                     product.Features = this.Features.Where(c => c.ProductId == product.Id).ToList();
-                    product.Services = this.Services.Where(c => c.ProductId == product.Id).ToList();
+                    product.Journeys = this.Journeys.Where(c => c.ProductId == product.Id).ToList();
                     product.Sources = new SourceCollection(this.Sources.Where(c => c.ProductId == product.Id).ToList());
                     
-                    foreach (var service in product.Services)
+                    foreach (var journey in product.Journeys)
                     {
-                        foreach (var item in service.FeatureMap)
+                        foreach (var item in journey.FeatureMap)
                         {
                             item.Feature = product.Features.Where(c => c.Id == item.FeatureId).Single();
                         }
@@ -94,10 +94,10 @@ namespace Owlvey.Falcon.Core.Aggregates
                 foreach (var product in customer.Products)
                 {
                     result.AddAnchors(customer.Name, product.Name, product.Anchors);
-                    result.AddServices(customer.Name, product.Name, product.Services);
-                    foreach (var service in product.Services)
+                    result.AddJourneys(customer.Name, product.Name, product.Journeys);
+                    foreach (var journey in product.Journeys)
                     {
-                        result.AddServiceMaps(customer.Name, product.Name, service.Name, service.FeatureMap);                        
+                        result.AddJourneyMaps(customer.Name, product.Name, journey.Name, journey.FeatureMap);                        
                     }
                     result.AddFeatures(customer.Name, product.Name, product.Features);
                     foreach (var feature in product.Features)

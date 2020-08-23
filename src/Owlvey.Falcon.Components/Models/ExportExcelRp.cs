@@ -87,9 +87,9 @@ namespace Owlvey.Falcon.Models
         }
     }
 
-    public class ExportExcelServiceRp
+    public class ExportExcelJourneyRp
     {
-        public int ServiceId { get; set; }
+        public int JourneyId { get; set; }
         public string Product { get; set; }
         public string Group { get; set; }
         public string Name { get; set; }
@@ -108,53 +108,53 @@ namespace Owlvey.Falcon.Models
         }
             
 
-        public ExportExcelServiceRp() { }
-        public ExportExcelServiceRp(ServiceEntity service) {
-            this.ServiceId = service.Id.Value;
-            this.Product = service.Product.Name;
-            this.Group = service.Group;
-            this.Name = service.Name;
-            this.AvailabilitySLO = service.AvailabilitySlo;
-            this.ExperienceSLO = service.ExperienceSlo;
-            this.LatencySLO = service.LatencySlo;
-            var measure = service.Measure();            
+        public ExportExcelJourneyRp() { }
+        public ExportExcelJourneyRp(JourneyEntity journey) {
+            this.JourneyId = journey.Id.Value;
+            this.Product = journey.Product.Name;
+            this.Group = journey.Group;
+            this.Name = journey.Name;
+            this.AvailabilitySLO = journey.AvailabilitySlo;
+            this.ExperienceSLO = journey.ExperienceSlo;
+            this.LatencySLO = journey.LatencySlo;
+            var measure = journey.Measure();            
             this.Availability = measure.Availability;
             this.Latency = measure.Latency;
             this.Experience = measure.Experience;
-            this.Description = service.Description;                   
+            this.Description = journey.Description;                   
         }
     }
 
-    public class ExportExcelServiceDetailRp {
-        public int ServiceId { get; set; }
+    public class ExportExcelJourneyDetailRp {
+        public int JourneyId { get; set; }
         public int FeatureId { get; set; }        
-        public string Service { get; set; }
+        public string Journey { get; set; }
         public string Feature { get; set; }
         public decimal AvailabilitySLO { get; set; }
         public decimal LatencySLO { get; set; }
         public decimal ExperienceSLO { get; set; }
-        public decimal ServiceQuality { get; set; }
-        public decimal ServiceBudget
+        public decimal JourneyQuality { get; set; }
+        public decimal JourneyBudget
         {
             get
             {
-                return QualityUtils.MeasureBudget(this.ServiceQuality, this.AvailabilitySLO);
+                return QualityUtils.MeasureBudget(this.JourneyQuality, this.AvailabilitySLO);
             }
         }
         
         
 
-        public ExportExcelServiceDetailRp() { }
+        public ExportExcelJourneyDetailRp() { }
 
-        public ExportExcelServiceDetailRp(ServiceMapEntity map) {
-            ServiceEntity service = map.Service;
+        public ExportExcelJourneyDetailRp(JourneyMapEntity map) {
+            JourneyEntity journey = map.Journey;
             FeatureEntity feature = map.Feature;
-            this.ServiceId = service.Id.Value;
+            this.JourneyId = journey.Id.Value;
             this.FeatureId = feature.Id.Value;            
-            this.Service = service.Name;
+            this.Journey = journey.Name;
             this.Feature = feature.Name;
-            this.AvailabilitySLO = service.AvailabilitySlo;            
-            this.ServiceQuality = service.Measure().Availability;            
+            this.AvailabilitySLO = journey.AvailabilitySlo;            
+            this.JourneyQuality = journey.Measure().Availability;            
         }
     }
 

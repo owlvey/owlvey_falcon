@@ -28,9 +28,8 @@ namespace Owlvey.Falcon.Repositories
 
         public DbSet<CustomerEntity> Customers { get; set; }
         public DbSet<ProductEntity> Products { get; set; }
-        public DbSet<ServiceEntity> Services { get; set; }
-        public DbSet<ServiceMapEntity> ServiceMaps { get; set; }
-
+        public DbSet<JourneyEntity> Journeys { get; set; }
+        public DbSet<JourneyMapEntity> JourneyMaps { get; set; }
         public DbSet<UserEntity> Users { get; set; }
 
         public DbSet<FeatureEntity> Features { get; set; }
@@ -83,15 +82,15 @@ namespace Owlvey.Falcon.Repositories
 
             modelBuilder.Entity<ProductEntity>().HasIndex(c => new { c.CustomerId, c.Name }).IsUnique();
 
-            modelBuilder.Entity<ServiceEntity>()
+            modelBuilder.Entity<JourneyEntity>()
                 .Property(c => c.AvailabilitySlo).HasColumnType("decimal(5,3)");
-            modelBuilder.Entity<ServiceEntity>()
+            modelBuilder.Entity<JourneyEntity>()
                 .Property(c => c.LatencySlo).HasColumnType("decimal(12,3)");
-            modelBuilder.Entity<ServiceEntity>()
+            modelBuilder.Entity<JourneyEntity>()
                 .Property(c => c.ExperienceSlo).HasColumnType("decimal(5,3)");
 
 
-            modelBuilder.Entity<ServiceEntity>()                
+            modelBuilder.Entity<JourneyEntity>()                
                 .HasIndex(c => new { c.ProductId, c.Name }).IsUnique();
             modelBuilder.Entity<FeatureEntity>().HasIndex(c => new { c.ProductId, c.Name }).IsUnique();
 
@@ -135,22 +134,22 @@ namespace Owlvey.Falcon.Repositories
                .OnDelete(DeleteBehavior.Cascade)
                .HasForeignKey(pt => pt.IncidentId);
 
-            modelBuilder.Entity<ServiceMapEntity>().HasKey(x => new { x.Id });
+            modelBuilder.Entity<JourneyMapEntity>().HasKey(x => new { x.Id });
 
-            modelBuilder.Entity<ServiceMapEntity>()
+            modelBuilder.Entity<JourneyMapEntity>()
                .HasOne(pt => pt.Feature)
-               .WithMany(p => p.ServiceMaps)
+               .WithMany(p => p.JourneyMaps)
                .OnDelete(DeleteBehavior.Restrict)
                .HasForeignKey(pt => pt.FeatureId);
 
-            modelBuilder.Entity<ServiceMapEntity>()
-               .HasOne(pt => pt.Service)
+            modelBuilder.Entity<JourneyMapEntity>()
+               .HasOne(pt => pt.Journey)
                .WithMany(p => p.FeatureMap)
                .OnDelete(DeleteBehavior.Cascade)
-               .HasForeignKey(pt => pt.ServiceId);
+               .HasForeignKey(pt => pt.JourneyId);
 
 
-            modelBuilder.Entity<ServiceMapEntity>().HasIndex(c => new { c.ServiceId, c.FeatureId }).IsUnique();
+            modelBuilder.Entity<JourneyMapEntity>().HasIndex(c => new { c.JourneyId, c.FeatureId }).IsUnique();
 
             modelBuilder.Entity<IndicatorEntity>().HasKey(x => new { x.Id });
 
@@ -233,10 +232,10 @@ namespace Owlvey.Falcon.Repositories
             return await this.GetSourceItemsByProduct(new List<int>() { productId }, start, end);
         }
 
-        public async Task LoadIndicators(IEnumerable<ServiceMapEntity> serviceMaps) {
-            var sourceIds = serviceMaps.SelectMany(c => c.Feature.Indicators.Select(d => d.SourceId)).Distinct().ToList();
+        public async Task LoadIndicators(IEnumerable<JourneyMapEntity> journeyMaps) {
+            var sourceIds = journeyMaps.SelectMany(c => c.Feature.Indicators.Select(d => d.SourceId)).Distinct().ToList();
             var sources = await this.Sources.Where(c => sourceIds.Contains(c.Id.Value)).ToListAsync();
-            foreach (var item in serviceMaps)
+            foreach (var item in journeyMaps)
             {
                 foreach (var indicator in item.Feature.Indicators)
                 {

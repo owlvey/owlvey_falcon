@@ -66,11 +66,11 @@ namespace Owlvey.Falcon.Models
 
 
             [JsonIgnore]
-            public List<CustomerServiceRp> Services = new List<CustomerServiceRp>();
+            public List<CustomerJourneyRp> Journeys = new List<CustomerJourneyRp>();
 
             public decimal Effectiveness { get {                    
                     
-                    return QualityUtils.CalculateProportion(this.Services.Count, this.Services.Where(c => c.AvailabilityErrorBudget >= 0).Count());                    
+                    return QualityUtils.CalculateProportion(this.Journeys.Count, this.Journeys.Where(c => c.AvailabilityErrorBudget >= 0).Count());                    
                 }
             }
 
@@ -79,7 +79,7 @@ namespace Owlvey.Falcon.Models
 
             public int Total {
                 get {
-                    return this.Services.Count();
+                    return this.Journeys.Count();
                 }
             }
 
@@ -98,18 +98,18 @@ namespace Owlvey.Falcon.Models
                 get {
                     var result = new List<object>();
                     
-                    var targets = new List<IList<CustomerServiceRp>>() {
-                        this.Services.Where(c => c.AvailabilitySLO > 0 && c.AvailabilitySLO <= 0.10m).ToList(),
-                        this.Services.Where(c => c.AvailabilitySLO > 0.10m  && c.AvailabilitySLO <= 0.80m).ToList(),
-                        this.Services.Where(c => c.AvailabilitySLO > 0.80m  && c.AvailabilitySLO <= 0.85m).ToList(),
-                        this.Services.Where(c => c.AvailabilitySLO > 0.85m  && c.AvailabilitySLO <= 0.90m).ToList(),
-                        this.Services.Where(c => c.AvailabilitySLO > 0.90m  && c.AvailabilitySLO <= 0.95m).ToList(),
-                        this.Services.Where(c => c.AvailabilitySLO > 0.95m  && c.AvailabilitySLO <= 0.96m).ToList(),
-                        this.Services.Where(c => c.AvailabilitySLO > 0.96m  && c.AvailabilitySLO <= 0.97m).ToList(),
-                        this.Services.Where(c => c.AvailabilitySLO > 0.97m  && c.AvailabilitySLO <= 0.98m).ToList(),
-                        this.Services.Where(c => c.AvailabilitySLO > 0.98m  && c.AvailabilitySLO <= 0.99m).ToList(),
-                        this.Services.Where(c => c.AvailabilitySLO > 0.99m  && c.AvailabilitySLO <= 0.999m).ToList(),
-                        this.Services.Where(c => c.AvailabilitySLO > 0.999m && c.AvailabilitySLO <= 100).ToList()
+                    var targets = new List<IList<CustomerJourneyRp>>() {
+                        this.Journeys.Where(c => c.AvailabilitySLO > 0 && c.AvailabilitySLO <= 0.10m).ToList(),
+                        this.Journeys.Where(c => c.AvailabilitySLO > 0.10m  && c.AvailabilitySLO <= 0.80m).ToList(),
+                        this.Journeys.Where(c => c.AvailabilitySLO > 0.80m  && c.AvailabilitySLO <= 0.85m).ToList(),
+                        this.Journeys.Where(c => c.AvailabilitySLO > 0.85m  && c.AvailabilitySLO <= 0.90m).ToList(),
+                        this.Journeys.Where(c => c.AvailabilitySLO > 0.90m  && c.AvailabilitySLO <= 0.95m).ToList(),
+                        this.Journeys.Where(c => c.AvailabilitySLO > 0.95m  && c.AvailabilitySLO <= 0.96m).ToList(),
+                        this.Journeys.Where(c => c.AvailabilitySLO > 0.96m  && c.AvailabilitySLO <= 0.97m).ToList(),
+                        this.Journeys.Where(c => c.AvailabilitySLO > 0.97m  && c.AvailabilitySLO <= 0.98m).ToList(),
+                        this.Journeys.Where(c => c.AvailabilitySLO > 0.98m  && c.AvailabilitySLO <= 0.99m).ToList(),
+                        this.Journeys.Where(c => c.AvailabilitySLO > 0.99m  && c.AvailabilitySLO <= 0.999m).ToList(),
+                        this.Journeys.Where(c => c.AvailabilitySLO > 0.999m && c.AvailabilitySLO <= 100).ToList()
                     };
                     for (int i = 0; i < targets.Count; i++)
                     {
@@ -122,7 +122,7 @@ namespace Owlvey.Falcon.Models
                             count = targets[i].Count(),
                             budget = targets[i].Sum(c => c.AvailabilityErrorBudget),
                             status = targets[i].Where(c => c.AvailabilityErrorBudget  < 0).Count() == 0 ? "success" : targets[i].Where(c => c.AvailabilityErrorBudget >= 0).Count() == 0 ? "danger" : "warning",
-                            tags = targets[i].Select(c => string.Format("{0}, SLO: {1}, Ava: {2}, Budget: {3}", c.Service, c.AvailabilitySLO, c.Availability, c.AvailabilityErrorBudget))
+                            tags = targets[i].Select(c => string.Format("{0}, SLO: {1}, Ava: {2}, Budget: {3}", c.Journey, c.AvailabilitySLO, c.Availability, c.AvailabilityErrorBudget))
                         }); 
                     }                   
 
@@ -131,19 +131,19 @@ namespace Owlvey.Falcon.Models
             }
             
         }
-        public class CustomerServiceRp {
-            public int ServiceId { get; set; }
-            public string Service { get; set; }
+        public class CustomerJourneyRp {
+            public int JourneyId { get; set; }
+            public string Journey { get; set; }
             public decimal AvailabilitySLO { get; set; }
             public decimal Availability { get; set; }
             public decimal AvailabilityErrorBudget { get; set; }
 
-            public CustomerServiceRp() { }
-            public CustomerServiceRp(ServiceEntity service) {
-                this.ServiceId = service.Id.Value;
-                this.Service = service.Name;
-                this.AvailabilitySLO = service.AvailabilitySlo;
-                var measure= service.Measure();
+            public CustomerJourneyRp() { }
+            public CustomerJourneyRp(JourneyEntity journey) {
+                this.JourneyId = journey.Id.Value;
+                this.Journey = journey.Name;
+                this.AvailabilitySLO = journey.AvailabilitySlo;
+                var measure= journey.Measure();
                 this.Availability = measure.Availability;
                 this.AvailabilityErrorBudget = measure.AvailabilityErrorBudget;
             }

@@ -12,60 +12,60 @@ namespace Owlvey.Falcon.IoC
 {
     public static class ApplicationExtensions
     {
-        public static void AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
+        public static void AddApplicationProviders(this IServiceCollection servs, IConfiguration configuration)
         {
             // ASP.NET HttpContext dependency
-            // services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            
 
             // Components
 
 
-            services.AddTransient<AppSettingQueryComponent>();
-            services.AddTransient<AppSettingComponent>();
+            servs.AddTransient<AppSettingQueryComponent>();
+            servs.AddTransient<AppSettingComponent>();
 
-            services.AddTransient<CustomerQueryComponent>();
-            services.AddTransient<CustomerComponent>();
+            servs.AddTransient<CustomerQueryComponent>();
+            servs.AddTransient<CustomerComponent>();
 
-            services.AddTransient<ProductQueryComponent>();
-            services.AddTransient<ProductComponent>();
+            servs.AddTransient<ProductQueryComponent>();
+            servs.AddTransient<ProductComponent>();
 
 
-            services.AddTransient<SourceItemComponent>();
-            services.AddTransient<SourceComponent>();
-            services.AddTransient<IndicatorComponent>();
+            servs.AddTransient<SourceItemComponent>();
+            servs.AddTransient<SourceComponent>();
+            servs.AddTransient<IndicatorComponent>();
 
-            services.AddTransient<FeatureQueryComponent>();
-            services.AddTransient<FeatureComponent>();
+            servs.AddTransient<FeatureQueryComponent>();
+            servs.AddTransient<FeatureComponent>();
 
-            services.AddTransient<SquadQueryComponent>();
-            services.AddTransient<SquadComponent>();
+            servs.AddTransient<SquadQueryComponent>();
+            servs.AddTransient<SquadComponent>();
 
-            services.AddTransient<ServiceQueryComponent>();
-            services.AddTransient<ServiceComponent>();
+            servs.AddTransient<JourneyQueryComponent>();
+            servs.AddTransient<JourneyComponent>();
 
-            services.AddTransient<ServiceMapComponent>();
+            servs.AddTransient<JourneyMapComponent>();
 
-            services.AddTransient<UserComponent>();
-            services.AddTransient<UserQueryComponent>();
+            servs.AddTransient<UserComponent>();
+            servs.AddTransient<UserQueryComponent>();
 
-            services.AddTransient<MemberComponent>();
-            services.AddTransient<MemberQueryComponent>();
+            servs.AddTransient<MemberComponent>();
+            servs.AddTransient<MemberQueryComponent>();
 
-            services.AddTransient<MigrationComponent>();
+            servs.AddTransient<MigrationComponent>();
 
-            services.AddTransient<IncidentComponent>();
+            servs.AddTransient<IncidentComponent>();
 
-            services.AddTransient<CacheComponent>();
+            servs.AddTransient<CacheComponent>();
 
-            services.AddTransient<ConfigurationComponent>();
+            servs.AddTransient<ConfigurationComponent>();
 
-            services.AddTransient<SecurityRiskComponent>();
+            servs.AddTransient<SecurityRiskComponent>();
 
             // Gateways
-            services.AddTransient<IDateTimeGateway, DateTimeGateway>();
+            servs.AddTransient<IDateTimeGateway, DateTimeGateway>();
 
             // Infra
-            services.AddAspNetCoreIndentityService();
+            servs.AddAspNetCoreIndentityProvider();
 
             // Automapper
             var mapperCfg = new MapperConfiguration(cfg =>
@@ -74,7 +74,7 @@ namespace Owlvey.Falcon.IoC
                 ProductComponentConfiguration.ConfigureMappers(cfg);
                 FeatureComponentConfiguration.ConfigureMappers(cfg);
                 IncidentComponentConfiguration.ConfigureMappers(cfg);
-                ServiceComponentConfiguration.ConfigureMappers(cfg);
+                JourneyComponentConfiguration.ConfigureMappers(cfg);
                 UserComponentConfiguration.ConfigureMappers(cfg);
                 SquadComponentConfiguration.ConfigureMappers(cfg);
                 MemberComponentConfiguration.ConfigureMappers(cfg);
@@ -87,7 +87,7 @@ namespace Owlvey.Falcon.IoC
             });
 
             IMapper mapper = mapperCfg.CreateMapper();
-            services.AddSingleton(mapper);
+            servs.AddSingleton(mapper);
         }
     }
 }

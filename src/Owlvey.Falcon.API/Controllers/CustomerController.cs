@@ -12,17 +12,17 @@ namespace Owlvey.Falcon.API.Controllers
     [Route("customers")]
     public class CustomerController : BaseController
     {
-        private readonly CustomerQueryComponent _customerQueryService;
-        private readonly CustomerComponent _customerService;
+        private readonly CustomerQueryComponent _customerQueryComponent;
+        private readonly CustomerComponent _customerComponent;
         private readonly ProductQueryComponent _productQueryComponent;
 
-        public CustomerController(CustomerQueryComponent CustomerQueryService,
-                                  CustomerComponent CustomerService,
+        public CustomerController(CustomerQueryComponent CustomerQuery,
+                                  CustomerComponent CustomerComponent,
                                   ProductQueryComponent productQueryComponent) : base()
         {
             this._productQueryComponent = productQueryComponent;
-            this._customerQueryService = CustomerQueryService;
-            this._customerService = CustomerService;
+            this._customerQueryComponent = CustomerQuery;
+            this._customerComponent = CustomerComponent;
         }
 
         /// <summary>
@@ -33,14 +33,14 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(IEnumerable<CustomerGetListRp>), 200)]
         public async Task<IActionResult> Get(DateTime? start, DateTime? end)
         {
-            var model = await this._customerQueryService.GetCustomersQuality(new Core.Values.DatePeriodValue(start, end));
+            var model = await this._customerQueryComponent.GetCustomersQuality(new Core.Values.DatePeriodValue(start, end));
             return this.Ok(model);
         }
         [HttpGet("lite")]
         [ProducesResponseType(typeof(IEnumerable<CustomerLiteRp>), 200)]
         public async Task<IActionResult> GetLite(int customerId)
         {
-            var model = await this._customerQueryService.GetCustomers();
+            var model = await this._customerQueryComponent.GetCustomers();
             return this.Ok(model);
         }
 
@@ -54,7 +54,7 @@ namespace Owlvey.Falcon.API.Controllers
         public async Task<IActionResult> GetById(int id)
         {
             CustomerGetRp model;            
-            model = await this._customerQueryService.GetCustomerById(id);
+            model = await this._customerQueryComponent.GetCustomerById(id);
             if (model == null)
                 return this.NotFound($"The Resource {id} doesn't exists.");                        
 
@@ -66,7 +66,7 @@ namespace Owlvey.Falcon.API.Controllers
         public async Task<IActionResult> GetByIdQuality(int id, DateTime? start, DateTime? end)
         {
             CustomerGetRp model;
-            model = await this._customerQueryService.GetCustomerByIdWithQuality(id, new DatePeriodValue(start, end));
+            model = await this._customerQueryComponent.GetCustomerByIdWithQuality(id, new DatePeriodValue(start, end));
             if (model == null)
                 return this.NotFound($"The Resource {id} doesn't exists.");
 
@@ -96,7 +96,7 @@ namespace Owlvey.Falcon.API.Controllers
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._customerService.CreateCustomer(resource);            
+            var response = await this._customerComponent.CreateCustomer(resource);            
 
             return this.Created(Url.RouteUrl("GetCustomerId", new { id = response.Id }), response);
         }
@@ -117,7 +117,7 @@ namespace Owlvey.Falcon.API.Controllers
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._customerService.UpdateCustomer(id, resource);
+            var response = await this._customerComponent.UpdateCustomer(id, resource);
 
             if (response.HasNotFounds())
             {
@@ -142,7 +142,7 @@ namespace Owlvey.Falcon.API.Controllers
         [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Delete(int id)
         {
-            await this._customerService.DeleteCustomer(id);           
+            await this._customerComponent.DeleteCustomer(id);           
 
             return this.Ok();
         }
@@ -153,7 +153,7 @@ namespace Owlvey.Falcon.API.Controllers
         {
             if (start.HasValue && end.HasValue)
             {
-                GraphGetRp result = await this._customerQueryService.GetSquadsGraph(id, new DatePeriodValue(start.Value, end.Value));
+                GraphGetRp result = await this._customerQueryComponent.GetSquadsGraph(id, new DatePeriodValue(start.Value, end.Value));
                 return this.Ok(result);
             }
             else
@@ -165,13 +165,13 @@ namespace Owlvey.Falcon.API.Controllers
 
         #region Reports
 
-        [HttpGet("dashboard/products/services")]
+        [HttpGet("dashboard/products/journeys")]
         [ProducesResponseType(typeof(CustomerDashboardRp), 200)]
-        public async Task<IActionResult> GetDashboardProductServices(DateTime? start, DateTime? end)
+        public async Task<IActionResult> GetDashboardProductJourneys(DateTime? start, DateTime? end)
         {
             if (start.HasValue && end.HasValue)
             {
-                var result = await this._customerQueryService.GetCustomersDashboardProductServices(start, end);
+                var result = await this._customerQueryComponent.GetCustomersDashboardProductJourneys(start, end);
                 return this.Ok(result);
             }
             else

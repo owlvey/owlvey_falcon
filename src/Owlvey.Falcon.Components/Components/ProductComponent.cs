@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Owlvey.Falcon.Repositories.Products;
 using Owlvey.Falcon.Repositories.Features;
-using Owlvey.Falcon.Repositories.Services;
+using Owlvey.Falcon.Repositories.Journeys;
 using Polly;
 using System.IO;
 using OfficeOpenXml;
@@ -31,10 +31,10 @@ namespace Owlvey.Falcon.Components
         private readonly SourceComponent _sourceComponent;
 
         public ProductComponent(FalconDbContext dbContext,
-            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway, 
+            IUserIdentityGateway identityGateway, IDateTimeGateway dateTimeGateway, 
             IMapper mapper, ConfigurationComponent configuration,
             SourceItemComponent sourceItemComponent,
-            SourceComponent sourceComponent) : base(dateTimeGateway, mapper, identityService, configuration)
+            SourceComponent sourceComponent) : base(dateTimeGateway, mapper, identityGateway, configuration)
         {
             this._sourceItemComponent = sourceItemComponent;
             this._dbContext = dbContext;
@@ -43,7 +43,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<AnchorRp> PostAnchor(int productId, string name)
         {
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             var entity = await this._dbContext.Anchors.Where(c => c.ProductId == productId && c.Name == name).SingleOrDefaultAsync();
             if (entity == null) {
                 var product = await this._dbContext.Products.Where(c => c.Id == productId).SingleAsync();
@@ -59,7 +59,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<AnchorRp> CreateOrUpdateAnchor(int productId, string name, DateTime target) {
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             var entity = await this._dbContext.Anchors.Where(c => c.ProductId == productId && c.Name == name).SingleOrDefaultAsync();
             if (entity == null)
             {
@@ -76,7 +76,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<AnchorRp> DeleteAnchor(int productId, string name)
         {
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             var entity = await this._dbContext.Anchors.Where(c => c.ProductId == productId && c.Name == name).SingleOrDefaultAsync();
             if (entity != null)
             {
@@ -88,7 +88,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task PutAnchor(int productId, string name, AnchorPutRp model)
         {
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             var entity = await this._dbContext.Anchors.Where(c => c.ProductId == productId && c.Name == name).SingleAsync();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
             entity.Update(model.Target, this._datetimeGateway.GetCurrentDateTime(), createdBy);
@@ -98,7 +98,7 @@ namespace Owlvey.Falcon.Components
                
         public async Task<ProductGetListItemRp> CreateOrUpdate(CustomerEntity customer, string name, string description, 
             string avatar, string leaders) {
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
             var entity = await this._dbContext.Products.Where(c => c.CustomerId == customer.Id && c.Name == name).SingleOrDefaultAsync();
             if (entity == null)
@@ -113,7 +113,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<ProductGetListItemRp> CreateProduct(ProductPostRp model)
         {            
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
 
             var retryPolicy = Policy.Handle<DbUpdateException>()
                 .WaitAndRetryAsync(this._configuration.DefaultRetryAttempts,
@@ -143,10 +143,10 @@ namespace Owlvey.Falcon.Components
         public async Task DeleteProduct(int id)
         {
             var result = new BaseComponentResultRp();
-            var modifiedBy = this._identityService.GetIdentity();
+            var modifiedBy = this._identityGateway.GetIdentity();
 
             var product = await this._dbContext.Products
-                .Include(c=>c.Services)
+                .Include(c=>c.Journeys)
                 .Include(c=>c.Features)
                 .Include(c=>c.Incidents)
                 .Include(c=>c.Sources)
@@ -161,9 +161,9 @@ namespace Owlvey.Falcon.Components
             if (product != null)
             {
 
-                foreach (var service in product.Services.Select(c=>c.Id.Value).ToList())
+                foreach (var journey in product.Journeys.Select(c=>c.Id.Value).ToList())
                 {
-                    await this._dbContext.RemoveService(service);                    
+                    await this._dbContext.RemoveJourney(journey);                    
                 }
 
                 await this._dbContext.SaveChangesAsync();                
@@ -186,7 +186,7 @@ namespace Owlvey.Falcon.Components
         {
 
             var createdOn = this._datetimeGateway.GetCurrentDateTime();
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             var product = await this._dbContext.Products.Include(c=>c.Customer)
                 .Where(c => c.Id == productId).SingleAsync();
 
@@ -229,7 +229,7 @@ namespace Owlvey.Falcon.Components
         public async Task<ProductGetRp> UpdateProduct(int id, ProductPutRp model)
         {
             
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
 
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
 

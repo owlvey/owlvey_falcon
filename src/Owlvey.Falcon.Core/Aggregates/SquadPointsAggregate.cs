@@ -16,12 +16,12 @@ namespace Owlvey.Falcon.Core.Aggregates
 
         public IEnumerable<
             (
-                ProductEntity product, ServiceEntity service, FeatureEntity feature,
+                ProductEntity product, JourneyEntity journey, FeatureEntity feature,
                 QualityMeasureValue quality,
                 DebtMeasureValue debt)> Measure() {
 
-            var result = new List<(ProductEntity product, 
-                ServiceEntity service, 
+            var result = new List<(ProductEntity product,
+                JourneyEntity journey,
                 FeatureEntity feature,
                 QualityMeasureValue quality,
                 DebtMeasureValue debt)>();
@@ -29,11 +29,11 @@ namespace Owlvey.Falcon.Core.Aggregates
             foreach (var featureMap in this._squad.FeatureMaps)
             {   
                 var quality = featureMap.Feature.Measure();
-                foreach (var serviceMap in featureMap.Feature.ServiceMaps)
+                foreach (var journeyMap in featureMap.Feature.JourneyMaps)
                 {                    
-                    var service = serviceMap.Service;
-                    var debt = quality.MeasureDebt(service.GetSLO());                    
-                    result.Add((service.Product, service, featureMap.Feature, quality, debt));
+                    var journey = journeyMap.Journey;
+                    var debt = quality.MeasureDebt(journey.GetSLO());                    
+                    result.Add((journey.Product, journey, featureMap.Feature, quality, debt));
                 }
             }
             return result;

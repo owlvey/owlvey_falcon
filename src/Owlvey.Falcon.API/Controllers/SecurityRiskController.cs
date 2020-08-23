@@ -87,7 +87,7 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok(response);
         }        
         [HttpDelete("threats/{id}")]
-        [ProducesResponseType(typeof(ServiceGetListRp), 200)]
+        [ProducesResponseType(typeof(JourneyGetListRp), 200)]
         public async Task<IActionResult> PostThreat(int id)
         {
             await this._SecurityRiskComponent.DeleteThreat(id);

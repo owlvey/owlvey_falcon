@@ -21,18 +21,19 @@ namespace Owlvey.Falcon.Core.Aggregates
             this.Period = DatePeriodValue.ToYearFromStart(target);
         }
 
-        public ( IEnumerable<AnnualAvailabilityInteractionsItemModel> services, IEnumerable<AnnualAvailabilityInteractionsItemModel>  sources ) Execute() {
+        public (IEnumerable<AnnualAvailabilityInteractionsItemModel> journeys, IEnumerable<AnnualAvailabilityInteractionsItemModel> sources) Execute()
+        {
             var periods = Period.ToYearPeriods();
-            var servicesResult = new List<AnnualAvailabilityInteractionsItemModel>();            
+            var journeysResult = new List<AnnualAvailabilityInteractionsItemModel>();            
             var sourceResult = new List<AnnualAvailabilityInteractionsItemModel>();
-            foreach (var service in this.Product.Services)
+            foreach (var journey in this.Product.Journeys)
             {
-                var temp = new AnnualAvailabilityInteractionsItemModel(service.Id.Value, service.Name);
+                var temp = new AnnualAvailabilityInteractionsItemModel(journey.Id.Value, journey.Name);
                 foreach (var period in periods)
                 {
                     int total = 0;
                     int good = 0;                    
-                    foreach (var map in service.FeatureMap)
+                    foreach (var map in journey.FeatureMap)
                     {
                         foreach (var indicator in map.Feature.Indicators)
                         {
@@ -46,7 +47,7 @@ namespace Owlvey.Falcon.Core.Aggregates
                     }
                     temp.LoadData(period.Start.Month, good, total);                    
                 }
-                servicesResult.Add(temp);
+                journeysResult.Add(temp);
             }
 
             foreach (var source in this.Product.Sources)
@@ -69,7 +70,7 @@ namespace Owlvey.Falcon.Core.Aggregates
 
                 sourceResult.Add(temp);
             }
-            return (servicesResult, sourceResult);            
+            return (journeysResult, sourceResult);            
         }
     }
 }

@@ -64,17 +64,17 @@ namespace Owlvey.Falcon.API
         public IConfiguration Configuration { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public virtual void ConfigureServices(IServiceCollection services)
+        public virtual void ConfigureServices(IServiceCollection providers)
         {
 
             IdentityModelEventSource.ShowPII = true;
 
-            services.AddAuthorization(options =>
+            providers.AddAuthorization(options =>
             {
                 options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("admin"));
             });
 
-            services.AddMvc(options =>
+            providers.AddMvc(options =>
             {
                 options.EnableEndpointRouting = false;
                 //Authorize Filter
@@ -85,29 +85,29 @@ namespace Owlvey.Falcon.API
 
                 options.Filters.Add(new AuthorizeFilter(policy));
             });
-            services.AddControllersWithViews().AddJsonOptions(
+            providers.AddControllersWithViews().AddJsonOptions(
                 options => options.JsonSerializerOptions.Converters.Add(
                         new JsonStringEnumConverter()
                     ));
 
-            services.AddApiVersioning(options => {
+            providers.AddApiVersioning(options => {
                     options.ReportApiVersions = true;
                     options.AssumeDefaultVersionWhenUnspecified = true;
                     options.DefaultApiVersion = new ApiVersion(1, 0);
                 }                
             );
 
-            services.Configure<FormOptions>(options =>
+            providers.Configure<FormOptions>(options =>
             {
                 // Set the limit to 256 MB
                 options.MultipartBodyLengthLimit = 268435456;
             });
 
-            services.AddCors();
-            services.AddAuthority(Configuration, Environment);
-            services.AddApplicationServices(Configuration);
-            services.SetupDataBase(Configuration, Environment.EnvironmentName);
-            services.AddCustomSwagger(Configuration, Environment);
+            providers.AddCors();
+            providers.AddAuthority(Configuration, Environment);
+            providers.AddApplicationProviders(Configuration);
+            providers.SetupDataBase(Configuration, Environment.EnvironmentName);
+            providers.AddCustomSwagger(Configuration, Environment);
 
 
            

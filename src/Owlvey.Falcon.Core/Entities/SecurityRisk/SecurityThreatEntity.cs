@@ -10,8 +10,11 @@ namespace Owlvey.Falcon.Core.Entities
         public string Reference { get; set;}        
         public string Tags {get ; set;}
 
-        public void Update(DateTime on, string ModifiedBy, string name) {
-            this.Name = name;
+        public void Update(DateTime on, string ModifiedBy, string name, string description, string tags, string reference) {
+            this.Name =  string.IsNullOrWhiteSpace( name) ? this.Name: name;
+            this.Description = string.IsNullOrWhiteSpace(description) ? this.Description : description;
+            this.Tags = string.IsNullOrWhiteSpace(tags) ? this.Tags : tags;
+            this.Reference = string.IsNullOrWhiteSpace(reference) ? this.Reference: reference;
             this.ModifiedBy = ModifiedBy;
             this.ModifiedOn = on;
         }

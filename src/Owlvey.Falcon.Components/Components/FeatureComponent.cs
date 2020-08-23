@@ -20,8 +20,8 @@ namespace Owlvey.Falcon.Components
         private readonly FalconDbContext _dbContext;        
 
         public FeatureComponent(FalconDbContext dbContext,
-            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway,
-            IMapper mapper, ConfigurationComponent configuration ) : base(dateTimeGateway, mapper, identityService, configuration)
+            IUserIdentityGateway identityGateway, IDateTimeGateway dateTimeGateway,
+            IMapper mapper, ConfigurationComponent configuration ) : base(dateTimeGateway, mapper, identityGateway, configuration)
         {
             this._dbContext = dbContext;            
             
@@ -32,7 +32,7 @@ namespace Owlvey.Falcon.Components
             string product,
             string name, string description, string avatar)
         {
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
             var entity = await this._dbContext.Features.Where(c=> c.Product.CustomerId == customer.Id &&
                         c.Product.Name == product &&
@@ -56,7 +56,7 @@ namespace Owlvey.Falcon.Components
         public async Task<FeatureGetListRp> CreateFeature(FeaturePostRp model)
         {
             var result = new BaseComponentResultRp();
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
 
             var retryPolicy = Policy.Handle<DbUpdateException>()
                 .WaitAndRetryAsync(this._configuration.DefaultRetryAttempts,
@@ -85,7 +85,7 @@ namespace Owlvey.Falcon.Components
         /// <returns></returns>
         public async Task DeleteFeature(int id)
         {            
-            var modifiedBy = this._identityService.GetIdentity();
+            var modifiedBy = this._identityGateway.GetIdentity();
             await this._dbContext.RemoveFeature(id);            
         }
         
@@ -97,7 +97,7 @@ namespace Owlvey.Falcon.Components
         public async Task<BaseComponentResultRp> UpdateFeature(int id, FeaturePutRp model)
         {
             var result = new BaseComponentResultRp();
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
 
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
 
@@ -130,7 +130,7 @@ namespace Owlvey.Falcon.Components
         {
             var result = new BaseComponentResultRp();
 
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
 
 
             var target = await this._dbContext.SquadFeatures.Where(c => c.SquadId == model.SquadId

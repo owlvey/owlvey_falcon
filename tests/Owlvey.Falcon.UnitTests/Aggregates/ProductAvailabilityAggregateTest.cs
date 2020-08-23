@@ -14,7 +14,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         [Fact]
         public void MeasureProductAvailability()
         {
-            var (_, product, service, feature) = BuildCustomerProductServiceFeature();
+            var (_, product, journey, feature) = BuildCustomerProductJourneyFeature();
             
 
             var indicator_a = Indicators.GenerateSourceItems(product, feature);
@@ -24,10 +24,10 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             feature.Indicators.Add(indicator_b);
                         
             
-            var service_aggregate = new ServiceDailyAggregate(service,
+            var journey_aggregate = new JourneyDailyAggregate(journey,
                 new DatePeriodValue(OwlveyCalendar.StartJanuary2019, OwlveyCalendar.EndJanuary2019));
 
-            var service_availabilities = service_aggregate.MeasureQuality();
+            var journey_availabilities = journey_aggregate.MeasureQuality;
             
             var product_aggregate = new ProductDailyAggregate(product, 
                 new DatePeriodValue(OwlveyCalendar.StartJanuary2019, OwlveyCalendar.EndJanuary2019));

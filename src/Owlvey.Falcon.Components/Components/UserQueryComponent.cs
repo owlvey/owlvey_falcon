@@ -15,8 +15,8 @@ namespace Owlvey.Falcon.Components
     {
         private readonly FalconDbContext _dbContext;
         public UserQueryComponent(FalconDbContext dbContext, IDateTimeGateway dateTimeGateway, IMapper mapper,
-            IUserIdentityGateway identityService, ConfigurationComponent configuration) : base(dateTimeGateway, mapper, 
-                identityService, configuration)
+            IUserIdentityGateway identityGateway, ConfigurationComponent configuration) : base(dateTimeGateway, mapper, 
+                identityGateway, configuration)
         {
             this._dbContext = dbContext;
         }
@@ -43,7 +43,7 @@ namespace Owlvey.Falcon.Components
 
             var customers = await this._dbContext.Customers
                 .Include(c=>c.Products)
-                .ThenInclude(c=>c.Services)                
+                .ThenInclude(c=>c.Journeys)                
                 .ToListAsync();            
 
             var customersSquads = await this._dbContext.Customers
@@ -65,19 +65,19 @@ namespace Owlvey.Falcon.Components
                         result.Products.Add(temp);
                     }
 
-                    foreach (var service in product.Services)
+                    foreach (var journey in product.Journeys)
                     {
-                        if (service.ValidateLeader(entity.Email))
+                        if (journey.ValidateLeader(entity.Email))
                         {
                             var temp = new Dictionary<string, object>();
                             temp["customerId"] = customer.Id;
                             temp["customer"] = customer.Name;
                             temp["productId"] = product.Id;
                             temp["product"] = product.Name;
-                            temp["serviceId"] = service.Id;
-                            temp["service"] = service.Name;
-                            temp["slo"] = service.AvailabilitySlo;
-                            result.Services.Add(temp);
+                            temp["journeyId"] = journey.Id;
+                            temp["journey"] = journey.Name;
+                            temp["slo"] = journey.AvailabilitySlo;
+                            result.Journeys.Add(temp);
                         }                            
                     }
                 }

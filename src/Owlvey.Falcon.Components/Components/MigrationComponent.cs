@@ -28,11 +28,11 @@ namespace Owlvey.Falcon.Components
         private readonly SquadComponent _squadComponent;
         private readonly ProductComponent _productComponent;
         private readonly ProductQueryComponent _productQueryComponent;
-        private readonly ServiceComponent _serviceComponent;
+        private readonly JourneyComponent _journeyComponent;
         private readonly SquadQueryComponent _squadQueryComponent;
         private readonly SourceComponent _sourceComponent;
         private readonly FeatureComponent _featureComponent;
-        private readonly ServiceMapComponent _serviceMapComponent;
+        private readonly JourneyMapComponent _journeyMapComponent;
         private readonly IndicatorComponent _indicatorComponent;
         private readonly SourceItemComponent _sourceItemComponent;
         private readonly IncidentComponent _incidentComponent;
@@ -44,20 +44,20 @@ namespace Owlvey.Falcon.Components
         public MigrationComponent(FalconDbContext dbContext,
             CustomerComponent customerComponent,
             ProductComponent productComponent,
-            ServiceComponent serviceComponent,
+            JourneyComponent journeyComponent,
             FeatureComponent featureComponent,
             SourceComponent sourceComponent,
-            ServiceMapComponent serviceMapComponent,
+            JourneyMapComponent journeyMapComponent,
             IndicatorComponent indicatorComponent,
             SourceItemComponent sourceItemComponent,
             IncidentComponent incidentComponent,
             UserComponent userComponent,
             ProductQueryComponent productQueryComponent,
-            IUserIdentityGateway identityService,
+            IUserIdentityGateway identityGateway,
             IDateTimeGateway dateTimeGateway, IMapper mapper,
             FeatureQueryComponent featureQueryComponent,
             SquadComponent squadComponent, SquadQueryComponent squadQueryComponent,
-            ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityService, configuration)
+            ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityGateway, configuration)
         {
             this._customerComponent = customerComponent;
             this._sourceComponent = sourceComponent;
@@ -65,9 +65,9 @@ namespace Owlvey.Falcon.Components
             this._squadComponent = squadComponent;
             this._squadQueryComponent = squadQueryComponent;
             this._productComponent = productComponent;
-            this._serviceComponent = serviceComponent;
+            this._journeyComponent = journeyComponent;
             this._featureComponent = featureComponent;
-            this._serviceMapComponent = serviceMapComponent;
+            this._journeyMapComponent = journeyMapComponent;
             this._indicatorComponent = indicatorComponent;
             this._sourceComponent = sourceComponent;
             this._sourceItemComponent = sourceItemComponent;
@@ -146,20 +146,20 @@ namespace Owlvey.Falcon.Components
 
         }
 
-        public async Task<IEnumerable<ServiceMapMigrateRp>> ExportServiceMap(int customerId)
+        public async Task<IEnumerable<JourneyMapMigrateRp>> ExportJourneyMap(int customerId)
         {
-            var result = new List<ServiceMapMigrateRp>();
+            var result = new List<JourneyMapMigrateRp>();
 
-            var maps = await this._dbContext.ServiceMaps
-                .Include(c=>c.Service).ThenInclude(c=>c.Product)
+            var maps = await this._dbContext.JourneyMaps
+                .Include(c=>c.Journey).ThenInclude(c=>c.Product)
                 .Include(c=>c.Feature)
-                .Where(c => c.Service.Product.CustomerId == customerId).ToListAsync();
+                .Where(c => c.Journey.Product.CustomerId == customerId).ToListAsync();
 
             foreach (var item in maps.OrderBy(c=>c.Id))
             {
-                result.Add(new ServiceMapMigrateRp() {
-                     Product = item.Service.Product.Name,
-                     Service = item.Service.Name,
+                result.Add(new JourneyMapMigrateRp() {
+                     Product = item.Journey.Product.Name,
+                     Journey = item.Journey.Name,
                      Feature = item.Feature.Name
                 });
             }
@@ -172,8 +172,8 @@ namespace Owlvey.Falcon.Components
             IEnumerable<SquadMigrationRp> squads,
             IEnumerable<MemberMigrateRp> members,
             IEnumerable<ProductMigrationRp> products,
-            IEnumerable<ServiceMigrateRp> services,
-            IEnumerable<ServiceMapMigrateRp> serviceMaps,
+            IEnumerable<JourneyMigrateRp> journeys,
+            IEnumerable<JourneyMapMigrateRp> journeyMaps,
             IEnumerable<FeatureMigrateRp> features,
             IEnumerable<IndicatorMigrateRp> indicators,
             IEnumerable<SourceMigrateRp> sources,
@@ -185,7 +185,7 @@ namespace Owlvey.Falcon.Components
             )> Export(int customerId, bool includeItems = false)
         {
             var customer = await this._dbContext.Customers
-                .Include(c => c.Products).ThenInclude(c => c.Services).Where(c => c.Id == customerId)
+                .Include(c => c.Products).ThenInclude(c => c.Journeys).Where(c => c.Id == customerId)
                 .SingleAsync();
 
             var incidents = await this._dbContext.Incidents.Include(c => c.FeatureMaps).ThenInclude(c => c.Feature).Where(c => c.Product.CustomerId == customerId).ToListAsync();
@@ -193,8 +193,8 @@ namespace Owlvey.Falcon.Components
             var squadLites = this._mapper.Map<IEnumerable<SquadMigrationRp>>(squads);
             var productLites = this._mapper.Map<IEnumerable<ProductMigrationRp>>(customer.Products);
 
-            var serviceLites = this._mapper.Map<IEnumerable<ServiceMigrateRp>>(
-                    customer.Products.SelectMany(c => c.Services).OrderBy(c=>c.Id).ToList()
+            var journeyLites = this._mapper.Map<IEnumerable<JourneyMigrateRp>>(
+                    customer.Products.SelectMany(c => c.Journeys).OrderBy(c=>c.Id).ToList()
                 );
 
             var memberLites = new List<MemberMigrateRp>();
@@ -215,11 +215,11 @@ namespace Owlvey.Falcon.Components
 
             var features = await this._dbContext.Features
                 .Include(c => c.Product)
-                .Include(c => c.ServiceMaps).ThenInclude(c => c.Service)
+                .Include(c => c.JourneyMaps).ThenInclude(c => c.Journey)
                 .Where(c => c.Product.CustomerId == customerId).ToListAsync();
 
             var featureLites = new List<FeatureMigrateRp>();
-            var serviceMapLites = await this.ExportServiceMap(customerId);
+            var journeyMapLites = await this.ExportJourneyMap(customerId);
 
             foreach (var item in features)
             {
@@ -293,7 +293,7 @@ namespace Owlvey.Falcon.Components
             var squadFeatureLite = await this.ExportSquadMap(customerId);
             var anchors = await this.ExportAnchors(customerId);
 
-            return (customer, squadLites, memberLites, productLites, serviceLites, serviceMapLites, featureLites, indicatorLites, sourceLites, items, incidentsLite,
+            return (customer, squadLites, memberLites, productLites, journeyLites, journeyMapLites, featureLites, indicatorLites, sourceLites, items, incidentsLite,
                         incidentFeaturesLite,
                         squadFeatureLite,
                         anchors);
@@ -382,7 +382,7 @@ namespace Owlvey.Falcon.Components
         public async Task<IEnumerable<string>> Restore(MemoryStream input) {
 
             var logs = new List<string>();            
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             var createdOn = this._datetimeGateway.GetCurrentDateTime();
 
             var previous = await this._dbContext.Customers.ToListAsync();
@@ -476,33 +476,33 @@ namespace Owlvey.Falcon.Components
                           users.Single(c=>c.Email == email).Id.Value);
                 }
 
-                var servicesSheet = package.Workbook.Worksheets["Services"];
-                for (int row = 2; row <= servicesSheet.Dimension.Rows; row++)
+                var journeysSheet = package.Workbook.Worksheets["Journeys"];
+                for (int row = 2; row <= journeysSheet.Dimension.Rows; row++)
                 {
-                    var organization = servicesSheet.Cells[row, 1].GetValue<string>();
-                    var product = servicesSheet.Cells[row, 2].GetValue<string>();
-                    var name = servicesSheet.Cells[row, 3].GetValue<string>();
-                    var group = servicesSheet.Cells[row, 4].GetValue<string>();
-                    var availabilitySlo = servicesSheet.Cells[row, 5].GetValue<decimal>();
-                    var latencySlo = servicesSheet.Cells[row, 6].GetValue<decimal>();
-                    var experienceSlo = servicesSheet.Cells[row, 7].GetValue<decimal>();
-                    var description = servicesSheet.Cells[row, 8].GetValue<string>();
-                    var avatar = servicesSheet.Cells[row, 9].GetValue<string>();
-                    var leaders = servicesSheet.Cells[row, 10].GetValue<string>();
+                    var organization = journeysSheet.Cells[row, 1].GetValue<string>();
+                    var product = journeysSheet.Cells[row, 2].GetValue<string>();
+                    var name = journeysSheet.Cells[row, 3].GetValue<string>();
+                    var group = journeysSheet.Cells[row, 4].GetValue<string>();
+                    var availabilitySlo = journeysSheet.Cells[row, 5].GetValue<decimal>();
+                    var latencySlo = journeysSheet.Cells[row, 6].GetValue<decimal>();
+                    var experienceSlo = journeysSheet.Cells[row, 7].GetValue<decimal>();
+                    var description = journeysSheet.Cells[row, 8].GetValue<string>();
+                    var avatar = journeysSheet.Cells[row, 9].GetValue<string>();
+                    var leaders = journeysSheet.Cells[row, 10].GetValue<string>();
                     var slaValue =  new SLAValue(
-                        servicesSheet.Cells[row, 11].GetValue<decimal>(),
-                        servicesSheet.Cells[row, 12].GetValue<decimal>()                        
+                        journeysSheet.Cells[row, 11].GetValue<decimal>(),
+                        journeysSheet.Cells[row, 12].GetValue<decimal>()                        
                     );
                     
-                    await this._serviceComponent.CreateOrUpdate(
+                    await this._journeyComponent.CreateOrUpdate(
                         organizations.Single(c=>c.Name == organization),product, name,
                         description, avatar, availabilitySlo, latencySlo, experienceSlo,
                         slaValue,
                         leaders, group);
                 }
 
-                var services = await this._dbContext.Services.ToListAsync();
-                foreach (var item in services)
+                var journeys = await this._dbContext.Journeys.ToListAsync();
+                foreach (var item in journeys)
                 {
                     item.Product = products.Single(c => c.Id == item.ProductId);
                 }
@@ -526,18 +526,18 @@ namespace Owlvey.Falcon.Components
                     item.Product = products.Single(c => c.Id == item.ProductId);
                 }
 
-                var serviceMapSheet = package.Workbook.Worksheets["ServiceMaps"];
+                var jouneryMapSheet = package.Workbook.Worksheets["JourneyMaps"];
 
-                for (int row = 2; row <= serviceMapSheet.Dimension.Rows; row++)
+                for (int row = 2; row <= jouneryMapSheet.Dimension.Rows; row++)
                 {
-                    var organization = serviceMapSheet.Cells[row, 1].GetValue<string>();
-                    var product = serviceMapSheet.Cells[row, 2].GetValue<string>();
-                    var service = serviceMapSheet.Cells[row, 3].GetValue<string>();
-                    var feature = serviceMapSheet.Cells[row, 4].GetValue<string>();
-                    var description = serviceMapSheet.Cells[row, 5].GetValue<string>();
-                    await this._serviceMapComponent.CreateServiceMap(
+                    var organization = jouneryMapSheet.Cells[row, 1].GetValue<string>();
+                    var product = jouneryMapSheet.Cells[row, 2].GetValue<string>();
+                    var journey = jouneryMapSheet.Cells[row, 3].GetValue<string>();
+                    var feature = jouneryMapSheet.Cells[row, 4].GetValue<string>();
+                    var description = jouneryMapSheet.Cells[row, 5].GetValue<string>();
+                    await this._journeyMapComponent.CreateMap(
                         organizations.Single(c => c.Name == organization).Id.Value,
-                        product, service, feature);
+                        product, journey, feature);
                 }
 
                 var sourcesSheet = package.Workbook.Worksheets["Sources"];
@@ -605,7 +605,7 @@ namespace Owlvey.Falcon.Components
                     .Include(c => c.Squads).ThenInclude(d => d.Members)
                     .ToListAsync();
 
-                var services = await this._dbContext.Services.Include(c => c.FeatureMap).ToListAsync();
+                var journeys = await this._dbContext.Journeys.Include(c => c.FeatureMap).ToListAsync();
                 var features = await this._dbContext.Features
                     .Include(c => c.Indicators)
                     .Include(c => c.Squads)
@@ -618,7 +618,7 @@ namespace Owlvey.Falcon.Components
                     sourceItems = await this._dbContext.SourcesItems.ToListAsync();
                 }
 
-                var aggregate = new BackupAggregate(users, customers, services, features, sources, sourceItems);
+                var aggregate = new BackupAggregate(users, customers, journeys, features, sources, sourceItems);
                 var model = aggregate.Execute();
 
                 var usersSheet = package.Workbook.Worksheets.Add("Users");
@@ -639,11 +639,11 @@ namespace Owlvey.Falcon.Components
                 var membersSheet = package.Workbook.Worksheets.Add("Members");
                 membersSheet.Cells.LoadFromCollection(model.Members, true);
 
-                var servicesSheet = package.Workbook.Worksheets.Add("Services");
-                servicesSheet.Cells.LoadFromCollection(model.Services, true);
+                var journeysSheet = package.Workbook.Worksheets.Add("Journeys");
+                journeysSheet.Cells.LoadFromCollection(model.Journeys, true);
 
-                var serviceMapsSheet = package.Workbook.Worksheets.Add("ServiceMaps");
-                serviceMapsSheet.Cells.LoadFromCollection(model.ServiceMaps, true);
+                var journeyMapsSheet = package.Workbook.Worksheets.Add("JourneyMaps");
+                journeyMapsSheet.Cells.LoadFromCollection(model.JourneyMaps, true);
 
                 var featuresSheet = package.Workbook.Worksheets.Add("Features");
                 featuresSheet.Cells.LoadFromCollection(model.Features, true);

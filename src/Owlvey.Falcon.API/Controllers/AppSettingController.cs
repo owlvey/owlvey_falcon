@@ -11,14 +11,14 @@ namespace Owlvey.Falcon.API.Controllers
     [Route("appsettings")]
     public class AppSettingController : BaseController
     {
-        private readonly AppSettingQueryComponent _appSettingQueryService;
-        private readonly AppSettingComponent _appSettingService;
+        private readonly AppSettingQueryComponent _appSettingQueryComponent;
+        private readonly AppSettingComponent _appSettingComponent;
         
-        public AppSettingController(AppSettingQueryComponent appSettingQueryService,
-                                    AppSettingComponent appSettingService) : base()
+        public AppSettingController(AppSettingQueryComponent appSettingQuery,
+                                    AppSettingComponent appSetting) : base()
         {
-            this._appSettingQueryService = appSettingQueryService;
-            this._appSettingService = appSettingService;
+            this._appSettingQueryComponent = appSettingQuery;
+            this._appSettingComponent = appSetting;
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(AppSettingPostRp), 200)]
         public async Task<IActionResult> Get()
         {
-            var model = await this._appSettingQueryService.GetSettings();
+            var model = await this._appSettingQueryComponent.GetSettings();
             return this.Ok(model);
         }
 
@@ -42,7 +42,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(AppSettingGetRp), 200)]
         public async Task<IActionResult> GetById(string id)
         {
-            var model = await this._appSettingQueryService.GetAppSettingById(id);
+            var model = await this._appSettingQueryComponent.GetAppSettingById(id);
 
             if (model == null)
                 return this.NotFound($"The Resource {id} doesn't exists.");
@@ -71,7 +71,7 @@ namespace Owlvey.Falcon.API.Controllers
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._appSettingService.CreateAppSetting(resource);
+            var response = await this._appSettingComponent.CreateAppSetting(resource);
 
             if (response.HasConflicts()) {
                 return this.Conflict(response.GetConflicts());
@@ -92,7 +92,7 @@ namespace Owlvey.Falcon.API.Controllers
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._appSettingService.UpdateAppSetting(id, resource);
+            var response = await this._appSettingComponent.UpdateAppSetting(id, resource);
 
             if (response.HasNotFounds())
             {
@@ -119,7 +119,7 @@ namespace Owlvey.Falcon.API.Controllers
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._appSettingService.DeleteAppSetting(id);
+            var response = await this._appSettingComponent.DeleteAppSetting(id);
 
             if (response.HasNotFounds())
             {

@@ -54,7 +54,7 @@ namespace Owlvey.Falcon.ComponentsTests
             var squadQueryComponent = container.GetInstance<SquadQueryComponent>();
             var sourceComponent = container.GetInstance<SourceComponent>();
             var migrationComponent = container.GetInstance<MigrationComponent>();
-            var serviceComponent = container.GetInstance<ServiceQueryComponent>();
+            var journeyComponent = container.GetInstance<JourneyQueryComponent>();
             var featureComponent = container.GetInstance<FeatureQueryComponent>();
             var sourceItemComponent = container.GetInstance<SourceItemComponent>();
 
@@ -79,7 +79,7 @@ namespace Owlvey.Falcon.ComponentsTests
             var squadQueryComponent = container.GetInstance<SquadQueryComponent>();
             var sourceComponent = container.GetInstance<SourceComponent>();
             var migrationComponent = container.GetInstance<MigrationComponent>();
-            var serviceComponent = container.GetInstance<ServiceQueryComponent>();
+            var journeyComponent = container.GetInstance<JourneyQueryComponent>();
             var featureComponent = container.GetInstance<FeatureQueryComponent>();
             var sourceItemComponent = container.GetInstance<SourceItemComponent>();
 
@@ -130,13 +130,13 @@ namespace Owlvey.Falcon.ComponentsTests
 
             Assert.NotEmpty(squads);
 
-            var services = await serviceComponent.GetServices(customer_target.Id);
-            Assert.NotEmpty(services);
+            var journeys = await journeyComponent.GetListByProductId(customer_target.Id);
+            Assert.NotEmpty(journeys);
 
-            foreach (var item in services)
+            foreach (var item in journeys)
             {
-                var service_detail = await serviceComponent.GetServiceById(item.Id);                
-                Assert.NotEmpty(service_detail.Features);
+                var journey_detail = await journeyComponent.GetJourneyById(item.Id);                
+                Assert.NotEmpty(journey_detail.Features);
             }
             
             var features = await featureComponent.GetFeatures(customer_target.Id);

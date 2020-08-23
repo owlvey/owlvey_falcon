@@ -15,7 +15,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         [Fact]
         public void MeasureAvailability()
         {
-            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductServiceFeature();
+            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductJourneyFeature();
             var source = TestDataFactory.BuildSource(product);
 
             var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, "test");
@@ -48,7 +48,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         [Fact]
         public void MeasureAvailabilityNoDataFirstDates()
         {
-            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductServiceFeature();
+            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductJourneyFeature();
             var source = TestDataFactory.BuildSource(product);
 
             var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, "test");
@@ -76,7 +76,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
 
         [Fact]
         public void MeasureAvailabilityEmpty() {
-            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductServiceFeature();
+            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductJourneyFeature();
             var source = TestDataFactory.BuildSource(product);
 
             var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, "test");

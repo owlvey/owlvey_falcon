@@ -18,12 +18,12 @@ namespace Owlvey.Falcon.Repositories.Products
         public static async Task<ProductEntity> FullLoadProductWithGroupAndSourceItems(this FalconDbContext context, int productId, string group, DateTime start, DateTime end)
         {
             var product = await FullLoadProduct(context, productId);
-            product.Services = product.Services.Where(c => c.Group == group).ToList();
-            var sources = product.Services.SelectMany(c => c.FeatureMap).SelectMany(c => c.Feature.Indicators).Select(c => c.SourceId).Distinct().ToList();
+            product.Journeys = product.Journeys.Where(c => c.Group == group).ToList();
+            var sources = product.Journeys.SelectMany(c => c.FeatureMap).SelectMany(c => c.Feature.Indicators).Select(c => c.SourceId).Distinct().ToList();
             var sourceItems = await context.GetSourceItems(sources,  start, end);
-            foreach (var service in product.Services)
+            foreach (var journey in product.Journeys)
             {
-                foreach (var map in service.FeatureMap)
+                foreach (var map in journey.FeatureMap)
                 {
                     foreach (var indicator in map.Feature.Indicators)
                     {
@@ -39,9 +39,9 @@ namespace Owlvey.Falcon.Repositories.Products
         public static async Task<ProductEntity> FullLoadProductWithSourceItems(this FalconDbContext context, int productId, DateTime start, DateTime end) {
             var product = await FullLoadProduct(context, productId);
             var sourceItems = await context.GetSourceItemsByProduct(productId, start, end);
-            foreach (var service in product.Services)
+            foreach (var journey in product.Journeys)
             {
-                foreach (var map in service.FeatureMap)
+                foreach (var map in journey.FeatureMap)
                 {
                     foreach (var indicator in map.Feature.Indicators)
                     {
@@ -57,7 +57,7 @@ namespace Owlvey.Falcon.Repositories.Products
             var product = await context.Products.Include(c => c.Customer)            
             .Where(c => c.Id == productId).SingleAsync();
 
-            product.Services = await context.Services
+            product.Journeys = await context.Journeys
                 .Include(c => c.FeatureMap)
                 .Where(c => c.ProductId == productId).ToListAsync();
 
@@ -66,7 +66,7 @@ namespace Owlvey.Falcon.Repositories.Products
                 .Include(c => c.Squads)
                 .Where(c => c.ProductId == productId).ToListAsync();
 
-            foreach (var item in product.Services)
+            foreach (var item in product.Journeys)
             {
                 foreach (var map in item.FeatureMap)
                 {

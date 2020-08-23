@@ -20,7 +20,7 @@ namespace Owlvey.Falcon.Models
         public DateTime? CreatedOn { get; set; }
 
         public List<ProductGetListItemRp> Products { get; set; } = new List<ProductGetListItemRp>();
-        public List<Dictionary<string, object>> Services { get; set; } = new List<Dictionary<string, object>>();
+        public List<Dictionary<string, object>> Journeys { get; set; } = new List<Dictionary<string, object>>();
         public List<Dictionary<string, object>> Features { get; set; } = new List<Dictionary<string, object>>();
     }
 

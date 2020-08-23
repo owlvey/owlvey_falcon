@@ -17,7 +17,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var aggregate = new BackupAggregate( 
                 new List<UserEntity>(), 
                 new List<CustomerEntity>() { customer },
-                new List<ServiceEntity>(), 
+                new List<JourneyEntity>(), 
                 new List<FeatureEntity>(),
                 new List<SourceEntity>(),
                 new List<SourceItemEntity>());

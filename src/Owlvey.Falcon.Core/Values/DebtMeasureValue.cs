@@ -33,7 +33,7 @@ namespace Owlvey.Falcon.Core.Values
                 this.Add(item);
             }            
         }
-        public void Add(ServiceQualityMeasureValue value)
+        public void Add(JourneyQualityMeasureValue value)
         {
             this.Availability += value.AvailabilityDebt;
             this.Latency += value.LatencyDebt;

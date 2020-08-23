@@ -10,14 +10,14 @@ namespace Owlvey.Falcon.Components
     {
         protected readonly IDateTimeGateway _datetimeGateway;
         protected readonly IMapper _mapper;
-        protected readonly IUserIdentityGateway _identityService;
+        protected readonly IUserIdentityGateway _identityGateway;
         protected readonly ConfigurationComponent _configuration; 
 
         protected BaseComponent(IDateTimeGateway dataTimeGateway, IMapper mapper,
-            IUserIdentityGateway identityService, ConfigurationComponent configuration) {
+            IUserIdentityGateway identityGateway, ConfigurationComponent configuration) {
             this._mapper = mapper;
             this._datetimeGateway = dataTimeGateway;
-            this._identityService = identityService;
+            this._identityGateway = identityGateway;
             this._configuration = configuration;
         }
     }

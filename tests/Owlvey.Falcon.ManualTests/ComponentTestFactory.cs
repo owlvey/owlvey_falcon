@@ -30,7 +30,7 @@ namespace Owlvey.Falcon.ManualTests
                 ProductComponentConfiguration.ConfigureMappers(cfg);
                 FeatureComponentConfiguration.ConfigureMappers(cfg);
                 IncidentComponentConfiguration.ConfigureMappers(cfg);
-                ServiceComponentConfiguration.ConfigureMappers(cfg);
+                JourneyComponentConfiguration.ConfigureMappers(cfg);
                 UserComponentConfiguration.ConfigureMappers(cfg);
                 SquadComponentConfiguration.ConfigureMappers(cfg);
                 MemberComponentConfiguration.ConfigureMappers(cfg);
@@ -101,7 +101,7 @@ namespace Owlvey.Falcon.ManualTests
             return user.Id;
         }
 
-        public static async Task<int> BuildService(Container container, int? product = null, string name = "service")
+        public static async Task<int> BuildJourney(Container container, int? product = null, string name = "journey")
         {
             if (!product.HasValue)
             {
@@ -109,14 +109,14 @@ namespace Owlvey.Falcon.ManualTests
                 product = product_id;
             }
 
-            var serviceComponent = container.GetInstance<ServiceComponent>();
-            var serviceQueryComponent = container.GetInstance<ServiceQueryComponent>();
-            await serviceComponent.CreateService(new Models.ServicePostRp() { Name = name, ProductId = product.Value});
-            var service = await serviceQueryComponent.GetServiceByName(product.Value, name);
-            return service.Id;
+            var journeyComponent = container.GetInstance<JourneyComponent>();
+            var journeyQueryComponent = container.GetInstance<JourneyQueryComponent>();
+            await journeyComponent.Create(new Models.JourneyPostRp() { Name = name, ProductId = product.Value});
+            var journey = await journeyQueryComponent.GetByProductIdName(product.Value, name);
+            return journey.Id;
         }
 
-        public static async Task<int> BuildSource(Container container, int? product = null, string name = "service")
+        public static async Task<int> BuildSource(Container container, int? product = null, string name = "journey")
         {
             if (!product.HasValue)
             {

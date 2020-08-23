@@ -23,7 +23,7 @@ namespace Owlvey.Falcon.Components
 
         private readonly FalconDbContext _dbContext;
         public SquadQueryComponent(FalconDbContext dbContext, IDateTimeGateway dateTimeGateway, IMapper mapper,
-            IUserIdentityGateway identityService, ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityService, configuration)
+            IUserIdentityGateway identityGateway, ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityGateway, configuration)
         {
             this._dbContext = dbContext;            
         }
@@ -99,15 +99,15 @@ namespace Owlvey.Falcon.Components
                     Quality = item.quality,
                     ProductId = item.product.Id.Value,
                     Product = item.product.Name,
-                    ServiceId = item.service.Id.Value,
-                    ServiceAvatar = item.service.Avatar,                    
+                    JourneyId = item.journey.Id.Value,
+                    JourneyAvatar = item.journey.Avatar,                    
                 };
                 tmp.Name = item.feature.Name;
-                tmp.SLO = item.service.GetSLO();
-                tmp.Service = item.service.Name;                
+                tmp.SLO = item.journey.GetSLO();
+                tmp.Journey = item.journey.Name;                
                 result.Features.Add(tmp);
             }
-            result.Features = result.Features.OrderBy(c => c.Service).ToList();
+            result.Features = result.Features.OrderBy(c => c.Journey).ToList();
             return result;
         }
 

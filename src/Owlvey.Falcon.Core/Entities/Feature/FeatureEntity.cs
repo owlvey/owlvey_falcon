@@ -34,12 +34,12 @@ namespace Owlvey.Falcon.Core.Entities
 
         public int ProductId { get; set; }
 
-        public int ServiceMapId { get; set; }
+        public int JourneyMapId { get; set; }
 
 
         public virtual ProductEntity Product { get; set; }
 
-        public virtual ICollection<ServiceMapEntity> ServiceMaps { get; set; } = new List<ServiceMapEntity>();
+        public virtual ICollection<JourneyMapEntity> JourneyMaps { get; set; } = new List<JourneyMapEntity>();
 
         public virtual ICollection<IndicatorEntity> Indicators { get; set; } = new List<IndicatorEntity>();
 

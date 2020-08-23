@@ -21,8 +21,8 @@ namespace Owlvey.Falcon.Components
         private readonly FalconDbContext _dbContext;
 
         public SourceComponent(FalconDbContext dbContext, IDateTimeGateway dataTimeGateway,
-            IMapper mapper, IUserIdentityGateway identityService,
-            ConfigurationComponent configuration) : base(dataTimeGateway, mapper, identityService, configuration)
+            IMapper mapper, IUserIdentityGateway identityGateway,
+            ConfigurationComponent configuration) : base(dataTimeGateway, mapper, identityGateway, configuration)
         {
             this._dbContext = dbContext;
         }
@@ -55,7 +55,7 @@ namespace Owlvey.Falcon.Components
             DefinitionValue experienceDefinition,
             string description, decimal percentile)
         {   
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
             var entity = await this._dbContext.Sources.Where(c => c.Product.CustomerId == customer.Id && c.Product.Name == product && c.Name == name).SingleOrDefaultAsync();
 
@@ -77,7 +77,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<SourceGetListRp> Create(SourcePostRp model)
         {   
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
 
             var product = await this._dbContext.Products.SingleAsync(c => c.Id == model.ProductId);
 
@@ -102,7 +102,7 @@ namespace Owlvey.Falcon.Components
         }
 
         public async Task Delete(int sourceId) {
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             var entity = await this._dbContext.Sources.Where(c => c.Id == sourceId).SingleOrDefaultAsync();
             if (entity != null)
             {                   

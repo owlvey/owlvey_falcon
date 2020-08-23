@@ -203,6 +203,9 @@ namespace Owlvey.Falcon.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("JourneyMapId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ModifiedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -216,9 +219,6 @@ namespace Owlvey.Falcon.Repositories.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ServiceMapId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -373,6 +373,112 @@ namespace Owlvey.Falcon.Repositories.Migrations
                         .IsUnique();
 
                     b.ToTable("IndicatorEntity");
+                });
+
+            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.JourneyEntity", b =>
+                {
+                    b.Property<int?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<decimal>("AvailabilitySla")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("AvailabilitySlo")
+                        .HasColumnType("decimal(5,3)");
+
+                    b.Property<string>("Avatar")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .IsRequired()
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("ExperienceSlo")
+                        .HasColumnType("decimal(5,3)");
+
+                    b.Property<string>("Group")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("LatencySla")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("LatencySlo")
+                        .HasColumnType("decimal(12,3)");
+
+                    b.Property<string>("Leaders")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .IsRequired()
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId", "Name")
+                        .IsUnique();
+
+                    b.ToTable("JourneyEntity");
+                });
+
+            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.JourneyMapEntity", b =>
+                {
+                    b.Property<int?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .IsRequired()
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FeatureId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("JourneyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .IsRequired()
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FeatureId");
+
+                    b.HasIndex("JourneyId", "FeatureId")
+                        .IsUnique();
+
+                    b.ToTable("JourneyMapEntity");
                 });
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.MemberEntity", b =>
@@ -595,112 +701,6 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SecurityThreatEntity");
-                });
-
-            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.ServiceEntity", b =>
-                {
-                    b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<decimal>("AvailabilitySla")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("AvailabilitySlo")
-                        .HasColumnType("decimal(5,3)");
-
-                    b.Property<string>("Avatar")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("CreatedOn")
-                        .IsRequired()
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("ExperienceSlo")
-                        .HasColumnType("decimal(5,3)");
-
-                    b.Property<string>("Group")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("LatencySla")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("LatencySlo")
-                        .HasColumnType("decimal(12,3)");
-
-                    b.Property<string>("Leaders")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ModifiedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ModifiedOn")
-                        .IsRequired()
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId", "Name")
-                        .IsUnique();
-
-                    b.ToTable("ServiceEntity");
-                });
-
-            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.ServiceMapEntity", b =>
-                {
-                    b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("CreatedOn")
-                        .IsRequired()
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("FeatureId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ModifiedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ModifiedOn")
-                        .IsRequired()
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FeatureId");
-
-                    b.HasIndex("ServiceId", "FeatureId")
-                        .IsUnique();
-
-                    b.ToTable("ServiceMapEntity");
                 });
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.SourceEntity", b =>
@@ -1024,6 +1024,30 @@ namespace Owlvey.Falcon.Repositories.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.JourneyEntity", b =>
+                {
+                    b.HasOne("Owlvey.Falcon.Core.Entities.ProductEntity", "Product")
+                        .WithMany("Journeys")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.JourneyMapEntity", b =>
+                {
+                    b.HasOne("Owlvey.Falcon.Core.Entities.FeatureEntity", "Feature")
+                        .WithMany("JourneyMaps")
+                        .HasForeignKey("FeatureId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Owlvey.Falcon.Core.Entities.JourneyEntity", "Journey")
+                        .WithMany("FeatureMap")
+                        .HasForeignKey("JourneyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.MemberEntity", b =>
                 {
                     b.HasOne("Owlvey.Falcon.Core.Entities.SquadEntity", "Squad")
@@ -1059,30 +1083,6 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     b.HasOne("Owlvey.Falcon.Core.Entities.SourceEntity", "Source")
                         .WithMany()
                         .HasForeignKey("SourceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.ServiceEntity", b =>
-                {
-                    b.HasOne("Owlvey.Falcon.Core.Entities.ProductEntity", "Product")
-                        .WithMany("Services")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.ServiceMapEntity", b =>
-                {
-                    b.HasOne("Owlvey.Falcon.Core.Entities.FeatureEntity", "Feature")
-                        .WithMany("ServiceMaps")
-                        .HasForeignKey("FeatureId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Owlvey.Falcon.Core.Entities.ServiceEntity", "Service")
-                        .WithMany("FeatureMap")
-                        .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

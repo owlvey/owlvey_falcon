@@ -22,20 +22,20 @@ namespace Owlvey.Falcon.Core.Entities
                 var paymentFeature = FeatureEntity.Factory.Create("Awesome Payment", on, user, defaultProduct);
                 defaultProduct.Features.Add(paymentFeature);
 
-                var defaultService = ServiceEntity.Factory.Create("Awesome Onboarding", on, user, defaultProduct);
-                defaultProduct.Services.Add(defaultService);
+                var defaultJourney = JourneyEntity.Factory.Create("Awesome Onboarding", on, user, defaultProduct);
+                defaultProduct.Journeys.Add(defaultJourney);
 
-                var defaultPaymentService = ServiceEntity.Factory.Create("Awesome Payment Service", on, user, defaultProduct);                
-                defaultProduct.Services.Add(defaultPaymentService);
+                var defaultPaymentJourney = JourneyEntity.Factory.Create("Awesome Payment Journey", on, user, defaultProduct);                
+                defaultProduct.Journeys.Add(defaultPaymentJourney);
 
-                var defaultMap = ServiceMapEntity.Factory.Create(defaultService, defaultFeature, on, user);
-                defaultService.FeatureMap.Add(defaultMap);
+                var defaultMap = JourneyMapEntity.Factory.Create(defaultJourney, defaultFeature, on, user);
+                defaultJourney.FeatureMap.Add(defaultMap);
 
-                defaultMap = ServiceMapEntity.Factory.Create(defaultService, defaultRegistration, on, user);
-                defaultService.FeatureMap.Add(defaultMap);
+                defaultMap = JourneyMapEntity.Factory.Create(defaultJourney, defaultRegistration, on, user);
+                defaultJourney.FeatureMap.Add(defaultMap);
 
-                defaultMap = ServiceMapEntity.Factory.Create(defaultPaymentService, paymentFeature, on, user);
-                defaultPaymentService.FeatureMap.Add(defaultMap);
+                defaultMap = JourneyMapEntity.Factory.Create(defaultPaymentJourney, paymentFeature, on, user);
+                defaultPaymentJourney.FeatureMap.Add(defaultMap);
 
                 var defaultSquad = SquadEntity.Factory.Create("Spartans", on, user, result);
                

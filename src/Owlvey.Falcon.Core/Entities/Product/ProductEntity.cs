@@ -21,15 +21,15 @@ namespace Owlvey.Falcon.Core.Entities
 
         public int CustomerId { get; set; }
         
-        public virtual ICollection<ServiceEntity> Services { get; set; } = new List<ServiceEntity>();
+        public virtual ICollection<JourneyEntity> Journeys { get; set; } = new List<JourneyEntity>();
         public virtual ICollection<FeatureEntity> Features { get; set; } = new List<FeatureEntity>();
         public virtual SourceCollection Sources { get; set; } = new SourceCollection();
         public virtual ICollection<IncidentEntity> Incidents { get; set; } = new List<IncidentEntity>();
         public virtual ICollection<AnchorEntity> Anchors { get; set; } = new List<AnchorEntity>(); 
 
-        public void AddService(ServiceEntity entity) {
+        public void AddJourney(JourneyEntity entity) {
             entity.Product = this;
-            this.Services.Add(entity);
+            this.Journeys.Add(entity);
         }
         
         public void AddFeature(FeatureEntity entity) {
@@ -53,9 +53,9 @@ namespace Owlvey.Falcon.Core.Entities
         }
 
         public void ClearSourceItems() {
-            foreach (var service in this.Services)
+            foreach (var journey in this.Journeys)
             {
-                foreach (var map in service.FeatureMap)
+                foreach (var map in journey.FeatureMap)
                 {
                     foreach (var indicator in map.Feature.Indicators)
                     {

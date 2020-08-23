@@ -11,7 +11,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
         [Fact]
         public void CreateIndicatorEntitySuccess()
         {
-            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductServiceFeature();
+            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductJourneyFeature();
             var source = TestDataFactory.BuildSource(product, "test", DateTime.Now, "createdby");
             var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, "test");
             Assert.NotNull(indicator.Source);

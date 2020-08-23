@@ -29,7 +29,7 @@ namespace Owlvey.Falcon.Models
     }
 
     public class ProductGetRp : ProductBaseRp {
-        public IEnumerable<ServiceGetListRp> Services { get; set; } = new List<ServiceGetListRp>();
+        public IEnumerable<JourneyGetListRp> Journeys { get; set; } = new List<JourneyGetListRp>();
     }
 
     public class ProductGetListRp  {
@@ -70,7 +70,7 @@ namespace Owlvey.Falcon.Models
     }
     public class ProductGetListItemRp : ProductBaseRp
     {
-        public int ServicesCount { get; set; }
+        public int JourneysCount { get; set; }
         public int FeaturesCount { get; set; }
         public int SourcesCount { get; set; }
 
