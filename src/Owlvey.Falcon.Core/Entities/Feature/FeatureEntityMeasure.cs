@@ -11,9 +11,10 @@ namespace Owlvey.Falcon.Core.Entities
     public partial class FeatureEntity 
     {
         public DebtMeasureValue MeasureDebt(DatePeriodValue period = null) {
-            var measure = this.Measure(period);
+            QualityMeasureValue measure = this.Measure(period);
             var result = new DebtMeasureValue();
-            result.AddRange(this.JourneyMaps.Select(c => measure.MeasureDebt(c.Journey.GetSLO())).ToList());
+            var measures = this.JourneyMaps.Select(c => measure.MeasureDebt(c.Journey.GetSLO())).ToList();
+            result.AddRange(measures);
             return result;            
         }
         public QualityMeasureValue Measure(DatePeriodValue period = null)

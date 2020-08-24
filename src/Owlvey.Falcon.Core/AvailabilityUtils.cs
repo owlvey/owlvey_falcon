@@ -54,11 +54,11 @@ namespace Owlvey.Falcon.Core
             return -1 * budget;
         }
         public static decimal MeasureLatencyBudget(decimal latency, decimal slo) {
-            // 2000 1000
-            // 500 1000
-            return slo - latency;
+            
+            return latency - slo;
         }
-        public static decimal MeasureLatencyDebt(decimal latency, decimal slo)
+        public static decimal MeasureLatencyDebt(decimal latency,
+            decimal slo)
         {
             var budget = MeasureLatencyBudget(latency, slo);
             if (budget <= 0)
