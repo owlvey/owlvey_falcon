@@ -64,6 +64,16 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok(model);
         }
 
+
+        [HttpPost("batch")]
+        [Authorize(Policy = "RequireAdminRole")]
+        [ProducesResponseType(typeof(void), 200)]
+        public async Task<IActionResult> PostInteractionItems([FromBody] SourceItemBatchPostRp model)
+        {            
+            var result = await this._sourceItemComponent.CreateInteractionItems(model);
+            return this.Ok(result);
+        }
+
         #region latency
         [HttpPost("latency")]
         [Authorize(Policy = "RequireAdminRole")]

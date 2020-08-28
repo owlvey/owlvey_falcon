@@ -147,6 +147,14 @@ namespace Owlvey.Falcon.Core
                 return Math.Round(good / total, 3);
             }
         }
+        public static decimal CalculateProportion(int total, int good, decimal defaultValue = 1)
+        {
+            return CalculateProportion((decimal)total, (decimal)good, defaultValue);
+        }
+        public static decimal CalculateProportion(int? total, int? good, decimal defaultValue = 1)
+        {
+            return CalculateProportion((decimal)total.GetValueOrDefault(), (decimal)good.GetValueOrDefault(), defaultValue);
+        }
         public static decimal CalculateAvailability(decimal total, decimal good, decimal defaultValue = 1) {
             if (total == 0)
             {   

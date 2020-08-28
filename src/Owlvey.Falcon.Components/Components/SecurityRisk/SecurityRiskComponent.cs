@@ -113,7 +113,10 @@ namespace Owlvey.Falcon.Components
             var item = this._dbContext.SecurityThreats.Where(c => c.Id == id).SingleOrDefault();
             if (item != null)
             {
-                item.Update(modifiedOn, modifiedBy, model.Name, model.Description, model.Tags, model.Reference);
+                item.Update(modifiedOn, modifiedBy, model.Name, model.Description, model.Tags, 
+                    model.Reference, model.AgentSkillLevel, model.Motive, model.Opportunity, model.Size,
+                    model.EasyDiscovery, model.EasyExploit, model.Awareness, model.IntrusionDetection, model.LossConfidentiality, model.LossIntegrity, 
+                    model.LossAccountability, model.LossAccountability, model.FinancialDamage, model.ReputationDamage, model.NonCompliance, model.PrivacyViolation);
                 await this._dbContext.SaveChangesAsync();
             }
             return this._mapper.Map<SecurityThreatGetRp>(item);

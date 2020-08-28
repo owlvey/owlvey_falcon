@@ -59,7 +59,23 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     Avatar = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     Reference = table.Column<string>(nullable: true),
-                    Tags = table.Column<string>(nullable: true)
+                    Tags = table.Column<string>(nullable: true),
+                    AgentSkillLevel = table.Column<int>(nullable: false),
+                    Motive = table.Column<int>(nullable: false),
+                    Opportunity = table.Column<int>(nullable: false),
+                    Size = table.Column<int>(nullable: false),
+                    EasyDiscovery = table.Column<int>(nullable: false),
+                    EasyExploit = table.Column<int>(nullable: false),
+                    Awareness = table.Column<int>(nullable: false),
+                    IntrusionDetection = table.Column<int>(nullable: false),
+                    LossConfidentiality = table.Column<int>(nullable: false),
+                    LossIntegrity = table.Column<int>(nullable: false),
+                    LossAvailability = table.Column<int>(nullable: false),
+                    LossAccountability = table.Column<int>(nullable: false),
+                    FinancialDamage = table.Column<int>(nullable: false),
+                    ReputationDamage = table.Column<int>(nullable: false),
+                    NonCompliance = table.Column<int>(nullable: false),
+                    PrivacyViolation = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {

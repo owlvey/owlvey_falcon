@@ -99,9 +99,7 @@ namespace Owlvey.Falcon.Components
                 var tmp = this._mapper.Map<IndicatorDetailRp>(indicator);                
                 tmp.Measure = indicator.Source.Measure();                
                 model.Indicators.Add(tmp);
-            }
-
-            model.Indicators = model.Indicators.OrderByDescending(c => c.Measure).ToList();
+            }            
 
             foreach (var map in feature.JourneyMaps)
             {

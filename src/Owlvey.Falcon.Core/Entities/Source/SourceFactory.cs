@@ -27,17 +27,7 @@ namespace Owlvey.Falcon.Core.Entities
             {
                 var result = new List<SourceItemEntity>();
                 var days = (decimal)DateTimeUtils.DaysDiff(end, start);
-                if (measure.HasValue && measure != 0)
-                {
-                    for (int i = 0; i < days; i++)
-                    {
-                        var target = start.AddDays(i);
-                        var entity = Factory.CreateItem(source,
-                            target, 0, 0, measure.Value, on, createdBy, group);
-                        result.Add(entity);
-                    }
-                }
-                else 
+                if (good.HasValue && total.HasValue)
                 {
                     if (good < 0 || total < 0)
                     {
@@ -54,7 +44,20 @@ namespace Owlvey.Falcon.Core.Entities
                             target, target_good, target_total, on, createdBy, group);
                         result.Add(entity);
                     }
-                }                            
+                }
+                else if (measure.HasValue)
+                {
+                    for (int i = 0; i < days; i++)
+                    {
+                        var target = start.AddDays(i);
+                        var entity = Factory.CreateItem(source,
+                            target, 0, 0, measure.Value, on, createdBy, group);
+                        result.Add(entity);
+                    }
+                }
+                else {
+                    throw new ApplicationException($" no values for measures ${total}, ${good}, ${measure}");
+                }
 
                 return result;
 
@@ -64,48 +67,57 @@ namespace Owlvey.Falcon.Core.Entities
                     DateTime target, int good, int total,
                     DateTime on, string createdBy, SourceGroupEnum group)
             {
-                return CreateItem(source, target, good, total, 0, on, createdBy, group);
+                return CreateItem(source, target, good, total, null, on, createdBy, group);
             }
             public static SourceItemEntity CreateItemByMeasure(SourceEntity source,
                     DateTime target, decimal measure,
                     DateTime on, string createdBy, SourceGroupEnum group)
             {
-                return CreateItem(source, target, 0, 0, measure, on, createdBy, group);
-            }
+                return CreateItem(source, target, null, null, measure, on, createdBy, group);
+            }            
 
             public static SourceItemEntity CreateItem(SourceEntity source,
-                    DateTime target, int good, int total, decimal measeure,
+                    DateTime target, int? good, int? total, decimal? measeure,
                     DateTime on, string createdBy, SourceGroupEnum group)
-            {
-                if (good < 0 || total < 0)
+            {                
+                if (measeure.HasValue)
                 {
-                    throw new ApplicationException(
-                        string.Format("good {0} and total {1} must be greater equal than zero", good, total));
+                    if (measeure < 0)
+                    {
+                        throw new ApplicationException(string.Format("invalid value measure {0} ", measeure));
+                    }
+                    if (group != SourceGroupEnum.Latency)
+                    {
+                        if (measeure > 1 || measeure < 0)
+                        {
+                            throw new ApplicationException(string.Format("proportion {0} must be between 0 and 1", measeure));
+                        }
+                    }
                 }
-                if (total < good)
-                {
-                    throw new ApplicationException(
-                          string.Format("good {0} is greater than total {1}", good, total));
-                }
-
-                if (measeure == 0) {
+                else if (good.HasValue && total.HasValue) {
+                    if (good < 0 || total < 0)
+                    {
+                        throw new ApplicationException(
+                            string.Format("good {0} and total {1} must be greater equal than zero", good, total));
+                    }
+                    if (total < good)
+                    {
+                        throw new ApplicationException(
+                              string.Format("good {0} is greater than total {1}", good, total));
+                    }
                     measeure = QualityUtils.CalculateProportion(total, good);
                 }
-
-                if (group != SourceGroupEnum.Latency)
+                else
                 {
-                    if (measeure > 1 || measeure < 0)
-                    {
-                        throw new ApplicationException(string.Format("proportion {0} must be between 0 and 1", measeure));
-                    }
-                }                
+                    throw new ApplicationException($" no values for measures ${total}, ${good}, ${measeure}");
+                }
 
                 var entity = new SourceItemEntity()
                 {
                     Target = target,
                     Good = good,
                     Total = total,
-                    Measure = measeure,
+                    Measure = measeure.Value,
                     Source = source,
                     CreatedBy = createdBy,
                     ModifiedBy = createdBy,

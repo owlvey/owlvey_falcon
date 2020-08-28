@@ -13,6 +13,7 @@ using Owlvey.Falcon.Repositories.Sources;
 using Polly;
 using Owlvey.Falcon.Core.Values;
 using Owlvey.Falcon.Repositories.Products;
+using System.Drawing.Printing;
 
 namespace Owlvey.Falcon.Components
 {
@@ -184,6 +185,7 @@ namespace Owlvey.Falcon.Components
             model.Availability = quality.Availability;
             model.Experience = quality.Experience;
             model.Latency = quality.Latency;
+            model.AvailabilityInteractions = quality.InteractionsProportion;
             model.AvailabilityInteractionsTotal = quality.Total;
             model.AvailabilityInteractionsGood = quality.Good;
 

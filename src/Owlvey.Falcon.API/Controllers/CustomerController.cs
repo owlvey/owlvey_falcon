@@ -32,13 +32,13 @@ namespace Owlvey.Falcon.API.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<CustomerGetListRp>), 200)]
         public async Task<IActionResult> Get(DateTime? start, DateTime? end)
-        {
+        {   
             var model = await this._customerQueryComponent.GetCustomersQuality(new Core.Values.DatePeriodValue(start, end));
             return this.Ok(model);
         }
         [HttpGet("lite")]
         [ProducesResponseType(typeof(IEnumerable<CustomerLiteRp>), 200)]
-        public async Task<IActionResult> GetLite(int customerId)
+        public async Task<IActionResult> GetLite()
         {
             var model = await this._customerQueryComponent.GetCustomers();
             return this.Ok(model);

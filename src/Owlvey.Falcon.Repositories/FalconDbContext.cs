@@ -181,18 +181,14 @@ namespace Owlvey.Falcon.Repositories
         }
 
         public async Task<ICollection<SourceItemEntity>> GetSourceItems(int sourceId,
-            DateTime start, DateTime end) {
-            start = start.Date;
-            end = end.Date;
+            DateTime start, DateTime end) {            
             List<SourceItemEntity> result = new List<SourceItemEntity>();
             result = await this.SourcesItems.Where(c => c.SourceId == sourceId && c.Target >= start && c.Target <= end).ToListAsync();                        
             return result;
         }
         public async Task<ICollection<SourceItemEntity>> GetSourceItems(int sourceId, SourceGroupEnum group,
             DateTime start, DateTime end)
-        {
-            start = start.Date;
-            end = end.Date;
+        {            
             List<SourceItemEntity> result = new List<SourceItemEntity>();
             result = await this.SourcesItems.Where(c => c.SourceId == sourceId && c.Group == group &&  c.Target >= start && c.Target <= end).ToListAsync();
             return result;
@@ -200,18 +196,14 @@ namespace Owlvey.Falcon.Repositories
 
         public async Task<ICollection<SourceItemEntity>> GetSourceItems(IEnumerable<int> sources,
             DateTime start, DateTime end)
-        {
-            start = start.Date;
-            end = end.Date;
+        {            
             List<SourceItemEntity> result = new List<SourceItemEntity>();
             result = await this.SourcesItems.Where(c => sources.Contains(c.SourceId) && c.Target >= start && c.Target <= end).ToListAsync();            
             return result;
         }
 
         public async Task<ICollection<SourceItemEntity>> GetSourceItems(DateTime start, DateTime end)
-        {
-            start = start.Date;
-            end = end.Date;
+        {            
             List<SourceItemEntity> result = new List<SourceItemEntity>();
             result = await this.SourcesItems.Where(c=>c.Target >= start && c.Target <= end).ToListAsync();
             return result;
@@ -219,9 +211,7 @@ namespace Owlvey.Falcon.Repositories
 
 
         public async Task<ICollection<SourceItemEntity>> GetSourceItemsByProduct(IEnumerable<int> productIds, DateTime start, DateTime end)
-        {
-            start = start.Date;
-            end = end.Date;
+        {            
             List<SourceItemEntity> result = new List<SourceItemEntity>();
             result = await this.SourcesItems.Where(c => productIds.Contains(c.Source.ProductId) && c.Target >= start && c.Target <= end).ToListAsync();
             return result;

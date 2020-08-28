@@ -12,6 +12,10 @@ namespace Owlvey.Falcon.Core.Entities
             var entity = new SecurityThreatEntity()
             {
                 Name = name,
+                Description = "Threat description",
+                Avatar = "https://www.flaticon.com/premium-icon/icons/svg/379/379743.svg",
+                Reference= "https://en.wikipedia.org/wiki/Threat_(computer)",
+                Tags="#security,#threat",
                 CreatedBy = createdBy,
                 CreatedOn = createdOn,
                 ModifiedBy = createdBy,

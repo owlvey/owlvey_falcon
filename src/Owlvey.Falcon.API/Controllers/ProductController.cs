@@ -35,8 +35,7 @@ namespace Owlvey.Falcon.API.Controllers
         [HttpGet("")]
         [ProducesResponseType(typeof(ProductGetListRp), 200)]
         public async Task<IActionResult> Get(int customerId, DateTime? start, DateTime? end)
-        {            
-
+        {   
             var model = await this._productQueryComponent.GetProductsWithInformation(customerId, new DatePeriodValue(start, end));
             return this.Ok(model);
         }

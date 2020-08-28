@@ -667,8 +667,14 @@ namespace Owlvey.Falcon.Repositories.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("AgentSkillLevel")
+                        .HasColumnType("int");
+
                     b.Property<string>("Avatar")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Awareness")
+                        .HasColumnType("int");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
@@ -681,6 +687,30 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("EasyDiscovery")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EasyExploit")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FinancialDamage")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IntrusionDetection")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LossAccountability")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LossAvailability")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LossConfidentiality")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LossIntegrity")
+                        .HasColumnType("int");
+
                     b.Property<string>("ModifiedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -689,11 +719,29 @@ namespace Owlvey.Falcon.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("Motive")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("NonCompliance")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Opportunity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PrivacyViolation")
+                        .HasColumnType("int");
+
                     b.Property<string>("Reference")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ReputationDamage")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Size")
+                        .HasColumnType("int");
 
                     b.Property<string>("Tags")
                         .HasColumnType("nvarchar(max)");

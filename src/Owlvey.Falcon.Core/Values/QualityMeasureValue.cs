@@ -10,6 +10,10 @@ namespace Owlvey.Falcon.Core.Values
         public int Good { get; protected set; }
         public int Total { get; protected set; }
 
+        public decimal InteractionsProportion { get {
+                return QualityUtils.CalculateProportion(this.Total, this.Good);
+            } 
+        }
         public int Delta { get { return this.Total - this.Good;  } }
         public decimal Availability { get; protected set; }
 

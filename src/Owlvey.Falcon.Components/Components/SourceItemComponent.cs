@@ -54,6 +54,54 @@ namespace Owlvey.Falcon.Components
                 throw new ApplicationException("type is not valid");
             }
         }
+
+        public async Task<SourceItemBatchPostRp.SourceItemBatchResultPostRp> CreateInteractionItems(SourceItemBatchPostRp model) {
+            var createdOn = this._datetimeGateway.GetCurrentDateTime();
+            var createdBy = this._identityGateway.GetIdentity();
+            
+            var product = await this._dbContext.Products
+                .Include(c=>c.Sources)
+                .Where(c => c.Name == model.Product && c.Customer.Name == model.Customer).SingleAsync();
+
+            SourceItemBatchPostRp.SourceItemBatchResultPostRp result = new SourceItemBatchPostRp.SourceItemBatchResultPostRp();
+            if (model.Kind == SourceKindEnum.Interaction) {
+                
+                
+                var data = model.ParseItems();
+                var groups = data.GroupBy(c => c.Source);
+                foreach (var item in groups)
+                {
+                    var source = product.Sources.Where(c => c.Name == item.Key).SingleOrDefault();
+                    if (source == null)
+                    {
+                        result.SourceCreated += 1;
+                        source = SourceEntity.Factory.Create(product, item.Key, createdOn, createdBy);
+                        product.Sources.Add(source);
+                        this._dbContext.Sources.Add(source);
+                    }
+                    await this._dbContext.SaveChangesAsync();
+                }
+                foreach (var group in groups)
+                {
+                    var availability = new List<SourceItemEntity>();
+                    var experience = new List<SourceItemEntity>();
+                    var latency = new List<SourceItemEntity>();
+                    var source = product.Sources.Where(c => c.Name == group.Key).Single();                    
+                    foreach (var item in group)
+                    {
+                        availability.AddRange(SourceEntity.Factory.CreateItemsFromRange(source, item.Start, item.End, item.Availability, item.Total, createdOn, createdBy, SourceGroupEnum.Availability));
+                        experience.AddRange( SourceEntity.Factory.CreateItemsFromRange(source, item.Start, item.End, item.Experience, item.Total, createdOn, createdBy, SourceGroupEnum.Experience));
+                        latency.AddRange(SourceEntity.Factory.CreateItemsFromRangeByMeasure(source, item.Start, item.End, item.Latency, createdOn, createdBy, SourceGroupEnum.Latency));                        
+                    }
+                    result.ItemsCreated += (availability.Count() + experience.Count() + latency.Count());
+                    this._dbContext.SourcesItems.AddRange(availability);
+                    this._dbContext.SourcesItems.AddRange(experience);
+                    this._dbContext.SourcesItems.AddRange(latency);
+                    await this._dbContext.SaveChangesAsync();
+                }                
+            }            
+            return result; 
+        }
         public async Task<IEnumerable<SourceItemBaseRp>> CreateLatencyItem(SourceItemLatencyPostRp model)
         {
             var createdBy = this._identityGateway.GetIdentity();

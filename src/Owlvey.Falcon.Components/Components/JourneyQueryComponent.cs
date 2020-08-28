@@ -553,7 +553,7 @@ namespace Owlvey.Falcon.Components
 
             var rootMeasure = rootJourney.Measure();
 
-            var snode = new GraphNode("journeyss", "journey",
+            var snode = new GraphNode("journeys", "journey",
                     rootJourney.Id.Value,
                     rootJourney.Avatar,
                     string.Format("{0} [ {1} | {2} ]", rootJourney.Name,
