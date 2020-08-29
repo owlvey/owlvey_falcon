@@ -54,10 +54,13 @@ namespace Owlvey.Falcon.Repositories
 
         public DbSet<SecurityRiskEntity> SecurityRisks { get; set; }
         public DbSet<SecurityThreatEntity> SecurityThreats { get; set; }
-                        
+
         #endregion
 
         #region Reliability Risk
+
+        public DbSet<ReliabilityRiskEntity> ReliabilityRisks { get; set; }
+        public DbSet<ReliabilityThreatEntity> ReliabilityThreats { get; set; }
 
         #endregion
 
@@ -105,8 +108,7 @@ namespace Owlvey.Falcon.Repositories
             //modelBuilder.Entity<InteractionSourceEntity>().HasBaseType<SourceEntity>();
 
             modelBuilder.Entity<SquadEntity>().HasIndex(c => new { c.CustomerId, c.Name }).IsUnique();
-
-
+            
             modelBuilder.Entity<SquadFeatureEntity>()
                .HasOne(pt => pt.Squad)
                .WithMany(p => p.FeatureMaps)

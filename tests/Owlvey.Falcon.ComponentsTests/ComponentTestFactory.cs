@@ -75,6 +75,8 @@ namespace Owlvey.Falcon.ComponentsTests
                 IndicatorComponentConfiguration.ConfigureMappers(cfg);
                 SourceComponent.ConfigureMappers(cfg);
                 SecurityRiskComponent.ConfigureMappers(cfg);
+                ReliabilityRiskComponent.ConfigureMappers(cfg);
+                MigrationComponent.ConfigureMappers(cfg);
             });
             configuration.AssertConfigurationIsValid();
             var mapper = configuration.CreateMapper();

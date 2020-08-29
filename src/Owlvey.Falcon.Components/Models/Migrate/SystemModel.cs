@@ -20,6 +20,40 @@ namespace Owlvey.Falcon.Core.Models.Migrate
         public ICollection<SourceModel> Sources { get; protected set; } = new List<SourceModel>();
         public ICollection<SourceItemModel> SourceItems { get; protected set; } = new List<SourceItemModel>();
         
+        public ICollection<SecurityThreatModel>  SecurityThreats { get; protected set; } = new List<SecurityThreatModel>();
+        public ICollection<ReliabilityThreatModel> ReliabilityThreats { get; protected set; } = new List<ReliabilityThreatModel>();
+
+        public ICollection<SecurityRiskModel> SecurityRisks{ get; protected set; } = new List<SecurityRiskModel>();
+        public ICollection<ReliabilityRiskModel> ReliabilityRisks { get; protected set; } = new List<ReliabilityRiskModel>();
+
+        public void AddSecurityRisks(IEnumerable<SecurityRiskModel> risks)
+        {
+            foreach (var item in risks)
+            {
+                this.SecurityRisks.Add(item);
+            }
+        }
+        public void AddReliabilityRisks(IEnumerable<ReliabilityRiskModel> risks)
+        {
+            foreach (var item in risks)
+            {
+                this.ReliabilityRisks.Add(item);
+            }
+        }
+        public void AddSecurityThreats(IEnumerable<SecurityThreatModel> threats) {
+            foreach (var item in threats)
+            {                
+                this.SecurityThreats.Add(item);
+            }
+        }
+        public void AddReliabilityThreats(IEnumerable<ReliabilityThreatModel> threats)
+        {
+            foreach (var item in threats)
+            {
+                this.ReliabilityThreats.Add(item);
+            }
+        }
+
         public void AddUsers(IEnumerable<UserEntity> users)
         {
             foreach (var item in users)

@@ -53,7 +53,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(void), 200)]
         public async Task<IActionResult> DeleteRisk(int id)
         {
-            await this.DeleteRisk(id);
+            await this._SecurityRiskComponent.DeleteRisk(id);
             return this.Ok();
         }
 

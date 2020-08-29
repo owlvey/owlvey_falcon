@@ -46,6 +46,32 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ReliabilityThreatEntity",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CreatedOn = table.Column<DateTime>(nullable: false),
+                    CreatedBy = table.Column<string>(nullable: false),
+                    ModifiedOn = table.Column<DateTime>(nullable: false),
+                    ModifiedBy = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
+                    Avatar = table.Column<string>(nullable: true),
+                    Reference = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    Tags = table.Column<string>(nullable: true),
+                    ETTD = table.Column<decimal>(nullable: false),
+                    ETTE = table.Column<decimal>(nullable: false),
+                    ETTF = table.Column<decimal>(nullable: false),
+                    UserImpact = table.Column<decimal>(nullable: false),
+                    ETTFail = table.Column<decimal>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReliabilityThreatEntity", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SecurityThreatEntity",
                 columns: table => new
                 {
@@ -461,6 +487,39 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ReliabilityRiskEntity",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CreatedOn = table.Column<DateTime>(nullable: false),
+                    CreatedBy = table.Column<string>(nullable: false),
+                    ModifiedOn = table.Column<DateTime>(nullable: false),
+                    ModifiedBy = table.Column<string>(nullable: false),
+                    SourceId = table.Column<int>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
+                    Avatar = table.Column<string>(nullable: true),
+                    Reference = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    Tags = table.Column<string>(nullable: true),
+                    ETTD = table.Column<decimal>(nullable: false),
+                    ETTE = table.Column<decimal>(nullable: false),
+                    ETTF = table.Column<decimal>(nullable: false),
+                    UserImpact = table.Column<decimal>(nullable: false),
+                    ETTFail = table.Column<decimal>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReliabilityRiskEntity", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ReliabilityRiskEntity_SourceEntity_SourceId",
+                        column: x => x.SourceId,
+                        principalTable: "SourceEntity",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SecurityRiskEntity",
                 columns: table => new
                 {
@@ -471,7 +530,11 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     ModifiedOn = table.Column<DateTime>(nullable: false),
                     ModifiedBy = table.Column<string>(nullable: false),
                     SourceId = table.Column<int>(nullable: false),
-                    SecurityThreatId = table.Column<int>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
+                    Avatar = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    Reference = table.Column<string>(nullable: true),
+                    Tags = table.Column<string>(nullable: true),
                     AgentSkillLevel = table.Column<int>(nullable: false),
                     Motive = table.Column<int>(nullable: false),
                     Opportunity = table.Column<int>(nullable: false),
@@ -487,19 +550,11 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     FinancialDamage = table.Column<int>(nullable: false),
                     ReputationDamage = table.Column<int>(nullable: false),
                     NonCompliance = table.Column<int>(nullable: false),
-                    PrivacyViolation = table.Column<int>(nullable: false),
-                    LikeHood = table.Column<decimal>(nullable: false),
-                    Impact = table.Column<decimal>(nullable: false)
+                    PrivacyViolation = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SecurityRiskEntity", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SecurityRiskEntity_SecurityThreatEntity_SecurityThreatId",
-                        column: x => x.SecurityThreatId,
-                        principalTable: "SecurityThreatEntity",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_SecurityRiskEntity_SourceEntity_SourceId",
                         column: x => x.SourceId,
@@ -643,9 +698,9 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_SecurityRiskEntity_SecurityThreatId",
-                table: "SecurityRiskEntity",
-                column: "SecurityThreatId");
+                name: "IX_ReliabilityRiskEntity_SourceId",
+                table: "ReliabilityRiskEntity",
+                column: "SourceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SecurityRiskEntity_SourceId",
@@ -709,7 +764,16 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 name: "MemberEntity");
 
             migrationBuilder.DropTable(
+                name: "ReliabilityRiskEntity");
+
+            migrationBuilder.DropTable(
+                name: "ReliabilityThreatEntity");
+
+            migrationBuilder.DropTable(
                 name: "SecurityRiskEntity");
+
+            migrationBuilder.DropTable(
+                name: "SecurityThreatEntity");
 
             migrationBuilder.DropTable(
                 name: "SquadFeatureEntity");
@@ -725,9 +789,6 @@ namespace Owlvey.Falcon.Repositories.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserEntity");
-
-            migrationBuilder.DropTable(
-                name: "SecurityThreatEntity");
 
             migrationBuilder.DropTable(
                 name: "FeatureEntity");

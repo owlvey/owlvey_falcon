@@ -50,6 +50,7 @@ namespace Owlvey.Falcon.ComponentsTests
             var container = ComponentTestFactory.BuildContainer();
             var customerComponet = container.GetInstance<CustomerComponent>();
             var customerQueryComponet = container.GetInstance<CustomerQueryComponent>();
+            var productComponent = container.GetInstance<ProductComponent>();
             var productQueryComponent = container.GetInstance<ProductQueryComponent>();
             var squadQueryComponent = container.GetInstance<SquadQueryComponent>();
             var sourceComponent = container.GetInstance<SourceComponent>();
@@ -57,24 +58,49 @@ namespace Owlvey.Falcon.ComponentsTests
             var journeyComponent = container.GetInstance<JourneyQueryComponent>();
             var featureComponent = container.GetInstance<FeatureQueryComponent>();
             var sourceItemComponent = container.GetInstance<SourceItemComponent>();
+            var securityComponent = container.GetInstance<SecurityRiskComponent>();
+            var reliabilityComponent = container.GetInstance<ReliabilityRiskComponent>();
 
             #endregion
             var result = await customerComponet.CreateCustomer(new Models.CustomerPostRp()
             {
                 Name = "test",  Default = true   
-            });            
+            });
+            var product = await productComponent.CreateProduct(new Models.ProductPostRp() { Name = "test", CustomerId = result.Id });
+            var SecurityThreat = await securityComponent.CreateThreat(new Models.SecurityThreatPostRp() { Name= "test" } );
+            var source = await sourceComponent.Create(new Models.SourcePostRp() {
+                 Name = "test", ProductId = product.Id
+            });
+            var SecurityRisk = await securityComponent.Create(new Models.SecurityRiskPost()
+            {
+                 SourceId = source.Id,  Name = SecurityThreat.Name
+            });
+
+
+            var reliabilityThreat = await reliabilityComponent.CreateThreat(new Models.ReliabilityThreatPostRp()
+            { Name = "test threat" });
+
+            var reliabilityRisk = await reliabilityComponent.Create(new Models.ReliabilityRiskPostRp()
+            {
+                 Name = "test risk", SourceId = source.Id
+            });
+
             var stream = await migrationComponent.Backup(true);
+
+            
+
             
         }
         
         [Fact]
         public async Task BackupRestore() {
-            
+
             #region   Components
 
             var container = ComponentTestFactory.BuildContainer();
             var customerComponet = container.GetInstance<CustomerComponent>();
             var customerQueryComponet = container.GetInstance<CustomerQueryComponent>();
+            var productComponent = container.GetInstance<ProductComponent>();
             var productQueryComponent = container.GetInstance<ProductQueryComponent>();
             var squadQueryComponent = container.GetInstance<SquadQueryComponent>();
             var sourceComponent = container.GetInstance<SourceComponent>();
@@ -82,13 +108,35 @@ namespace Owlvey.Falcon.ComponentsTests
             var journeyComponent = container.GetInstance<JourneyQueryComponent>();
             var featureComponent = container.GetInstance<FeatureQueryComponent>();
             var sourceItemComponent = container.GetInstance<SourceItemComponent>();
+            var securityComponent = container.GetInstance<SecurityRiskComponent>();
+            var reliabilityComponent = container.GetInstance<ReliabilityRiskComponent>();
 
             #endregion
-
             var result = await customerComponet.CreateCustomer(new Models.CustomerPostRp()
             {
-                Name = "test",  Default = true   
-            });            
+                Name = "test",
+                Default = true
+            });
+            var product = await productComponent.CreateProduct(new Models.ProductPostRp() { Name = "test", CustomerId = result.Id });
+            var SecurityThreat = await securityComponent.CreateThreat(new Models.SecurityThreatPostRp() { Name = "test" });
+            var source = await sourceComponent.Create(new Models.SourcePostRp()
+            {
+                Name = "test",
+                ProductId = product.Id
+            });
+            var SecurityRisk = await securityComponent.Create(new Models.SecurityRiskPost()
+            {
+                SourceId = source.Id,
+                Name = SecurityThreat.Name
+            });
+            var reliabilityThreat = await reliabilityComponent.CreateThreat(new Models.ReliabilityThreatPostRp()
+            { Name = "test threat" });
+
+            var reliabilityRisk = await reliabilityComponent.Create(new Models.ReliabilityRiskPostRp()
+            {
+                Name = "test risk",
+                SourceId = source.Id
+            });
 
             var stream = await migrationComponent.Backup(true);
 
@@ -140,7 +188,19 @@ namespace Owlvey.Falcon.ComponentsTests
             }
             
             var features = await featureComponent.GetFeatures(customer_target.Id);
-            Assert.NotEmpty(features);      
+            Assert.NotEmpty(features);
+
+            var securityThreats = await  securityComponent.GetThreats();
+            Assert.NotEmpty(securityThreats);
+
+            var securityRisks = await securityComponent.GetRisks(null);
+            Assert.NotEmpty(securityRisks);
+
+            var reliabilityThreats = await reliabilityComponent.GetThreats();
+            Assert.NotEmpty(reliabilityThreats);
+
+            var reliabilityRisks = await reliabilityComponent.GetRisks(null);
+            Assert.NotEmpty(reliabilityRisks);
         }
     }
 }

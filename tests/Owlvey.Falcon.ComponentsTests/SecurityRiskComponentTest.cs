@@ -32,8 +32,7 @@ namespace Owlvey.Falcon.ComponentsTests
 
             var risk = await component.Create(new Models.SecurityRiskPost()
             {
-                SourceId = source.Id,
-                ThreatId = threat.Id
+                SourceId = source.Id                
             });
 
             var risks = await component.GetRisks(source.Id);

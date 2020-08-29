@@ -631,9 +631,8 @@ namespace Owlvey.Falcon.Components
                 var ids = sources.Select(c => c.Id.Value).Distinct().ToList();
                 var sourceItems = await this._dbContext.GetSourceItems(ids, period.Start, period.End);
 
-                var aggregate = new BackupItemsAggregate(sources, sourceItems);
+                var aggregate = new Builders.SourceItemsExportBuilder(sources, sourceItems);
                 var model = aggregate.Execute();
-
 
                 var sourceSheet = package.Workbook.Worksheets.Add("Sources");
                 sourceSheet.Cells.LoadFromCollection(model.sources, true);

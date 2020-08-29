@@ -2,33 +2,36 @@
 using Owlvey.Falcon.Core.Models.Migrate;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
-namespace Owlvey.Falcon.Core.Aggregates
+namespace Owlvey.Falcon.Builders
 {
-    public class BackupItemsAggregate
+    public class SourceItemsExportBuilder
     {
         public IEnumerable<SourceEntity> Sources { get; }
         public IEnumerable<SourceItemEntity> SourceItems { get; }
-        public BackupItemsAggregate(
+        public SourceItemsExportBuilder(
             IEnumerable<SourceEntity> sources,
-            IEnumerable<SourceItemEntity> sourceItems) {
+            IEnumerable<SourceItemEntity> sourceItems)
+        {
             Sources = sources;
             SourceItems = sourceItems;
         }
 
-        public (ICollection<SourceLiteModel> sources, ICollection<SourceItemLiteModel> items) Execute() {
+        public (ICollection<SourceLiteModel> sources, ICollection<SourceItemLiteModel> items) Execute()
+        {
             var roots = new List<SourceLiteModel>();
             var items = new List<SourceItemLiteModel>();
             roots.AddRange(SourceLiteModel.Load(this.Sources));
             foreach (var source in this.Sources)
-            {               
+            {
                 source.SourceItems = this.SourceItems.Where(c => c.SourceId == source.Id).ToList();
-                items.AddRange(SourceItemLiteModel.Loads(source.Name, source.SourceItems));                
+                items.AddRange(SourceItemLiteModel.Loads(source.Name, source.SourceItems));
             }
 
-            return (roots,items);
+            return (roots, items);
         }
 
 

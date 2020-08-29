@@ -16,7 +16,8 @@ namespace Owlvey.Falcon.Components
     {
         public static void ConfigureMappers(IMapperConfigurationExpression cfg)
         {
-            cfg.CreateMap<SecurityRiskEntity, SecurityRiskGetRp>();
+            cfg.CreateMap<SecurityRiskEntity, SecurityRiskGetRp>()
+                .ForMember(c=>c.Source, c=>c.MapFrom(d=> d.Source != null? d.Source.Name : ""));
             cfg.CreateMap<SecurityThreatEntity, SecurityThreatGetRp>();
             
         }
@@ -33,18 +34,21 @@ namespace Owlvey.Falcon.Components
         public async Task<IEnumerable<SecurityRiskGetRp>> GetRisks(int? sourceId) {
             if (sourceId.HasValue)
             {
-                var response = await this._dbContext.SecurityRisks.Where(c => c.SourceId == sourceId).ToListAsync();
+                var response = await this._dbContext.SecurityRisks.Include(c=>c.Source)
+                    .Where(c => c.SourceId == sourceId).ToListAsync();
                 return this._mapper.Map<IEnumerable<SecurityRiskGetRp>>(response);
             }
             else {
-                var response = await this._dbContext.SecurityRisks.ToListAsync();
+                var response = await this._dbContext.SecurityRisks.Include(c=>c.Source).ToListAsync();
                 return this._mapper.Map<IEnumerable<SecurityRiskGetRp>>(response);
             }
             
         }
         public async Task<SecurityRiskGetRp> GetRiskById(int id)
         {
-            var response = await this._dbContext.SecurityRisks.Where(c => c.Id == id).SingleOrDefaultAsync();
+            var response = await this._dbContext.SecurityRisks
+                .Include(c=>c.Source)
+                .Where(c => c.Id == id).SingleOrDefaultAsync();
             return this._mapper.Map<SecurityRiskGetRp>(response);
         }
         public async Task<SecurityRiskGetRp> Create(SecurityRiskPost model)
@@ -52,10 +56,13 @@ namespace Owlvey.Falcon.Components
             var modifiedBy = this._identityGateway.GetIdentity();
             var modifiedOn = this._datetimeGateway.GetCurrentDateTime();
             var item = SecurityRiskEntity.Factory.Create(
-                model.SourceId, 
-                model.ThreatId, 
-                modifiedBy, 
-                modifiedOn);
+                model.SourceId,                 
+                modifiedOn, modifiedBy, model.Name,
+                model.Description, model.Tags, model.Reference, model.Avatar, 
+                model.AgentSkillLevel, model.Motive, model.Opportunity, model.Size
+                , model.EasyDiscovery, model.EasyExploit, model.Awareness, model.IntrusionDetection, 
+                model.LossConfidentiality, model.LossIntegrity, model.LossAvailability, model.LossAccountability, model.FinancialDamage,
+                model.ReputationDamage, model.NonCompliance, model.PrivacyViolation);
 
             this._dbContext.SecurityRisks.Add(item);
             await this._dbContext.SaveChangesAsync();
@@ -66,11 +73,13 @@ namespace Owlvey.Falcon.Components
             var modifiedBy = this._identityGateway.GetIdentity();
             var modifiedOn = this._datetimeGateway.GetCurrentDateTime();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
-
+            
             var item = this._dbContext.SecurityRisks.Where(c => c.Id == id).SingleOrDefault();
             if (item != null) {
 
-                item.Update(modifiedOn, modifiedBy, model.AgentSkillLevel);
+                item.Update(modifiedOn, modifiedBy, model.Name, model.Description, model.Tags, model.Reference, model.AgentSkillLevel,
+                    model.Motive, model.Opportunity, model.Size, model.EasyDiscovery, model.EasyExploit, model.Awareness, model.IntrusionDetection, model.LossConfidentiality, model.LossIntegrity, model.LossAvailability, model.LossAccountability, model.FinancialDamage, model.ReputationDamage, model.NonCompliance, model.PrivacyViolation);
+                this._dbContext.SecurityRisks.Update(item);
                 await this._dbContext.SaveChangesAsync();
             }
             return this._mapper.Map<SecurityRiskGetRp>(item);
@@ -117,6 +126,7 @@ namespace Owlvey.Falcon.Components
                     model.Reference, model.AgentSkillLevel, model.Motive, model.Opportunity, model.Size,
                     model.EasyDiscovery, model.EasyExploit, model.Awareness, model.IntrusionDetection, model.LossConfidentiality, model.LossIntegrity, 
                     model.LossAccountability, model.LossAccountability, model.FinancialDamage, model.ReputationDamage, model.NonCompliance, model.PrivacyViolation);
+                this._dbContext.SecurityThreats.Update(item);
                 await this._dbContext.SaveChangesAsync();
             }
             return this._mapper.Map<SecurityThreatGetRp>(item);

@@ -37,7 +37,7 @@ namespace Owlvey.Falcon.Models
         #region Impact
 
         #region Technical Impact
-        public decimal TechnicalImpact { get; set; }
+        
         public int LossConfidentiality { get; set; } = 0;
         public int LossIntegrity { get; set; } = 0;
         public int LossAvailability { get; set; } = 0;
@@ -45,7 +45,7 @@ namespace Owlvey.Falcon.Models
         #endregion
 
         #region Business Impact
-        public decimal BusinessImpact { get; set; }
+        
         public int FinancialDamage { get; set; } = 0;
         public int ReputationDamage { get; set; } = 0;
         public int NonCompliance { get; set; } = 0;
@@ -54,13 +54,16 @@ namespace Owlvey.Falcon.Models
         #endregion
         #endregion
 
-        public decimal LikeHood { get; set; }
-        public decimal Impact { get; set; }
-        public decimal Risk { get; set; }
+        
     }
     public class SecurityThreatGetRp: SecurityThreatRp
     {
         public int Id { get; set; }
+        public decimal LikeHood { get; set; }
+        public decimal Impact { get; set; }
+        public decimal Risk { get; set; }
+        public decimal TechnicalImpact { get; set; }
+        public decimal BusinessImpact { get; set; }
     }
 
     public class SecurityThreatPutRp : SecurityThreatRp

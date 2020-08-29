@@ -77,10 +77,27 @@ namespace Owlvey.Falcon.ComponentsTests
             var dbcontext = container.GetInstance<FalconDbContext>();
             var source = container.GetInstance<SourceComponent>();
             var sourceItemComponent = container.GetInstance<SourceItemComponent>();
+            var securityRiskComponent = container.GetInstance<SecurityRiskComponent>();
+            var reliabilityRiskComponent = container.GetInstance<ReliabilityRiskComponent>();
             var result = await ComponentTestFactory.BuildCustomerWithSquad(container, 
                 OwlveyCalendar.January201903, OwlveyCalendar.January201905);
+                        
+            var securityRisk = await securityRiskComponent.Create(new SecurityRiskPost()
+            {   SourceId = result.sourceId, Name = "test"
+            });
 
+            var reliabilityRisk = await reliabilityRiskComponent.Create(new ReliabilityRiskPostRp()
+            {
+                 SourceId = result.sourceId, Name = "test reliabilty"
+            });
             await source.Delete(result.sourceId);
+
+            var securityRisks = await securityRiskComponent.GetRisks(null);
+            Assert.Empty(securityRisks);
+
+            var reliabilityRisks = await reliabilityRiskComponent.GetRisks(null);
+            Assert.Empty(reliabilityRisks);
+
             var sources = await source.GetById(result.sourceId);
             Assert.Null(sources);
 

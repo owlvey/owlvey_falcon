@@ -37,8 +37,7 @@ namespace Owlvey.Falcon.IntegrationTests.SecurityThreats.Scenarios
         public void when_send_request()
         {               
             var representation = Builder<SecurityRiskPost>.CreateNew()
-                     .With(x => x.SourceId = this.Source.Id)
-                     .With(x => x.ThreatId = this.Threat.Id)
+                     .With(x => x.SourceId = this.Source.Id)                     
                      .Build();
 
             var jsonContent = HttpClientExtension.ParseModelToHttpContent(representation);
