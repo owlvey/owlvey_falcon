@@ -11,14 +11,14 @@ namespace Owlvey.Falcon.Models
         public string Reference { get; set; }
         public string Description { get; set; }
         public string Tags { get; set; }
-        public decimal ETTD { get; set; } // minutes
-        public decimal ETTE { get; set; } // minutes
-        public decimal ETTF { get; set; } // minutes        
-        public decimal UserImpact { get; set; } // percentage of users affected 
-        public decimal ETTFail { get; set; }  // Estimate time to fail in days per year
-        public decimal ETTR { get;set; }
-        public decimal IncidentsPerYear { get; set; }        
-        public decimal BadMinutesPerYear { get; set; }
+        public decimal? ETTD { get; set; } // minutes
+        public decimal? ETTE { get; set; } // minutes
+        public decimal? ETTF { get; set; } // minutes        
+        public decimal? UserImpact { get; set; } // percentage of users affected 
+        public decimal? ETTFail { get; set; }  // Estimate time to fail in days per year
+        public decimal? ETTR { get;set; }
+        public decimal? IncidentsPerYear { get; set; }        
+        public decimal? BadMinutesPerYear { get; set; }
     }
     public class ReliabilityThreatGetRp : ReliabilityThreatRp
     {

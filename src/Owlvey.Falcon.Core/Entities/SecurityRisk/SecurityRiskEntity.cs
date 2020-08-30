@@ -56,14 +56,14 @@ namespace Owlvey.Falcon.Core.Entities
         {
             get
             {
-                return (this.AgentSkillLevel + this.Motive + this.Opportunity + this.Size) / 4;
+                return ((decimal)(this.AgentSkillLevel + this.Motive + this.Opportunity + this.Size)) / 4m;
             }
         }
         public decimal VulnerabilityFactor
         {
             get
             {
-                return (this.EasyDiscovery + this.EasyExploit + this.Awareness + this.IntrusionDetection) / 4;
+                return (this.EasyDiscovery + this.EasyExploit + this.Awareness + this.IntrusionDetection) / 4m;
             }
         }
 
@@ -71,28 +71,28 @@ namespace Owlvey.Falcon.Core.Entities
         {
             get
             {
-                return (LossConfidentiality + LossIntegrity + LossAvailability + LossAccountability) / 4;
+                return (LossConfidentiality + LossIntegrity + LossAvailability + LossAccountability) / 4m;
             }
         }
         public decimal BusinessImpact
         {
             get
             {
-                return (this.FinancialDamage + this.ReputationDamage + this.NonCompliance + this.PrivacyViolation) / 4;
+                return (this.FinancialDamage + this.ReputationDamage + this.NonCompliance + this.PrivacyViolation) / 4m;
             }
         }
         public decimal LikeHood
         {
             get
             {
-                return (ThreatAgentFactor + VulnerabilityFactor) / 2;
+                return (ThreatAgentFactor + VulnerabilityFactor) / 2m;
             }
         }
         public decimal Impact
         {
             get
             {
-                return (this.TechnicalImpact + this.BusinessImpact) / 2;
+                return (this.TechnicalImpact + this.BusinessImpact) / 2m;
             }
         }
 

@@ -9,21 +9,21 @@ namespace Owlvey.Falcon.Core.Entities
         public void Update(DateTime on, string ModifiedBy, string name, 
             string avatar,
             string reference, string description, string tags,
-            decimal ettd, decimal ette, decimal ettf,
-            decimal userImpact,
-            decimal ettfail) {
+            decimal? ettd, decimal? ette, decimal? ettf,
+            decimal? userImpact,
+            decimal? ettfail) {
             this.ModifiedBy = ModifiedBy;
             this.Avatar = avatar;
             this.ModifiedOn = on;
-            this.Name = name;
-            this.Reference = reference;
-            this.Description = description;
+            this.Name =  string.IsNullOrWhiteSpace(name) ? this.Name: name;
+            this.Reference = string.IsNullOrWhiteSpace(reference) ? this.Reference: reference;
+            this.Description = string.IsNullOrWhiteSpace(description) ? this.Description: description;
             this.Tags = tags;
-            this.ETTD = ettd;
-            this.ETTE = ette;
-            this.ETTF = ettf;
-            this.UserImpact = userImpact;
-            this.ETTFail = ettfail; 
+            this.ETTD = ettd.HasValue ? ettd.Value: this.ETTD;
+            this.ETTE = ette.HasValue ? ette.Value: this.ETTE;
+            this.ETTF = ettf.HasValue ? ettf.Value: this.ETTF;
+            this.UserImpact = userImpact.HasValue ? userImpact.Value: this.UserImpact;
+            this.ETTFail = ettfail.HasValue ? ettfail.Value: this.ETTFail;
         }
         public static class Factory {
             public static ReliabilityThreatEntity Create(                

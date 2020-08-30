@@ -9,6 +9,17 @@ namespace Owlvey.Falcon.ComponentsTests
 {
     public class SecurityThreatComponentTest
     {
+
+        [Fact]
+        public async Task DefaultThreats(){
+            var container = ComponentTestFactory.BuildContainer();
+            var component = container.GetInstance<SecurityRiskComponent>();
+            await component.CreateDefault();
+            var threats = await component.GetThreats();
+            foreach( var item in threats){
+                Assert.Equal( 0.75m, item.ThreatAgentFactor);
+            }
+        }
         [Fact]
         public async Task Maintentance() {
             var container = ComponentTestFactory.BuildContainer();

@@ -51,35 +51,35 @@ namespace Owlvey.Falcon.Core.Entities
 
 
         public decimal ThreatAgentFactor { get {
-                return (this.AgentSkillLevel + this.Motive + this.Opportunity + this.Size) / 4;
+                return (this.AgentSkillLevel + this.Motive + this.Opportunity + this.Size) / 4m;
             } }
         public decimal VulnerabilityFactor
         {
             get
             {
-                return (this.EasyDiscovery + this.EasyExploit + this.Awareness + this.IntrusionDetection) / 4;
+                return (this.EasyDiscovery + this.EasyExploit + this.Awareness + this.IntrusionDetection) / 4m;
             }
         }
 
         public decimal TechnicalImpact {
             get
             {
-                return (LossConfidentiality + LossIntegrity + LossAvailability + LossAccountability) / 4;
+                return (LossConfidentiality + LossIntegrity + LossAvailability + LossAccountability) / 4m;
             }        
         }
         public decimal BusinessImpact { 
             get {
-                return (this.FinancialDamage + this.ReputationDamage + this.NonCompliance + this.PrivacyViolation) / 4;       
+                return (this.FinancialDamage + this.ReputationDamage + this.NonCompliance + this.PrivacyViolation) / 4m;       
             } 
         }
         public decimal LikeHood { 
             get {
-                return (ThreatAgentFactor + VulnerabilityFactor)/2;
+                return (ThreatAgentFactor + VulnerabilityFactor)/2m;
             } 
         }
         public decimal Impact { 
             get {
-                return (this.TechnicalImpact + this.BusinessImpact) / 2;                        
+                return (this.TechnicalImpact + this.BusinessImpact) / 2m;                        
             } 
         }
 
@@ -91,7 +91,7 @@ namespace Owlvey.Falcon.Core.Entities
             }
         }
 
-        public void Update(DateTime on, string ModifiedBy, string name, 
+        public void Update(DateTime on, string ModifiedBy, string name, string avatar, 
                 string description, string tags, string reference,
                 int? agentSkillLevel, int? motive , int? opportunity, int? size ,
                 int? easyDiscovery, int? easyExploit, int? awareness, int? intrusionDetection,            
@@ -119,6 +119,9 @@ namespace Owlvey.Falcon.Core.Entities
             this.PrivacyViolation = privacyViolation.HasValue ? privacyViolation.Value : this.PrivacyViolation;
             
             this.Name =  string.IsNullOrWhiteSpace( name) ? this.Name: name;
+
+            this.Avatar =  string.IsNullOrWhiteSpace(avatar) ? this.Avatar: avatar;
+
             this.Description = string.IsNullOrWhiteSpace(description) ? this.Description : description;
             this.Tags = string.IsNullOrWhiteSpace(tags) ? this.Tags : tags;
             this.Reference = string.IsNullOrWhiteSpace(reference) ? this.Reference: reference;

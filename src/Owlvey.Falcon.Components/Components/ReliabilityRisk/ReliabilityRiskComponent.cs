@@ -65,6 +65,129 @@ namespace Owlvey.Falcon.Components
             await this._dbContext.SaveChangesAsync();
             return this._mapper.Map<ReliabilityRiskGetRp>(item);
         }
+
+        public async Task CreateDefault(){
+            var integrationPoints = await this.CreateThreat(new ReliabilityThreatPostRp(){
+                Name = "Integration Points"          
+            });
+            await this.UpdateThreat(integrationPoints.Id, new ReliabilityThreatPutRp() { 
+                Description = "Integration points are the number-one killer of systems. Every single one presents a stability risk.",
+                Avatar = "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQv1jeFPSj_0NEhrUk3IdzvoeKpBkQ1wPIXfw&usqp=CAU", 
+                Tags = "#integration-point",  
+                Reference = "https://learning.oreilly.com/library/view/release-it/9781680500264/"  
+            });
+
+            var chain = await this.CreateThreat(new ReliabilityThreatPostRp(){
+                Name = "Chain reactions"          
+            });
+            await this.UpdateThreat(chain.Id, new ReliabilityThreatPutRp() { 
+                Description = "Whenever one server in a pool goes down, the rest of the servers pick up the slack. The increased load makes them more likely to fail, likely from the same defect.",
+                Avatar = "https://cdn4.iconfinder.com/data/icons/security-39/92/icon91-18-512.png", 
+                Tags = "#chain-reactions",  
+                Reference = "https://learning.oreilly.com/library/view/release-it/9781680500264/"  
+            });
+
+             var failures = await this.CreateThreat(new ReliabilityThreatPostRp(){
+                Name = "Cascading Failures"          
+            });
+            await this.UpdateThreat(failures.Id, new ReliabilityThreatPutRp() { 
+                Description = "A cascading failure occurs when a crack in one layer triggers a crack in a calling layer",
+                Avatar = "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQdujTrzBkaFf7VZ5n2k8VohH1zmvEoTAN7yw&usqp=CAU",
+                Tags = "#cascading-failures",  
+                Reference = "https://learning.oreilly.com/library/view/release-it/9781680500264/"  
+            });
+            var userMemory = await this.CreateThreat(new ReliabilityThreatPostRp(){
+                Name = "User Memory Consumption"          
+            });
+            await this.UpdateThreat(userMemory.Id, new ReliabilityThreatPutRp() { 
+                Description = "Each user’s session requires some memory. Minimize that memory to improve your capacity. Use a session only for caching so you can purge the session’s contents if memory gets tight.",
+                Avatar = "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcR30SI-uBVs2LI0-oPqsNDVgvVL-ojsD8fiNQ&usqp=CAU",
+                Tags = "#memory-consumption",  
+                Reference = "https://learning.oreilly.com/library/view/release-it/9781680500264/"  
+            });
+
+            var userMobs = await this.CreateThreat(new ReliabilityThreatPostRp(){
+                Name = "User Mobs"          
+            });
+            await this.UpdateThreat(userMobs.Id, new ReliabilityThreatPutRp() { 
+                Description = "Large mobs can trigger hangs, deadlocks, and obscure race conditions. Run special stress tests to hammer deep links or hot URLs.",
+                Avatar = "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRfoj5SgTCbm4RUufbzvTriLVHHi-D5-SN6Ng&usqp=CAU",
+                Tags = "#user-mobs",  
+                Reference = "https://learning.oreilly.com/library/view/release-it/9781680500264/"  
+            });
+            var blockedThreads = await this.CreateThreat(new ReliabilityThreatPostRp(){
+                Name = "Blocked threads"          
+            });
+            await this.UpdateThreat(blockedThreads.Id, new ReliabilityThreatPutRp() { 
+                Description = "Blocked threads end up slowing responses, creating a feedback loop that amplifies a minor problem into total system failure.",
+                Avatar = "https://cdn4.iconfinder.com/data/icons/security-39/92/icon91-18-512.png", 
+                Tags = "#blocked-threads",  
+                Reference = "https://learning.oreilly.com/library/view/release-it/9781680500264/"  
+            });
+
+            var selfDenied = await this.CreateThreat(new ReliabilityThreatPostRp(){
+                Name = "Attacks of Self-Denied"          
+            });
+            await this.UpdateThreat(selfDenied.Id, new ReliabilityThreatPutRp() { 
+                Description = "Good marketing can kill you at any time.",
+                Avatar = "https://cdn4.iconfinder.com/data/icons/security-39/92/icon91-18-512.png", 
+                Tags = "#self-denied",  
+                Reference = "https://learning.oreilly.com/library/view/release-it/9781680500264/"  
+            });
+
+            var scaling = await this.CreateThreat(new ReliabilityThreatPostRp(){
+                Name = "Scaling Effects"          
+            });
+            await this.UpdateThreat(scaling.Id, new ReliabilityThreatPutRp() { 
+                Description = "Whenever possible, build out a shared-nothing architecture. Each server operates independently, without the need for coordination or calls to a central service. With a shared-nothing architecture, capacity scales with the number of servers.",
+                Avatar = "https://cdn4.iconfinder.com/data/icons/security-39/92/icon91-18-512.png", 
+                Tags = "#scaling-effects",  
+                Reference = "https://learning.oreilly.com/library/view/release-it/9781680500264/"  
+            });
+
+            var balanced = await this.CreateThreat(new ReliabilityThreatPostRp(){
+                Name = "Unbalanced Capacities"          
+            });
+            await this.UpdateThreat(scaling.Id, new ReliabilityThreatPutRp() { 
+                Description = "Your front-end service experiences an increase in load that’s visible from a dashboard. Adding more servers to the front-end solves the problem. However, each of these front-end servers requires a connection to a back-end service that now is vastly under-provisioned.",
+                Avatar = "https://cdn4.iconfinder.com/data/icons/security-39/92/icon91-18-512.png", 
+                Tags = "#unbalanced-capacities",  
+                Reference = "https://learning.oreilly.com/library/view/release-it/9781680500264/"  
+            });
+
+
+
+            var slowResponses = await this.CreateThreat(new ReliabilityThreatPostRp(){
+                Name = "Slow Responses"          
+            });
+            await this.UpdateThreat(scaling.Id, new ReliabilityThreatPutRp() { 
+                Description = "Generating a slow response is worse than returning an error.",
+                Avatar = "https://cdn4.iconfinder.com/data/icons/security-39/92/icon91-18-512.png", 
+                Tags = "#slow-responses",  
+                Reference = "https://learning.oreilly.com/library/view/release-it/9781680500264/"  
+            });
+
+
+            var slaInversion = await this.CreateThreat(new ReliabilityThreatPostRp(){
+                Name = "SLA Inversion"          
+            });
+            await this.UpdateThreat(scaling.Id, new ReliabilityThreatPutRp() { 
+                Description = "When calling third parties, service levels can only decrease. Your system is only as reliable as the systems it depends on.",
+                Avatar = "https://cdn4.iconfinder.com/data/icons/security-39/92/icon91-18-512.png", 
+                Tags = "#sla-inversion",  
+                Reference = "https://learning.oreilly.com/library/view/release-it/9781680500264/"  
+            });
+
+            var unboundedResultSet = await this.CreateThreat(new ReliabilityThreatPostRp(){
+                Name = "Unbounded Result Sets"          
+            });
+            await this.UpdateThreat(scaling.Id, new ReliabilityThreatPutRp() { 
+                Description = "Be prepared for the possibility that queries for data return infinite results. Typically this will not happen with test data, but after code hits production. Be sure to test with realistic data volumes.", 
+                Avatar = "https://cdn4.iconfinder.com/data/icons/security-39/92/icon91-18-512.png", 
+                Tags = "#unbounded-results",  
+                Reference = "https://learning.oreilly.com/library/view/release-it/9781680500264/"  
+            });
+        }
         public async Task<ReliabilityRiskGetRp> UpdateRisk(int id,
            ReliabilityRiskPutRp model)
         {            
