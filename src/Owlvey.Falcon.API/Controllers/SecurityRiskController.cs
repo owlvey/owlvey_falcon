@@ -72,6 +72,14 @@ namespace Owlvey.Falcon.API.Controllers
             var response = await this._SecurityRiskComponent.GetThreat(id);
             return this.Ok(response);            
         }
+        [HttpPost("threats/default")]
+        [ProducesResponseType(typeof(SecurityThreatGetRp), 200)]
+        public async Task<IActionResult> PostThreatDefault()
+        {
+            await this._SecurityRiskComponent.CreateDefault();
+            return this.Ok();
+        }
+
         [HttpPost("threats")]
         [ProducesResponseType(typeof(SecurityThreatGetRp), 200)]
         public async Task<IActionResult> PostThreat([FromBody] SecurityThreatPostRp model)
