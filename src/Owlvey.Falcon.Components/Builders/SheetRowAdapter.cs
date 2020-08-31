@@ -18,6 +18,9 @@ namespace Owlvey.Falcon.Builders {
 
         public int getRows()
         {
+            if (this.Sheet.Dimension == null) {
+                return 0;
+            }
             return this.Sheet.Dimension.Rows;
         }
     }

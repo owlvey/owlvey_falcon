@@ -435,7 +435,6 @@ namespace Owlvey.Falcon.Components
                 await this._reliabilityRiskComponent.DeleteThreat(item.Id);
             }
 
-
             using (var package = new ExcelPackage(input))
             {
                 var securityThreatSheet = package.Workbook.Worksheets[SHEET_SecurityThreatsName];

@@ -28,12 +28,28 @@ namespace Owlvey.Falcon.Models
     }
     public class SourceGetRp : SourceLiteRp
     {        
-        public QualityMeasureValue Quality { get; set; }        
+        public QualityMeasureValue Quality { get; set; }
+        public DebtMeasureValue Debt { get; set; } = new DebtMeasureValue();
         public Dictionary<string, int> Features  { get; set; } = new Dictionary<string, int>();
         public Dictionary<string, decimal> Clues { get; set; } = new Dictionary<string, decimal>();
         public IEnumerable<DayMeasureValue> Daily { get; set; } = new List<DayMeasureValue>();
     }
 
+    public class SourcesGetRp
+    {
+        public List<SourceGetListRp> Items { get; set; } = new List<SourceGetListRp>();
+
+        public decimal Availability { get; set; }
+
+        public int AvailabilityInteractionsTotal { get; set; }
+        public int AvailabilityInteractionsGood { get; set; }
+        public decimal AvailabilityInteractions { get; set; }
+
+        public decimal Latency { get; set; }
+
+        public decimal Experience { get; set; }
+        
+    }
 
     public class SourceMigrateRp {
         public string ProductName { get; set; }
@@ -58,24 +74,13 @@ namespace Owlvey.Falcon.Models
         public QualityMeasureValue Measure { get; set; }        
         public double? Correlation { get; set; }
         public int References { get; set; }
-    }
 
-    public class SourcesGetRp {
-        public List<SourceGetListRp> Items { get; set; } = new List<SourceGetListRp>();
-
-        public decimal Availability { get; set; }
-
-        public int AvailabilityInteractionsTotal { get; set; }
-        public int AvailabilityInteractionsGood { get; set; }
-        public decimal AvailabilityInteractions { get; set; }
-
-        public decimal Latency { get; set; }
-
-        public decimal Experience { get; set; }
+        public DebtMeasureValue Debt { get; set; } = new DebtMeasureValue();
 
     }
 
- 
+
+
 
     public class SourcePostRp
     {

@@ -141,7 +141,7 @@ namespace Owlvey.Falcon.Components
             var product =  await this._dbContext.FullLoadProductWithSourceItems(productId, period.Start, period.End);                                   
 
             foreach (var feature in product.Features)
-            {                
+            { 
                 var tmp = this._mapper.Map<FeatureAvailabilityGetListRp>(feature);
                 tmp.Quality  = feature.Measure();                                                 
                 tmp.Squads = feature.Squads.Count();                                

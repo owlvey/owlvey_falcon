@@ -40,6 +40,7 @@ namespace Owlvey.Falcon.API.Controllers
             object model = null;            
             if (start.HasValue && end.HasValue)
             {
+                
                 model = await this._featureQueryComponent.GetFeaturesWithQuality(productId, 
                      new  DatePeriodValue(start.Value, end.Value));
             }

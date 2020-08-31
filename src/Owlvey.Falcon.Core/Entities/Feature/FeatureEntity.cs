@@ -36,7 +36,44 @@ namespace Owlvey.Falcon.Core.Entities
 
         public int JourneyMapId { get; set; }
 
-
+        public decimal AvailabilitySLO { get {
+                decimal slo = 0;
+                
+                foreach (var item in this.JourneyMaps)
+                {
+                    if (item.Journey.AvailabilitySlo > slo) {
+                        slo = item.Journey.AvailabilitySlo;
+                    }
+                }
+                return slo; 
+            } 
+        }
+        public decimal LatencySLO {
+            get {
+                decimal slo = decimal.MaxValue;
+                foreach (var item in this.JourneyMaps)
+                {
+                    if (item.Journey.LatencySlo < slo)
+                    {
+                        slo = item.Journey.LatencySlo;
+                    }
+                }
+                return slo;
+            }
+        }
+        public decimal ExperienceSLO {
+            get {
+                decimal slo = 0;
+                foreach (var item in this.JourneyMaps)
+                {
+                    if (item.Journey.ExperienceSlo > slo)
+                    {
+                        slo = item.Journey.ExperienceSlo;
+                    }
+                }
+                return slo;
+            }
+        }
         public virtual ProductEntity Product { get; set; }
 
         public virtual ICollection<JourneyMapEntity> JourneyMaps { get; set; } = new List<JourneyMapEntity>();

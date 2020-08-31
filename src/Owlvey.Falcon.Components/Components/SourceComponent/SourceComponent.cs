@@ -163,18 +163,26 @@ namespace Owlvey.Falcon.Components
    
         public async Task<SourcesGetRp> GetByProductIdWithAvailability(int productId, DateTime start, DateTime end)
         {
-            var entities = await this._dbContext.Sources.Include(c=>c.Indicators).Where(c => c.Product.Id == productId).ToListAsync();            
+            var product = await this._dbContext.FullLoadProduct(productId);
+            var entities = await this._dbContext.Sources
+                .Include(c=>c.Indicators)
+                .Where(c => c.Product.Id == productId).ToListAsync();            
             var sourceItems = await this._dbContext.GetSourceItems(start, end);
 
             var items = new List<SourceGetListRp>();
             foreach (var source in entities)
-            {                
+            {
+                foreach (var indicator in source.Indicators)
+                {
+                    indicator.Feature = product.Features.Where(c => c.Id == indicator.FeatureId).Single();
+                }
                 source.SourceItems = sourceItems.Where(c => c.SourceId == source.Id).ToList();                
                 var proportion= source.Measure();
                 var tmp = this._mapper.Map<SourceGetListRp>(source);
                 tmp.References = source.Indicators.Count();
                 tmp.Correlation = source.MeasureDailyCorrelation();
-                tmp.Measure = proportion;                
+                tmp.Measure = proportion;
+                tmp.Debt = source.MeasureDebt();
                 items.Add(tmp);
             }
             var model = new SourcesGetRp();
@@ -188,6 +196,7 @@ namespace Owlvey.Falcon.Components
             model.AvailabilityInteractions = quality.InteractionsProportion;
             model.AvailabilityInteractionsTotal = quality.Total;
             model.AvailabilityInteractionsGood = quality.Good;
+            
 
             return model;            
         }

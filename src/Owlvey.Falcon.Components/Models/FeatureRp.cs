@@ -103,7 +103,8 @@ namespace Owlvey.Falcon.Models
         public string Product { get; set; }
         public int IndicatorsCount { get; set; }
         public int JourneyCount { get; set; }
-        public QualityMeasureValue Quality { get; set; }                
+        public QualityMeasureValue Quality { get; set; }
+        
         public int Squads { get; set; }
 
         public DebtMeasureValue Debt { get; set; } = new DebtMeasureValue();

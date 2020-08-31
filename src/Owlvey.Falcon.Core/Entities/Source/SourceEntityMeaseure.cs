@@ -11,6 +11,25 @@ namespace Owlvey.Falcon.Core.Entities
 {
     public partial class SourceEntity
     {
+        public DebtMeasureValue MeasureDebt(DatePeriodValue period = null) {
+            var measure = this.Measure(period);
+
+            var maps = this.Indicators.Select(c => c.Feature.JourneyMaps).ToList();
+            var services = maps.SelectMany(c => c.Select(d => d.Journey)).Distinct(new JourneyEntityCompare());
+            decimal availabilityDebt = 0;
+            decimal latencyDebt = 0;
+            decimal experienceDebt = 0;
+            foreach (var item in services)
+            {
+                availabilityDebt += QualityUtils.MeasureDebt(measure.Availability, item.AvailabilitySlo);
+
+                latencyDebt += QualityUtils.MeasureLatencyDebt(measure.Latency, item.LatencySlo);
+
+                experienceDebt += QualityUtils.MeasureDebt(measure.Experience, item.ExperienceSlo);
+            }
+            var result = new DebtMeasureValue(availabilityDebt, latencyDebt, experienceDebt);
+            return result;
+        }
         private MeasureValue MeasureLatency(DatePeriodValue period = null) {
             IEnumerable<SourceItemEntity> data;
             if (period != null)

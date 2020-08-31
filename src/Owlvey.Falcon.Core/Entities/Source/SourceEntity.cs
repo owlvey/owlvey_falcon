@@ -70,8 +70,6 @@ namespace Owlvey.Falcon.Core.Entities
 
         public virtual ICollection<SourceItemEntity> SourceItems { get; set; } = new List<SourceItemEntity>();
 
-        public decimal Latency { get; set; }
-    
         public virtual void Update(
          string name, string avatar,
          DefinitionValue availabilityDefinition,
