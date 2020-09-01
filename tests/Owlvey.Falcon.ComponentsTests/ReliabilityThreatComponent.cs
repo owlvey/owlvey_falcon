@@ -18,7 +18,9 @@ namespace Owlvey.Falcon.ComponentsTests
             foreach( var item in threats){
                 Assert.False( String.IsNullOrWhiteSpace(item.Name));
                 Assert.Equal( 10, item.ETTD);
-                Assert.NotNull( item.Description );
+                Assert.NotNull(item.Description );
+                Assert.True( item.Reference.StartsWith("http"));
+
             }
         }
 

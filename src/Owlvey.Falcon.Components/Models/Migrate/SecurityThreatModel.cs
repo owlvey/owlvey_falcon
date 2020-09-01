@@ -80,9 +80,8 @@ namespace Owlvey.Falcon.Core.Models.Migrate
                 result.LossAccountability = adapter.get<int>(row, 17);
                 result.FinancialDamage = adapter.get<int>(row, 18);
                 result.ReputationDamage = adapter.get<int>(row, 19);
-                result.NonCompliance = adapter.get<int>(row, 20);
-                result.NonCompliance = adapter.get<int>(row, 21);
-                result.PrivacyViolation = adapter.get<int>(row, 22);
+                result.NonCompliance = adapter.get<int>(row, 20);                
+                result.PrivacyViolation = adapter.get<int>(row, 21);
                 items.Add(result);
             }
             return items;
