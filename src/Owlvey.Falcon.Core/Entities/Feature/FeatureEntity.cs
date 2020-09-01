@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using System.Linq;
 using Owlvey.Falcon.Core.Aggregates;
+using Owlvey.Falcon.Core.Values;
 
 namespace Owlvey.Falcon.Core.Entities
 {
@@ -93,53 +94,68 @@ namespace Owlvey.Falcon.Core.Entities
             this.ModifiedBy = modifiedBy;            
         }
 
-        [NotMapped]
-        public int MTTD { get {
-                if (this.IncidentMap.Count > 0)
-                {
-                    return (int)Math.Ceiling(this.IncidentMap.Select(c => c.Incident).Average(c => c.TTD));
-                }
-                return -1;                
-            } }
-        [NotMapped]
-        public int MTTE
+
+        public SLOValue SLO
         {
             get
             {
-                if (this.IncidentMap.Count > 0)
+                var temp = this.JourneyMaps.Select(c => c.Journey).ToList();
+                if (temp.Count() > 0)
                 {
-                    return (int)Math.Ceiling(this.IncidentMap.Select(c => c.Incident).Average(c => c.TTE));
+                    var ava = temp.Max(c => c.AvailabilitySlo);
+                    var latency = temp.Min(c => c.LatencySlo);
+                    var experience = temp.Max(c => c.AvailabilitySlo);
+                    return new SLOValue(ava, latency, experience);
                 }
-                return -1;
-            }
-        }
-        [NotMapped]
-        public int MTTF
-        {
-            get
-            {
-                if (this.IncidentMap.Count > 0)
-                {
-                    return (int)Math.Ceiling(this.IncidentMap.Select(c => c.Incident).Average(c => c.TTF));
-                }
-                return -1;
-            }
-        }
-        [NotMapped]
-        public int MTTM
-        {
-            get
-            {
-                if (this.IncidentMap.Count > 0)
-                {
-                    return (int)Math.Ceiling(this.IncidentMap.Select(c => c.Incident).Average(c => c.TTM));
-                }
-                return -1;
+                return null;
             }
         }
 
-        public void RegisterIncident(IncidentMapEntity map) {
-            this.IncidentMap.Add(map);
+        public decimal SecurityRisk
+        {
+            get
+            {
+                var sources = this.Indicators.Select(c => c.Source).ToList();
+
+                if (sources.Count > 0)
+                    return sources.Max(c => c.SecurityRisk); 
+                return 0;
+            }
         }
+        public string SecurityRiskLabel
+        {
+            get
+            {
+                return QualityUtils.SecurityRiskToLabel(this.SecurityRisk);
+            }
+        }
+
+        public decimal ReliabilityRisk
+        {
+            get
+            {
+                var sources = this.Indicators.Select(c => c.Source).ToList();
+
+                if (sources.Count > 0)
+                    return sources.Max(c => c.ReliabilityRisk);
+                return 0;                
+            }
+        }
+        public string ReliabilityRiskLabel
+        {
+            get
+            {
+                if (this.SLO != null)
+                {
+                    var error = this.ReliabilityRisk;
+                    return QualityUtils.ReliabilityRiskToLabel(this.SLO.Availability, error);
+                }
+                return "no slo";
+            }
+        }
+
+
+
+
     }
 }

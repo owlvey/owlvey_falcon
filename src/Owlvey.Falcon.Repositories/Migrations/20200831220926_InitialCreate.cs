@@ -320,8 +320,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     Avatar = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     Percentile = table.Column<decimal>(nullable: false),
-                    ProductId = table.Column<int>(nullable: false),
-                    Latency = table.Column<decimal>(nullable: false)
+                    ProductId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {

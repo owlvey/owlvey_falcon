@@ -43,6 +43,35 @@ namespace Owlvey.Falcon.Core
                 return "improve";                
             }            
         }
+        public static string SecurityRiskToLabel(decimal risk)
+        {
+            if (0 <= risk && risk <= 3)
+            {
+                return "low";
+            }
+            else if (3 < risk && risk <= 6)
+            {
+                return "medium";
+            }
+            else {
+                return "high";
+            }
+
+        }
+        public static string ReliabilityRiskToLabel(decimal slo, decimal risk)
+        {
+            var budget = (365.25m * 24 * 60) * (1 - slo);
+
+            if (risk >= budget)
+            {
+                return "High";
+            }            
+            else
+            {
+                return "Low";
+            }
+
+        }
         public static decimal MeasureBudget(decimal avaialbility, decimal slo) {
             return avaialbility - slo;
         }

@@ -38,7 +38,11 @@ namespace Owlvey.Falcon.Models
 
     public class IndicatorDetailRp : IndicatorGetListRp
     {
-        public QualityMeasureValue Measure { get; set; }        
+        public QualityMeasureValue Measure { get; set; }
+        public string ReliabilityRiskLabel { get; set; }
+        public string SecurityRiskLabel { get; set; }
+        public decimal SecurityRisk { get; set; }
+        public decimal ReliabilityRisk { get; set; }
     }
 
     public class IndicatorPostRp

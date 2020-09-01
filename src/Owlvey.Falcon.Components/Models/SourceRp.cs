@@ -20,6 +20,13 @@ namespace Owlvey.Falcon.Models
         public DefinitionValue AvailabilityDefinition { get; set; }
         public DefinitionValue LatencyDefinition { get; set; }
         public DefinitionValue ExperienceDefinition { get; set; }
+
+        public string ReliabilityRiskLabel { get; set; }
+        public string SecurityRiskLabel { get; set; }
+        public decimal SecurityRisk { get; set; }
+        public decimal ReliabilityRisk { get; set; }
+        public SLOValue SLO { get; set; }
+
     }
     public class SourceAnchorRp { 
         public int Id { get; set; }
@@ -30,9 +37,10 @@ namespace Owlvey.Falcon.Models
     {        
         public QualityMeasureValue Quality { get; set; }
         public DebtMeasureValue Debt { get; set; } = new DebtMeasureValue();
-        public Dictionary<string, int> Features  { get; set; } = new Dictionary<string, int>();
+        public IEnumerable<FeatureGetListRp>  Features  { get; set; } = new List<FeatureGetListRp>();
         public Dictionary<string, decimal> Clues { get; set; } = new Dictionary<string, decimal>();
         public IEnumerable<DayMeasureValue> Daily { get; set; } = new List<DayMeasureValue>();
+        public IEnumerable<JourneyGetListRp> Journeys { get; set; } = new List<JourneyGetListRp>();
     }
 
     public class SourcesGetRp

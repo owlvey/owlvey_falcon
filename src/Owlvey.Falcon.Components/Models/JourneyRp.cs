@@ -30,6 +30,11 @@ namespace Owlvey.Falcon.Models
         public DateTime? CreatedOn { get; set; }
         
         public string Group { get; set; }
+
+        public string ReliabilityRiskLabel { get; set; }
+        public string SecurityRiskLabel { get; set; }
+        public decimal SecurityRisk { get; set; }
+        public decimal ReliabilityRisk { get; set; }
     }
 
     public class JourneyMigrateRp {

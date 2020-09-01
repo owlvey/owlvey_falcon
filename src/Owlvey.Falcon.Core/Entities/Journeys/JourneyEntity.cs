@@ -76,6 +76,46 @@ namespace Owlvey.Falcon.Core.Entities
 
         public virtual ICollection<JourneyMapEntity> FeatureMap { get; set; } = new List<JourneyMapEntity>();
 
+
+        public decimal SecurityRisk
+        {
+            get
+            {
+                var sources = this.FeatureMap.Select(c => c.Feature).ToList();
+
+                if (sources.Count > 0)
+                    return sources.Max(c => c.SecurityRisk);
+                return 0;
+            }
+        }
+        public string SecurityRiskLabel
+        {
+            get
+            {
+                return QualityUtils.SecurityRiskToLabel(this.SecurityRisk);
+            }
+        }
+
+        public decimal ReliabilityRisk
+        {
+            get
+            {
+                var sources = this.FeatureMap.Select(c => c.Feature).ToList();
+
+                if (sources.Count > 0)
+                    return sources.Max(c => c.ReliabilityRisk);
+                return 0;
+            }
+        }
+        public string ReliabilityRiskLabel
+        {
+            get
+            {                
+                var error = this.ReliabilityRisk;
+                return QualityUtils.ReliabilityRiskToLabel(this.AvailabilitySlo, error);                                
+            }
+        }
+
         public void Update(DateTime on, string modifiedBy, string name, 
             decimal? availabilitySlo,
             decimal? latencySlo,

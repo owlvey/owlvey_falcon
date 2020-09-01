@@ -65,10 +65,59 @@ namespace Owlvey.Falcon.Core.Entities
         public virtual ProductEntity Product { get; set; }
 
         public int ProductId { get; set; }
-        
+
+        public SLOValue SLO { get {
+                var temp = this.GetJourneys();
+                if (temp.Count() > 0)
+                {
+                    var ava = temp.Max(c => c.AvailabilitySlo);
+                    var latency = temp.Min(c => c.LatencySlo);
+                    var experience = temp.Max(c => c.AvailabilitySlo);
+                    return new SLOValue(ava, latency, experience);
+                }
+                return null;
+            } 
+        }
+
+        public decimal SecurityRisk {
+            get {
+                if (this.SecurityRisks.Count > 0)
+                    return this.SecurityRisks.Max(c => c.Risk);
+                return 0;
+            }   
+        }
+        public string SecurityRiskLabel {
+            get {
+                return QualityUtils.SecurityRiskToLabel(this.SecurityRisk);
+            }
+        }
+
+        public decimal ReliabilityRisk {
+            get {
+                if ( this.ReliabilityRisks.Count > 0)
+                    return this.ReliabilityRisks.Sum(c => c.BadMinutesPerYear);
+                return 0;
+            }
+        }
+        public string ReliabilityRiskLabel
+        {
+            get
+            {
+                if (this.SLO != null) {
+                    var error = this.ReliabilityRisk;
+                    return QualityUtils.ReliabilityRiskToLabel(this.SLO.Availability, error);
+                }
+                return "no slo";                
+            }
+        }
+
         public virtual ICollection<IndicatorEntity> Indicators { get; set; } = new List<IndicatorEntity>();
 
         public virtual ICollection<SourceItemEntity> SourceItems { get; set; } = new List<SourceItemEntity>();
+
+        public virtual ICollection<SecurityRiskEntity> SecurityRisks { get; set;  } = new List<SecurityRiskEntity>();
+
+        public virtual ICollection<ReliabilityRiskEntity> ReliabilityRisks { get; set; } = new List<ReliabilityRiskEntity>();
 
         public virtual void Update(
          string name, string avatar,
@@ -105,8 +154,15 @@ namespace Owlvey.Falcon.Core.Entities
             return result;
         }
 
-        public Dictionary<string, int> FeaturesToDictionary() {
-            return this.Indicators.ToDictionary(d => d.Feature.Name, c => c.Feature.Id.Value); 
+        public IEnumerable<FeatureEntity> GetFeatures() {
+            var features = this.Indicators.Select(c => c.Feature);
+            return features;
+        }
+
+        public IEnumerable<JourneyEntity> GetJourneys() {
+            var maps = this.Indicators.SelectMany(c => c.Feature.JourneyMaps);
+            var journeys = maps.Select(c => c.Journey).Distinct(new JourneyEntityCompare());
+            return journeys;
         }
 
         public SourceGroupEnum ParseGroup(string value) {

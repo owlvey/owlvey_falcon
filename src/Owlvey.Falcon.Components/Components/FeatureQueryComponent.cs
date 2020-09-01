@@ -72,18 +72,15 @@ namespace Owlvey.Falcon.Components
             DatePeriodValue period)
         {
             var feature = await this._dbContext.Features
-                .Include(c => c.Squads).ThenInclude(c => c.Squad)
-                .Include(c => c.Indicators).ThenInclude(c => c.Source)
-                .Include(c => c.JourneyMaps).ThenInclude(c => c.Journey)
                 .Where(c => c.Id == id)
                 .SingleOrDefaultAsync();
-
-
             if (feature == null)
             {
                 return null;
             }
-
+            var product = await this._dbContext.FullLoadProduct(feature.ProductId);
+            feature = product.Features.Where(c => c.Id == id).Single(); 
+            
             foreach (var indicator in feature.Indicators)
             {
                 var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, period.Start, period.End);

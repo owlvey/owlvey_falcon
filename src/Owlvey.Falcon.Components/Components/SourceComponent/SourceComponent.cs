@@ -164,18 +164,12 @@ namespace Owlvey.Falcon.Components
         public async Task<SourcesGetRp> GetByProductIdWithAvailability(int productId, DateTime start, DateTime end)
         {
             var product = await this._dbContext.FullLoadProduct(productId);
-            var entities = await this._dbContext.Sources
-                .Include(c=>c.Indicators)
-                .Where(c => c.Product.Id == productId).ToListAsync();            
+            var entities = product.Sources;
             var sourceItems = await this._dbContext.GetSourceItems(start, end);
 
             var items = new List<SourceGetListRp>();
             foreach (var source in entities)
-            {
-                foreach (var indicator in source.Indicators)
-                {
-                    indicator.Feature = product.Features.Where(c => c.Id == indicator.FeatureId).Single();
-                }
+            {                
                 source.SourceItems = sourceItems.Where(c => c.SourceId == source.Id).ToList();                
                 var proportion= source.Measure();
                 var tmp = this._mapper.Map<SourceGetListRp>(source);
@@ -209,10 +203,12 @@ namespace Owlvey.Falcon.Components
         }        
         public async Task<SourceGetRp> GetByIdWithDetail(int id, DatePeriodValue period)
         {
-            var entity = await this._dbContext.Sources
-                .Include(c => c.Indicators)
-                .ThenInclude(c => c.Feature)
+            
+            var entity = await this._dbContext.Sources                
                 .SingleOrDefaultAsync(c => c.Id == id);
+
+            var product = await this._dbContext.FullLoadProduct(entity.ProductId);
+            entity = product.Sources.Where(c => c.Id == id).Single();
 
             var result = this._mapper.Map<SourceGetRp>(entity);
             if (entity != null)
@@ -221,7 +217,9 @@ namespace Owlvey.Falcon.Components
                 var ids = sourceItems.Select(c => c.Id).ToList();
                 entity.SourceItems = sourceItems;
                 result.Quality = entity.Measure();
-                result.Features = entity.FeaturesToDictionary();                
+                result.Features = this._mapper.Map<IEnumerable<FeatureGetListRp>>(entity.GetFeatures());
+                result.Journeys = this._mapper.Map<IEnumerable<JourneyGetListRp>>(entity.GetJourneys());
+                result.Debt = entity.MeasureDebt(period);
                 result.Daily = entity.GetDailySeries(period);
             }
             return result;

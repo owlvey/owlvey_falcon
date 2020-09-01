@@ -74,7 +74,10 @@ namespace Owlvey.Falcon.Repositories.Products
                 }
             }
 
-            var sources = await context.Sources.Where(c => c.ProductId == productId).ToListAsync();
+            var sources = await context.Sources
+                .Include(c => c.SecurityRisks)
+                .Include(c => c.ReliabilityRisks)
+                .Where(c => c.ProductId == productId).ToListAsync();
 
             product.Sources = new SourceCollection(sources);
 

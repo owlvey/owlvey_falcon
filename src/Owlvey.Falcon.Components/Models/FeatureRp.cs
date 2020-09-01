@@ -13,7 +13,12 @@ namespace Owlvey.Falcon.Models
         public string Avatar { get; set; }
         public string Description { get; set; }
         public int Id { get; set; } 
-        public int ProductId { get; set; }  
+        public int ProductId { get; set; }
+        public string ReliabilityRiskLabel { get; set; }
+        public string SecurityRiskLabel { get; set; }
+        public decimal SecurityRisk { get; set; }
+        public decimal ReliabilityRisk { get; set; }
+        public SLOValue SLO { get; set; }
 
         public virtual void Read(FeatureEntity entity){
             this.Id = entity.Id.Value;

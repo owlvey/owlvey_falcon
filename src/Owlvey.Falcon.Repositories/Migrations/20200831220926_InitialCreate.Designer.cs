@@ -10,7 +10,7 @@ using Owlvey.Falcon.Repositories;
 namespace Owlvey.Falcon.Repositories.Migrations
 {
     [DbContext(typeof(FalconDbContext))]
-    [Migration("20200831043409_InitialCreate")]
+    [Migration("20200831220926_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -911,9 +911,6 @@ namespace Owlvey.Falcon.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Latency")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("ModifiedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1250,7 +1247,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.ReliabilityRiskEntity", b =>
                 {
                     b.HasOne("Owlvey.Falcon.Core.Entities.SourceEntity", "Source")
-                        .WithMany()
+                        .WithMany("ReliabilityRisks")
                         .HasForeignKey("SourceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1259,7 +1256,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.SecurityRiskEntity", b =>
                 {
                     b.HasOne("Owlvey.Falcon.Core.Entities.SourceEntity", "Source")
-                        .WithMany()
+                        .WithMany("SecurityRisks")
                         .HasForeignKey("SourceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
