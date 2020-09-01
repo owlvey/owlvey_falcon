@@ -14,6 +14,9 @@ namespace Owlvey.Falcon.Core.Entities
                         
         public int? Good { get; set; }
 
+        [Required]
+        public SourceGroupEnum Group { get; set; }
+
         [NotMapped]
         public int? Bad { get {
                 return this.Total - this.Good;

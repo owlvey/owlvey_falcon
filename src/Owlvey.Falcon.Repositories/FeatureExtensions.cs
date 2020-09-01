@@ -19,7 +19,7 @@ namespace Owlvey.Falcon.Repositories.Features
             
             var feature = await context.Features
                 .Include(c => c.IncidentMap)
-                .Include(c => c.ServiceMaps)
+                .Include(c => c.JourneyMaps)
                 .Include(c => c.Squads).SingleAsync(c => c.Id == id);
 
             if (feature != null)
@@ -28,9 +28,9 @@ namespace Owlvey.Falcon.Repositories.Features
                 {
                     context.IncidentMaps.Remove(map);
                 }
-                foreach (var map in feature.ServiceMaps)
+                foreach (var map in feature.JourneyMaps)
                 {
-                    context.ServiceMaps.Remove(map);
+                    context.JourneyMaps.Remove(map);
                 }
                 foreach (var squad in feature.Squads)
                 {
@@ -40,7 +40,7 @@ namespace Owlvey.Falcon.Repositories.Features
                 await context.SaveChangesAsync();
 
                 feature = await context.Features
-                .Include(c => c.ServiceMaps)
+                .Include(c => c.JourneyMaps)
                 .Include(c => c.Squads).SingleAsync(c => c.Id == id);
 
                 context.Features.Remove(feature);

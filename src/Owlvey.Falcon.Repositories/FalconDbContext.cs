@@ -28,9 +28,8 @@ namespace Owlvey.Falcon.Repositories
 
         public DbSet<CustomerEntity> Customers { get; set; }
         public DbSet<ProductEntity> Products { get; set; }
-        public DbSet<ServiceEntity> Services { get; set; }
-        public DbSet<ServiceMapEntity> ServiceMaps { get; set; }
-
+        public DbSet<JourneyEntity> Journeys { get; set; }
+        public DbSet<JourneyMapEntity> JourneyMaps { get; set; }
         public DbSet<UserEntity> Users { get; set; }
 
         public DbSet<FeatureEntity> Features { get; set; }
@@ -50,6 +49,20 @@ namespace Owlvey.Falcon.Repositories
         public DbSet<AnchorEntity> Anchors { get; set; } 
 
         public DbSet<ClueEntity> Clues { get; set; }
+
+        #region Security  Risk
+
+        public DbSet<SecurityRiskEntity> SecurityRisks { get; set; }
+        public DbSet<SecurityThreatEntity> SecurityThreats { get; set; }
+
+        #endregion
+
+        #region Reliability Risk
+
+        public DbSet<ReliabilityRiskEntity> ReliabilityRisks { get; set; }
+        public DbSet<ReliabilityThreatEntity> ReliabilityThreats { get; set; }
+
+        #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -72,15 +85,15 @@ namespace Owlvey.Falcon.Repositories
 
             modelBuilder.Entity<ProductEntity>().HasIndex(c => new { c.CustomerId, c.Name }).IsUnique();
 
-            modelBuilder.Entity<ServiceEntity>()
+            modelBuilder.Entity<JourneyEntity>()
                 .Property(c => c.AvailabilitySlo).HasColumnType("decimal(5,3)");
-            modelBuilder.Entity<ServiceEntity>()
+            modelBuilder.Entity<JourneyEntity>()
                 .Property(c => c.LatencySlo).HasColumnType("decimal(12,3)");
-            modelBuilder.Entity<ServiceEntity>()
+            modelBuilder.Entity<JourneyEntity>()
                 .Property(c => c.ExperienceSlo).HasColumnType("decimal(5,3)");
 
 
-            modelBuilder.Entity<ServiceEntity>()                
+            modelBuilder.Entity<JourneyEntity>()                
                 .HasIndex(c => new { c.ProductId, c.Name }).IsUnique();
             modelBuilder.Entity<FeatureEntity>().HasIndex(c => new { c.ProductId, c.Name }).IsUnique();
 
@@ -95,8 +108,7 @@ namespace Owlvey.Falcon.Repositories
             //modelBuilder.Entity<InteractionSourceEntity>().HasBaseType<SourceEntity>();
 
             modelBuilder.Entity<SquadEntity>().HasIndex(c => new { c.CustomerId, c.Name }).IsUnique();
-
-
+            
             modelBuilder.Entity<SquadFeatureEntity>()
                .HasOne(pt => pt.Squad)
                .WithMany(p => p.FeatureMaps)
@@ -124,22 +136,22 @@ namespace Owlvey.Falcon.Repositories
                .OnDelete(DeleteBehavior.Cascade)
                .HasForeignKey(pt => pt.IncidentId);
 
-            modelBuilder.Entity<ServiceMapEntity>().HasKey(x => new { x.Id });
+            modelBuilder.Entity<JourneyMapEntity>().HasKey(x => new { x.Id });
 
-            modelBuilder.Entity<ServiceMapEntity>()
+            modelBuilder.Entity<JourneyMapEntity>()
                .HasOne(pt => pt.Feature)
-               .WithMany(p => p.ServiceMaps)
+               .WithMany(p => p.JourneyMaps)
                .OnDelete(DeleteBehavior.Restrict)
                .HasForeignKey(pt => pt.FeatureId);
 
-            modelBuilder.Entity<ServiceMapEntity>()
-               .HasOne(pt => pt.Service)
+            modelBuilder.Entity<JourneyMapEntity>()
+               .HasOne(pt => pt.Journey)
                .WithMany(p => p.FeatureMap)
                .OnDelete(DeleteBehavior.Cascade)
-               .HasForeignKey(pt => pt.ServiceId);
+               .HasForeignKey(pt => pt.JourneyId);
 
 
-            modelBuilder.Entity<ServiceMapEntity>().HasIndex(c => new { c.ServiceId, c.FeatureId }).IsUnique();
+            modelBuilder.Entity<JourneyMapEntity>().HasIndex(c => new { c.JourneyId, c.FeatureId }).IsUnique();
 
             modelBuilder.Entity<IndicatorEntity>().HasKey(x => new { x.Id });
 
@@ -171,28 +183,29 @@ namespace Owlvey.Falcon.Repositories
         }
 
         public async Task<ICollection<SourceItemEntity>> GetSourceItems(int sourceId,
-            DateTime start, DateTime end) {
-            start = start.Date;
-            end = end.Date;
+            DateTime start, DateTime end) {            
             List<SourceItemEntity> result = new List<SourceItemEntity>();
             result = await this.SourcesItems.Where(c => c.SourceId == sourceId && c.Target >= start && c.Target <= end).ToListAsync();                        
+            return result;
+        }
+        public async Task<ICollection<SourceItemEntity>> GetSourceItems(int sourceId, SourceGroupEnum group,
+            DateTime start, DateTime end)
+        {            
+            List<SourceItemEntity> result = new List<SourceItemEntity>();
+            result = await this.SourcesItems.Where(c => c.SourceId == sourceId && c.Group == group &&  c.Target >= start && c.Target <= end).ToListAsync();
             return result;
         }
 
         public async Task<ICollection<SourceItemEntity>> GetSourceItems(IEnumerable<int> sources,
             DateTime start, DateTime end)
-        {
-            start = start.Date;
-            end = end.Date;
+        {            
             List<SourceItemEntity> result = new List<SourceItemEntity>();
             result = await this.SourcesItems.Where(c => sources.Contains(c.SourceId) && c.Target >= start && c.Target <= end).ToListAsync();            
             return result;
         }
 
         public async Task<ICollection<SourceItemEntity>> GetSourceItems(DateTime start, DateTime end)
-        {
-            start = start.Date;
-            end = end.Date;
+        {            
             List<SourceItemEntity> result = new List<SourceItemEntity>();
             result = await this.SourcesItems.Where(c=>c.Target >= start && c.Target <= end).ToListAsync();
             return result;
@@ -200,9 +213,7 @@ namespace Owlvey.Falcon.Repositories
 
 
         public async Task<ICollection<SourceItemEntity>> GetSourceItemsByProduct(IEnumerable<int> productIds, DateTime start, DateTime end)
-        {
-            start = start.Date;
-            end = end.Date;
+        {            
             List<SourceItemEntity> result = new List<SourceItemEntity>();
             result = await this.SourcesItems.Where(c => productIds.Contains(c.Source.ProductId) && c.Target >= start && c.Target <= end).ToListAsync();
             return result;
@@ -213,10 +224,10 @@ namespace Owlvey.Falcon.Repositories
             return await this.GetSourceItemsByProduct(new List<int>() { productId }, start, end);
         }
 
-        public async Task LoadIndicators(IEnumerable<ServiceMapEntity> serviceMaps) {
-            var sourceIds = serviceMaps.SelectMany(c => c.Feature.Indicators.Select(d => d.SourceId)).Distinct().ToList();
+        public async Task LoadIndicators(IEnumerable<JourneyMapEntity> journeyMaps) {
+            var sourceIds = journeyMaps.SelectMany(c => c.Feature.Indicators.Select(d => d.SourceId)).Distinct().ToList();
             var sources = await this.Sources.Where(c => sourceIds.Contains(c.Id.Value)).ToListAsync();
-            foreach (var item in serviceMaps)
+            foreach (var item in journeyMaps)
             {
                 foreach (var indicator in item.Feature.Indicators)
                 {

@@ -37,7 +37,7 @@ namespace Owlvey.Falcon.ComponentsTests
         public static DateTime StartJuly2019 = new DateTime(2019, 07, 1);
         public static DateTime EndJuly2019 = new DateTime(2019, 07, 31);
         public static DatePeriodValue year2019 = new DatePeriodValue(StartJanuary2019, EndDecember2019);
-
+        public static DatePeriodValue january2019 = new DatePeriodValue(StartJanuary2019, EndJanuary2019);
     }
     public static class ComponentTestFactory
     {
@@ -65,7 +65,7 @@ namespace Owlvey.Falcon.ComponentsTests
                 ProductComponentConfiguration.ConfigureMappers(cfg);
                 FeatureComponentConfiguration.ConfigureMappers(cfg);
                 IncidentComponentConfiguration.ConfigureMappers(cfg);
-                ServiceComponentConfiguration.ConfigureMappers(cfg);
+                JourneyComponentConfiguration.ConfigureMappers(cfg);
                 UserComponentConfiguration.ConfigureMappers(cfg);
                 SquadComponentConfiguration.ConfigureMappers(cfg);
                 MemberComponentConfiguration.ConfigureMappers(cfg);
@@ -73,11 +73,10 @@ namespace Owlvey.Falcon.ComponentsTests
                 SourceItemComponentConfiguration.ConfigureMappers(cfg);
                 SquadFeatureComponentConfiguration.ConfigureMappers(cfg);                
                 IndicatorComponentConfiguration.ConfigureMappers(cfg);
-
-                LatencySourceComponent.ConfigureMappers(cfg);
-                AvailabilitySourceComponent.ConfigureMappers(cfg);
-                ExperienceSourceComponent.ConfigureMappers(cfg);
                 SourceComponent.ConfigureMappers(cfg);
+                SecurityRiskComponent.ConfigureMappers(cfg);
+                ReliabilityRiskComponent.ConfigureMappers(cfg);
+                MigrationComponent.ConfigureMappers(cfg);
             });
             configuration.AssertConfigurationIsValid();
             var mapper = configuration.CreateMapper();
@@ -136,21 +135,21 @@ namespace Owlvey.Falcon.ComponentsTests
             return user.Id;
         }
 
-        public static async Task<int> BuildService(Container container, int? product= null, string name = "service")
+        public static async Task<int> BuildJourney(Container container, int? product= null, string name = "journey")
         {
             if (!product.HasValue) {
                 var (_, product_id) = await BuildCustomerProduct(container);
                 product = product_id;
             }
 
-            var serviceComponent = container.GetInstance<ServiceComponent>();
-            var serviceQueryComponent = container.GetInstance<ServiceQueryComponent>();
-            await serviceComponent.CreateService(new Models.ServicePostRp() { Name = name, ProductId = product.Value });
-            var service = await serviceQueryComponent.GetServiceByName(product.Value, name);
-            return service.Id;
+            var Component = container.GetInstance<JourneyComponent>();
+            var QueryComponent = container.GetInstance<JourneyQueryComponent>();
+            await Component.Create(new Models.JourneyPostRp() { Name = name, ProductId = product.Value });
+            var journey = await QueryComponent.GetByProductIdName(product.Value, name);
+            return journey.Id;
         }
 
-        public static async Task<int> BuildSource(Container container, int? product = null, string name = "service")
+        public static async Task<int> BuildSource(Container container, int? product = null, string name = "journey")
         {
             if (!product.HasValue)
             {
@@ -209,14 +208,14 @@ namespace Owlvey.Falcon.ComponentsTests
             return (customer.Id, product.Id);
         }
 
-        public static async Task<(int customerId, int productId, int serviceId, int featureId, 
+        public static async Task<(int customerId, int productId, int journeyId, int featureId,
             int sourceId, int squadId)> BuildCustomerWithSquad(Container container,
             DateTime start, DateTime end) {
 
             var squadComponent = container.GetInstance<SquadComponent>();
             var featureComponent = container.GetInstance<FeatureComponent>();
-            var serviceComponent = container.GetInstance<ServiceComponent>();
-            var serviceMapComponent = container.GetInstance<ServiceMapComponent>();
+            var journeyComponent = container.GetInstance<JourneyComponent>();
+            var journeyMapComponent = container.GetInstance<JourneyMapComponent>();
             var indicatorComponent = container.GetInstance<IndicatorComponent>();
             var sourceComponent = container.GetInstance<SourceComponent>();
             var sourceItemComponent = container.GetInstance<SourceItemComponent>();
@@ -224,9 +223,9 @@ namespace Owlvey.Falcon.ComponentsTests
 
             var (customer, product) = await ComponentTestFactory.BuildCustomerProduct(container);
             
-            var service = await serviceComponent.CreateService(new Models.ServicePostRp()
+            var journey = await journeyComponent.Create(new Models.JourneyPostRp()
             {
-                Name = "test service",
+                Name = "test journey",
                 ProductId = product
             });
 
@@ -236,19 +235,19 @@ namespace Owlvey.Falcon.ComponentsTests
                 ProductId = product
             });
 
-            await serviceMapComponent.CreateServiceMap(new ServiceMapPostRp()
+            await journeyMapComponent.CreateMap(new JourneyMapPostRp()
             {
                 FeatureId = feature.Id,
-                ServiceId = service.Id
+                JourneyId = journey.Id
             });
 
-            var source = await sourceComponent.Create(new Models.SourcePostRp()
+            var source = await sourceComponent.Create(new SourcePostRp()
             {
                 Name = "test source",
                 ProductId = product
             });
 
-            await sourceItemComponent.Create(new Models.SourceItemInteractionPostRp()
+            await sourceItemComponent.CreateAvailabilityItem(new SourceItemAvailabilityPostRp()
             {
                 SourceId = source.Id,
                 Start = start,
@@ -259,11 +258,11 @@ namespace Owlvey.Falcon.ComponentsTests
 
             await indicatorComponent.Create(feature.Id, source.Id);
 
-            var squad = await squadComponent.CreateSquad(new Models.SquadPostRp() { Name = "test", CustomerId = customer });
+            var squad = await squadComponent.CreateSquad(new SquadPostRp() { Name = "test", CustomerId = customer });
 
-            await featureComponent.RegisterSquad(new Models.SquadFeaturePostRp() { FeatureId = feature.Id, SquadId = squad.Id });
+            await featureComponent.RegisterSquad(new SquadFeaturePostRp() { FeatureId = feature.Id, SquadId = squad.Id });
 
-            return (customer, product, service.Id, feature.Id, source.Id, squad.Id);
+            return (customer, product, journey.Id, feature.Id, source.Id, squad.Id);
         }
     }
 }

@@ -17,8 +17,8 @@ namespace Owlvey.Falcon.Components
         private readonly FalconDbContext _dbContext;
         public AppSettingQueryComponent(FalconDbContext dbContext,
             IDateTimeGateway dateTimeGateway, IMapper mapper, 
-            IUserIdentityGateway identityService,
-            ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityService, configuration)
+            IUserIdentityGateway identityGateway,
+            ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityGateway, configuration)
         {
             this._dbContext = dbContext;
         }

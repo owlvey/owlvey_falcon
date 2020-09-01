@@ -13,19 +13,19 @@ namespace Owlvey.Falcon.API.Controllers
     [Route("features")]
     public class FeatureController : BaseController
     {
-        private readonly FeatureQueryComponent _featureQueryService;
+        private readonly FeatureQueryComponent _featureQueryComponent;
         private readonly IndicatorComponent _indicatorComponent;
         private readonly FeatureComponent _featureComponent;        
         private readonly SquadComponent _squadComponent; 
 
-        public FeatureController(FeatureQueryComponent featureQueryService,
+        public FeatureController(FeatureQueryComponent featureQueryComponent,
             IndicatorComponent indicatorComponent,            
             SquadComponent squadComponent,
-            FeatureComponent featureService) : base()
+            FeatureComponent featureComponent) : base()
         {
             this._indicatorComponent = indicatorComponent;            
-            this._featureQueryService = featureQueryService;
-            this._featureComponent = featureService;
+            this._featureQueryComponent = featureQueryComponent;
+            this._featureComponent = featureComponent;
             this._squadComponent = squadComponent;
         }
 
@@ -40,12 +40,13 @@ namespace Owlvey.Falcon.API.Controllers
             object model = null;            
             if (start.HasValue && end.HasValue)
             {
-                model = await this._featureQueryService.GetFeaturesWithQuality(productId, 
+                
+                model = await this._featureQueryComponent.GetFeaturesWithQuality(productId, 
                      new  DatePeriodValue(start.Value, end.Value));
             }
             else
             {
-                model = await this._featureQueryService.GetFeatures(productId);
+                model = await this._featureQueryComponent.GetFeatures(productId);
             }            
             return this.Ok(model);
         }
@@ -62,10 +63,11 @@ namespace Owlvey.Falcon.API.Controllers
             object model = null;
             if (end.HasValue)
             {
-                model = await this._featureQueryService.GetFeatureByIdWithAvailability(id, start.Value,  end.Value);
+                model = await this._featureQueryComponent.GetFeatureByIdWithQuality(id, 
+                    new DatePeriodValue( start.Value,  end.Value));
             }
             else {
-                model = await this._featureQueryService.GetFeatureById(id);
+                model = await this._featureQueryComponent.GetFeatureById(id);
             }
 
             if (model == null)
@@ -82,7 +84,7 @@ namespace Owlvey.Falcon.API.Controllers
 
             if (!string.IsNullOrWhiteSpace(name))
             {
-                result = await this._featureQueryService.SearchFeatureByName(productId, name);
+                result = await this._featureQueryComponent.SearchFeatureByName(productId, name);
             }
             else {
                 return BadRequest("name is required");
@@ -248,7 +250,7 @@ namespace Owlvey.Falcon.API.Controllers
             {
                 return this.BadRequest("end is required");
             }
-            var result = await this._featureQueryService.GetDailyAvailabilitySeriesById(id, start.Value, end.Value);
+            var result = await this._featureQueryComponent.GetDailyAvailabilitySeriesById(id, start.Value, end.Value);
 
             return this.Ok(result);
         }

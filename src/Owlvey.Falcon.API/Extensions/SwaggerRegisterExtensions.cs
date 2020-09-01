@@ -15,15 +15,15 @@ namespace Owlvey.Falcon.API.Extensions
     public static class SwaggerRegisterExtensions
     {
 
-        public static void AddCustomSwagger(this IServiceCollection services, IConfiguration configuration, IHostingEnvironment environtment)
+        public static void AddCustomSwagger(this IServiceCollection providers, IConfiguration configuration, IHostingEnvironment environtment)
         {
-            services.Configure<SwaggerAppOptions>(configuration.GetSection("Swagger"));
+            providers.Configure<SwaggerAppOptions>(configuration.GetSection("Swagger"));
 
-            var sp = services.BuildServiceProvider();
+            var sp = providers.BuildServiceProvider();
             var swaggerOptions = sp.GetService<IOptions<SwaggerAppOptions>>();
             var authenticationOptions = sp.GetService<IOptions<AuthorityOptions>>();
 
-            services.AddSwaggerGen(c =>
+            providers.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc(swaggerOptions.Value.Version, new OpenApiInfo
                 {

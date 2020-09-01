@@ -22,7 +22,7 @@ namespace Owlvey.Falcon.Components
         private readonly FalconDbContext _dbContext;
 
         public IndicatorComponent(FalconDbContext dbContext, IDateTimeGateway dataTimeGateway, IMapper mapper, 
-            IUserIdentityGateway identityService, ConfigurationComponent configuration) : base(dataTimeGateway, mapper, identityService, configuration)
+            IUserIdentityGateway identityGateway, ConfigurationComponent configuration) : base(dataTimeGateway, mapper, identityGateway, configuration)
         {
             this._dbContext = dbContext;
         }
@@ -51,7 +51,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<IndicatorGetListRp>  Create(int customerId, string product, string source, string feature)
         {
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             var productEntity = await this._dbContext.Products.Where(c => c.CustomerId == customerId && c.Name == product).SingleAsync();
             var sourceEntity = NotNullValidator.Validate(await this._dbContext.GetSource(productEntity.Id.Value, source), c=>c.Name, source);
             var featureEntity = await this._dbContext.Features.Where(c => c.ProductId == productEntity.Id && c.Name == feature).SingleAsync();
@@ -68,7 +68,7 @@ namespace Owlvey.Falcon.Components
         }
 
         public async Task<IndicatorGetListRp> Create(int featureId, int sourceId) {
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             var updatedOn = this._datetimeGateway.GetCurrentDateTime();
 
             var feature = await this._dbContext.Features.Where(c => c.Id == featureId).SingleAsync();
@@ -112,28 +112,7 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<IndicatorGetListRp>>(entity);
         }
 
-        
-        public async Task<IEnumerable<IndicatorAvailabilityGetListRp>> GetByFeatureWithAvailability(int featureId, DateTime start, DateTime end)
-        {
-            var entities = await this._dbContext.Indicators
-                .Include(c => c.Feature)
-                .Include(c => c.Source).Where(c => c.Feature.Id == featureId).ToListAsync();
-
-            var sourceIds = entities.Select(c => c.SourceId).Distinct().ToList();
-
-            var sourceitems = await this._dbContext.GetSourceItems(sourceIds, start, end); 
-
-            var result = new List<IndicatorAvailabilityGetListRp>();
-            foreach (var item in entities)
-            {
-                item.Source.SourceItems = sourceitems.Where(c => c.SourceId == item.SourceId).ToList();
-                var measure = item.Source.Measure();                
-                var tmp = this._mapper.Map<IndicatorAvailabilityGetListRp>(item);
-                tmp.Measure = measure.Value;
-                result.Add(tmp);
-            }
-            return result;
-        }
+       
 
         public async Task<IndicatorGetRp> GetById(int id)
         {

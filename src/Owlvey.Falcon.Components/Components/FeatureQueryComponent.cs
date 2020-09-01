@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Owlvey.Falcon.Repositories.Services;
+using Owlvey.Falcon.Repositories.Journeys;
 using Owlvey.Falcon.Core.Values;
 using Owlvey.Falcon.Repositories.Products;
 
@@ -68,24 +68,22 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<FeatureGetListRp>>(entities);
         }
 
-        public async Task<FeatureQualityGetRp> GetFeatureByIdWithAvailability(int id, DateTime start, DateTime end)
+        public async Task<FeatureQualityGetRp> GetFeatureByIdWithQuality(int id, 
+            DatePeriodValue period)
         {
             var feature = await this._dbContext.Features
-                .Include(c => c.Squads).ThenInclude(c => c.Squad)
-                .Include(c => c.Indicators).ThenInclude(c => c.Source)
-                .Include(c => c.ServiceMaps).ThenInclude(c => c.Service)
                 .Where(c => c.Id == id)
                 .SingleOrDefaultAsync();
-
-
             if (feature == null)
             {
                 return null;
             }
-
+            var product = await this._dbContext.FullLoadProduct(feature.ProductId);
+            feature = product.Features.Where(c => c.Id == id).Single(); 
+            
             foreach (var indicator in feature.Indicators)
             {
-                var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, start, end);
+                var sourceItems = await this._dbContext.GetSourceItems(indicator.SourceId, period.Start, period.End);
                 indicator.Source.SourceItems = sourceItems;
             }
                         
@@ -95,17 +93,15 @@ namespace Owlvey.Falcon.Components
             model.Debt = feature.MeasureDebt();
             foreach (var indicator in feature.Indicators)
             {                
-                var tmp = this._mapper.Map<IndicatorAvailabilityGetListRp>(indicator);                
-                tmp.Measure = indicator.Source.Measure().Value;                
+                var tmp = this._mapper.Map<IndicatorDetailRp>(indicator);                
+                tmp.Measure = indicator.Source.Measure();                
                 model.Indicators.Add(tmp);
-            }
+            }            
 
-            model.Indicators = model.Indicators.OrderByDescending(c => c.Measure).ToList();
-
-            foreach (var map in feature.ServiceMaps)
+            foreach (var map in feature.JourneyMaps)
             {
-                var tmp = this._mapper.Map<ServiceGetListRp>(map.Service);
-                model.Services.Add(tmp);
+                var tmp = this._mapper.Map<JourneyGetListRp>(map.Journey);
+                model.Journeys.Add(tmp);
             }
 
             model.Incidents = this._mapper.Map<List<IncidentGetListRp>>(await this._dbContext.GetIncidentsByFeature(feature.Id.Value));
@@ -142,18 +138,15 @@ namespace Owlvey.Falcon.Components
             var product =  await this._dbContext.FullLoadProductWithSourceItems(productId, period.Start, period.End);                                   
 
             foreach (var feature in product.Features)
-            {                
-                var tmp = this._mapper.Map<FeatureAvailabilityGetListRp>(feature);                
-                var measure = feature.Measure();                                
-                tmp.Availability = measure.Availability;
-                tmp.Experience = measure.Experience;
-                tmp.Latency = measure.Latency;
+            { 
+                var tmp = this._mapper.Map<FeatureAvailabilityGetListRp>(feature);
+                tmp.Quality  = feature.Measure();                                                 
                 tmp.Squads = feature.Squads.Count();                                
-                tmp.ServiceCount = feature.ServiceMaps.Count();
+                tmp.JourneyCount = feature.JourneyMaps.Count();
                 tmp.Debt = feature.MeasureDebt();                
                 result.Add(tmp);
             }
-            return result.OrderBy(c => c.Availability).ToList();
+            return result.OrderBy(c => c.Quality.Availability).ToList();
         }
 
 
@@ -163,23 +156,23 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<FeatureGetListRp>>(entities);
         }
 
-        public async Task<ICollection<FeatureGetListRp>> GetFeaturesByServiceId(int serviceId)
+        public async Task<ICollection<FeatureGetListRp>> GetFeaturesByJourneyId(int journeyId)
         {
-            var entities = await this._dbContext.ServiceMaps.Include(c => c.Feature).Where(c => c.Service.Id == serviceId).ToListAsync();
+            var entities = await this._dbContext.JourneyMaps.Include(c => c.Feature).Where(c => c.Journey.Id == journeyId).ToListAsync();
             var features = entities.Select(c => c.Feature).ToList();
             return this._mapper.Map<ICollection<FeatureGetListRp>>(features);
         }
 
-        public async Task<ICollection<SequenceFeatureGetListRp>> GetFeaturesByServiceIdWithAvailability(int serviceId, DateTime start, DateTime end)
+        public async Task<ICollection<SequenceFeatureGetListRp>> GetFeaturesByJourneyIdWithAvailability(int journeyId, DateTime start, DateTime end)
         {
-            var service = await this._dbContext.GetService(serviceId);
+            var journey = await this._dbContext.GetJourney(journeyId);
             
             var result = new List<SequenceFeatureGetListRp>();                                   
 
-            var sources = service.FeatureMap.SelectMany(c => c.Feature.Indicators).Select(c => c.SourceId).Distinct().ToList();
+            var sources = journey.FeatureMap.SelectMany(c => c.Feature.Indicators).Select(c => c.SourceId).Distinct().ToList();
             var sourceItems = await this._dbContext.GetSourceItems(sources, start, end);
 
-            foreach (var map in service.FeatureMap)            
+            foreach (var map in journey.FeatureMap)            
             {
                 var feature = map.Feature;
 

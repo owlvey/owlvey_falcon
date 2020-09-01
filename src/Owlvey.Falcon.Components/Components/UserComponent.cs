@@ -16,7 +16,7 @@ namespace Owlvey.Falcon.Components
     {
         private readonly FalconDbContext _dbContext;
         public UserComponent(FalconDbContext dbContext, IDateTimeGateway dateTimeGateway, IMapper mapper,
-            IUserIdentityGateway identityService, ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityService, configuration)
+            IUserIdentityGateway identityGateway, ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityGateway, configuration)
         {
             this._dbContext = dbContext;
         }
@@ -44,7 +44,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<UserGetListRp> CreateOrUpdate(string email, string name, 
             string avatar, string slackmember) {
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             var entity = await this._dbContext.Users.Where(c => c.Email == email).SingleOrDefaultAsync();
             if (entity == null)
             {
@@ -61,7 +61,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<UserGetListRp> CreateUser(UserPostRp model)
         {            
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
 
             var entity = await this._dbContext.Users.Where(c => c.Email == model.Email).SingleOrDefaultAsync();
             if (entity == null)

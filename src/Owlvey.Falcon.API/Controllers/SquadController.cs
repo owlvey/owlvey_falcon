@@ -13,14 +13,14 @@ namespace Owlvey.Falcon.API.Controllers
     [Route("squads")]
     public class SquadController : BaseController
     {
-        private readonly SquadQueryComponent _squadQueryService;
-        private readonly SquadComponent _squadService;        
+        private readonly SquadQueryComponent _squadQueryComponent;
+        private readonly SquadComponent _squadComponent;        
 
-        public SquadController(SquadQueryComponent squadQueryService, 
-            SquadComponent squadService) 
+        public SquadController(SquadQueryComponent squadQueryComponent, 
+            SquadComponent squadComponent) 
         {
-            this._squadQueryService = squadQueryService;
-            this._squadService = squadService;            
+            this._squadQueryComponent = squadQueryComponent;
+            this._squadComponent = squadComponent;            
         }
 
         
@@ -32,12 +32,12 @@ namespace Owlvey.Falcon.API.Controllers
         {
             if (start.HasValue)
             {
-                var model = await this._squadQueryService.GetSquadsWithPoints(customerId, 
+                var model = await this._squadQueryComponent.GetSquadsWithPoints(customerId, 
                     new DatePeriodValue(start.Value, end.Value));
                 return this.Ok(model);
             }
             else {
-                var model = await this._squadQueryService.GetSquads(customerId);
+                var model = await this._squadQueryComponent.GetSquads(customerId);
                 return this.Ok(model);
             }
             
@@ -52,7 +52,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(SquadGetRp), 200)]
         public async Task<IActionResult> GetById(int id)
         {            
-            var model = await this._squadQueryService.GetSquadById(id);
+            var model = await this._squadQueryComponent.GetSquadById(id);
             if (model == null)
                 return this.NotFound($"The Resource {id} doesn't exists.");
 
@@ -64,7 +64,7 @@ namespace Owlvey.Falcon.API.Controllers
         {
             if (start.HasValue)
             {
-                var model = await this._squadQueryService.GetSquadByIdWithQuality(id, 
+                var model = await this._squadQueryComponent.GetSquadByIdWithQuality(id, 
                     new DatePeriodValue( start.Value, end.Value));
                 if (model == null)
                     return this.NotFound($"The Resource {id} doesn't exists.");
@@ -100,7 +100,7 @@ namespace Owlvey.Falcon.API.Controllers
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._squadService.CreateSquad(resource);            
+            var response = await this._squadComponent.CreateSquad(resource);            
             
             return this.Created(Url.RouteUrl("GetSquadId", new { id = response.Id }), response);
         }
@@ -111,7 +111,7 @@ namespace Owlvey.Falcon.API.Controllers
         [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> PutMember(int id, int userId)
         {
-            await this._squadService.RegisterMember(id, userId);
+            await this._squadComponent.RegisterMember(id, userId);
             return this.Ok();            
         }
 
@@ -120,7 +120,7 @@ namespace Owlvey.Falcon.API.Controllers
         [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> DeleteMember(int id, int userId)
         {
-            await this._squadService.UnRegisterMember(id, userId);
+            await this._squadComponent.UnRegisterMember(id, userId);
             return this.Ok();
         }
 
@@ -128,7 +128,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(IEnumerable<UserGetListRp>), 200)]
         public async Task<IActionResult> ComplementMembers(int id)
         {
-            var result = await this._squadService.GetUsersComplement(id);
+            var result = await this._squadComponent.GetUsersComplement(id);
             return this.Ok(result);
         }
         /// <summary>
@@ -148,7 +148,7 @@ namespace Owlvey.Falcon.API.Controllers
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._squadService.UpdateSquad(id, resource);
+            var response = await this._squadComponent.UpdateSquad(id, resource);
 
             if (response.HasNotFounds())
             {
@@ -176,7 +176,7 @@ namespace Owlvey.Falcon.API.Controllers
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._squadService.DeleteSquad(id);
+            var response = await this._squadComponent.DeleteSquad(id);
 
             if (response.HasNotFounds())
             {

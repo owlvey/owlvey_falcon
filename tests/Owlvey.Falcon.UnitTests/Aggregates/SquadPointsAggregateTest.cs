@@ -19,9 +19,9 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                           Feature = new FeatureEntity() {
                                   Id = 1,
                                   Name = "test",
-                                  ServiceMaps = new List<ServiceMapEntity>(){
-                                      new ServiceMapEntity(){
-                                           Service = new ServiceEntity(){
+                                  JourneyMaps = new List<JourneyMapEntity>(){
+                                      new JourneyMapEntity(){
+                                           Journey = new JourneyEntity(){
                                                 AvailabilitySlo = 0.99m
                                            }
                                       }

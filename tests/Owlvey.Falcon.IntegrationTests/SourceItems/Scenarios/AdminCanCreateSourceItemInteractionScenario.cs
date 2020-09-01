@@ -36,7 +36,7 @@ namespace Owlvey.Falcon.IntegrationTests.SourceItems.Scenarios
         {
             int sourceId = this.Source.Id;
             var period = DataSeedUtil.JanuaryPeriod();
-            var representation = Builder<SourceItemInteractionPostRp>.CreateNew()
+            var representation = Builder<SourceItemAvailabilityPostRp>.CreateNew()
                      .With(x => x.SourceId = sourceId)
                      .With(x => x.Start = period.start)
                      .With(x => x.End = period.end)
@@ -45,7 +45,7 @@ namespace Owlvey.Falcon.IntegrationTests.SourceItems.Scenarios
                      .Build();
 
             var jsonContent = HttpClientExtension.ParseModelToHttpContent(representation);
-            var responsePost = this._client.PostAsync($"/sourceItems", jsonContent).Result;
+            var responsePost = this._client.PostAsync($"/sourceItems/availability", jsonContent).Result;
             Assert.Equal(StatusCodes.Status200OK, (int)responsePost.StatusCode);            
         }
 

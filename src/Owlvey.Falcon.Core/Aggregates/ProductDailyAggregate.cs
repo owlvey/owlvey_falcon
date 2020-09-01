@@ -18,8 +18,8 @@ namespace Owlvey.Falcon.Core.Aggregates
         }
         public IEnumerable<DayBudgetMeasure> MeasureQuality() {
             var result = new List<DayBudgetMeasure>();
-            var totalServices = this.Product.Services.Count;
-            if (totalServices == 0)
+            var totalJourneys = this.Product.Journeys.Count;
+            if (totalJourneys == 0)
             {
                 return result;
             }                        
@@ -28,9 +28,9 @@ namespace Owlvey.Falcon.Core.Aggregates
                 decimal Avadebt = 0, LatDebt = 0, ExpDebt = 0;
                 decimal Avaasset = 0 , LatAsset = 0, ExpAsset = 0;                
                 bool hasData = false;
-                foreach (var service in this.Product.Services)
+                foreach (var journey in this.Product.Journeys)
                 {                    
-                    var measure = service.Measure(period);
+                    var measure = journey.Measure(period);
                     if (measure.HasData) {
                         Avaasset += measure.AvailabilityAsset;
                         LatAsset += measure.LatencyAsset;

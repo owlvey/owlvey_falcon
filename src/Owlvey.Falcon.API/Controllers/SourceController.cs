@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Core.Values;
 using Owlvey.Falcon.Models;
 
 namespace Owlvey.Falcon.API.Controllers
@@ -46,22 +47,30 @@ namespace Owlvey.Falcon.API.Controllers
         
 
         [HttpGet("{id}", Name = "GetSourceById")]
-        [ProducesResponseType(typeof(SourceGetRp), 200)]
-        public async Task<IActionResult> GetSourceById(int id, DateTime? start,  DateTime? end)
+        [ProducesResponseType(typeof(SourceLiteRp), 200)]
+        public async Task<IActionResult> GetSourceById(int id)
         {
-            SourceGetRp model = null;
-            if (end.HasValue) {
-                model = await this._sourceComponent.GetByIdWithAvailability(id, start.Value, end.Value);                
-            }
-            else {
-                model = await this._sourceComponent.GetById(id);
-            }            
+            var model = await this._sourceComponent.GetById(id);
+            if (model == null)
+                return this.NotFound($"The Resource {id} doesn't exists.");
+            return this.Ok(model);
+        }
+
+        [HttpGet("{id}/detail", Name = "GetSourceDetailById")]
+        [ProducesResponseType(typeof(SourceGetRp), 200)]
+        public async Task<IActionResult> GetSourceDetailById(int id, DateTime? start, DateTime? end)
+        {            
+            var model = await this._sourceComponent.GetByIdWithDetail(id, 
+                new DatePeriodValue(start.Value, end.Value));            
 
             if (model == null)
                 return this.NotFound($"The Resource {id} doesn't exists.");
 
             return this.Ok(model);
         }
+
+
+
 
         [HttpGet("{id}/anchor")]
         [ProducesResponseType(typeof(SourceAnchorRp), 200)]
@@ -83,7 +92,20 @@ namespace Owlvey.Falcon.API.Controllers
             var response = await this._sourceComponent.Create(resource);            
             return this.Created(Url.RouteUrl("GetSourceById", new { response.Id }), response);
         }
-               
+
+
+        [HttpPut("{id}")]
+        [ProducesResponseType(typeof(SourceGetRp), 200)]
+        [ProducesResponseType(409)]
+        [ProducesResponseType(400)]
+        [Authorize(Policy = "RequireAdminRole")]
+        public async Task<IActionResult> Put(int id, [FromBody] SourcePutRp resource)
+        {
+            if (!this.ModelState.IsValid)
+                return this.BadRequest(this.ModelState);
+            var response = await this._sourceComponent.Update(id, resource);
+            return this.Created(Url.RouteUrl("GetSourceById", new { response.Id }), response);
+        }
 
         [HttpDelete("{id}")]
         [ProducesResponseType(typeof(void), 200)]
@@ -92,25 +114,7 @@ namespace Owlvey.Falcon.API.Controllers
         {            
             await this._sourceComponent.Delete(id);            
             return this.Ok();
-        }
-        
-        #region reports
+        }        
 
-        [HttpGet("{id}/reports/daily/series")]
-        [ProducesResponseType(typeof(SeriesGetRp), 200)]
-        public async Task<IActionResult> ReportSeries(int id, DateTime? start, DateTime? end)
-        {
-            if (!start.HasValue)
-            {
-                return this.BadRequest("start is required");
-            }
-            if (!end.HasValue)
-            {
-                return this.BadRequest("end is required");
-            }
-            var result = await this._sourceComponent.GetDailySeriesById(id, new Core.Values.DatePeriodValue( start.Value, end.Value));
-            return this.Ok(result);
-        }
-        #endregion
     }
 }

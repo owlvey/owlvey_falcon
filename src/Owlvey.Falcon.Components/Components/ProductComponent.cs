@@ -12,12 +12,15 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Owlvey.Falcon.Repositories.Products;
 using Owlvey.Falcon.Repositories.Features;
-using Owlvey.Falcon.Repositories.Services;
+using Owlvey.Falcon.Repositories.Journeys;
 using Polly;
 using System.IO;
 using OfficeOpenXml;
 using Owlvey.Falcon.Core.Models.Migrate;
 using Owlvey.Falcon.Components.Models;
+using Owlvey.Falcon.Core.Values;
+using Owlvey.Falcon.Builders;
+using Owlvey.Falcon.Core.Entities.Source;
 
 namespace Owlvey.Falcon.Components
 {
@@ -28,10 +31,10 @@ namespace Owlvey.Falcon.Components
         private readonly SourceComponent _sourceComponent;
 
         public ProductComponent(FalconDbContext dbContext,
-            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway, 
+            IUserIdentityGateway identityGateway, IDateTimeGateway dateTimeGateway, 
             IMapper mapper, ConfigurationComponent configuration,
             SourceItemComponent sourceItemComponent,
-            SourceComponent sourceComponent) : base(dateTimeGateway, mapper, identityService, configuration)
+            SourceComponent sourceComponent) : base(dateTimeGateway, mapper, identityGateway, configuration)
         {
             this._sourceItemComponent = sourceItemComponent;
             this._dbContext = dbContext;
@@ -40,7 +43,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<AnchorRp> PostAnchor(int productId, string name)
         {
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             var entity = await this._dbContext.Anchors.Where(c => c.ProductId == productId && c.Name == name).SingleOrDefaultAsync();
             if (entity == null) {
                 var product = await this._dbContext.Products.Where(c => c.Id == productId).SingleAsync();
@@ -56,7 +59,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<AnchorRp> CreateOrUpdateAnchor(int productId, string name, DateTime target) {
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             var entity = await this._dbContext.Anchors.Where(c => c.ProductId == productId && c.Name == name).SingleOrDefaultAsync();
             if (entity == null)
             {
@@ -73,7 +76,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<AnchorRp> DeleteAnchor(int productId, string name)
         {
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             var entity = await this._dbContext.Anchors.Where(c => c.ProductId == productId && c.Name == name).SingleOrDefaultAsync();
             if (entity != null)
             {
@@ -85,7 +88,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task PutAnchor(int productId, string name, AnchorPutRp model)
         {
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             var entity = await this._dbContext.Anchors.Where(c => c.ProductId == productId && c.Name == name).SingleAsync();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
             entity.Update(model.Target, this._datetimeGateway.GetCurrentDateTime(), createdBy);
@@ -95,7 +98,7 @@ namespace Owlvey.Falcon.Components
                
         public async Task<ProductGetListItemRp> CreateOrUpdate(CustomerEntity customer, string name, string description, 
             string avatar, string leaders) {
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
             var entity = await this._dbContext.Products.Where(c => c.CustomerId == customer.Id && c.Name == name).SingleOrDefaultAsync();
             if (entity == null)
@@ -110,7 +113,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<ProductGetListItemRp> CreateProduct(ProductPostRp model)
         {            
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
 
             var retryPolicy = Policy.Handle<DbUpdateException>()
                 .WaitAndRetryAsync(this._configuration.DefaultRetryAttempts,
@@ -140,10 +143,10 @@ namespace Owlvey.Falcon.Components
         public async Task DeleteProduct(int id)
         {
             var result = new BaseComponentResultRp();
-            var modifiedBy = this._identityService.GetIdentity();
+            var modifiedBy = this._identityGateway.GetIdentity();
 
             var product = await this._dbContext.Products
-                .Include(c=>c.Services)
+                .Include(c=>c.Journeys)
                 .Include(c=>c.Features)
                 .Include(c=>c.Incidents)
                 .Include(c=>c.Sources)
@@ -158,9 +161,9 @@ namespace Owlvey.Falcon.Components
             if (product != null)
             {
 
-                foreach (var service in product.Services.Select(c=>c.Id.Value).ToList())
+                foreach (var journey in product.Journeys.Select(c=>c.Id.Value).ToList())
                 {
-                    await this._dbContext.RemoveService(service);                    
+                    await this._dbContext.RemoveJourney(journey);                    
                 }
 
                 await this._dbContext.SaveChangesAsync();                
@@ -181,6 +184,9 @@ namespace Owlvey.Falcon.Components
 
         public async Task<IEnumerable<string>> ImportsItems(int productId, MemoryStream input)
         {
+
+            var createdOn = this._datetimeGateway.GetCurrentDateTime();
+            var createdBy = this._identityGateway.GetIdentity();
             var product = await this._dbContext.Products.Include(c=>c.Customer)
                 .Where(c => c.Id == productId).SingleAsync();
 
@@ -188,90 +194,27 @@ namespace Owlvey.Falcon.Components
 
             var sources =  this._dbContext.Sources.Where(c => c.ProductId == productId).ToList();
 
+            var productInstance = await this._dbContext.Products.Include( c=>c.Customer)
+                    .Where(e => e.Id == productId).SingleAsync();
+
             using (var package = new ExcelPackage(input))
             {
                 var sourceSheet = package.Workbook.Worksheets["Sources"];
-                for (int row = 2; row <= sourceSheet.Dimension.Rows; row++)
-                {                    
-                    var name = sourceSheet.Cells[row, 1].GetValue<string>();
-                    var avatar = sourceSheet.Cells[row, 2].GetValue<string>();
-                    var description = sourceSheet.Cells[row, 3].GetValue<string>();
-                    var group = sourceSheet.Cells[row, 4].GetValue<string>();
-                    var goodDefinition = sourceSheet.Cells[row, 5].GetValue<string>();
-                    var totalDefinition = sourceSheet.Cells[row, 6].GetValue<string>();
-                    var kind = sourceSheet.Cells[row, 7].GetValue<string>();
-                    var percentile = sourceSheet.Cells[row, 8].GetValue<decimal>();                    
-                    if (!sources.Exists(c=>c.Name == name)) {                        
-                        await this._sourceComponent.CreateOrUpdate(product.Customer, product.Name,
-                            name, null, avatar, goodDefinition, totalDefinition, description, kind, group, percentile);
-                    }                    
+                var sourcesInstances = SourceLiteModel.Build(productInstance, createdOn, createdBy, 
+                new  Builders.SheetRowAdapter( sourceSheet));                
+                foreach (var item in sourcesInstances){
+                    if (!sources.Exists(c=>c.Name == item.Name)) {                        
+                        this._dbContext.Sources.Add(item);                        
+                    }   
                 }
-
-                // reload sources 
-                sources = this._dbContext.Sources.Where(c => c.ProductId == productId).ToList();
-
+                await this._dbContext.SaveChangesAsync();
+                productInstance.Sources = new SourceCollection(await this._dbContext.Sources.Where(c=>c.ProductId == productId).ToListAsync());
+                                  
                 var sourceItemsSheet = package.Workbook.Worksheets["SourceItems"];
-
-                var sourceItems = new List<(SourceEntity, SourceItemPostRp)>();
-
-                for (int row = 2; row <= sourceItemsSheet.Dimension.Rows; row++)
-                {                    
-                    var source = sourceItemsSheet.Cells[row, 1].GetValue<string>();
-                    var good = sourceItemsSheet.Cells[row, 2].GetValue<int>();
-                    var total = sourceItemsSheet.Cells[row, 3].GetValue<int>();
-                    var target = DateTime.Parse(sourceItemsSheet.Cells[row, 4].GetValue<string>());
-                    var measure = sourceItemsSheet.Cells[row, 5].GetValue<decimal>();
-                    var sourceTarget = sources.SingleOrDefault(c => c.Name == source);
-                    if (sourceTarget != null)
-                    {
-                        if (sourceTarget.Group == SourceGroupEnum.Availability || sourceTarget.Group == SourceGroupEnum.Experience)
-                        {
-                            if (sourceTarget.Kind == SourceKindEnum.Interaction)
-                            {
-                                sourceItems.Add((sourceTarget, new SourceItemInteractionPostRp()
-                                {
-                                    SourceId = sourceTarget.Id.Value,
-                                    Start = target,
-                                    End = target,
-                                    Good = good,
-                                    Total = total
-                                }));
-                            }
-                            else
-                            {
-                                sourceItems.Add((sourceTarget, new SourceItemProportionPostRp()
-                                {
-                                    SourceId = sourceTarget.Id.Value,
-                                    Start = target,
-                                    End = target,
-                                    Proportion = measure
-                                }));
-                            }
-                        }
-                        else if (sourceTarget.Group == SourceGroupEnum.Latency)
-                        {
-                            sourceItems.Add((sourceTarget, new LatencySourceItemPostRp()
-                            {
-                                SourceId = sourceTarget.Id.Value,
-                                Start = target,
-                                End = target,
-                                Latency = measure
-                            }));
-                        }
-                        else {
-                            throw new ApplicationException("source group is not supported");
-                        }
-                    }
-                    else {
-                        logs.Add(" source not found " + source);
-                    }                    
-                }
-
-                var groups = sourceItems.GroupBy(c => c.Item1, new SourceEntityComparer());
-                foreach (var item in groups)
-                {
-                    await this._sourceItemComponent.BulkInsert(item.Key, item.Select(c => c.Item2).ToList());
-                }
+                var sourceItems = SourceItemLiteModel.Build(productInstance, createdOn, createdBy, 
+                    new SheetRowAdapter(sourceItemsSheet));
+                
+                await this._sourceItemComponent.BulkInsert(sourceItems);                
             }
 
             return logs;
@@ -286,7 +229,7 @@ namespace Owlvey.Falcon.Components
         public async Task<ProductGetRp> UpdateProduct(int id, ProductPutRp model)
         {
             
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
 
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
 

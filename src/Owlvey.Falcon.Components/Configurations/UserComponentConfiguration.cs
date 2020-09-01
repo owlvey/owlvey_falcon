@@ -14,7 +14,7 @@ namespace Owlvey.Falcon.Components
             cfg.CreateMap<UserEntity, UserGetListRp>();
             cfg.CreateMap<UserEntity, UserGetRp>()
                 .ForMember(m => m.Products, ope => ope.Ignore())
-                .ForMember(m => m.Services, ope => ope.Ignore())
+                .ForMember(m => m.Journeys, ope => ope.Ignore())
                 .ForMember(m => m.Features, ope => ope.Ignore());
         }
     }

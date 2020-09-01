@@ -2,8 +2,6 @@
 using Owlvey.Falcon.IntegrationTests.SourceItems.Scenarios;
 using StructureMap;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using TestStack.BDDfy;
 using Xunit;
 

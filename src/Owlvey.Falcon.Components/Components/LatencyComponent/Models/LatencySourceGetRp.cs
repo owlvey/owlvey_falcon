@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Owlvey.Falcon.Models
 {
-    public class LatencySourceGetRp : SourceLitRp
+    public class LatencySourceGetRp : SourceLiteRp
     {
         public decimal Percentile { get; set; }
         public decimal Latency { get; set; }

@@ -11,14 +11,14 @@ namespace Owlvey.Falcon.API.Controllers
     [Route("users")]
     public class UserController : BaseController
     {
-        private readonly UserQueryComponent _userQueryService;
-        private readonly UserComponent _userService;
+        private readonly UserQueryComponent _userQueryComponent;
+        private readonly UserComponent _userComponent;
         
-        public UserController(UserQueryComponent userQueryService, 
-            UserComponent userService) : base()
+        public UserController(UserQueryComponent userQueryComponent, 
+            UserComponent userComponent) : base()
         {
-            this._userQueryService = userQueryService;
-            this._userService = userService;
+            this._userQueryComponent = userQueryComponent;
+            this._userComponent = userComponent;
         }
 
 
@@ -34,10 +34,10 @@ namespace Owlvey.Falcon.API.Controllers
 
             if (string.IsNullOrEmpty(email))
             {
-                model = await this._userQueryService.GetUsers();
+                model = await this._userQueryComponent.GetUsers();
             }
             else {
-                var user = await this._userQueryService.GetUserByEmail(email);
+                var user = await this._userQueryComponent.GetUserByEmail(email);
                 if (user != null) {
                     model = new List<UserGetListRp>() {
                     new UserGetListRp {
@@ -60,7 +60,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(UserGetRp), 200)]
         public async Task<IActionResult> GetById(int id)
         {
-            var model = await this._userQueryService.GetUserById(id);
+            var model = await this._userQueryComponent.GetUserById(id);
 
             if (model == null)
                 return this.NotFound($"The Resource {id} doesn't exists.");
@@ -72,7 +72,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(UserGetRp), 200)]
         public async Task<IActionResult> Put(int id, [FromBody]UserPutRp model)
         {
-            var result = await this._userService.PutUser(id, model);
+            var result = await this._userComponent.PutUser(id, model);
             return this.Ok(result);
         }
 
@@ -80,7 +80,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(UserGetRp), 200)]
         public async Task<IActionResult> Delete(int id)
         {
-            await this._userService.DeleteUser(id);
+            await this._userComponent.DeleteUser(id);
             return this.Ok();
         }
 
@@ -109,7 +109,7 @@ namespace Owlvey.Falcon.API.Controllers
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._userService.CreateUser(resource);
+            var response = await this._userComponent.CreateUser(resource);
             return this.Created(Url.RouteUrl("GetUserId", new { id = response.Id }), response);
         }
 

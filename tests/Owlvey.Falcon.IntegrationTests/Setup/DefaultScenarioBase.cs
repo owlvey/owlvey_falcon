@@ -89,15 +89,15 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
                 throw new ApplicationException(result.Content.ReadAsStringAsync().Result);
             
         }
-        [Given("default service", Order = -98)]
-        public virtual void GivenDefaultService()
+        [Given("default journey", Order = -98)]
+        public virtual void GivenDefaultJourney()
         {            
             var jsonContent = HttpClientExtension.ParseModelToHttpContent(new
             {
-                Name = KeyConstants.ServiceName,
+                Name = KeyConstants.JourneyName,
                 productId = this.DefaultProductId
             });
-            var result = this._client.PostAsync("/services", jsonContent).Result;
+            var result = this._client.PostAsync("/journeys", jsonContent).Result;
             if (!result.IsSuccessStatusCode)
                 throw new ApplicationException(result.Content.ReadAsStringAsync().Result);
             

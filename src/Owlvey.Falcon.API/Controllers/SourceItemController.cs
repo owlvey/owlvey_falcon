@@ -18,41 +18,10 @@ namespace Owlvey.Falcon.API.Controllers
         public SourceItemController(SourceItemComponent sourceItemComponent)
         {
             this._sourceItemComponent = sourceItemComponent;
-        }
-        
-        [HttpPost]
-        [ProducesResponseType(typeof(void), 200)]
-        [ProducesResponseType(409)]
-        [ProducesResponseType(401)]
-        [ProducesResponseType(400)]
-        [Authorize(Policy = "RequireAdminRole")]
-        public async Task<IActionResult> Post([FromBody]SourceItemInteractionPostRp model)
-        {
-            if (!this.ModelState.IsValid)
-            {
-                return this.BadRequest(this.ModelState);
-            }            
-            var response = await this._sourceItemComponent.Create(model);            
-            return this.Ok(response);
-        }
-
-        
-
-        [HttpPost("proportion")]
-        [ProducesResponseType(typeof(InteractiveSourceItemGetRp), 200)]
-        [Authorize(Policy = "RequireAdminRole")]
-        public async Task<IActionResult> PostProportion([FromBody]SourceItemProportionPostRp model)
-        {            
-            if (!this.ModelState.IsValid)
-            {
-                return this.BadRequest(this.ModelState);
-            }
-            var response = await this._sourceItemComponent.CreateProportion(model);
-            return this.Ok(response); 
-        }
+        }        
 
         [HttpGet("{id}", Name = "GetBySourceItemId")]
-        [ProducesResponseType(typeof(InteractiveSourceItemGetRp), 200)]
+        [ProducesResponseType(typeof(SourceItemGetListRp), 200)]
         public async Task<IActionResult> GetBySourceItemId(int id)
         {
             var model = await this._sourceItemComponent.GetById(id);
@@ -60,7 +29,7 @@ namespace Owlvey.Falcon.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [ProducesResponseType(typeof(InteractiveSourceItemGetRp), 200)]
+        [ProducesResponseType(typeof(SourceItemGetListRp), 200)]
         [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> DeleteSourceItem(int id)
         {
@@ -69,7 +38,7 @@ namespace Owlvey.Falcon.API.Controllers
         }
 
         [HttpDelete()]
-        [ProducesResponseType(typeof(InteractiveSourceItemGetRp), 200)]
+        [ProducesResponseType(typeof(SourceItemGetListRp), 200)]
         [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> DeleteAllSourceItems(int sourceId)
         {
@@ -95,20 +64,102 @@ namespace Owlvey.Falcon.API.Controllers
             return this.Ok(model);
         }
 
-        [HttpGet("interactions")]
-        [ProducesResponseType(typeof(IEnumerable<InteractionSourceItemGetListRp>), 200)]
-        public async Task<IActionResult> GetInteractionsBySourceId(int? sourceId, DateTime? start, DateTime? end)
+
+        [HttpPost("batch")]
+        [Authorize(Policy = "RequireAdminRole")]
+        [ProducesResponseType(typeof(void), 200)]
+        public async Task<IActionResult> PostInteractionItems([FromBody] SourceItemBatchPostRp model)
         {            
-            if (sourceId.HasValue && start.HasValue && end.HasValue)
+            var result = await this._sourceItemComponent.CreateInteractionItems(model);
+            return this.Ok(result);
+        }
+
+        #region latency
+        [HttpPost("latency")]
+        [Authorize(Policy = "RequireAdminRole")]
+        [ProducesResponseType(typeof(IEnumerable<SourceItemBaseRp>), 200)]
+        public async Task<IActionResult> PostLatencyItem([FromBody]SourceItemLatencyPostRp model)
+        {
+            var result = await this._sourceItemComponent.CreateLatencyItem(model);
+            return this.Ok(result);
+        }
+
+
+
+        [HttpGet("latency")]
+        [ProducesResponseType(typeof(IEnumerable<LatencySourceItemGetRp>), 200)]
+        public async Task<IActionResult> GetLatencyItems(int sourceId, DateTime? start, DateTime? end)
+        {
+            IEnumerable<LatencySourceItemGetRp> model = new List<LatencySourceItemGetRp>();
+            if (start.HasValue && end.HasValue)
             {
-                var model = await this._sourceItemComponent.GetInteractionsBySourceIdAndDateRange(sourceId.Value, start.Value, end.Value);
-                return this.Ok(model);
-            }            
-            else
-            {
-                return this.BadRequest();
+                model = await this._sourceItemComponent.GetLatencyItems(sourceId, new DatePeriodValue(start, end));
             }
-            
+            return this.Ok(model);
+        }
+        #endregion
+
+        #region Experience
+
+        [HttpPost("experience")]
+        [Authorize(Policy = "RequireAdminRole")]
+        [ProducesResponseType(typeof(IEnumerable<SourceItemBaseRp>), 200)]
+        public async Task<IActionResult> PostProportion([FromBody]SourceItemExperiencePostRp model)
+        {
+            var result = await this._sourceItemComponent.CreateExperienceItem(model);
+            return this.Ok(result);
+        }
+
+        [HttpGet("experience")]
+        [ProducesResponseType(typeof(IEnumerable<LatencySourceItemGetRp>), 200)]
+        public async Task<IActionResult> GetExperienceItems(int sourceId, DateTime? start, DateTime? end)
+        {
+            IEnumerable<ExperienceSourceItemGetRp> model = new List<ExperienceSourceItemGetRp>();
+            if (start.HasValue && end.HasValue)
+            {
+                model = await this._sourceItemComponent.GetExperienceItems(sourceId, new DatePeriodValue(start, end));
+            }
+            return this.Ok(model);
+        }
+
+        #endregion
+
+        #region availability
+
+        [HttpPost("availability")]
+        [Authorize(Policy = "RequireAdminRole")]
+        [ProducesResponseType(typeof(IEnumerable<SourceItemBaseRp>), 200)]
+        public async Task<IActionResult> PostAvailability([FromBody]SourceItemAvailabilityPostRp model)
+        {
+            var result = await this._sourceItemComponent.CreateAvailabilityItem(model);
+            return this.Ok(result);
+        }
+
+        [HttpGet("availability")]
+        [ProducesResponseType(typeof(IEnumerable<LatencySourceItemGetRp>), 200)]
+        public async Task<IActionResult> GetAvailabilityItems(int sourceId, DateTime? start, DateTime? end)
+        {
+            IEnumerable<AvailabilitySourceItemGetRp> model = new List<AvailabilitySourceItemGetRp>();
+            if (start.HasValue && end.HasValue)
+            {
+                model = await this._sourceItemComponent.GetAvailabilityItems(sourceId, new DatePeriodValue(start, end));
+            }
+            return this.Ok(model);
+        }
+
+        #endregion
+
+
+
+
+        [HttpGet("{id}/scalability")]
+        [ProducesResponseType(typeof(ScalabilitySourceGetRp), 200)]
+        public async Task<IActionResult> GetScalability(int id, 
+            DateTime? start, DateTime? end)
+        {            
+            var model = await this._sourceItemComponent.GetScalability(id, 
+                new DatePeriodValue(start, end));            
+            return this.Ok(model);
         }
 
     }

@@ -15,46 +15,72 @@ using Newtonsoft.Json;
 using Owlvey.Falcon.Core.Aggregates;
 using Owlvey.Falcon.Core;
 using Owlvey.Falcon.Components.Models;
+using Owlvey.Falcon.Core.Values;
+using Owlvey.Falcon.Core.Models.Migrate;
+using Owlvey.Falcon.Builders;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Owlvey.Falcon.Components
 {
     public class MigrationComponent : BaseComponent
     {
+        public static void ConfigureMappers(IMapperConfigurationExpression cfg)
+        {
+            cfg.CreateMap<SecurityThreatEntity, SecurityThreatModel>();
+            cfg.CreateMap<SecurityRiskEntity, SecurityRiskModel>()
+                .ForMember(c => c.Source, d => d.MapFrom(c => c.Source.Name))
+                .ForMember(c => c.Product, d => d.MapFrom(c => c.Source.Product.Name))
+                .ForMember(c => c.Organization, d => d.MapFrom(c => c.Source.Product.Customer.Name));
+            cfg.CreateMap<ReliabilityThreatEntity, ReliabilityThreatModel>();
+            cfg.CreateMap<ReliabilityRiskEntity, ReliabilityRiskModel>()
+                .ForMember(c => c.Source, d => d.MapFrom(c => c.Source.Name))
+                .ForMember(c => c.Product, d => d.MapFrom(c => c.Source.Product.Name))
+                .ForMember(c => c.Organization, d => d.MapFrom(c => c.Source.Product.Customer.Name));
+        }
         private readonly FalconDbContext _dbContext;
         private readonly CustomerComponent _customerComponent;
         private readonly SquadComponent _squadComponent;
         private readonly ProductComponent _productComponent;
         private readonly ProductQueryComponent _productQueryComponent;
-        private readonly ServiceComponent _serviceComponent;
+        private readonly JourneyComponent _journeyComponent;
         private readonly SquadQueryComponent _squadQueryComponent;
         private readonly SourceComponent _sourceComponent;
         private readonly FeatureComponent _featureComponent;
-        private readonly ServiceMapComponent _serviceMapComponent;
+        private readonly JourneyMapComponent _journeyMapComponent;
         private readonly IndicatorComponent _indicatorComponent;
         private readonly SourceItemComponent _sourceItemComponent;
         private readonly IncidentComponent _incidentComponent;
         private readonly UserComponent _userComponent;
         private readonly FeatureQueryComponent _featureQueryComponent;
+        private readonly SecurityRiskComponent _securityRiskComponent;
+        private readonly ReliabilityRiskComponent _reliabilityRiskComponent;
+
+        private const string SHEET_SecurityThreatsName = "SecurityThreats";
+        private const string SHEET_SecurityRisks = "SecurityRisks";
+        private const string SHEET_ReliabilityThreats = "ReliabilityThreats";
+        private const string SHEET_ReliabilityRisks  = "ReliabilityRisks";
         
 
 
         public MigrationComponent(FalconDbContext dbContext,
             CustomerComponent customerComponent,
             ProductComponent productComponent,
-            ServiceComponent serviceComponent,
+            JourneyComponent journeyComponent,
             FeatureComponent featureComponent,
             SourceComponent sourceComponent,
-            ServiceMapComponent serviceMapComponent,
+            JourneyMapComponent journeyMapComponent,
             IndicatorComponent indicatorComponent,
             SourceItemComponent sourceItemComponent,
             IncidentComponent incidentComponent,
             UserComponent userComponent,
             ProductQueryComponent productQueryComponent,
-            IUserIdentityGateway identityService,
+            IUserIdentityGateway identityGateway,
             IDateTimeGateway dateTimeGateway, IMapper mapper,
             FeatureQueryComponent featureQueryComponent,
+            SecurityRiskComponent securityRiskComponent,
+            ReliabilityRiskComponent reliabilityRiskComponent,
             SquadComponent squadComponent, SquadQueryComponent squadQueryComponent,
-            ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityService, configuration)
+            ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityGateway, configuration)
         {
             this._customerComponent = customerComponent;
             this._sourceComponent = sourceComponent;
@@ -62,9 +88,9 @@ namespace Owlvey.Falcon.Components
             this._squadComponent = squadComponent;
             this._squadQueryComponent = squadQueryComponent;
             this._productComponent = productComponent;
-            this._serviceComponent = serviceComponent;
+            this._journeyComponent = journeyComponent;
             this._featureComponent = featureComponent;
-            this._serviceMapComponent = serviceMapComponent;
+            this._journeyMapComponent = journeyMapComponent;
             this._indicatorComponent = indicatorComponent;
             this._sourceComponent = sourceComponent;
             this._sourceItemComponent = sourceItemComponent;
@@ -72,19 +98,22 @@ namespace Owlvey.Falcon.Components
             this._userComponent = userComponent;
             this._productQueryComponent = productQueryComponent;
             this._featureQueryComponent = featureQueryComponent;
+            this._securityRiskComponent = securityRiskComponent;
+            this._reliabilityRiskComponent = reliabilityRiskComponent;
         }
 
 
         #region exports
 
 
-        public async Task<IEnumerable<SquadFeatureMigrationRp>> ExportSquadMap(int customerId) {
+        public async Task<IEnumerable<SquadFeatureMigrationRp>> ExportSquadMap(int customerId)
+        {
 
             var result = new List<SquadFeatureMigrationRp>();
 
-            var squads = await this._dbContext.Squads.Include(c=>c.FeatureMaps)
-                .ThenInclude(c=>c.Feature)
-                .ThenInclude(c=>c.Product)
+            var squads = await this._dbContext.Squads.Include(c => c.FeatureMaps)
+                .ThenInclude(c => c.Feature)
+                .ThenInclude(c => c.Product)
                 .Where(c => c.CustomerId == customerId).ToListAsync();
 
             foreach (var squad in squads)
@@ -98,10 +127,11 @@ namespace Owlvey.Falcon.Components
                         Feature = map.Feature.Name
                     };
 
-                    if (!result.Contains( temp , new SquadFeatureMigrationRp.Comparer())) {
+                    if (!result.Contains(temp, new SquadFeatureMigrationRp.Comparer()))
+                    {
                         result.Add(temp);
-                    }                    
-                }                                           
+                    }
+                }
             }
             return result;
         }
@@ -109,33 +139,35 @@ namespace Owlvey.Falcon.Components
         public async Task<IEnumerable<AnchorMigrationRp>> ExportAnchors(int customerId)
         {
             var result = new List<AnchorMigrationRp>();
-            var anchors = await this._dbContext.Anchors.Include(c=>c.Product).Where(c => c.Product.CustomerId == customerId).ToListAsync();
+            var anchors = await this._dbContext.Anchors.Include(c => c.Product).Where(c => c.Product.CustomerId == customerId).ToListAsync();
             foreach (var anchor in anchors)
-            {                
+            {
                 result.Add(new AnchorMigrationRp()
                 {
-                     Product = anchor.Product.Name,
-                     Name = anchor.Name,
-                     Target = anchor.Target.ToString("s", System.Globalization.CultureInfo.InvariantCulture) 
-                });                
+                    Product = anchor.Product.Name,
+                    Name = anchor.Name,
+                    Target = anchor.Target.ToString("s", System.Globalization.CultureInfo.InvariantCulture)
+                });
             }
             return result;
         }
 
-        public async Task<IEnumerable<IndicatorMigrateRp>> ExportIndicators(int customerId) {
+        public async Task<IEnumerable<IndicatorMigrateRp>> ExportIndicators(int customerId)
+        {
             var result = new List<IndicatorMigrateRp>();
 
             var indicators = await this._dbContext.Indicators
-                .Include(c=>c.Source)
-                .Include(c=>c.Feature).ThenInclude(c=>c.Product)
+                .Include(c => c.Source)
+                .Include(c => c.Feature).ThenInclude(c => c.Product)
                 .Where(c => c.Feature.Product.CustomerId == customerId).ToListAsync();
 
-            foreach (var item in indicators.OrderBy(c=>c.Id))
+            foreach (var item in indicators.OrderBy(c => c.Id))
             {
-                result.Add(new IndicatorMigrateRp() {
-                     Product = item.Feature.Product.Name,
-                     Feature = item.Feature.Name,
-                     Source = item.Source.Name
+                result.Add(new IndicatorMigrateRp()
+                {
+                    Product = item.Feature.Product.Name,
+                    Feature = item.Feature.Name,
+                    Source = item.Source.Name
                 });
             }
 
@@ -143,21 +175,22 @@ namespace Owlvey.Falcon.Components
 
         }
 
-        public async Task<IEnumerable<ServiceMapMigrateRp>> ExportServiceMap(int customerId)
+        public async Task<IEnumerable<JourneyMapMigrateRp>> ExportJourneyMap(int customerId)
         {
-            var result = new List<ServiceMapMigrateRp>();
+            var result = new List<JourneyMapMigrateRp>();
 
-            var maps = await this._dbContext.ServiceMaps
-                .Include(c=>c.Service).ThenInclude(c=>c.Product)
-                .Include(c=>c.Feature)
-                .Where(c => c.Service.Product.CustomerId == customerId).ToListAsync();
+            var maps = await this._dbContext.JourneyMaps
+                .Include(c => c.Journey).ThenInclude(c => c.Product)
+                .Include(c => c.Feature)
+                .Where(c => c.Journey.Product.CustomerId == customerId).ToListAsync();
 
-            foreach (var item in maps.OrderBy(c=>c.Id))
+            foreach (var item in maps.OrderBy(c => c.Id))
             {
-                result.Add(new ServiceMapMigrateRp() {
-                     Product = item.Service.Product.Name,
-                     Service = item.Service.Name,
-                     Feature = item.Feature.Name
+                result.Add(new JourneyMapMigrateRp()
+                {
+                    Product = item.Journey.Product.Name,
+                    Journey = item.Journey.Name,
+                    Feature = item.Feature.Name
                 });
             }
             return result;
@@ -169,8 +202,8 @@ namespace Owlvey.Falcon.Components
             IEnumerable<SquadMigrationRp> squads,
             IEnumerable<MemberMigrateRp> members,
             IEnumerable<ProductMigrationRp> products,
-            IEnumerable<ServiceMigrateRp> services,
-            IEnumerable<ServiceMapMigrateRp> serviceMaps,
+            IEnumerable<JourneyMigrateRp> journeys,
+            IEnumerable<JourneyMapMigrateRp> journeyMaps,
             IEnumerable<FeatureMigrateRp> features,
             IEnumerable<IndicatorMigrateRp> indicators,
             IEnumerable<SourceMigrateRp> sources,
@@ -182,7 +215,7 @@ namespace Owlvey.Falcon.Components
             )> Export(int customerId, bool includeItems = false)
         {
             var customer = await this._dbContext.Customers
-                .Include(c => c.Products).ThenInclude(c => c.Services).Where(c => c.Id == customerId)
+                .Include(c => c.Products).ThenInclude(c => c.Journeys).Where(c => c.Id == customerId)
                 .SingleAsync();
 
             var incidents = await this._dbContext.Incidents.Include(c => c.FeatureMaps).ThenInclude(c => c.Feature).Where(c => c.Product.CustomerId == customerId).ToListAsync();
@@ -190,8 +223,8 @@ namespace Owlvey.Falcon.Components
             var squadLites = this._mapper.Map<IEnumerable<SquadMigrationRp>>(squads);
             var productLites = this._mapper.Map<IEnumerable<ProductMigrationRp>>(customer.Products);
 
-            var serviceLites = this._mapper.Map<IEnumerable<ServiceMigrateRp>>(
-                    customer.Products.SelectMany(c => c.Services).OrderBy(c=>c.Id).ToList()
+            var journeyLites = this._mapper.Map<IEnumerable<JourneyMigrateRp>>(
+                    customer.Products.SelectMany(c => c.Journeys).OrderBy(c => c.Id).ToList()
                 );
 
             var memberLites = new List<MemberMigrateRp>();
@@ -212,34 +245,34 @@ namespace Owlvey.Falcon.Components
 
             var features = await this._dbContext.Features
                 .Include(c => c.Product)
-                .Include(c => c.ServiceMaps).ThenInclude(c => c.Service)
+                .Include(c => c.JourneyMaps).ThenInclude(c => c.Journey)
                 .Where(c => c.Product.CustomerId == customerId).ToListAsync();
 
             var featureLites = new List<FeatureMigrateRp>();
-            var serviceMapLites = await this.ExportServiceMap(customerId);
+            var journeyMapLites = await this.ExportJourneyMap(customerId);
 
             foreach (var item in features)
             {
                 var tmp = this._mapper.Map<FeatureMigrateRp>(item);
-                featureLites.Add(tmp);             
+                featureLites.Add(tmp);
             }
 
             var sources = await this._dbContext.Sources
                 .Include(c => c.Product)
-                .Include(c => c.Indicators)                
+                .Include(c => c.Indicators)
                 .ThenInclude(c => c.Feature)
                 .Where(c => c.Product.CustomerId == customerId)
                 .ToListAsync();
 
             var sourceLites = this._mapper.Map<IEnumerable<SourceMigrateRp>>(sources);
 
-            var indicatorLites = await this.ExportIndicators(customerId);             
+            var indicatorLites = await this.ExportIndicators(customerId);
 
             List<SourceItemMigrationRp> items = new List<SourceItemMigrationRp>();
             if (includeItems)
             {
                 var temp = await this._dbContext.SourcesItems
-                    .Include(c => c.Source)                    
+                    .Include(c => c.Source)
                     .Where(c => c.Source.Product.CustomerId == customerId).ToListAsync();
                 foreach (var item in temp)
                 {
@@ -247,15 +280,15 @@ namespace Owlvey.Falcon.Components
                     var map = new SourceItemMigrationRp()
                     {
                         Product = product.Name,
-                        Target = item.Target.ToString("s", System.Globalization.CultureInfo.InvariantCulture),                        
-                        Source = item.Source.Name,                        
+                        Target = item.Target.ToString("s", System.Globalization.CultureInfo.InvariantCulture),
+                        Source = item.Source.Name,
                         Proportion = item.Measure
                     };
-                    
+
                     map.Total = item.Total.GetValueOrDefault();
-                    map.Good = item.Good.GetValueOrDefault();                        
-                    
-                    items.Add(map);                    
+                    map.Good = item.Good.GetValueOrDefault();
+
+                    items.Add(map);
                 }
             }
 
@@ -290,18 +323,19 @@ namespace Owlvey.Falcon.Components
             var squadFeatureLite = await this.ExportSquadMap(customerId);
             var anchors = await this.ExportAnchors(customerId);
 
-            return (customer, squadLites, memberLites, productLites, serviceLites, serviceMapLites, featureLites, indicatorLites, sourceLites, items, incidentsLite,
+            return (customer, squadLites, memberLites, productLites, journeyLites, journeyMapLites, featureLites, indicatorLites, sourceLites, items, incidentsLite,
                         incidentFeaturesLite,
                         squadFeatureLite,
                         anchors);
         }
 
-        
+
 
         #endregion
         #region Import
 
-        private async Task ImportMembers(int customerId, ExcelWorksheet membersSource) {
+        private async Task ImportMembers(int customerId, ExcelWorksheet membersSource)
+        {
 
             for (int row = 2; row <= membersSource.Dimension.Rows; row++)
             {
@@ -321,30 +355,33 @@ namespace Owlvey.Falcon.Components
             for (int row = 2; row <= source.Dimension.Rows; row++)
             {
                 var product = source.Cells[row, 1].GetValue<string>();
-                var name = source.Cells[row, 2].GetValue<string>();                
+                var name = source.Cells[row, 2].GetValue<string>();
                 var target = DateTime.Parse(source.Cells[row, 3].GetValue<string>());
                 var pproduct = await this._productQueryComponent.GetProductByName(customerId, product);
-                await this._productComponent.CreateOrUpdateAnchor(pproduct.Id, name, target);                
+                await this._productComponent.CreateOrUpdateAnchor(pproduct.Id, name, target);
             }
         }
 
-        private async Task ImportSquadFeatures(int customerId, ExcelWorksheet source) {
+        private async Task ImportSquadFeatures(int customerId, ExcelWorksheet source)
+        {
             for (int row = 2; row <= source.Dimension.Rows; row++)
             {
-                var product = source.Cells[row, 1].GetValue<string>();                
+                var product = source.Cells[row, 1].GetValue<string>();
                 var squad = source.Cells[row, 2].GetValue<string>();
                 var feature = source.Cells[row, 3].GetValue<string>();
                 var psquad = await this._squadQueryComponent.GetSquadByName(customerId, squad);
                 var pproduct = await this._productQueryComponent.GetProductByName(customerId, product);
                 var pfeature = await this._featureQueryComponent.GetFeatureByName(pproduct.Id, feature);
 
-                await this._featureComponent.RegisterSquad(new SquadFeaturePostRp() {
-                     SquadId = psquad.Id,
-                     FeatureId =  pfeature.Id
-                });                                
+                await this._featureComponent.RegisterSquad(new SquadFeaturePostRp()
+                {
+                    SquadId = psquad.Id,
+                    FeatureId = pfeature.Id
+                });
             }
         }
-        public async Task ImportSource(CustomerEntity customer, ExcelWorksheet source) {            
+        public async Task ImportSource(CustomerEntity customer, ExcelWorksheet source)
+        {
             for (int row = 2; row <= source.Dimension.Rows; row++)
             {
                 var product = source.Cells[row, 1].GetValue<string>();
@@ -359,30 +396,69 @@ namespace Owlvey.Falcon.Components
                 var percentile = source.Cells[row, 10].GetValue<decimal>();
                 if (product != null && name != null)
                 {
+                    //TODO: Work
                     await this._sourceComponent.CreateOrUpdate(customer,
-                        product, name, tags, avatar, good, total, description, kind, group, percentile);
+                        product, name, tags, avatar,
+                        new DefinitionValue(good, total),
+                        new DefinitionValue(good, total),
+                        new DefinitionValue(good, total),
+                        description, percentile);
                 }
             }
         }
-        
+
 
         #endregion
 
         #region backups
 
-
-        public async Task<IEnumerable<string>> Restore(MemoryStream input) {
-
-            var logs = new List<string>();            
-
+        public async Task ClearData(){
             var previous = await this._dbContext.Customers.ToListAsync();
             foreach (var item in previous)
             {
                 await this._customerComponent.DeleteCustomer(item.Id.Value);
-            }            
+            }
+            var previous_security_threats = await this._securityRiskComponent.GetThreats();
+            foreach (var item in previous_security_threats)
+            {
+                await this._securityRiskComponent.DeleteThreat(item.Id);
+            }
+            var previous_reliability_threats = await this._reliabilityRiskComponent.GetThreats();
+            foreach (var item in previous_reliability_threats)
+            {
+                await this._reliabilityRiskComponent.DeleteThreat(item.Id);
+            }
+        }
+        public async Task<IEnumerable<string>> Restore(MemoryStream input)
+        {
+            var logs = new List<string>();
+            var createdBy = this._identityGateway.GetIdentity();
+            var createdOn = this._datetimeGateway.GetCurrentDateTime();
+
+            await this.ClearData();           
 
             using (var package = new ExcelPackage(input))
             {
+                var securityThreatSheet = package.Workbook.Worksheets[SHEET_SecurityThreatsName];
+                var securityThreats = SecurityThreatModel.Build(new SheetRowAdapter(securityThreatSheet));
+                foreach (var item in securityThreats)
+                {
+                    var temp = await this._securityRiskComponent.CreateThreat(new SecurityThreatPostRp()
+                    {
+                        Name = item.Name
+                    });
+                    await this._securityRiskComponent.UpdateThreat(temp.Id, item);
+                }
+
+                var reliabilityThreatSheet = package.Workbook.Worksheets[SHEET_ReliabilityThreats];
+                var reliabilityThreats = ReliabilityThreatModel.Build(new SheetRowAdapter(reliabilityThreatSheet));
+                foreach (var item in reliabilityThreats)
+                {
+                    var temp = await this._reliabilityRiskComponent.CreateThreat( new ReliabilityThreatPostRp() { 
+                         Name = item.Name
+                    } );
+                    await this._reliabilityRiskComponent.UpdateThreat(temp.Id, item);
+                }
 
                 var usersSheet = package.Workbook.Worksheets["Users"];
                 for (int row = 2; row <= usersSheet.Dimension.Rows; row++)
@@ -390,7 +466,7 @@ namespace Owlvey.Falcon.Components
                     var name = usersSheet.Cells[row, 1].GetValue<string>();
                     var avatar = usersSheet.Cells[row, 2].GetValue<string>();
                     var email = usersSheet.Cells[row, 3].GetValue<string>();
-                    var slack = usersSheet.Cells[row, 3].GetValue<string>();
+                    var slack = usersSheet.Cells[row, 4].GetValue<string>();
                     await this._userComponent.CreateOrUpdate(email, name, avatar, slack);
                 }
 
@@ -401,10 +477,10 @@ namespace Owlvey.Falcon.Components
                 {
                     var name = organizationSheet.Cells[row, 1].GetValue<string>();
                     var avatar = organizationSheet.Cells[row, 2].GetValue<string>();
-                    var leaders = organizationSheet.Cells[row, 3].GetValue<string>();                                        
+                    var leaders = organizationSheet.Cells[row, 3].GetValue<string>();
                     await this._customerComponent.CreateOrUpdate(name, avatar, leaders);
                 }
-                               
+
                 var organizations = await this._dbContext.Customers.ToListAsync();
 
                 var productsSheet = package.Workbook.Worksheets["Products"];
@@ -415,10 +491,10 @@ namespace Owlvey.Falcon.Components
                     var description = productsSheet.Cells[row, 3].GetValue<string>();
                     var leaders = productsSheet.Cells[row, 4].GetValue<string>();
                     var avatar = productsSheet.Cells[row, 5].GetValue<string>();
-                    await this._productComponent.CreateOrUpdate(organizations.Single(c=>c.Name == organization),
+                    await this._productComponent.CreateOrUpdate(organizations.Single(c => c.Name == organization),
                         name, description, avatar, leaders);
                 }
-                
+
                 var products = await this._dbContext.Products.ToListAsync();
                 foreach (var item in products)
                 {
@@ -433,7 +509,7 @@ namespace Owlvey.Falcon.Components
                     var name = anchorSheet.Cells[row, 3].GetValue<string>();
                     var target = DateTime.Parse(anchorSheet.Cells[row, 4].GetValue<string>());
                     await this._productComponent.CreateOrUpdateAnchor(
-                        products.Single(c=>c.Name == product && c.Customer.Name == organization).Id.Value,
+                        products.Single(c => c.Name == product && c.Customer.Name == organization).Id.Value,
                         name, target);
                 }
 
@@ -446,7 +522,7 @@ namespace Owlvey.Falcon.Components
                     var description = squadSheet.Cells[row, 4].GetValue<string>();
                     var leaders = squadSheet.Cells[row, 5].GetValue<string>();
                     await this._squadComponent.CreateOrUpdate(organizations.Single(c => c.Name == organization),
-                        name, description, avatar, leaders);                    
+                        name, description, avatar, leaders);
                 }
 
                 var squads = await this._dbContext.Squads.ToListAsync();
@@ -460,43 +536,43 @@ namespace Owlvey.Falcon.Components
                 {
                     var organization = membersSheet.Cells[row, 1].GetValue<string>();
                     var email = membersSheet.Cells[row, 2].GetValue<string>();
-                    var squad  = membersSheet.Cells[row, 3].GetValue<string>();                    
+                    var squad = membersSheet.Cells[row, 3].GetValue<string>();
                     await this._squadComponent.RegisterMember(
-                          squads.Where(c=>c.Customer.Name == organization && c.Name == squad).Single().Id.Value,
-                          users.Single(c=>c.Email == email).Id.Value);
+                          squads.Where(c => c.Customer.Name == organization && c.Name == squad).Single().Id.Value,
+                          users.Single(c => c.Email == email).Id.Value);
                 }
 
-                var servicesSheet = package.Workbook.Worksheets["Services"];
-                for (int row = 2; row <= servicesSheet.Dimension.Rows; row++)
+                var journeysSheet = package.Workbook.Worksheets["Journeys"];
+                for (int row = 2; row <= journeysSheet.Dimension.Rows; row++)
                 {
-                    var organization = servicesSheet.Cells[row, 1].GetValue<string>();
-                    var product = servicesSheet.Cells[row, 2].GetValue<string>();
-                    var name = servicesSheet.Cells[row, 3].GetValue<string>();
-                    var group = servicesSheet.Cells[row, 4].GetValue<string>();
-                    var availabilitySlo = servicesSheet.Cells[row, 5].GetValue<decimal>();
-                    var latencySlo = servicesSheet.Cells[row, 6].GetValue<decimal>();
-                    var experienceSlo = servicesSheet.Cells[row, 7].GetValue<decimal>();
-                    var description = servicesSheet.Cells[row, 8].GetValue<string>();
-                    var avatar = servicesSheet.Cells[row, 9].GetValue<string>();
-                    var leaders = servicesSheet.Cells[row, 10].GetValue<string>();
-                    var slaValue =  new SLAValue(
-                        servicesSheet.Cells[row, 11].GetValue<decimal>(),
-                        servicesSheet.Cells[row, 12].GetValue<decimal>()                        
+                    var organization = journeysSheet.Cells[row, 1].GetValue<string>();
+                    var product = journeysSheet.Cells[row, 2].GetValue<string>();
+                    var name = journeysSheet.Cells[row, 3].GetValue<string>();
+                    var group = journeysSheet.Cells[row, 4].GetValue<string>();
+                    var availabilitySlo = journeysSheet.Cells[row, 5].GetValue<decimal>();
+                    var latencySlo = journeysSheet.Cells[row, 6].GetValue<decimal>();
+                    var experienceSlo = journeysSheet.Cells[row, 7].GetValue<decimal>();
+                    var description = journeysSheet.Cells[row, 8].GetValue<string>();
+                    var avatar = journeysSheet.Cells[row, 9].GetValue<string>();
+                    var leaders = journeysSheet.Cells[row, 10].GetValue<string>();
+                    var slaValue = new SLAValue(
+                        journeysSheet.Cells[row, 11].GetValue<decimal>(),
+                        journeysSheet.Cells[row, 12].GetValue<decimal>()
                     );
-                    
-                    await this._serviceComponent.CreateOrUpdate(
-                        organizations.Single(c=>c.Name == organization),product, name,
+
+                    await this._journeyComponent.CreateOrUpdate(
+                        organizations.Single(c => c.Name == organization), product, name,
                         description, avatar, availabilitySlo, latencySlo, experienceSlo,
                         slaValue,
                         leaders, group);
                 }
 
-                var services = await this._dbContext.Services.ToListAsync();
-                foreach (var item in services)
+                var journeys = await this._dbContext.Journeys.ToListAsync();
+                foreach (var item in journeys)
                 {
                     item.Product = products.Single(c => c.Id == item.ProductId);
                 }
-                
+
                 var featuresSheet = package.Workbook.Worksheets["Features"];
 
                 for (int row = 2; row <= featuresSheet.Dimension.Rows; row++)
@@ -516,40 +592,30 @@ namespace Owlvey.Falcon.Components
                     item.Product = products.Single(c => c.Id == item.ProductId);
                 }
 
-                var serviceMapSheet = package.Workbook.Worksheets["ServiceMaps"];
+                var jouneryMapSheet = package.Workbook.Worksheets["JourneyMaps"];
 
-                for (int row = 2; row <= serviceMapSheet.Dimension.Rows; row++)
+                for (int row = 2; row <= jouneryMapSheet.Dimension.Rows; row++)
                 {
-                    var organization = serviceMapSheet.Cells[row, 1].GetValue<string>();
-                    var product = serviceMapSheet.Cells[row, 2].GetValue<string>();
-                    var service = serviceMapSheet.Cells[row, 3].GetValue<string>();
-                    var feature = serviceMapSheet.Cells[row, 4].GetValue<string>();
-                    var description = serviceMapSheet.Cells[row, 5].GetValue<string>();
-                    await this._serviceMapComponent.CreateServiceMap(
+                    var organization = jouneryMapSheet.Cells[row, 1].GetValue<string>();
+                    var product = jouneryMapSheet.Cells[row, 2].GetValue<string>();
+                    var journey = jouneryMapSheet.Cells[row, 3].GetValue<string>();
+                    var feature = jouneryMapSheet.Cells[row, 4].GetValue<string>();
+                    var description = jouneryMapSheet.Cells[row, 5].GetValue<string>();
+                    await this._journeyMapComponent.CreateMap(
                         organizations.Single(c => c.Name == organization).Id.Value,
-                        product, service, feature);
+                        product, journey, feature);
                 }
 
                 var sourcesSheet = package.Workbook.Worksheets["Sources"];
 
-                for (int row = 2; row <= sourcesSheet.Dimension.Rows; row++)
-                {
-                    var organization = sourcesSheet.Cells[row, 1].GetValue<string>();
-                    var product = sourcesSheet.Cells[row, 2].GetValue<string>();
-                    var name = sourcesSheet.Cells[row, 3].GetValue<string>();
-                    var avatar = sourcesSheet.Cells[row, 4].GetValue<string>();
-                    var description = sourcesSheet.Cells[row, 5].GetValue<string>();
-                    var group = sourcesSheet.Cells[row, 6].GetValue<string>();
-                    var good = sourcesSheet.Cells[row, 7].GetValue<string>();
-                    var total = sourcesSheet.Cells[row, 8].GetValue<string>();
-                    var kind = sourcesSheet.Cells[row, 9].GetValue<string>();
-                    var percentile = sourcesSheet.Cells[row, 10].GetValue<decimal>();
-                    await this._sourceComponent.CreateOrUpdate(
-                        organizations.Single(c => c.Name == organization), product, name, string.Empty, avatar, good, total, 
-                        description, kind, group, percentile);                        
-                }
+                var sourcesInstances = SourceModel.Build(organizations, createdOn, createdBy,
+                    new SheetRowAdapter(sourcesSheet));
+
+                await this._dbContext.Sources.AddRangeAsync(sourcesInstances);
+                await this._dbContext.SaveChangesAsync();
 
                 var sources = await this._dbContext.Sources.ToListAsync();
+
                 foreach (var item in sources)
                 {
                     item.Product = products.Single(c => c.Id == item.ProductId);
@@ -562,7 +628,7 @@ namespace Owlvey.Falcon.Components
                     var organization = indicatorsSheet.Cells[row, 1].GetValue<string>();
                     var product = indicatorsSheet.Cells[row, 2].GetValue<string>();
                     var feature = indicatorsSheet.Cells[row, 3].GetValue<string>();
-                    var source = indicatorsSheet.Cells[row, 4].GetValue<string>();                    
+                    var source = indicatorsSheet.Cells[row, 4].GetValue<string>();
                     await this._indicatorComponent.Create(
                           features.Single(c => c.Name == feature && c.Product.Name == product && c.Product.Customer.Name == organization).Id.Value,
                           sources.Single(c => c.Name == source && c.Product.Name == product && c.Product.Customer.Name == organization).Id.Value
@@ -580,104 +646,47 @@ namespace Owlvey.Falcon.Components
 
                     var featureId = features.Where(c => c.Name == feature && c.Product.Name == product && c.Product.Customer.Name == organization).Single().Id.Value;
                     var squadId = squads.Where(c => c.Name == squad && c.Customer.Name == organization).Single().Id.Value;
-                    await this._featureComponent.RegisterSquad(new SquadFeaturePostRp() {
+                    await this._featureComponent.RegisterSquad(new SquadFeaturePostRp()
+                    {
                         FeatureId = featureId,
                         SquadId = squadId,
                     });
                 }
 
+
+                var risksSources = await this._dbContext.Sources.Include(c => c.Product).ThenInclude(c => c.Customer)
+                    .ToListAsync();
+
+                var securityRiskSheet = package.Workbook.Worksheets[SHEET_SecurityRisks];
+                var securityRisks = SecurityRiskModel.Build(new SheetRowAdapter(securityRiskSheet), risksSources);
+                foreach (var item in securityRisks)
+                {
+                    var temp = await this._securityRiskComponent.Create(item.Item1);
+                    await this._securityRiskComponent.UpdateRisk(temp.Id, item.Item2);
+                }
+
+                var reliabilityRiskSheet = package.Workbook.Worksheets[SHEET_ReliabilityRisks];
+                var reliabilityRisks = ReliabilityRiskModel.Build(new SheetRowAdapter(reliabilityRiskSheet), risksSources);
+                foreach (var item in reliabilityRisks)
+                {
+                    var temp = await this._reliabilityRiskComponent.Create(item.Item1);
+                    await this._reliabilityRiskComponent.UpdateRisk(temp.Id, item.Item2);
+                }
+
                 var sourceItemsSheet = package.Workbook.Worksheets["SourceItems"];
-
-                var sourceItems= new List<(SourceEntity, SourceItemPostRp)>();
-                
-
-                for (int row = 2; row <= sourceItemsSheet.Dimension.Rows; row++)
-                {
-                    var organization = sourceItemsSheet.Cells[row, 1].GetValue<string>();
-                    var product = sourceItemsSheet.Cells[row, 2].GetValue<string>();
-                    var source = sourceItemsSheet.Cells[row, 3].GetValue<string>();
-                    var good = sourceItemsSheet.Cells[row, 4].GetValue<int>();
-                    var total = sourceItemsSheet.Cells[row, 5].GetValue<int>();
-                    var target = DateTime.Parse(sourceItemsSheet.Cells[row, 6].GetValue<string>());
-                    var measure = sourceItemsSheet.Cells[row, 7].GetValue<decimal>();
-
-                    var sourceTarget = sources.Single(c => c.Name == source && c.Product.Name == product && c.Product.Customer.Name == organization);
-
-                    if (sourceTarget.Group == SourceGroupEnum.Availability || sourceTarget.Group == SourceGroupEnum.Experience)
-                    {
-                        if (sourceTarget.Kind == SourceKindEnum.Interaction)
-                        {
-                            sourceItems.Add((sourceTarget, new SourceItemInteractionPostRp()
-                            {
-                                SourceId = sourceTarget.Id.Value,
-                                Start = target,
-                                End = target,
-                                Good = good,
-                                Total = total
-                            }));
-                        }
-                        else
-                        {
-                            sourceItems.Add((sourceTarget, new SourceItemProportionPostRp()
-                            {
-                                SourceId = sourceTarget.Id.Value,
-                                Start = target,
-                                End = target,
-                                Proportion = measure,
-                            })); ;
-                        }
-                    }
-                    else if (sourceTarget.Group == SourceGroupEnum.Latency)
-                    {
-                        sourceItems.Add((sourceTarget, new LatencySourceItemPostRp()
-                        {
-                            SourceId = sourceTarget.Id.Value,
-                            Start = target,
-                            End = target,
-                            Latency = measure,
-                        }));
-                    }
-                    else {
-                        throw new ApplicationException("source is not supported");
-                    }
-                }
-
-                var groups = sourceItems.GroupBy(c => c.Item1, new SourceEntityComparer());
-                foreach (var item in groups)
-                {
-                    await this._sourceItemComponent.BulkInsert(item.Key, item.Select(c => c.Item2).ToList());
-                }
+                var sourceItems = SourceItemModel.Build(organizations, createdOn, createdBy, new SheetRowAdapter(sourceItemsSheet));
+                await this._sourceItemComponent.BulkInsert(sourceItems);
             }
 
             return logs;
         }
-        
+
         public async Task<MemoryStream> Backup(bool includeData)
         {
             var stream = new MemoryStream();
             using (var package = new ExcelPackage(stream))
             {
-                var users = await this._dbContext.Users.ToListAsync();
-                var customers = await this._dbContext.Customers
-                    .Include(c => c.Products).ThenInclude(c => c.Anchors)
-                    .Include(c => c.Squads).ThenInclude(d => d.Members)
-                    .ToListAsync();
-
-                var services = await this._dbContext.Services.Include(c => c.FeatureMap).ToListAsync();
-                var features = await this._dbContext.Features
-                    .Include(c => c.Indicators)
-                    .Include(c => c.Squads)
-                    .ToListAsync();
-                var sources = await this._dbContext.Sources.ToListAsync();
-
-                var sourceItems = new List<SourceItemEntity>();
-                if (includeData)
-                {
-                    sourceItems = await this._dbContext.SourcesItems.ToListAsync();
-                }
-
-                var aggregate = new BackupAggregate(users, customers, services, features, sources, sourceItems);
-                var model = aggregate.Execute();
+                var model = await SystemModelBuilder.Build(this._mapper, this._dbContext, includeData);
 
                 var usersSheet = package.Workbook.Worksheets.Add("Users");
                 usersSheet.Cells.LoadFromCollection(model.Users, true);
@@ -689,7 +698,7 @@ namespace Owlvey.Falcon.Components
                 productsSheet.Cells.LoadFromCollection(model.Products, true);
 
                 var anchorsSheet = package.Workbook.Worksheets.Add("Anchors");
-                anchorsSheet.Cells.LoadFromCollection(model.Anchors, true);                
+                anchorsSheet.Cells.LoadFromCollection(model.Anchors, true);
 
                 var squadsSheet = package.Workbook.Worksheets.Add("Squads");
                 squadsSheet.Cells.LoadFromCollection(model.Squads, true);
@@ -697,11 +706,11 @@ namespace Owlvey.Falcon.Components
                 var membersSheet = package.Workbook.Worksheets.Add("Members");
                 membersSheet.Cells.LoadFromCollection(model.Members, true);
 
-                var servicesSheet = package.Workbook.Worksheets.Add("Services");
-                servicesSheet.Cells.LoadFromCollection(model.Services, true);
+                var journeysSheet = package.Workbook.Worksheets.Add("Journeys");
+                journeysSheet.Cells.LoadFromCollection(model.Journeys, true);
 
-                var serviceMapsSheet = package.Workbook.Worksheets.Add("ServiceMaps");
-                serviceMapsSheet.Cells.LoadFromCollection(model.ServiceMaps, true);
+                var journeyMapsSheet = package.Workbook.Worksheets.Add("JourneyMaps");
+                journeyMapsSheet.Cells.LoadFromCollection(model.JourneyMaps, true);
 
                 var featuresSheet = package.Workbook.Worksheets.Add("Features");
                 featuresSheet.Cells.LoadFromCollection(model.Features, true);
@@ -717,6 +726,18 @@ namespace Owlvey.Falcon.Components
 
                 var sourceItemsSheet = package.Workbook.Worksheets.Add("SourceItems");
                 sourceItemsSheet.Cells.LoadFromCollection(model.SourceItems, true);
+
+                var securityTHreatsSheet = package.Workbook.Worksheets.Add(SHEET_SecurityThreatsName);
+                securityTHreatsSheet.Cells.LoadFromCollection(model.SecurityThreats, true);
+
+                var securityRisksSheet = package.Workbook.Worksheets.Add(SHEET_SecurityRisks);
+                securityRisksSheet.Cells.LoadFromCollection(model.SecurityRisks, true);
+
+                var reliabilityThreatsSheet = package.Workbook.Worksheets.Add(SHEET_ReliabilityThreats);
+                reliabilityThreatsSheet.Cells.LoadFromCollection(model.ReliabilityThreats, true);
+
+                var reliabilityRisksSheet = package.Workbook.Worksheets.Add(SHEET_ReliabilityRisks);
+                reliabilityRisksSheet.Cells.LoadFromCollection(model.ReliabilityRisks, true);
 
                 package.Save();
             }

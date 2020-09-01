@@ -14,7 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Owlvey.Falcon.Repositories.Products;
-using Owlvey.Falcon.Repositories.Services;
+using Owlvey.Falcon.Repositories.Journeys;
 using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
 using Owlvey.Falcon.Core.Entities.Source;
 using System.Collections.Concurrent;
@@ -23,15 +23,10 @@ namespace Owlvey.Falcon.Components
 {
     public class ProductQueryComponent : BaseComponent
     {
-        private readonly FalconDbContext _dbContext;
-        private readonly FeatureQueryComponent _featureQueryComponent;
-        private readonly ServiceQueryComponent _serviceQueryComponent;        
-        public ProductQueryComponent(FalconDbContext dbContext, IDateTimeGateway dateTimeGateway,
-            FeatureQueryComponent featureQueryComponent, ServiceQueryComponent serviceQueryComponent,
-            IMapper mapper, IUserIdentityGateway identityService, ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityService, configuration)
-        {
-            this._featureQueryComponent = featureQueryComponent;
-            this._serviceQueryComponent = serviceQueryComponent;
+        private readonly FalconDbContext _dbContext;        
+        public ProductQueryComponent(FalconDbContext dbContext, IDateTimeGateway dateTimeGateway,            
+            IMapper mapper, IUserIdentityGateway identityGateway, ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityGateway, configuration)
+        {            
             this._dbContext = dbContext;
         }
 
@@ -82,25 +77,25 @@ namespace Owlvey.Falcon.Components
             result.Nodes.Add(node);
             */
 
-            foreach (var service in product.Services)
+            foreach (var journey in product.Journeys)
             {
-                var measure = service.Measure();                
+                var measure = journey.Measure();                
                 var snode = new GraphNode
                 {
-                    Id = string.Format("service_{0}", service.Id),
-                    Avatar = service.Avatar,
-                    Name = string.Format("{0} [ {1} | {2} ]", service.Name,
-                        Math.Round(service.AvailabilitySlo, 2),
+                    Id = string.Format("journey_{0}", journey.Id),
+                    Avatar = journey.Avatar,
+                    Name = string.Format("{0} [ {1} | {2} ]", journey.Name,
+                        Math.Round(journey.AvailabilitySlo, 2),
                         Math.Round(measure.Availability, 2)),                    
                     Value = measure.Availability,
-                    Group = "services",
-                    Slo = service.AvailabilitySlo,                    
+                    Group = "journeys",
+                    Slo = journey.AvailabilitySlo,                    
                     Budget = measure.AvailabilityErrorBudget
                 };
                 
                 result.Nodes.Add(snode);                
 
-                foreach (var map in service.FeatureMap)
+                foreach (var map in journey.FeatureMap)
                 {
                     var featureMeasure = map.Feature.Measure();
                     var Id = string.Format("feature_{0}", map.Feature.Id);
@@ -121,7 +116,7 @@ namespace Owlvey.Falcon.Components
                     {
                         From = snode.Id,
                         To = fnode.Id,
-                        Value = QualityUtils.MeasureBudget(fnode.Value, service.AvailabilitySlo),
+                        Value = QualityUtils.MeasureBudget(fnode.Value, journey.AvailabilitySlo),
                         Tags = new Dictionary<string, object>() {
                             { "Availability", fnode.Value }
                         }
@@ -140,25 +135,25 @@ namespace Owlvey.Falcon.Components
             result.Name = product.Name;
             result.Id = product.Id.Value;
             result.Avatar = product.Avatar;
-            foreach (var service in product.Services)
+            foreach (var journey in product.Journeys)
             {
-                var measure = service.Measure();
+                var measure = journey.Measure();
                 var snode = new GraphNode
                 {
-                    Id = string.Format("service_{0}", service.Id),
-                    Avatar = service.Avatar,
-                    Name = string.Format("{0} [ {1} | {2} ]", service.Name,
-                        Math.Round(service.LatencySlo, 2),
+                    Id = string.Format("journey_{0}", journey.Id),
+                    Avatar = journey.Avatar,
+                    Name = string.Format("{0} [ {1} | {2} ]", journey.Name,
+                        Math.Round(journey.LatencySlo, 2),
                         Math.Round(measure.Latency, 2)),
                     Value = measure.Latency,
-                    Group = "services",
-                    Slo = service.LatencySlo,                    
+                    Group = "journeys",
+                    Slo = journey.LatencySlo,                    
                     Budget = measure.LatencyErrorBudget
                 };
 
                 result.Nodes.Add(snode);
 
-                foreach (var map in service.FeatureMap)
+                foreach (var map in journey.FeatureMap)
                 {
                     var featureMeasure = map.Feature.Measure();
                     var Id = string.Format("feature_{0}", map.Feature.Id);
@@ -179,7 +174,7 @@ namespace Owlvey.Falcon.Components
                     {
                         From = snode.Id,
                         To = fnode.Id,
-                        Value = QualityUtils.MeasureBudget(fnode.Value, service.LatencySlo),
+                        Value = QualityUtils.MeasureBudget(fnode.Value, journey.LatencySlo),
                         Tags = new Dictionary<string, object>() {
                             { "Latency", fnode.Value }
                         }
@@ -198,25 +193,25 @@ namespace Owlvey.Falcon.Components
             result.Name = product.Name;
             result.Id = product.Id.Value;
             result.Avatar = product.Avatar;
-            foreach (var service in product.Services)
+            foreach (var journey in product.Journeys)
             {
-                var measure = service.Measure();
+                var measure = journey.Measure();
                 var snode = new GraphNode
                 {
-                    Id = string.Format("service_{0}", service.Id),
-                    Avatar = service.Avatar,
-                    Name = string.Format("{0} [ {1} | {2} ]", service.Name,
-                        Math.Round(service.ExperienceSlo, 2),
+                    Id = string.Format("journey_{0}", journey.Id),
+                    Avatar = journey.Avatar,
+                    Name = string.Format("{0} [ {1} | {2} ]", journey.Name,
+                        Math.Round(journey.ExperienceSlo, 2),
                         Math.Round(measure.Experience, 2)),
                     Value = measure.Experience,
-                    Group = "services",
-                    Slo = service.ExperienceSlo,                    
+                    Group = "journeys",
+                    Slo = journey.ExperienceSlo,                    
                     Budget = measure.ExperienceErrorBudget
                 };
 
                 result.Nodes.Add(snode);
 
-                foreach (var map in service.FeatureMap)
+                foreach (var map in journey.FeatureMap)
                 {
                     var featureMeasure = map.Feature.Measure();
                     var Id = string.Format("feature_{0}", map.Feature.Id);
@@ -237,7 +232,7 @@ namespace Owlvey.Falcon.Components
                     {
                         From = snode.Id,
                         To = fnode.Id,
-                        Value = QualityUtils.MeasureBudget(fnode.Value, service.ExperienceSlo),
+                        Value = QualityUtils.MeasureBudget(fnode.Value, journey.ExperienceSlo),
                         Tags = new Dictionary<string, object>() {
                             { "Latency", fnode.Value }
                         }
@@ -306,7 +301,7 @@ namespace Owlvey.Falcon.Components
         #region Daily Reports
 
 
-        private MultiSeriesGetRp InternalGetDailyServiceSeries(ProductEntity product, DateTime start, DateTime end) {            
+        private MultiSeriesGetRp InternalGetDailyJourneySeries(ProductEntity product, DateTime start, DateTime end) {            
 
             var result = new MultiSeriesGetRp
             {
@@ -335,15 +330,15 @@ namespace Owlvey.Falcon.Components
 
             return result;
         }
-        public async Task<MultiSeriesGetRp> GetDailyServiceSeriesByIdAndGroup(int productId, DatePeriodValue period, string group)
+        public async Task<MultiSeriesGetRp> GetDailyJourneysSeriesByIdAndGroup(int productId, DatePeriodValue period, string group)
         {
             var product = await this._dbContext.FullLoadProductWithGroupAndSourceItems(productId, group, period.Start, period.End);
-            return this.InternalGetDailyServiceSeries(product, period.Start, period.End);
+            return this.InternalGetDailyJourneySeries(product, period.Start, period.End);
         }
-        public async Task<MultiSeriesGetRp> GetDailyServiceSeriesById(int productId, DatePeriodValue period)
+        public async Task<MultiSeriesGetRp> GetDailyJourneysSeriesById(int productId, DatePeriodValue period)
         {
             var product = await this._dbContext.FullLoadProductWithSourceItems(productId, period.Start, period.End);
-            return this.InternalGetDailyServiceSeries(product, period.Start, period.End);
+            return this.InternalGetDailyJourneySeries(product, period.Start, period.End);
         }
 
         #endregion
@@ -391,30 +386,30 @@ namespace Owlvey.Falcon.Components
                 }
             }
             
-            var serviceExports = new List<ExportExcelServiceRp>();
-            var serviceDetailExports = new List<ExportExcelServiceDetailRp>();
-            foreach (var service in product.Services)
+            var journeysExports = new List<ExportExcelJourneyRp>();
+            var journeyDetailExports = new List<ExportExcelJourneyDetailRp>();
+            foreach (var journey in product.Journeys)
             {
-                foreach (var map in service.FeatureMap)
+                foreach (var map in journey.FeatureMap)
                 {
                     map.Feature = product.Features.Single(c => c.Id == map.FeatureId);
                 }
-                service.Measure();
-                serviceExports.Add(new ExportExcelServiceRp(service));
+                journey.Measure();
+                journeysExports.Add(new ExportExcelJourneyRp(journey));
              
-                foreach (var featureMap in service.FeatureMap)
+                foreach (var featureMap in journey.FeatureMap)
                 {                    
-                    serviceDetailExports.Add(new ExportExcelServiceDetailRp(featureMap));
+                    journeyDetailExports.Add(new ExportExcelJourneyDetailRp(featureMap));
                 }               
             }
 
             var stream = new MemoryStream();
             using (var package = new ExcelPackage(stream))
             {
-                var servicesSheet = package.Workbook.Worksheets.Add("Services");
-                servicesSheet.Cells.LoadFromCollection(serviceExports, true);
-                var servicesDetailSheet = package.Workbook.Worksheets.Add("ServicesDetail");
-                servicesDetailSheet.Cells.LoadFromCollection(serviceDetailExports, true);
+                var journeysSheet = package.Workbook.Worksheets.Add("Journeys");
+                journeysSheet.Cells.LoadFromCollection(journeysExports, true);
+                var journeysDetailSheet = package.Workbook.Worksheets.Add("JourneysDetail");
+                journeysDetailSheet.Cells.LoadFromCollection(journeyDetailExports, true);
                 var featuresSheet = package.Workbook.Worksheets.Add("Features");
                 featuresSheet.Cells.LoadFromCollection(featuresExports, true);
                 var indicatorsSheet = package.Workbook.Worksheets.Add("Indicators");
@@ -431,7 +426,7 @@ namespace Owlvey.Falcon.Components
 
         #region Dashboard
 
-        public async Task<ProductDashboardRp> GetServiceGroupDashboard(int productId,
+        public async Task<ProductDashboardRp> GetJourneyGroupDashboard(int productId,
             DateTime start, DateTime end)
         {
             var result = new ProductDashboardRp();
@@ -451,24 +446,24 @@ namespace Owlvey.Falcon.Components
             }
             
             int sloFails = 0;
-            var temp = new List<ProductDashboardRp.ServiceGroupRp>();            
+            var temp = new List<ProductDashboardRp.JourneyGroupRp>();            
             
-            foreach (var group in product.Services.GroupBy(c=>c.Group))
+            foreach (var group in product.Journeys.GroupBy(c=>c.Group))
             {
-                var targetGroup = new ProductDashboardRp.ServiceGroupRp
+                var targetGroup = new ProductDashboardRp.JourneyGroupRp
                 {
                     Total = group.Count(),
                     Name = group.Key
                 };
-                foreach (var service in group)
+                foreach (var journey in group)
                 {                    
-                    foreach (var map in service.FeatureMap)
+                    foreach (var map in journey.FeatureMap)
                     {
                         map.Feature = product.Features.Single(c => c.Id == map.FeatureId);
                     }
-                    var measure = service.Measure();
+                    var measure = journey.Measure();
                     
-                    if (measure.Availability < service.AvailabilitySlo)
+                    if (measure.Availability < journey.AvailabilitySlo)
                     {
                         targetGroup.Fail += 1;
                         sloFails += 1;
@@ -477,10 +472,10 @@ namespace Owlvey.Falcon.Components
                 temp.Add(targetGroup);                
             }
 
-            result.Groups.Add(new ProductDashboardRp.ServiceGroupRp()
+            result.Groups.Add(new ProductDashboardRp.JourneyGroupRp()
             {
                 Name = "All",
-                Total = product.Services.Count,
+                Total = product.Journeys.Count,
                 Fail = sloFails
             });
             result.Groups.AddRange(temp);
@@ -512,12 +507,13 @@ namespace Owlvey.Falcon.Components
                 result.Sources.Add(new SourceGetListRp()
                 {
                     Id = source.Id.Value,
-                    Measure = measure.Value,                    
+                    Measure = measure,                    
                     Avatar = source.Avatar,
                     CreatedBy = source.CreatedBy,
                     CreatedOn = source.CreatedOn.Value,
-                    GoodDefinition = source.GoodDefinition,
-                    TotalDefinition = source.TotalDefinition,
+                    AvailabilityDefinition = source.AvailabilityDefinition,
+                    LatencyDefinition = source.LatencyDefinition,
+                    ExperienceDefinition = source.ExperienceDefinition,
                     Name = source.Name
                 });                
             }
@@ -567,35 +563,36 @@ namespace Owlvey.Falcon.Components
 
             int sloFails = 0;
 
-            foreach (var service in product.Services)
+            foreach (var journey in product.Journeys)
             {
-                foreach (var map in service.FeatureMap)
+                foreach (var map in journey.FeatureMap)
                 {
                     map.Feature = product.Features.Single(c => c.Id == map.FeatureId);
                 }                
                 
-                var measure = service.Measure();
+                var measure = journey.Measure();
 
-                if (measure.Availability < service.AvailabilitySlo)
+                if (measure.Availability < journey.AvailabilitySlo)
                 {
                     sloFails += 1;
                 }
 
-                var tmp = this._mapper.Map<ServiceGetListRp>(service);
-                result.Services.Add(tmp);
-                result.ServiceMaps[service.Id.Value] = service.FeatureMap.OrderBy(c=>c.Id).Select(c => c.FeatureId).ToList();
+                var tmp = this._mapper.Map<JourneyGetListRp>(journey);
+                result.Journeys.Add(tmp);
+                result.JourneyMaps[journey.Id.Value] = journey.FeatureMap.OrderBy(c=>c.Id).Select(c => c.FeatureId).ToList();
                 
             }
 
-            result.Services = result.Services.OrderBy(c => c.Availability).ToList();
+            result.Journeys = result.Journeys.OrderBy(c => c.Availability).ToList();
             result.SLOFail = sloFails;
-            result.SLOProportion = QualityUtils.CalculateFailProportion(product.Services.Count, sloFails);
-            result.SourceStats = new StatsValue(result.Sources.Select(c => c.Measure));            
+            result.SLOProportion = QualityUtils.CalculateFailProportion(product.Journeys.Count, sloFails);
+            //TODO: change
+            //result.SourceStats = new StatsValue(result.Sources.Select(c => c.Measure));            
             result.FeaturesStats = new StatsValue(result.Features.Select(c => c.Availability));
             result.FeaturesCoverage = QualityUtils.CalculateProportion(product.Features.Count,
                 squadsData.Select(c=>c.FeatureId).Distinct().Count());
 
-            result.ServicesStats = new StatsValue(result.Services.Select(c => c.Availability));
+            result.JourneysStats = new StatsValue(result.Journeys.Select(c => c.Availability));
             return result;
         }
         #endregion
@@ -613,8 +610,8 @@ namespace Owlvey.Falcon.Components
 
                 var model = agg.Execute();
 
-                var serviceSheet = package.Workbook.Worksheets.Add("Services");
-                serviceSheet.Cells.LoadFromCollection(model.services, true);
+                var journeySheet = package.Workbook.Worksheets.Add("journeys");
+                journeySheet.Cells.LoadFromCollection(model.journeys, true);
 
                 var sourceSheet = package.Workbook.Worksheets.Add("Sources");
                 sourceSheet.Cells.LoadFromCollection(model.sources, true);
@@ -634,9 +631,8 @@ namespace Owlvey.Falcon.Components
                 var ids = sources.Select(c => c.Id.Value).Distinct().ToList();
                 var sourceItems = await this._dbContext.GetSourceItems(ids, period.Start, period.End);
 
-                var aggregate = new BackupItemsAggregate(sources, sourceItems);
+                var aggregate = new Builders.SourceItemsExportBuilder(sources, sourceItems);
                 var model = aggregate.Execute();
-
 
                 var sourceSheet = package.Workbook.Worksheets.Add("Sources");
                 sourceSheet.Cells.LoadFromCollection(model.sources, true);

@@ -18,9 +18,9 @@ namespace Owlvey.Falcon.Components
         private readonly FalconDbContext _dbContext;        
 
         public AppSettingComponent(FalconDbContext dbContext,
-            IUserIdentityGateway identityService,
+            IUserIdentityGateway identityGateway,
             IDateTimeGateway dateTimeGateway,
-            IMapper mapper, ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityService, configuration)
+            IMapper mapper, ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityGateway, configuration)
         {
             this._dbContext = dbContext;            
         }
@@ -33,7 +33,7 @@ namespace Owlvey.Falcon.Components
         public async Task<BaseComponentResultRp> CreateAppSetting(AppSettingPostRp model)
         {
             var result = new BaseComponentResultRp();
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
 
             var appSetting = AppSettingEntity.Factory.Create(model.Key, model.Value, true, DateTime.UtcNow, createdBy);
 
@@ -93,7 +93,7 @@ namespace Owlvey.Falcon.Components
             }
 
             appSetting.Value = model.Value;
-            appSetting.ModifiedBy = this._identityService.GetIdentity();
+            appSetting.ModifiedBy = this._identityGateway.GetIdentity();
             appSetting.ModifiedOn = DateTime.UtcNow;
 
             this._dbContext.Update(appSetting);

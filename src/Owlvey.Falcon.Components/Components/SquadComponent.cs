@@ -18,8 +18,8 @@ namespace Owlvey.Falcon.Components
         private readonly FalconDbContext _dbContext;        
 
         public SquadComponent(FalconDbContext dbContext,
-            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway, 
-            IMapper mapper, ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityService, configuration)
+            IUserIdentityGateway identityGateway, IDateTimeGateway dateTimeGateway, 
+            IMapper mapper, ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityGateway, configuration)
         {
             this._dbContext = dbContext;            
         }
@@ -31,7 +31,7 @@ namespace Owlvey.Falcon.Components
         /// <returns></returns>
         public async Task<SquadGetRp> CreateSquad(SquadPostRp model)
         {            
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             var customer = await this._dbContext.Customers.Where(c => c.Id == model.CustomerId).SingleAsync();
                         
             var entity = await this._dbContext.Squads.Where(c => c.Name == model.Name && c.CustomerId == model.CustomerId).SingleOrDefaultAsync();
@@ -46,7 +46,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<SquadGetRp> CreateOrUpdate(CustomerEntity customer, string name, string description, string avatar
             , string leaders) {
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
             var entity = await this._dbContext.Squads.Where(c => c.CustomerId == customer.Id && c.Name == name).SingleOrDefaultAsync();
             if (entity == null) {
@@ -67,7 +67,7 @@ namespace Owlvey.Falcon.Components
         public async Task<BaseComponentResultRp> DeleteSquad(int id)
         {
             var result = new BaseComponentResultRp();
-            var modifiedBy = this._identityService.GetIdentity();
+            var modifiedBy = this._identityGateway.GetIdentity();
 
             var squad = await this._dbContext.Squads.SingleAsync(c => c.Id == id);
 
@@ -92,7 +92,7 @@ namespace Owlvey.Falcon.Components
         public async Task RegisterMember(int id, int userId) {
             var exists = await this._dbContext.Members.Where(c => c.UserId == userId && c.SquadId == id).SingleOrDefaultAsync();
             if (exists == null) {
-                var createdBy = this._identityService.GetIdentity();
+                var createdBy = this._identityGateway.GetIdentity();
                 var member = MemberEntity.Factory.Create(id, userId, this._datetimeGateway.GetCurrentDateTime(), createdBy);
                 this._dbContext.Members.Add(member);
                 await this._dbContext.SaveChangesAsync();
@@ -147,7 +147,7 @@ namespace Owlvey.Falcon.Components
         public async Task<BaseComponentResultRp> UpdateSquad(int id, SquadPutRp model)
         {
             var result = new BaseComponentResultRp();
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
 
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
 

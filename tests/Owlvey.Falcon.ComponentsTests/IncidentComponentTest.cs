@@ -61,7 +61,8 @@ namespace Owlvey.Falcon.ComponentsTests
 
             await incidentComponent.RegisterFeature(result.Id, feature.Id);
 
-            var featureDetail = await featureQueryComponent.GetFeatureByIdWithAvailability(feature.Id, OwlveyCalendar.StartJanuary2019, OwlveyCalendar.StartJanuary2020);
+            var featureDetail = await featureQueryComponent.GetFeatureByIdWithQuality(feature.Id, 
+                OwlveyCalendar.january2019);
 
             Assert.NotEmpty(featureDetail.Incidents);
         }

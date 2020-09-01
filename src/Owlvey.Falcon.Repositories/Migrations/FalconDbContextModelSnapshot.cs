@@ -195,6 +195,9 @@ namespace Owlvey.Falcon.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("JourneyMapId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("ModifiedBy")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -208,9 +211,6 @@ namespace Owlvey.Falcon.Repositories.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ServiceMapId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -364,6 +364,110 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     b.ToTable("IndicatorEntity");
                 });
 
+            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.JourneyEntity", b =>
+                {
+                    b.Property<int?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("AvailabilitySla")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("AvailabilitySlo")
+                        .HasColumnType("decimal(5,3)");
+
+                    b.Property<string>("Avatar")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("ExperienceSlo")
+                        .HasColumnType("decimal(5,3)");
+
+                    b.Property<string>("Group")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("LatencySla")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("LatencySlo")
+                        .HasColumnType("decimal(12,3)");
+
+                    b.Property<string>("Leaders")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId", "Name")
+                        .IsUnique();
+
+                    b.ToTable("JourneyEntity");
+                });
+
+            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.JourneyMapEntity", b =>
+                {
+                    b.Property<int?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("FeatureId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("JourneyId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FeatureId");
+
+                    b.HasIndex("JourneyId", "FeatureId")
+                        .IsUnique();
+
+                    b.ToTable("JourneyMapEntity");
+                });
+
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.MemberEntity", b =>
                 {
                     b.Property<int?>("Id")
@@ -449,20 +553,13 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     b.ToTable("ProductEntity");
                 });
 
-            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.ServiceEntity", b =>
+            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.ReliabilityRiskEntity", b =>
                 {
                     b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("AvailabilitySla")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("AvailabilitySlo")
-                        .HasColumnType("decimal(5,3)");
-
                     b.Property<string>("Avatar")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("CreatedBy")
@@ -476,20 +573,16 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("ExperienceSlo")
-                        .HasColumnType("decimal(5,3)");
-
-                    b.Property<string>("Group")
-                        .IsRequired()
+                    b.Property<decimal>("ETTD")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("LatencySla")
+                    b.Property<decimal>("ETTE")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("LatencySlo")
-                        .HasColumnType("decimal(12,3)");
+                    b.Property<decimal>("ETTF")
+                        .HasColumnType("TEXT");
 
-                    b.Property<string>("Leaders")
+                    b.Property<decimal>("ETTFail")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ModifiedBy")
@@ -501,24 +594,97 @@ namespace Owlvey.Falcon.Repositories.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ProductId")
+                    b.Property<string>("Reference")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("SourceId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Tags")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("UserImpact")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId", "Name")
-                        .IsUnique();
+                    b.HasIndex("SourceId");
 
-                    b.ToTable("ServiceEntity");
+                    b.ToTable("ReliabilityRiskEntity");
                 });
 
-            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.ServiceMapEntity", b =>
+            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.ReliabilityThreatEntity", b =>
                 {
                     b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Avatar")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("ETTD")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("ETTE")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("ETTF")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("ETTFail")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Reference")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Tags")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("UserImpact")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ReliabilityThreatEntity");
+                });
+
+            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.SecurityRiskEntity", b =>
+                {
+                    b.Property<int?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AgentSkillLevel")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Avatar")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Awareness")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("CreatedBy")
@@ -529,7 +695,31 @@ namespace Owlvey.Falcon.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("FeatureId")
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("EasyDiscovery")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("EasyExploit")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("FinancialDamage")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("IntrusionDetection")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("LossAccountability")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("LossAvailability")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("LossConfidentiality")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("LossIntegrity")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("ModifiedBy")
@@ -540,17 +730,131 @@ namespace Owlvey.Falcon.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ServiceId")
+                    b.Property<int>("Motive")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("NonCompliance")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Opportunity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PrivacyViolation")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Reference")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ReputationDamage")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Size")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SourceId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Tags")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FeatureId");
+                    b.HasIndex("SourceId");
 
-                    b.HasIndex("ServiceId", "FeatureId")
-                        .IsUnique();
+                    b.ToTable("SecurityRiskEntity");
+                });
 
-                    b.ToTable("ServiceMapEntity");
+            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.SecurityThreatEntity", b =>
+                {
+                    b.Property<int?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AgentSkillLevel")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Avatar")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Awareness")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("EasyDiscovery")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("EasyExploit")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("FinancialDamage")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("IntrusionDetection")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("LossAccountability")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("LossAvailability")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("LossConfidentiality")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("LossIntegrity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Motive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("NonCompliance")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Opportunity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PrivacyViolation")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Reference")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ReputationDamage")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Size")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Tags")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SecurityThreatEntity");
                 });
 
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.SourceEntity", b =>
@@ -573,17 +877,16 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("GoodDefinition")
+                    b.Property<string>("GoodDefinitionAvailability")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Group")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("GoodDefinitionExperience")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
-                    b.Property<int>("Kind")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("Latency")
+                    b.Property<string>("GoodDefinitionLatency")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ModifiedBy")
@@ -607,7 +910,15 @@ namespace Owlvey.Falcon.Repositories.Migrations
                     b.Property<string>("Tags")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("TotalDefinition")
+                    b.Property<string>("TotalDefinitionAvailability")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TotalDefinitionExperience")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TotalDefinitionLatency")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -634,6 +945,9 @@ namespace Owlvey.Falcon.Repositories.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("Good")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Group")
                         .HasColumnType("INTEGER");
 
                     b.Property<decimal>("Measure")
@@ -856,6 +1170,30 @@ namespace Owlvey.Falcon.Repositories.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.JourneyEntity", b =>
+                {
+                    b.HasOne("Owlvey.Falcon.Core.Entities.ProductEntity", "Product")
+                        .WithMany("Journeys")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.JourneyMapEntity", b =>
+                {
+                    b.HasOne("Owlvey.Falcon.Core.Entities.FeatureEntity", "Feature")
+                        .WithMany("JourneyMaps")
+                        .HasForeignKey("FeatureId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Owlvey.Falcon.Core.Entities.JourneyEntity", "Journey")
+                        .WithMany("FeatureMap")
+                        .HasForeignKey("JourneyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Owlvey.Falcon.Core.Entities.MemberEntity", b =>
                 {
                     b.HasOne("Owlvey.Falcon.Core.Entities.SquadEntity", "Squad")
@@ -880,26 +1218,20 @@ namespace Owlvey.Falcon.Repositories.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.ServiceEntity", b =>
+            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.ReliabilityRiskEntity", b =>
                 {
-                    b.HasOne("Owlvey.Falcon.Core.Entities.ProductEntity", "Product")
-                        .WithMany("Services")
-                        .HasForeignKey("ProductId")
+                    b.HasOne("Owlvey.Falcon.Core.Entities.SourceEntity", "Source")
+                        .WithMany("ReliabilityRisks")
+                        .HasForeignKey("SourceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.ServiceMapEntity", b =>
+            modelBuilder.Entity("Owlvey.Falcon.Core.Entities.SecurityRiskEntity", b =>
                 {
-                    b.HasOne("Owlvey.Falcon.Core.Entities.FeatureEntity", "Feature")
-                        .WithMany("ServiceMaps")
-                        .HasForeignKey("FeatureId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Owlvey.Falcon.Core.Entities.ServiceEntity", "Service")
-                        .WithMany("FeatureMap")
-                        .HasForeignKey("ServiceId")
+                    b.HasOne("Owlvey.Falcon.Core.Entities.SourceEntity", "Source")
+                        .WithMany("SecurityRisks")
+                        .HasForeignKey("SourceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

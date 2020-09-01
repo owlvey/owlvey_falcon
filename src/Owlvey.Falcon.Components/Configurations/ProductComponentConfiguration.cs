@@ -10,7 +10,7 @@ namespace Owlvey.Falcon.Components
         public static void ConfigureMappers(IMapperConfigurationExpression cfg)
         {
             cfg.CreateMap<ProductEntity, ProductGetListItemRp>()
-                .ForMember(c => c.ServicesCount, opt => opt.MapFrom(d => d.Services.Count))
+                .ForMember(c => c.JourneysCount, opt => opt.MapFrom(d => d.Journeys.Count))
                 .ForMember(c => c.FeaturesCount, opt => opt.MapFrom(d => d.Features.Count))
                 .ForMember(c => c.SourcesCount, opt => opt.MapFrom(d => d.Sources.Count))
                 .ForMember(c => c.Coverage, opt => opt.MapFrom(d => d.MeasureCoverage().assigned))

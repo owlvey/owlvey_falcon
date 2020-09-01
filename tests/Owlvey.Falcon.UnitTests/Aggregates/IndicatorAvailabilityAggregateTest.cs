@@ -15,17 +15,17 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         [Fact]
         public void MeasureAvailability()
         {
-            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductServiceFeature();
+            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductJourneyFeature();
             var source = TestDataFactory.BuildSource(product);
 
             var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, "test");
 
-            var sourceItemA = SourceEntity.Factory.CreateInteractionsFromRange(source,
+            var sourceItemA = SourceEntity.Factory.CreateItemsFromRange(source,
                 OwlveyCalendar.StartJanuary2019, OwlveyCalendar.EndJanuary2019,
-                900, 1200, DateTime.Now, "test");            
-            var sourceItemB = SourceEntity.Factory.CreateInteraction(source,
+                900, 1200, DateTime.Now, "test", SourceGroupEnum.Availability);            
+            var sourceItemB = SourceEntity.Factory.CreateItem(source,
                 TDF.OwlveyCalendar.StartJanuary2019,
-                900, 1200, DateTime.Now, "test");
+                900, 1200, DateTime.Now, "test", SourceGroupEnum.Availability);
 
             foreach (var item in sourceItemA)
             {
@@ -34,7 +34,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             
             source.SourceItems.Add(sourceItemB);
 
-            var aggregate = new SourceDailyAvailabilityAggregate(indicator.Source,                
+            var aggregate = new SourceDailyAggregate(indicator.Source,                
                 new Core.Values.DatePeriodValue(
                 OwlveyCalendar.StartJanuary2019,
                 OwlveyCalendar.EndJanuary2019));
@@ -42,28 +42,27 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             var availabilities = aggregate.MeasureAvailability();
 
             Assert.Equal(31, availabilities.Count());
-            Assert.Equal(0.751m, availabilities.First().Measure.Availability);
+            Assert.Equal(0.76m, availabilities.First().Measure.Availability);
         }
 
         [Fact]
         public void MeasureAvailabilityNoDataFirstDates()
         {
-            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductServiceFeature();
+            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductJourneyFeature();
             var source = TestDataFactory.BuildSource(product);
 
             var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, "test");
 
-            var sourceItemA = SourceEntity.Factory.CreateInteraction(source,
-                OwlveyCalendar.January201905,                
-                900, 1200, DateTime.Now, "test");
-            var sourceItemB = SourceEntity.Factory.CreateInteraction(source,                
+            var sourceItemA = SourceEntity.Factory.CreateItem(source,
+                OwlveyCalendar.January201905, 900, 1200, DateTime.Now, "test", SourceGroupEnum.Availability);
+            var sourceItemB = SourceEntity.Factory.CreateItem(source,                
                 OwlveyCalendar.EndJanuary2019,
-                900, 1200, DateTime.Now, "test");
+                900, 1200, DateTime.Now, "test", SourceGroupEnum.Availability);
 
             source.SourceItems.Add(sourceItemA);
             source.SourceItems.Add(sourceItemB);
 
-            var aggregate = new SourceDailyAvailabilityAggregate(indicator.Source,                
+            var aggregate = new SourceDailyAggregate(indicator.Source,                
                 new Core.Values.DatePeriodValue(
                 OwlveyCalendar.StartJanuary2019,
                 OwlveyCalendar.EndJanuary2019));
@@ -77,12 +76,12 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
 
         [Fact]
         public void MeasureAvailabilityEmpty() {
-            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductServiceFeature();
+            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductJourneyFeature();
             var source = TestDataFactory.BuildSource(product);
 
             var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, "test");
             
-            var aggregate = new SourceDailyAvailabilityAggregate(
+            var aggregate = new SourceDailyAggregate(
                 indicator.Source,                
                 new Core.Values.DatePeriodValue(
                 OwlveyCalendar.StartJanuary2019,

@@ -17,8 +17,8 @@ namespace Owlvey.Falcon.Components
         private readonly FalconDbContext _dbContext;
 
         public MemberComponent(FalconDbContext dbContext,
-            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway, 
-            IMapper mapper, ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityService, configuration)
+            IUserIdentityGateway identityGateway, IDateTimeGateway dateTimeGateway, 
+            IMapper mapper, ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityGateway, configuration)
         {
             this._dbContext = dbContext;
         }
@@ -26,7 +26,7 @@ namespace Owlvey.Falcon.Components
         public async Task<BaseComponentResultRp> CreateMember(MemberPostRp model)
         {
             var result = new BaseComponentResultRp();
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
 
             var squad = await this._dbContext.Squads.SingleAsync(c=>c.Id == model.SquadId);
             var user = await this._dbContext.Users.SingleAsync(c => c.Id == model.UserId);
@@ -43,7 +43,7 @@ namespace Owlvey.Falcon.Components
         public async Task<BaseComponentResultRp> DeleteMember(int memberId)
         {
             var result = new BaseComponentResultRp();
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
 
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
 

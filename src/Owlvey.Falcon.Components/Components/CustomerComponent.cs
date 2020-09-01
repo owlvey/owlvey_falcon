@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using Owlvey.Falcon.Repositories.Customers;
 using Owlvey.Falcon.Repositories.Features;
-using Owlvey.Falcon.Repositories.Services;
+using Owlvey.Falcon.Repositories.Journeys;
 using Polly;
 
 namespace Owlvey.Falcon.Components
@@ -20,15 +20,15 @@ namespace Owlvey.Falcon.Components
         
 
         public CustomerComponent(FalconDbContext dbContext,
-            IUserIdentityGateway identityService, IDateTimeGateway dateTimeGateway, IMapper mapper,
-            ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityService, configuration)
+            IUserIdentityGateway identityGateway, IDateTimeGateway dateTimeGateway, IMapper mapper,
+            ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityGateway, configuration)
         {
             this._dbContext = dbContext;            
         }
 
         public async Task<CustomerGetListRp> CreateCustomer(CustomerPostRp model)
         {            
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
 
             var retryPolicy = Policy.Handle<DbUpdateException>()
                 .WaitAndRetryAsync(this._configuration.DefaultRetryAttempts,
@@ -52,7 +52,7 @@ namespace Owlvey.Falcon.Components
         public async Task<CustomerGetRp> CreateOrUpdate(string name,
             string avatar, string leaders)
         {
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
             var entity = await this._dbContext.Customers.Where(c => c.Name == name).SingleOrDefaultAsync();
             if (entity == null)
@@ -69,14 +69,14 @@ namespace Owlvey.Falcon.Components
         {
             var customer = await this._dbContext.Customers.SingleOrDefaultAsync(c => c.Id == id);
             if (customer != null) {
-                var modifiedBy = this._identityService.GetIdentity();
+                var modifiedBy = this._identityGateway.GetIdentity();
                 this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;                
-                var services = await this._dbContext.Services.Where(c => c.Product.CustomerId == id).ToListAsync();
+                var journeys = await this._dbContext.Journeys.Where(c => c.Product.CustomerId == id).ToListAsync();
                 var features = await this._dbContext.Features.Where(c => c.Product.CustomerId == id).ToListAsync();
 
-                foreach (var service in services)
+                foreach (var journey in journeys)
                 {
-                    await this._dbContext.RemoveService(service.Id.Value);
+                    await this._dbContext.RemoveJourney(journey.Id.Value);
                 }
 
                 foreach (var feature in features)
@@ -93,7 +93,7 @@ namespace Owlvey.Falcon.Components
         public async Task<BaseComponentResultRp> UpdateCustomer(int id, CustomerPutRp model)
         {
             var result = new BaseComponentResultRp();
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
 
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
 

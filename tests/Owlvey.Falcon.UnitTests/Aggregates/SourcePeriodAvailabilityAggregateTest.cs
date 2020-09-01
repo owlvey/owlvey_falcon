@@ -12,18 +12,18 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         [Fact]
         public void MeasureAvailabilityWithNoDataStart()
         {
-            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductServiceFeature();
+            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductJourneyFeature();
             var source = TestDataFactory.BuildSource(product);
 
-            var sourceItemA = SourceEntity.Factory.CreateInteractionsFromRange(source,
+            var sourceItemA = SourceEntity.Factory.CreateItemsFromRange(source,
                 OwlveyCalendar.January201903,
                 OwlveyCalendar.January201905,
-                900, 1000, DateTime.Now, "test");
+                900, 1000, DateTime.Now, "test", SourceGroupEnum.Availability);
 
-            var sourceItemB = SourceEntity.Factory.CreateInteractionsFromRange(source,
+            var sourceItemB = SourceEntity.Factory.CreateItemsFromRange(source,
                 OwlveyCalendar.January201908,
                 OwlveyCalendar.January201910,
-                800, 1000, DateTime.Now, "test");
+                800, 1000, DateTime.Now, "test", SourceGroupEnum.Availability);
 
 
             foreach (var item in sourceItemA)
@@ -36,7 +36,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                 source.SourceItems.Add(item);
             }                                   
 
-            var aggregate = new SourceDailyAvailabilityAggregate(source,
+            var aggregate = new SourceDailyAggregate(source,
                 new Core.Values.DatePeriodValue(
                 OwlveyCalendar.January201906,
                 OwlveyCalendar.January201920));
@@ -51,13 +51,13 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
 
         [Fact]
         public void MeasureAvailabilityWithPartialStart() {
-            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductServiceFeature();
+            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductJourneyFeature();
             var source = TestDataFactory.BuildSource(product);
 
-            var sourceItemA = SourceEntity.Factory.CreateInteractionsFromRange(source,
+            var sourceItemA = SourceEntity.Factory.CreateItemsFromRange(source,
                 OwlveyCalendar.January201908,
                 OwlveyCalendar.January201914,
-                900, 1000, DateTime.Now, "test");
+                900, 1000, DateTime.Now, "test", SourceGroupEnum.Availability);
 
             foreach (var item in sourceItemA)
             {
@@ -65,7 +65,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
             }
 
             
-            var aggregate = new SourceDailyAvailabilityAggregate(source,
+            var aggregate = new SourceDailyAggregate(source,
                 new Core.Values.DatePeriodValue(
                 OwlveyCalendar.January201905,
                 OwlveyCalendar.January201910));
@@ -81,20 +81,20 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         [Fact]
         public void MeasureAvailabilityWithPartialEnd()
         {
-            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductServiceFeature();
+            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductJourneyFeature();
             var source = TestDataFactory.BuildSource(product);
 
-            var sourceItemA = SourceEntity.Factory.CreateInteractionsFromRange(source,
+            var sourceItemA = SourceEntity.Factory.CreateItemsFromRange(source,
                 OwlveyCalendar.January201908,
                 OwlveyCalendar.January201914,
-                900, 1000, DateTime.Now, "test");
+                900, 1000, DateTime.Now, "test", SourceGroupEnum.Availability);
 
             foreach (var item in sourceItemA)
             {
                 source.SourceItems.Add(item);
             }            
 
-            var aggregate = new SourceDailyAvailabilityAggregate(source,
+            var aggregate = new SourceDailyAggregate(source,
                 new Core.Values.DatePeriodValue(
                 OwlveyCalendar.January201910,
                 OwlveyCalendar.January201920));
@@ -109,18 +109,18 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         [Fact]
         public void MeasureAvailability()
         {
-            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductServiceFeature();
+            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductJourneyFeature();
             var source = TestDataFactory.BuildSource(product);
 
             var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, "test");
 
-            var sourceItemA = SourceEntity.Factory.CreateInteractionsFromRange(source,
+            var sourceItemA = SourceEntity.Factory.CreateItemsFromRange(source,
                 OwlveyCalendar.StartJanuary2019,
                 OwlveyCalendar.EndJanuary2019,
-                900, 1200, DateTime.Now, "test");
-            var sourceItemB = SourceEntity.Factory.CreateInteractionsFromRange(source,
+                900, 1200, DateTime.Now, "test", SourceGroupEnum.Availability);
+            var sourceItemB = SourceEntity.Factory.CreateItemsFromRange(source,
                 OwlveyCalendar.StartJanuary2019, OwlveyCalendar.EndJanuary2019,
-                900, 1200, DateTime.Now, "test");
+                900, 1200, DateTime.Now, "test", SourceGroupEnum.Availability);
 
             foreach (var item in sourceItemA)
             {
@@ -132,7 +132,7 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
                 source.SourceItems.Add(item);
             }            
 
-            var aggregate = new SourceDailyAvailabilityAggregate(source,                
+            var aggregate = new SourceDailyAggregate(source,                
                 new Core.Values.DatePeriodValue(
                 OwlveyCalendar.StartJanuary2019,
                 OwlveyCalendar.EndJanuary2019));
@@ -146,22 +146,22 @@ namespace Owlvey.Falcon.UnitTests.Aggregates
         [Fact]
         public void MeasureAvailabilityNotMinusOne()
         {
-            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductServiceFeature();
+            var (_, product, _, feature) = TestDataFactory.BuildCustomerProductJourneyFeature();
             var source = TestDataFactory.BuildSource(product);
 
             var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, "test");
 
-            var sourceItemA = SourceEntity.Factory.CreateInteractionsFromRange(source,
+            var sourceItemA = SourceEntity.Factory.CreateItemsFromRange(source,
                 OwlveyCalendar.StartJuly2019,
                 OwlveyCalendar.EndJuly2019,
-                3900223, 3911869, DateTime.Now, "test");
+                3900223, 3911869, DateTime.Now, "test", SourceGroupEnum.Availability);
 
             foreach (var item in sourceItemA)
             {
                 source.SourceItems.Add(item);
             }            
 
-            var aggregate = new SourceDailyAvailabilityAggregate(source,
+            var aggregate = new SourceDailyAggregate(source,
                 new Core.Values.DatePeriodValue(
                 OwlveyCalendar.StartJuly2019,
                 OwlveyCalendar.EndJuly2019));

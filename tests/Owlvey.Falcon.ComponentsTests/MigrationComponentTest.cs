@@ -1,18 +1,16 @@
-﻿using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
+﻿using KellermanSoftware.CompareNetObjects;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using Owlvey.Falcon.Components;
-using Owlvey.Falcon.Repositories;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
+using System.Linq;
+using Owlvey.Falcon.Models;
+using System;
 
 namespace Owlvey.Falcon.ComponentsTests
 {
     public class MigrationComponentTest
-    {
+    {        
         [Fact]
         public async Task ExporImport()
         {            
@@ -49,42 +47,109 @@ namespace Owlvey.Falcon.ComponentsTests
             await productComponent.ImportsItems(result.Id, stream);
         }
                 
-
         [Fact]
-        public async Task BackupRestore() {
-            
+        public async Task Backup(){
             #region   Components
 
             var container = ComponentTestFactory.BuildContainer();
             var customerComponet = container.GetInstance<CustomerComponent>();
             var customerQueryComponet = container.GetInstance<CustomerQueryComponent>();
+            var productComponent = container.GetInstance<ProductComponent>();
             var productQueryComponent = container.GetInstance<ProductQueryComponent>();
             var squadQueryComponent = container.GetInstance<SquadQueryComponent>();
             var sourceComponent = container.GetInstance<SourceComponent>();
             var migrationComponent = container.GetInstance<MigrationComponent>();
-            var serviceComponent = container.GetInstance<ServiceQueryComponent>();
+            var journeyComponent = container.GetInstance<JourneyQueryComponent>();
             var featureComponent = container.GetInstance<FeatureQueryComponent>();
             var sourceItemComponent = container.GetInstance<SourceItemComponent>();
+            var securityComponent = container.GetInstance<SecurityRiskComponent>();
+            var reliabilityComponent = container.GetInstance<ReliabilityRiskComponent>();
 
             #endregion
-
             var result = await customerComponet.CreateCustomer(new Models.CustomerPostRp()
             {
                 Name = "test",  Default = true   
-            });            
+            });
+            var product = await productComponent.CreateProduct(new Models.ProductPostRp() { Name = "test", CustomerId = result.Id });
+            var SecurityThreat = await securityComponent.CreateThreat(new Models.SecurityThreatPostRp() { Name= "test" } );
+            var source = await sourceComponent.Create(new Models.SourcePostRp() {
+                 Name = "test", ProductId = product.Id
+            });
+            var SecurityRisk = await securityComponent.Create(new Models.SecurityRiskPost()
+            {
+                 SourceId = source.Id,  Name = SecurityThreat.Name
+            });
+
+
+            var reliabilityThreat = await reliabilityComponent.CreateThreat(new Models.ReliabilityThreatPostRp()
+            { Name = "test threat" });
+
+            var reliabilityRisk = await reliabilityComponent.Create(new Models.ReliabilityRiskPostRp()
+            {
+                 Name = "test risk", SourceId = source.Id
+            });
 
             var stream = await migrationComponent.Backup(true);
 
-            var customers = await customerQueryComponet.GetCustomers();
+            
 
-            foreach (var item in customers)
+            
+        }
+        
+        [Fact]
+        public async Task BackupRestore() {
+
+            #region   Components
+
+            var container = ComponentTestFactory.BuildContainer();
+            var customerComponet = container.GetInstance<CustomerComponent>();
+            var customerQueryComponet = container.GetInstance<CustomerQueryComponent>();
+            var productComponent = container.GetInstance<ProductComponent>();
+            var productQueryComponent = container.GetInstance<ProductQueryComponent>();
+            var squadQueryComponent = container.GetInstance<SquadQueryComponent>();
+            var sourceComponent = container.GetInstance<SourceComponent>();
+            var migrationComponent = container.GetInstance<MigrationComponent>();
+            var journeyComponent = container.GetInstance<JourneyQueryComponent>();
+            var featureComponent = container.GetInstance<FeatureQueryComponent>();
+            var sourceItemComponent = container.GetInstance<SourceItemComponent>();
+            var securityComponent = container.GetInstance<SecurityRiskComponent>();
+            var reliabilityComponent = container.GetInstance<ReliabilityRiskComponent>();
+
+            #endregion
+            var result = await customerComponet.CreateCustomer(new Models.CustomerPostRp()
             {
-                await customerComponet.DeleteCustomer(item.Id);
-            }
+                Name = "test",
+                Default = true
+            });
+            var product = await productComponent.CreateProduct(new Models.ProductPostRp() { Name = "test", CustomerId = result.Id });
+            
+            var source = await sourceComponent.Create(new Models.SourcePostRp()
+            {
+                Name = "test",
+                ProductId = product.Id
+            });
 
-            customers = await customerQueryComponet.GetCustomers();
+            var securityThreats =  await securityComponent.CreateDefault();
+            var SecurityRisk = await securityComponent.Create(new Models.SecurityRiskPost()
+            {
+                SourceId = source.Id,
+                Name = "test risk"
+            });
+            var reliabiltyThreats =  await reliabilityComponent.CreateDefault();
+            
+            var reliabilityRisk = await reliabilityComponent.Create(new Models.ReliabilityRiskPostRp()
+            {
+                Name = "reliability risk",
+                SourceId = source.Id
+            });
 
-            Assert.Empty(customers);
+            var stream = await migrationComponent.Backup(true);
+
+            await migrationComponent.ClearData();
+
+            Assert.Empty(await customerQueryComponet.GetCustomers());            
+            Assert.Empty(await securityComponent.GetThreats());            
+            Assert.Empty(await reliabilityComponent.GetThreats());            
 
             await migrationComponent.Restore(stream);
 
@@ -113,20 +178,55 @@ namespace Owlvey.Falcon.ComponentsTests
 
             Assert.NotEmpty(squads);
 
-            var services = await serviceComponent.GetServices(customer_target.Id);
-            Assert.NotEmpty(services);
+            var journeys = await journeyComponent.GetListByProductId(customer_target.Id);
+            Assert.NotEmpty(journeys);
 
-            foreach (var item in services)
+            foreach (var item in journeys)
             {
-                var service_detail = await serviceComponent.GetServiceById(item.Id);                
-                Assert.NotEmpty(service_detail.Features);
+                var journey_detail = await journeyComponent.GetJourneyById(item.Id);                
+                Assert.NotEmpty(journey_detail.Features);
             }
             
             var features = await featureComponent.GetFeatures(customer_target.Id);
-            Assert.NotEmpty(features);      
+            Assert.NotEmpty(features);            
+
+            var securityRisks = await securityComponent.GetRisks(null);
+            Assert.NotEmpty(securityRisks);
+
+            var reliabilityThreats = await reliabilityComponent.GetThreats();
+            Assert.NotEmpty(reliabilityThreats);
+
+
+            var reliabilityRisks = await reliabilityComponent.GetRisks(null);
+            Assert.NotEmpty(reliabilityRisks);
+
             
+            
+            ComparisonConfig config = new ComparisonConfig();            
+            config.IgnoreProperty((SecurityThreatGetRp c)=>c.Id);
+            config.IgnoreProperty((ReliabilityThreatGetRp c)=>c.Id);
+            config.MaxDifferences = 5;
+            var ThreatsCompare = new CompareLogic(config);        
+               
+            var targets = await securityComponent.GetThreats();
+            foreach( var item in securityThreats){                
+                var target = targets.Where(e=>e.Name == item.Name).Single();
+                var temp = ThreatsCompare.Compare(item,  target);
+                if (!temp.AreEqual)
+                {
+                    throw new ApplicationException(target.Name + " " + temp.DifferencesString);   
+                }                
+            }
 
+            var reliabilityThreatsRestored = await reliabilityComponent.GetThreats();
+            foreach(var item in reliabiltyThreats){
+                var target = reliabilityThreatsRestored.Where(e=>e.Name == item.Name).Single();
+                var temp = ThreatsCompare.Compare(item,  target);
+                if (!temp.AreEqual)
+                {
+                    throw new ApplicationException(target.Name + " " + temp.DifferencesString);   
+                }                
+            } 
         }
-
     }
 }

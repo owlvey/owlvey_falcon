@@ -22,20 +22,20 @@ namespace Owlvey.Falcon.Core.Entities
                 var paymentFeature = FeatureEntity.Factory.Create("Awesome Payment", on, user, defaultProduct);
                 defaultProduct.Features.Add(paymentFeature);
 
-                var defaultService = ServiceEntity.Factory.Create("Awesome Onboarding", on, user, defaultProduct);
-                defaultProduct.Services.Add(defaultService);
+                var defaultJourney = JourneyEntity.Factory.Create("Awesome Onboarding", on, user, defaultProduct);
+                defaultProduct.Journeys.Add(defaultJourney);
 
-                var defaultPaymentService = ServiceEntity.Factory.Create("Awesome Payment Service", on, user, defaultProduct);                
-                defaultProduct.Services.Add(defaultPaymentService);
+                var defaultPaymentJourney = JourneyEntity.Factory.Create("Awesome Payment Journey", on, user, defaultProduct);                
+                defaultProduct.Journeys.Add(defaultPaymentJourney);
 
-                var defaultMap = ServiceMapEntity.Factory.Create(defaultService, defaultFeature, on, user);
-                defaultService.FeatureMap.Add(defaultMap);
+                var defaultMap = JourneyMapEntity.Factory.Create(defaultJourney, defaultFeature, on, user);
+                defaultJourney.FeatureMap.Add(defaultMap);
 
-                defaultMap = ServiceMapEntity.Factory.Create(defaultService, defaultRegistration, on, user);
-                defaultService.FeatureMap.Add(defaultMap);
+                defaultMap = JourneyMapEntity.Factory.Create(defaultJourney, defaultRegistration, on, user);
+                defaultJourney.FeatureMap.Add(defaultMap);
 
-                defaultMap = ServiceMapEntity.Factory.Create(defaultPaymentService, paymentFeature, on, user);
-                defaultPaymentService.FeatureMap.Add(defaultMap);
+                defaultMap = JourneyMapEntity.Factory.Create(defaultPaymentJourney, paymentFeature, on, user);
+                defaultPaymentJourney.FeatureMap.Add(defaultMap);
 
                 var defaultSquad = SquadEntity.Factory.Create("Spartans", on, user, result);
                
@@ -52,13 +52,13 @@ namespace Owlvey.Falcon.Core.Entities
                 defaultSquadFeature = SquadFeatureEntity.Factory.Create(AllBlacksSquad, paymentFeature, on, user);
                 AllBlacksSquad.FeatureMaps.Add(defaultSquadFeature);                
 
-                var defaultSource = SourceEntity.Factory.Create(defaultProduct, "login requests", on, user, SourceKindEnum.Interaction, SourceGroupEnum.Availability);
+                var defaultSource = SourceEntity.Factory.Create(defaultProduct, "login requests", on, user);
                 defaultProduct.Sources.Add(defaultSource);
 
-                var registrationSource = SourceEntity.Factory.Create(defaultProduct, "registration requests", on, user, SourceKindEnum.Interaction, SourceGroupEnum.Availability);
+                var registrationSource = SourceEntity.Factory.Create(defaultProduct, "registration requests", on, user);
                 defaultProduct.Sources.Add(registrationSource);
 
-                var paymentSource = SourceEntity.Factory.Create(defaultProduct, "payment requests", on, user, SourceKindEnum.Interaction, SourceGroupEnum.Availability);
+                var paymentSource = SourceEntity.Factory.Create(defaultProduct, "payment requests", on, user);
                 defaultProduct.Sources.Add(paymentSource);
 
                 var year = on.Year;
@@ -68,13 +68,16 @@ namespace Owlvey.Falcon.Core.Entities
 
                     for (int j = 1; j < 28; j++)
                     {
-                        var defaultSourceItem = SourceEntity.Factory.CreateInteraction(defaultSource, new DateTime(year, i, j), random.Next(800, 1000), 1000, on, user);
+                        var defaultSourceItem = SourceEntity.Factory.CreateItem(defaultSource, new DateTime(year, i, j), 
+                            random.Next(800, 1000), 1000, on, user, SourceGroupEnum.Availability);
                         defaultSource.SourceItems.Add(defaultSourceItem);
 
-                        var registrationSourceItem = SourceEntity.Factory.CreateInteraction(registrationSource, new DateTime(year, i, j), random.Next(800, 1000), 1000, on, user);
+                        var registrationSourceItem = SourceEntity.Factory.CreateItem(registrationSource, new DateTime(year, i, j), random.Next(800, 1000), 1000, on, user,
+                            SourceGroupEnum.Availability);
                         registrationSource.SourceItems.Add(registrationSourceItem);
 
-                        var paymentSourceItem = SourceEntity.Factory.CreateInteraction(paymentSource, new DateTime(year, i, j), random.Next(800, 1000), 1000, on, user);
+                        var paymentSourceItem = SourceEntity.Factory.CreateItem(paymentSource, new DateTime(year, i, j), random.Next(800, 1000), 1000, on, 
+                            user, SourceGroupEnum.Availability);
                         paymentSource.SourceItems.Add(paymentSourceItem);
 
                     }                    

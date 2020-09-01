@@ -18,8 +18,8 @@ namespace Owlvey.Falcon.Components
         private readonly FalconDbContext _dbContext;
 
         public IncidentComponent(FalconDbContext dbContext, IMapper mapper,
-            IDateTimeGateway dateTimeGateway, IUserIdentityGateway identityService,
-            ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityService, configuration)
+            IDateTimeGateway dateTimeGateway, IUserIdentityGateway identityGateway,
+            ConfigurationComponent configuration) : base(dateTimeGateway, mapper, identityGateway, configuration)
         {
             this._dbContext = dbContext;                       
         }
@@ -59,7 +59,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<(IncidentGetListRp incident, bool created)> Post(IncidentPostRp model) {
             bool created = false;
-            var createdBy = this._identityService.GetIdentity();            
+            var createdBy = this._identityGateway.GetIdentity();            
             var entity = await this._dbContext.Incidents.Where(c => c.Key == model.Key && c.ProductId == model.ProductId).SingleOrDefaultAsync();
             if (entity == null) {
                 created = true;
@@ -72,7 +72,7 @@ namespace Owlvey.Falcon.Components
         }
 
         public async Task<IncidentGetListRp> Put(int id, IncidentPutRp model) {
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             var incident = await this._dbContext.Incidents.Where(c => c.Id == id).SingleAsync();
             this._dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
             incident.Update(model.Title, createdBy, this._datetimeGateway.GetCurrentDateTime(),
@@ -84,7 +84,7 @@ namespace Owlvey.Falcon.Components
         }
 
         public async Task RegisterFeature(int incidentId, int featureId) {
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             var entity = await this._dbContext.IncidentMaps.Where(c => c.IncidentId == incidentId && c.FeatureId == featureId).SingleOrDefaultAsync();
 
             if (entity == null) {
@@ -101,7 +101,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task UnRegisterFeature(int incidentId, int featureId)
         {
-            var createdBy = this._identityService.GetIdentity();
+            var createdBy = this._identityGateway.GetIdentity();
             var entity = await this._dbContext.IncidentMaps.Where(c => c.IncidentId == incidentId && c.FeatureId == featureId).SingleOrDefaultAsync();
             if (entity != null)
             {   

@@ -14,6 +14,12 @@ namespace Owlvey.Falcon.Core.Values
         {
             
         }
+        public DebtMeasureValue(decimal availability, decimal latency, decimal experience)
+        {
+            this.Availability = availability;
+            this.Latency = latency;
+            this.Experience = experience;
+        }
         public DebtMeasureValue(IEnumerable<DebtMeasureValue> value)
         {
             this.Availability = value.Sum(c=>c.Availability);
@@ -33,7 +39,7 @@ namespace Owlvey.Falcon.Core.Values
                 this.Add(item);
             }            
         }
-        public void Add(ServiceQualityMeasureValue value)
+        public void Add(JourneyQualityMeasureValue value)
         {
             this.Availability += value.AvailabilityDebt;
             this.Latency += value.LatencyDebt;

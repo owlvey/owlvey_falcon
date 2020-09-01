@@ -27,9 +27,9 @@ namespace Owlvey.Falcon.UnitTests
             var squad = SquadEntity.Factory.Create(name, DateTime.UtcNow, createdBy, customer);
             return squad;
         }
-        public static ServiceEntity BuildService(string name, decimal slo, string createdBy, DateTime on) {
+        public static JourneyEntity BuildJourney(string name, decimal slo, string createdBy, DateTime on) {
             var (_, product) = TestDataFactory.BuildCustomerProduct();
-            var entity = ServiceEntity.Factory.Create(name, on, createdBy, product);
+            var entity = JourneyEntity.Factory.Create(name, on, createdBy, product);
             return entity;
         }
         public static FeatureEntity BuildFeature(string name, string createdBy, DateTime on)
@@ -41,8 +41,7 @@ namespace Owlvey.Falcon.UnitTests
         public static SourceEntity BuildSource(ProductEntity product, string name = "/owlvey", DateTime? on = null, string createdBy = "test") {
 
             on = on ?? DateTime.Now;
-            var entity = SourceEntity.Factory.Create(product, name, on.Value, createdBy,
-                 SourceKindEnum.Interaction, SourceGroupEnum.Availability);
+            var entity = SourceEntity.Factory.Create(product, name, on.Value, createdBy);
             return entity;
         }
 
@@ -52,28 +51,28 @@ namespace Owlvey.Falcon.UnitTests
             return (customer, product);
         }
 
-        public static (CustomerEntity, ProductEntity, ServiceEntity) BuildCustomerProductService()
+        public static (CustomerEntity, ProductEntity, JourneyEntity) BuildCustomerProductJourney()
         {
             var customer = TestDataFactory.BuildCustomer();
             var product = TestDataFactory.BuildProduct(customer);
-            var service = TestDataFactory.BuildService("test", 99, "test", DateTime.Now);
-            product.AddService(service);
+            var journey = TestDataFactory.BuildJourney("test", 99, "test", DateTime.Now);
+            product.AddJourney(journey);
 
-            return (customer, product, service);
+            return (customer, product, journey);
         }
 
-        public static (CustomerEntity, ProductEntity, ServiceEntity, FeatureEntity) BuildCustomerProductServiceFeature()
+        public static (CustomerEntity, ProductEntity, JourneyEntity, FeatureEntity) BuildCustomerProductJourneyFeature()
         {
             var customer = TestDataFactory.BuildCustomer();
             var product = TestDataFactory.BuildProduct(customer);
-            var service = TestDataFactory.BuildService("test", 99, "test", DateTime.Now);
+            var journey = TestDataFactory.BuildJourney("test", 99, "test", DateTime.Now);
             var feature = TestDataFactory.BuildFeature("test", "test", DateTime.Now);
-            var map = ServiceMapEntity.Factory.Create(service, feature, DateTime.Now, "test");
-            product.AddService(service);
+            var map = JourneyMapEntity.Factory.Create(journey, feature, DateTime.Now, "test");
+            product.AddJourney(journey);
             product.AddFeature(feature);
-            service.FeatureMap.Add(map); 
+            journey.FeatureMap.Add(map); 
             
-            return (customer, product, service, feature);
+            return (customer, product, journey, feature);
         }
 
         public static ICollection<SourceEntity> BuildSources(ProductEntity product) {
@@ -108,7 +107,7 @@ namespace Owlvey.Falcon.UnitTests
             var start = new DateTime(2019, 01, 01);            
             foreach (var item in results)
             {
-                SourceEntity.Factory.CreateInteraction(item, start, 900, 1000, DateTime.Now, "test");
+                SourceEntity.Factory.CreateItem(item, start, 900, 1000, DateTime.Now, "test", SourceGroupEnum.Availability);
             }
             return results;
         }
@@ -142,11 +141,11 @@ namespace Owlvey.Falcon.UnitTests
                 
                 var indicator = IndicatorEntity.Factory.Create(feature, source, DateTime.Now, Guid.NewGuid().ToString());
 
-                var sourceItem = SourceEntity.Factory.CreateInteraction(source, OwlveyCalendar.StartJanuary2019,
-                    900, 1200, DateTime.Now, "test");                
+                var sourceItem = SourceEntity.Factory.CreateItem(source, OwlveyCalendar.StartJanuary2019,
+                    900, 1200, DateTime.Now, "test", SourceGroupEnum.Availability);                
 
-                var sourceItemA = SourceEntity.Factory.CreateInteraction(source, 
-                    OwlveyCalendar.EndJanuary2019, 900, 1200, DateTime.Now, "test");
+                var sourceItemA = SourceEntity.Factory.CreateItem(source, 
+                    OwlveyCalendar.EndJanuary2019, 900, 1200, DateTime.Now, "test", SourceGroupEnum.Availability);
 
                 source.SourceItems.Add(sourceItem);
                 source.SourceItems.Add(sourceItemA);

@@ -11,11 +11,10 @@ namespace Owlvey.Falcon.Components
     {
         public static void ConfigureMappers(IMapperConfigurationExpression cfg)
         {
-            cfg.CreateMap<SourceItemEntity, SourceItemGetListRp>();
-
-            cfg.CreateMap<InteractiveSourceItemGetRp, InteractiveSourceItemGetRp>();
-            cfg.CreateMap<ProportionSourceItemGetRp, ProportionSourceItemGetRp>();
-
+            cfg.CreateMap<SourceItemEntity, SourceItemGetListRp>();            
+            cfg.CreateMap<SourceItemEntity, AvailabilitySourceItemGetRp>();
+            cfg.CreateMap<SourceItemEntity, LatencySourceItemGetRp>();
+            cfg.CreateMap<SourceItemEntity, ExperienceSourceItemGetRp>();
             cfg.CreateMap<DayPointValue, SeriesItemGetRp>()
                 .ForMember(m => m.OMax, ope => ope.MapFrom(c => c.Maximun))
                 .ForMember(m => m.OMin, ope => ope.MapFrom(c => c.Minimun))

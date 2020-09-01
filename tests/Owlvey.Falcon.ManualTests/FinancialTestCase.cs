@@ -22,11 +22,11 @@ namespace Owlvey.Falcon.ManualTests
             var comQueryCustomer = container.GetInstance<CustomerQueryComponent>();
             var comProduct = container.GetInstance<ProductComponent>();
             var comQueryProduct = container.GetInstance<ProductQueryComponent>();
-            var comService = container.GetInstance<ServiceComponent>();
-            var comQueryService = container.GetInstance<ServiceQueryComponent>();
+            var comJourney = container.GetInstance<JourneyComponent>();
+            var comJourneyQueryComponent = container.GetInstance<JourneyQueryComponent>();
             var comFeature = container.GetInstance<FeatureComponent>();
             var comQueryFeature = container.GetInstance<FeatureQueryComponent>();
-            var comServiceMap = container.GetInstance<ServiceMapComponent>();
+            var comJourneyMap = container.GetInstance<JourneyMapComponent>();
             var comSource = container.GetInstance<SourceComponent>();
             var comItemSource = container.GetInstance<SourceItemComponent>();
             var comIndicators = container.GetInstance<IndicatorComponent>();
@@ -83,7 +83,7 @@ namespace Owlvey.Falcon.ManualTests
 
             foreach (var item in biz_names)
             {
-                await comService.CreateService(new Models.ServicePostRp()
+                await comJourney.Create(new Models.JourneyPostRp()
                 {
                     Name = item,
                     ProductId = product.Id                    
@@ -95,12 +95,12 @@ namespace Owlvey.Falcon.ManualTests
                     ProductId = product.Id
                 });
 
-                var service = await comQueryService.GetServiceByName(product.Id, item);
+                var journey = await comJourneyQueryComponent.GetByProductIdName(product.Id, item);
                 var feature = await comQueryFeature.GetFeatureByName(product.Id, item);
-                await comServiceMap.CreateServiceMap(new Models.ServiceMapPostRp()
+                await comJourneyMap.CreateMap(new Models.JourneyMapPostRp()
                 {
                     FeatureId = feature.Id,
-                    ServiceId = service.Id
+                    JourneyId = journey.Id
                 });
 
                 await comSource.Create(new Models.SourcePostRp()

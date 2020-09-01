@@ -10,9 +10,9 @@ namespace Owlvey.Falcon.Core.Entities
     {
         public DebtMeasureValue Measure(DatePeriodValue period = null) {
             var measure = new DebtMeasureValue();
-            foreach (var service in this.Services)
+            foreach (var journey in this.Journeys)
             {
-                measure.Add(service.Measure(period));
+                measure.Add(journey.Measure(period));
             }
             return measure;
         }
@@ -25,7 +25,7 @@ namespace Owlvey.Falcon.Core.Entities
             }
             var total = features.Count;
             var state = features.ToDictionary(c => c.Id.Value, c => c.Name);
-            foreach (var item in this.Services.SelectMany(c => c.FeatureMap))
+            foreach (var item in this.Journeys.SelectMany(c => c.FeatureMap))
             {
                 if (state.ContainsKey(item.FeatureId))
                 {

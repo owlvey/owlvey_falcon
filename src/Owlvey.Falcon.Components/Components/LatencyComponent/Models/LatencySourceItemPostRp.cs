@@ -5,8 +5,5 @@ using System.Text;
 
 namespace Owlvey.Falcon.Components.Models
 {
-    public class LatencySourceItemPostRp: SourceItemPostRp
-    {
-        public decimal Latency { get; set; }
-    }
+    
 }

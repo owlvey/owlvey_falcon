@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CompareNETObjects" Version="4.66.0" />
     <PackageReference Include="coverlet.msbuild" Version="2.6.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
@@ -39,8 +40,5 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Owlvey.Falcon.Components\Owlvey.Falcon.Components.csproj" />
     <ProjectReference Include="..\..\src\Owlvey.Falcon.Repositories\Owlvey.Falcon.Repositories.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Mocks\" />
   </ItemGroup>
 </Project>

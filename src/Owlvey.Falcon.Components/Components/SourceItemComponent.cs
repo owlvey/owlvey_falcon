@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using Owlvey.Falcon.Core;
 using Owlvey.Falcon.Core.Values;
 using Owlvey.Falcon.Components.Models;
+using Owlvey.Falcon.Repositories.Sources;
+using Owlvey.Falcon.Core.Aggregates;
 
 namespace Owlvey.Falcon.Components
 {
@@ -21,95 +23,192 @@ namespace Owlvey.Falcon.Components
         public SourceItemComponent(FalconDbContext dbContext, 
             IDateTimeGateway dataTimeGateway, 
             IMapper mapper, 
-            IUserIdentityGateway identityService,
-            ConfigurationComponent configuration) : base(dataTimeGateway, mapper, identityService, configuration)
+            IUserIdentityGateway identityGateway,
+            ConfigurationComponent configuration) : base(dataTimeGateway, mapper, identityGateway, configuration)
         {
             this._dbContext = dbContext;            
         }
 
 
-        public async Task<IEnumerable<SourceItemGetListRp>> CreateProportion(SourceItemProportionPostRp model) {
-
-            var createdBy = this._identityService.GetIdentity();
-            var source = await this._dbContext.Sources.SingleAsync(c => c.Id == model.SourceId);
-
-            var entities = SourceEntity.Factory.CreateProportionFromRange(source,model.Start, model.End, model.Proportion,
-                this._datetimeGateway.GetCurrentDateTime(), createdBy);
-
-            foreach (var item in entities)
+        private IEnumerable<SourceItemEntity> CreateFromPostRp(SourceEntity source, SourceItemPostRp model, DateTime on, string createdBy) {
+            if (model is SourceItemAvailabilityPostRp ava)
             {
-                this._dbContext.SourcesItems.Add(item);
+                return SourceEntity.Factory.CreateItemsFromRange(source, model.Start,
+                    model.End, ava.Good, ava.Total, ava.Measure, on, createdBy,
+                    SourceGroupEnum.Availability);
             }
-            await this._dbContext.SaveChangesAsync();
+            else if (model is SourceItemLatencyPostRp latency)
+            {
+                return SourceEntity.Factory.CreateItemsFromRangeByMeasure(source, model.Start,
+                    model.End, latency.Measure, on, createdBy,
+                    SourceGroupEnum.Latency);
+            }
+            else if (model is SourceItemExperiencePostRp experience)
+            {
+                return SourceEntity.Factory.CreateItemsFromRange(source, model.Start,
+                    model.End, experience.Good, experience.Total, 
+                    experience.Measure, on, createdBy,
+                    SourceGroupEnum.Experience);
+            }
+            else {
+                throw new ApplicationException("type is not valid");
+            }
+        }
 
-            var entitiess = this._dbContext.SourcesItems.Where(c => c.SourceId == source.Id).ToList(); 
-
-            return this._mapper.Map<IEnumerable<SourceItemGetListRp>>(entities);             
-        }        
-        
-        public async Task<IEnumerable<SourceItemGetListRp>> Create(SourceItemInteractionPostRp model)
-        {
+        public async Task<SourceItemBatchPostRp.SourceItemBatchResultPostRp> CreateInteractionItems(SourceItemBatchPostRp model) {
+            var createdOn = this._datetimeGateway.GetCurrentDateTime();
+            var createdBy = this._identityGateway.GetIdentity();
             
-            var createdBy = this._identityService.GetIdentity();
+            var product = await this._dbContext.Products
+                .Include(c=>c.Sources)
+                .Where(c => c.Name == model.Product && c.Customer.Name == model.Customer).SingleAsync();
+
+            SourceItemBatchPostRp.SourceItemBatchResultPostRp result = new SourceItemBatchPostRp.SourceItemBatchResultPostRp();
+            if (model.Kind == SourceKindEnum.Interaction) {
+                
+                
+                var data = model.ParseItems();
+                var groups = data.GroupBy(c => c.Source);
+                foreach (var item in groups)
+                {
+                    var source = product.Sources.Where(c => c.Name == item.Key).SingleOrDefault();
+                    if (source == null)
+                    {
+                        result.SourceCreated += 1;
+                        source = SourceEntity.Factory.Create(product, item.Key, createdOn, createdBy);
+                        product.Sources.Add(source);
+                        this._dbContext.Sources.Add(source);
+                    }
+                    await this._dbContext.SaveChangesAsync();
+                }
+                foreach (var group in groups)
+                {
+                    var availability = new List<SourceItemEntity>();
+                    var experience = new List<SourceItemEntity>();
+                    var latency = new List<SourceItemEntity>();
+                    var source = product.Sources.Where(c => c.Name == group.Key).Single();                    
+                    foreach (var item in group)
+                    {
+                        availability.AddRange(SourceEntity.Factory.CreateItemsFromRange(source, item.Start, item.End, item.Availability, item.Total, createdOn, createdBy, SourceGroupEnum.Availability));
+                        experience.AddRange( SourceEntity.Factory.CreateItemsFromRange(source, item.Start, item.End, item.Experience, item.Total, createdOn, createdBy, SourceGroupEnum.Experience));
+                        latency.AddRange(SourceEntity.Factory.CreateItemsFromRangeByMeasure(source, item.Start, item.End, item.Latency, createdOn, createdBy, SourceGroupEnum.Latency));                        
+                    }
+                    result.ItemsCreated += (availability.Count() + experience.Count() + latency.Count());
+                    this._dbContext.SourcesItems.AddRange(availability);
+                    this._dbContext.SourcesItems.AddRange(experience);
+                    this._dbContext.SourcesItems.AddRange(latency);
+                    await this._dbContext.SaveChangesAsync();
+                }                
+            }            
+            return result; 
+        }
+        public async Task<IEnumerable<SourceItemBaseRp>> CreateLatencyItem(SourceItemLatencyPostRp model)
+        {
+            var createdBy = this._identityGateway.GetIdentity();
             var on = this._datetimeGateway.GetCurrentDateTime();
             var source = await this._dbContext.Sources.SingleAsync(c => c.Id == model.SourceId);
 
-            var range = SourceEntity.Factory.CreateInteractionsFromRange(source, model.Start, model.End, model.Good, model.Total, on, createdBy);
-            
+            var range = SourceEntity.Factory.CreateItemsFromRangeByMeasure(source, model.Start, 
+                model.End, model.Measure, on, createdBy,
+                SourceGroupEnum.Latency);
+
             foreach (var item in range)
             {
                 this._dbContext.SourcesItems.Add(item);
             }
 
             await this._dbContext.SaveChangesAsync();
-            return this._mapper.Map<IEnumerable<SourceItemGetListRp>>(range);
+            return this._mapper.Map<IEnumerable<SourceItemBaseRp>>(range);
         }
-        public async Task BulkInsert(SourceEntity source, 
-            IEnumerable<SourceItemPostRp> sourceItems) {
 
-            var createdBy = this._identityService.GetIdentity();
-            int period = 0;
-            foreach (var model in sourceItems)
+        public async Task<IEnumerable<SourceItemBaseRp>> CreateExperienceItem(SourceItemExperiencePostRp model)
+        {
+            var createdBy = this._identityGateway.GetIdentity();
+            var on = this._datetimeGateway.GetCurrentDateTime();
+            var source = await this._dbContext.Sources.SingleAsync(c => c.Id == model.SourceId);
+
+            var range = SourceEntity.Factory.CreateItemsFromRange(source, model.Start, 
+                model.End, 
+                model.Good, 
+                model.Total, 
+                model.Measure, 
+                on, createdBy,  SourceGroupEnum.Experience );
+
+            foreach (var item in range)
             {
-                var interaction = model as SourceItemInteractionPostRp;
-                if (interaction != null)
-                {
-                    var range = SourceEntity.Factory.CreateInteractionsFromRange(source, interaction.Start,
-                                interaction.End, interaction.Good, interaction.Total,
-                                this._datetimeGateway.GetCurrentDateTime(), createdBy);                    
-                    foreach (var item in range)
-                    {
-                        this._dbContext.SourcesItems.Add(item);
-                        period += 1;
-                    }
-                }
-                var proportion = model as SourceItemProportionPostRp;
-                if (proportion != null)
-                {
-                    var range = SourceEntity.Factory.CreateProportionFromRange(source,
-                        proportion.Start, proportion.End, proportion.Proportion, 
-                                this._datetimeGateway.GetCurrentDateTime(), createdBy);
-                    
-                    foreach (var item in range)
-                    {
-                        this._dbContext.SourcesItems.Add(item);
-                        period += 1;
-                    }
-                }
-                var latency = model as LatencySourceItemPostRp;
-                if (latency != null)
-                {
-                    var range = SourceEntity.Factory.CreateLatencyFromRange(source,
-                        latency.Start, latency.End, latency.Latency,
-                                this._datetimeGateway.GetCurrentDateTime(), createdBy);
+                this._dbContext.SourcesItems.Add(item);
+            }
 
-                    foreach (var item in range)
-                    {
-                        this._dbContext.SourcesItems.Add(item);
-                        period += 1;
-                    }
-                }
+            await this._dbContext.SaveChangesAsync();
+            return this._mapper.Map<IEnumerable<SourceItemBaseRp>>(range);
 
+        }   
+
+        public async Task<ScalabilitySourceGetRp> GetScalability(int sourceId, DatePeriodValue period) {            
+            var source = await this._dbContext.GetSourceWithItems(sourceId, period);
+            
+            var model = new ScalabilitySourceGetRp
+            {
+                Period = period,
+            };
+            var agg = new ScalabilityMeasureAggregate(source.SourceItems);
+            (model.DailyCorrelation, model.DailyTotal, model.DailyBad, model.DailyIntercept, 
+                model.DailySlope, model.DailyR2, model.DailyInteractions) = agg.Measure();
+            
+            return model;
+        }
+        public async Task<IEnumerable<SourceItemBaseRp>> CreateAvailabilityItem(SourceItemAvailabilityPostRp model)
+        {
+            var createdBy = this._identityGateway.GetIdentity();
+            var on = this._datetimeGateway.GetCurrentDateTime();
+            var source = await this._dbContext.Sources.SingleAsync(c => c.Id == model.SourceId);
+
+            var range = SourceEntity.Factory.CreateItemsFromRange(source, 
+                model.Start, 
+                model.End, 
+                model.Good, 
+                model.Total, 
+                model.Measure,
+                on, 
+                createdBy, 
+                SourceGroupEnum.Availability);
+
+            foreach (var item in range)
+            {
+                this._dbContext.SourcesItems.Add(item);
+            }
+
+            await this._dbContext.SaveChangesAsync();
+            return this._mapper.Map<IEnumerable<SourceItemBaseRp>>(range);
+        }
+
+        public async Task<IEnumerable<LatencySourceItemGetRp>> GetLatencyItems(int sourceId, DatePeriodValue period)
+        {
+            var entities = await this._dbContext.GetSourceItems(sourceId, SourceGroupEnum.Latency, period.Start, period.End);
+            var result = this._mapper.Map<IEnumerable<LatencySourceItemGetRp>>(entities);
+            return result;
+        }
+        public async Task<IEnumerable<ExperienceSourceItemGetRp>> GetExperienceItems(int sourceId, DatePeriodValue period)
+        {
+            var entities = await this._dbContext.GetSourceItems(sourceId, SourceGroupEnum.Experience, period.Start, period.End);
+            var result = this._mapper.Map<IEnumerable<ExperienceSourceItemGetRp>>(entities);
+            return result;
+        }
+        public async Task<IEnumerable<AvailabilitySourceItemGetRp>> GetAvailabilityItems(int sourceId, DatePeriodValue period)
+        {
+            IEnumerable<SourceItemEntity> entities = await this._dbContext.GetSourceItems(sourceId, SourceGroupEnum.Availability, period.Start, period.End);
+            var result = this._mapper.Map<IEnumerable<AvailabilitySourceItemGetRp>>(entities);
+            return result;
+        }
+
+       
+        public async Task BulkInsert(IEnumerable<SourceItemEntity> sourceItems) {
+            
+            int period = 0;                        
+            foreach (var model in sourceItems)
+            {   
+                this._dbContext.SourcesItems.Add(model);
+                period += 1;                
                 if (period > 1000) {                    
                     await this._dbContext.SaveChangesAsync();
                     period = 0;
@@ -196,18 +295,6 @@ namespace Owlvey.Falcon.Components
             return this._mapper.Map<IEnumerable<SourceItemGetListRp>>(entity);
         }
 
-        public async Task<IEnumerable<InteractiveSourceItemGetRp>> GetInteractionsBySourceIdAndDateRange(int sourceId,
-            DateTime start, DateTime end)
-        {
-            var entities = await this._dbContext.GetSourceItems(sourceId, start, end);
-            var  temp = entities.OfType<SourceItemEntity>().ToList();
-            var result = new List<InteractiveSourceItemGetRp>();
-            foreach (var item in temp)
-            {
-                result.Add(new InteractiveSourceItemGetRp(item));
-            }
-            return result;
-        }
 
     }
 }

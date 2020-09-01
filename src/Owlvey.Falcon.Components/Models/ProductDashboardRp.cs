@@ -28,9 +28,9 @@ namespace Owlvey.Falcon.Models
             }
         }
 
-        public List<ServiceGroupRp> Groups { get; set; } = new List<ServiceGroupRp>();
+        public List<JourneyGroupRp> Groups { get; set; } = new List<JourneyGroupRp>();
 
-        public class ServiceGroupRp {
+        public class JourneyGroupRp {
             public string Name { get; set; }
             public decimal Proportion {
                 get

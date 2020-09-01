@@ -10,7 +10,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
         public void CreateSquadFeatureSuccess()
         {
 
-            var (customer, _, _, feature) = TestDataFactory.BuildCustomerProductServiceFeature();
+            var (customer, _, _, feature) = TestDataFactory.BuildCustomerProductJourneyFeature();
             var squad = TestDataFactory.BuildSquad(customer);
 
             var entity = SquadFeatureEntity.Factory.Create(squad, feature, DateTime.Now, "test@test.com");

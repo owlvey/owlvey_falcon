@@ -16,16 +16,16 @@ namespace Owlvey.Falcon.API.Controllers
     [Route("products")]
     public class ProductController : BaseController
     {
-        private readonly ProductQueryComponent _productQueryService;
-        private readonly ProductComponent _productService;
-        private readonly ServiceQueryComponent _serviceQueryComponent;
-        public ProductController(ProductQueryComponent productQueryService,
-                                 ProductComponent productService,
-                                 ServiceQueryComponent serviceQueryComponent)
+        private readonly ProductQueryComponent _productQueryComponent;
+        private readonly ProductComponent _productComponent;
+        private readonly JourneyQueryComponent _journeyQueryComponent;
+        public ProductController(ProductQueryComponent productQueryComponent,
+                                 ProductComponent productComponent,
+                                 JourneyQueryComponent journeyQueryComponent)
         {
-            this._productQueryService = productQueryService;
-            this._productService = productService;
-            this._serviceQueryComponent = serviceQueryComponent;
+            this._productQueryComponent = productQueryComponent;
+            this._productComponent = productComponent;
+            this._journeyQueryComponent = journeyQueryComponent;
         }
 
         /// <summary>
@@ -35,9 +35,8 @@ namespace Owlvey.Falcon.API.Controllers
         [HttpGet("")]
         [ProducesResponseType(typeof(ProductGetListRp), 200)]
         public async Task<IActionResult> Get(int customerId, DateTime? start, DateTime? end)
-        {            
-
-            var model = await this._productQueryService.GetProductsWithInformation(customerId, new DatePeriodValue(start, end));
+        {   
+            var model = await this._productQueryComponent.GetProductsWithInformation(customerId, new DatePeriodValue(start, end));
             return this.Ok(model);
         }
 
@@ -45,7 +44,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(IEnumerable<ProductBaseRp>), 200)]
         public async Task<IActionResult> GetLite(int customerId)
         {
-            var model = await this._productQueryService.GetProducts(customerId);
+            var model = await this._productQueryComponent.GetProducts(customerId);
             return this.Ok(model);
         }
 
@@ -58,12 +57,12 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(ProductGetRp), 200)]
         public async Task<IActionResult> GetProductId(int id)
         {
-            var model = await this._productQueryService.GetProductById(id);
+            var model = await this._productQueryComponent.GetProductById(id);
 
             if (model == null)
                 return this.NotFound($"The Resource {id} doesn't exists.");
 
-            model.Services = await this._serviceQueryComponent.GetServices(id);
+            model.Journeys = await this._journeyQueryComponent.GetListByProductId(id);
 
             return this.Ok(model);
         }
@@ -92,7 +91,7 @@ namespace Owlvey.Falcon.API.Controllers
         {
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
-            var response = await this._productService.CreateProduct(resource);
+            var response = await this._productComponent.CreateProduct(resource);
             return this.Created(Url.RouteUrl("GetProductId", new { response.Id }), response);
         }
 
@@ -112,7 +111,7 @@ namespace Owlvey.Falcon.API.Controllers
             if (!this.ModelState.IsValid)
                 return this.BadRequest(this.ModelState);
 
-            var response = await this._productService.UpdateProduct(id, resource);
+            var response = await this._productComponent.UpdateProduct(id, resource);
 
             return this.Ok();
         }
@@ -127,7 +126,7 @@ namespace Owlvey.Falcon.API.Controllers
         [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Delete(int id)
         {
-            await this._productService.DeleteProduct(id);
+            await this._productComponent.DeleteProduct(id);
             return this.Ok();
         }
 
@@ -137,7 +136,7 @@ namespace Owlvey.Falcon.API.Controllers
         {
             if (start.HasValue && end.HasValue)
             {
-                var result = await this._productQueryService.GetProductDashboard(id, start.Value, end.Value);
+                var result = await this._productQueryComponent.GetProductDashboard(id, start.Value, end.Value);
                 return this.Ok(result);
             }
             else
@@ -146,13 +145,13 @@ namespace Owlvey.Falcon.API.Controllers
             }
         }
 
-        [HttpGet("{id}/dashboard/services/groups")]
+        [HttpGet("{id}/dashboard/journeys/groups")]
         [ProducesResponseType(typeof(ProductDashboardRp), 200)]
-        public async Task<IActionResult> GetDashboardServicesGroups(int id, DateTime? start, DateTime? end)
+        public async Task<IActionResult> GetDashboardGroups(int id, DateTime? start, DateTime? end)
         {
             if (start.HasValue && end.HasValue)
             {
-                var result = await this._productQueryService.GetServiceGroupDashboard(id, start.Value, end.Value);
+                var result = await this._productQueryComponent.GetJourneyGroupDashboard(id, start.Value, end.Value);
                 return this.Ok(result);
             }
             else
@@ -172,7 +171,7 @@ namespace Owlvey.Falcon.API.Controllers
             DatePeriodValue period = new DatePeriodValue(start.Value, end.Value);
             if (period.IsValid())
             {
-                GraphGetRp result = await this._productQueryService.GetGraphAvailability(id, period);
+                GraphGetRp result = await this._productQueryComponent.GetGraphAvailability(id, period);
                 return this.Ok(result);
             }
             else
@@ -188,7 +187,7 @@ namespace Owlvey.Falcon.API.Controllers
             DatePeriodValue period = new DatePeriodValue(start.Value, end.Value);
             if (period.IsValid())
             {
-                GraphGetRp result = await this._productQueryService.GetGraphLatency(id, period);
+                GraphGetRp result = await this._productQueryComponent.GetGraphLatency(id, period);
                 return this.Ok(result);
             }
             else
@@ -203,7 +202,7 @@ namespace Owlvey.Falcon.API.Controllers
             DatePeriodValue period = new DatePeriodValue(start.Value, end.Value);
             if (period.IsValid())
             {
-                GraphGetRp result = await this._productQueryService.GetGraphExperience(id, period);
+                GraphGetRp result = await this._productQueryComponent.GetGraphExperience(id, period);
                 return this.Ok(result);
             }
             else
@@ -224,7 +223,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(AnchorRp), 200)]
         public async Task<IActionResult> GetAnchors(int id)
         {
-            var entities = await this._productQueryService.GetAnchors(id);
+            var entities = await this._productQueryComponent.GetAnchors(id);
             return this.Ok(entities);
         }
 
@@ -232,7 +231,7 @@ namespace Owlvey.Falcon.API.Controllers
         [ProducesResponseType(typeof(AnchorRp), 200)]
         public async Task<IActionResult> GetAnchor(int id, string name)
         {
-            var result = await this._productQueryService.GetAnchor(id, name);
+            var result = await this._productQueryComponent.GetAnchor(id, name);
             return this.Ok(result);
         }
 
@@ -241,7 +240,7 @@ namespace Owlvey.Falcon.API.Controllers
         [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> SetAnchor(int id, string name, [FromBody]AnchorPutRp model)
         {
-            await this._productService.PutAnchor(id, name, model);
+            await this._productComponent.PutAnchor(id, name, model);
             return this.Ok();
         }
 
@@ -251,7 +250,7 @@ namespace Owlvey.Falcon.API.Controllers
         [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> PostAnchor(int id, string name)
         {
-            var result = await this._productService.PostAnchor(id, name);
+            var result = await this._productComponent.PostAnchor(id, name);
             return this.Ok(result);
         }
 
@@ -259,7 +258,7 @@ namespace Owlvey.Falcon.API.Controllers
         [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Delete(int id, string name)
         {
-            await this._productService.DeleteAnchor(id, name);
+            await this._productComponent.DeleteAnchor(id, name);
             return this.Ok();
         }
 
@@ -271,7 +270,7 @@ namespace Owlvey.Falcon.API.Controllers
         [HttpGet("{id}/exports/items")]
         public async Task<IActionResult> Exportitems(int id, DateTime? start, DateTime? end)
         {
-            var stream = await this._productQueryService.ExportItems(id, new DatePeriodValue(start, end));
+            var stream = await this._productQueryComponent.ExportItems(id, new DatePeriodValue(start, end));
 
             string excelName = $"owlvey-items-{DateTime.Now:yyyyMMdd}.xlsx";
 
@@ -280,7 +279,7 @@ namespace Owlvey.Falcon.API.Controllers
 
         [HttpGet("{id}/exports/availability/interactions")]
         public async Task<IActionResult> ExportAnnualAvailabilityInteractions(int id) {
-            var stream = await this._productQueryService.ExportAnnualAvailabilityInteractions(id);
+            var stream = await this._productQueryComponent.ExportAnnualAvailabilityInteractions(id);
 
             string excelName = $"owlvey-annual-availability-interactions-{DateTime.Now:yyyyMMdd}.xlsx";
 
@@ -295,7 +294,7 @@ namespace Owlvey.Falcon.API.Controllers
             using (MemoryStream excelStream = new MemoryStream())
             {
                 file.CopyTo(excelStream);
-                var logs = await this._productService.ImportsItems(id, excelStream);
+                var logs = await this._productComponent.ImportsItems(id, excelStream);
                 return Ok(logs);
             }
         }
@@ -315,7 +314,7 @@ namespace Owlvey.Falcon.API.Controllers
                 return this.BadRequest("start is required");
             }
 
-            var result = await this._productQueryService.GetProductExportToExcel(id, start.Value, end.Value);
+            var result = await this._productQueryComponent.GetProductExportToExcel(id, start.Value, end.Value);
             string excelName = $"{result.Item1.Customer.Name}-{result.Item1.Name}-excel-{start.Value.ToString("yyyyMMdd")}-{end.Value.ToString("yyyyMMdd")}.xlsx";
             return File(result.Item2, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);                       
         }
@@ -323,7 +322,7 @@ namespace Owlvey.Falcon.API.Controllers
                
 
 
-        [HttpGet("{id}/reports/daily/services/series")]
+        [HttpGet("{id}/reports/daily/journeys/series")]
         [ProducesResponseType(typeof(SeriesGetRp), 200)]
         public async Task<IActionResult> ReportSeries(int id, DateTime? start, DateTime? end, string group = null)
         {
@@ -339,10 +338,10 @@ namespace Owlvey.Falcon.API.Controllers
             var period = new DatePeriodValue(start.Value, end.Value);  
             if (string.IsNullOrWhiteSpace(group))
             {
-                result = await this._productQueryService.GetDailyServiceSeriesById(id, period);
+                result = await this._productQueryComponent.GetDailyJourneysSeriesById(id, period);
             }
             else {
-                result = await this._productQueryService.GetDailyServiceSeriesByIdAndGroup(id, period, group);
+                result = await this._productQueryComponent.GetDailyJourneysSeriesByIdAndGroup(id, period, group);
             }            
 
             return this.Ok(result);

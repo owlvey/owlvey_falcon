@@ -26,9 +26,9 @@ namespace Owlvey.Falcon.Components
         private readonly SquadQueryComponent _squadQueryComponent;
         private readonly ProductQueryComponent _productQueryComponent;
         public CustomerQueryComponent(FalconDbContext dbContext, IMapper mapper,
-            IDateTimeGateway dateTimeGateway, IUserIdentityGateway identityService,
+            IDateTimeGateway dateTimeGateway, IUserIdentityGateway identityGateway,
             SquadQueryComponent squadQueryComponent,
-            ConfigurationComponent configuration, ProductQueryComponent productQueryComponent) : base(dateTimeGateway, mapper, identityService, configuration)
+            ConfigurationComponent configuration, ProductQueryComponent productQueryComponent) : base(dateTimeGateway, mapper, identityGateway, configuration)
         {
             this._squadQueryComponent = squadQueryComponent;
             this._productQueryComponent = productQueryComponent;
@@ -174,12 +174,12 @@ namespace Owlvey.Falcon.Components
             return result;
         }
 
-        private async Task<CustomerDashboardRp> InternalGetDashboardCustomersProductServices(DateTime? start, DateTime? end)
+        private async Task<CustomerDashboardRp> InternalGetDashboardCustomersProductJourneys(DateTime? start, DateTime? end)
         {
             var result = new CustomerDashboardRp();
             var customers = await this._dbContext.Customers
                 .Include(c => c.Products)
-                .ThenInclude(c => c.Services)
+                .ThenInclude(c => c.Journeys)
                 .ThenInclude(c => c.FeatureMap)
                 .ThenInclude(c => c.Feature)
                 .ThenInclude(c => c.Indicators)
@@ -194,9 +194,9 @@ namespace Owlvey.Falcon.Components
                 {
                     var productResult = new CustomerDashboardRp.CustomerProductRp(product);
 
-                    foreach (var service in product.Services)
+                    foreach (var journey in product.Journeys)
                     {
-                        foreach (var featureMap in service.FeatureMap)
+                        foreach (var featureMap in journey.FeatureMap)
                         {
                             foreach (var indicator in featureMap.Feature.Indicators)
                             {
@@ -204,25 +204,25 @@ namespace Owlvey.Falcon.Components
                                 indicator.Source.SourceItems = target;
                             }
                         }
-                        service.Measure();
-                        var serviceResult = new CustomerDashboardRp.CustomerServiceRp(service);
-                        productResult.Services.Add(serviceResult);
+                        journey.Measure();
+                        var journeyResult = new CustomerDashboardRp.CustomerJourneyRp(journey);
+                        productResult.Journeys.Add(journeyResult);
                     }
                     result.Products.Add(productResult);
                 }
             }
             return result;
         }
-        public async Task<CustomerDashboardRp> GetCustomersDashboardProductServices(DateTime? start, DateTime? end)
+        public async Task<CustomerDashboardRp> GetCustomersDashboardProductJourneys(DateTime? start, DateTime? end)
         {
             var result = new CustomerDashboardRp();
 
-            result = await this.InternalGetDashboardCustomersProductServices(start, end);
+            result = await this.InternalGetDashboardCustomersProductJourneys(start, end);
 
             var (bs, be, ps, pe) = DateTimeUtils.CalculateBeforePreviousDates(start, end);
 
-            var before = await this.InternalGetDashboardCustomersProductServices(bs, be);
-            var previous = await this.InternalGetDashboardCustomersProductServices(ps, pe);
+            var before = await this.InternalGetDashboardCustomersProductJourneys(bs, be);
+            var previous = await this.InternalGetDashboardCustomersProductJourneys(ps, pe);
 
             foreach (var product in result.Products)
             {

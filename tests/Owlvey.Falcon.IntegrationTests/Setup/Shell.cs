@@ -55,7 +55,7 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
         }
         private void Init()
         {
-            var services = new ServiceCollection();                                          
+            var providers = new ServiceCollection();                                          
             if (IsDevelopment())
             {
                 // add TestServer Client
@@ -64,7 +64,7 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
                 .UseStartup<TestStartup>();
                 this.Server = new TestServer(builder);
                 var client = this.Server.CreateClient();                
-                services.AddSingleton<HttpClient>(client);                
+                providers.AddSingleton<HttpClient>(client);                
             }
             else {
                 /*
@@ -84,7 +84,7 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
                     BaseAddress = new Uri(APIHost())                    
                 };
                 
-                services.AddSingleton<HttpClient>(client);
+                providers.AddSingleton<HttpClient>(client);
                 
             }
             this.Container.Configure(config =>
@@ -94,7 +94,7 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
                     sp.AssemblyContainingType(typeof(IBaseTest));
                     sp.WithDefaultConventions();
                 });
-                config.Populate(services);
+                config.Populate(providers);
             });
         }
 

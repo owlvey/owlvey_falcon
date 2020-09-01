@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Owlvey.Falcon.Components;
+using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Repositories;
 using Xunit;
 
@@ -27,6 +28,25 @@ namespace Owlvey.Falcon.ComponentsTests
                 ProductId = product
             });
             Assert.Equal(result.Id, result2.Id);
+        }
+
+
+        [Fact]
+        public async Task SourceCreation()
+        {
+            var container = ComponentTestFactory.BuildContainer();
+
+            var (_, product) = await ComponentTestFactory.BuildCustomerProduct(container);
+
+            var component = container.GetInstance<SourceComponent>();
+
+            var result = await component.Create(new Models.SourcePostRp()
+            {
+                Name = "test",
+                ProductId = product                 
+            });
+
+            Assert.Equal("test", result.Name);
         }
 
         [Fact]
@@ -57,10 +77,27 @@ namespace Owlvey.Falcon.ComponentsTests
             var dbcontext = container.GetInstance<FalconDbContext>();
             var source = container.GetInstance<SourceComponent>();
             var sourceItemComponent = container.GetInstance<SourceItemComponent>();
+            var securityRiskComponent = container.GetInstance<SecurityRiskComponent>();
+            var reliabilityRiskComponent = container.GetInstance<ReliabilityRiskComponent>();
             var result = await ComponentTestFactory.BuildCustomerWithSquad(container, 
                 OwlveyCalendar.January201903, OwlveyCalendar.January201905);
+                        
+            var securityRisk = await securityRiskComponent.Create(new SecurityRiskPost()
+            {   SourceId = result.sourceId, Name = "test"
+            });
 
+            var reliabilityRisk = await reliabilityRiskComponent.Create(new ReliabilityRiskPostRp()
+            {
+                 SourceId = result.sourceId, Name = "test reliabilty"
+            });
             await source.Delete(result.sourceId);
+
+            var securityRisks = await securityRiskComponent.GetRisks(null);
+            Assert.Empty(securityRisks);
+
+            var reliabilityRisks = await reliabilityRiskComponent.GetRisks(null);
+            Assert.Empty(reliabilityRisks);
+
             var sources = await source.GetById(result.sourceId);
             Assert.Null(sources);
 
@@ -92,7 +129,7 @@ namespace Owlvey.Falcon.ComponentsTests
             });
             var testSource = await component.GetByName(product, "test");
 
-            var item = await sourceItemComponent.Create(new Models.SourceItemInteractionPostRp() {
+            var item = await sourceItemComponent.CreateAvailabilityItem(new SourceItemAvailabilityPostRp() {
                  SourceId = testSource.Id,  Total = 1000, Good = 800,
                  Start = OwlveyCalendar.January201904,
                  End = OwlveyCalendar.January201906
@@ -105,6 +142,49 @@ namespace Owlvey.Falcon.ComponentsTests
             Assert.NotEmpty(result.Items);
 
         }
+
+        [Fact]
+        public async void SourceListSuccess() {
+            var container = ComponentTestFactory.BuildContainer();
+
+            var data = await ComponentTestFactory.BuildCustomerProduct(container);
+
+            var component = container.GetInstance<SourceComponent>();
+            var componentItems = container.GetInstance<SourceItemComponent>();
+
+            var source = await component.Create(new SourcePostRp() { Name = "testSource", ProductId = data.product });
+
+            await componentItems.CreateAvailabilityItem(new SourceItemAvailabilityPostRp() {
+                SourceId = source.Id, Start = OwlveyCalendar.StartJanuary2019, 
+                End = OwlveyCalendar.EndJanuary2019,
+                Good = 800,  Total = 1000
+            });
+
+            var items = await componentItems.GetAvailabilityItems(source.Id, OwlveyCalendar.january2019);
+
+            Assert.Equal(0.788m, items.First().Measure);
+            Assert.Equal(33,  items.First().Total);
+            Assert.Equal(26,  items.First().Good);
+
+            var result = await component.GetByIdWithDetail(source.Id, OwlveyCalendar.january2019);
+            Assert.Equal(1023, result.Quality.Total);
+        }
+
+        [Fact]
+        public async void SourcesByProduct() {
+            //GetByProductIdWithAvailability
+            var container = ComponentTestFactory.BuildContainer();
+
+            var data = await ComponentTestFactory.BuildCustomerWithSquad(container, OwlveyCalendar.StartJanuary2017, OwlveyCalendar.EndDecember2019);
+
+            var sourceComponent = container.GetInstance<SourceComponent>();
+
+            var result = await sourceComponent.GetByProductIdWithAvailability(data.productId, OwlveyCalendar.StartJanuary2017, OwlveyCalendar.EndDecember2019);
+
+            Assert.Single(result.Items);
+        }
+
+      
 
     }
 }

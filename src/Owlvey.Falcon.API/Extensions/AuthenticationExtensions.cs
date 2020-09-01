@@ -15,20 +15,20 @@ namespace Owlvey.Falcon.API.Extensions
 {
     public static class AuthenticationExtensions
     {
-        public static void AddAuthority(this IServiceCollection services, IConfiguration configuration, IHostingEnvironment environtment)
+        public static void AddAuthority(this IServiceCollection providers, IConfiguration configuration, IHostingEnvironment environtment)
         {   
-            services.AddHttpContextAccessor();
-            services.Configure<AuthorityOptions>(options => {
+            providers.AddHttpContextAccessor();
+            providers.Configure<AuthorityOptions>(options => {
                 options.Authority = configuration["Authentication:Authority"];
                 options.ApiName = configuration["Authentication:ApiName"];
                 options.NameClaimType = configuration["Authentication:NameClaimType"];
                 options.RoleClaimType = configuration["Authentication:RoleClaimType"];
             });
 
-            var sp = services.BuildServiceProvider();
+            var sp = providers.BuildServiceProvider();
             var authenticationOptions = sp.GetService<IOptions<AuthorityOptions>>();
             //
-            services.AddAuthentication(options =>
+            providers.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;

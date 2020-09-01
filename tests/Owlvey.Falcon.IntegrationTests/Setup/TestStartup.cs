@@ -43,18 +43,18 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
         }
 
         /// <summary>
-        /// This method gets called by the runtime. Use this method to add services to the container
+        /// This method gets called by the runtime. Use this method to add journey to the container
         /// </summary>
-        /// <param name="services">Service Collection</param>
-        public override void ConfigureServices(IServiceCollection services)
+        /// <param name="providers">Service Collection</param>
+        public override void ConfigureServices(IServiceCollection providers)
         {
 
-            services.AddAuthorization(options =>
+            providers.AddAuthorization(options =>
             {
                 options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("admin"));
             });
 
-            services.AddMvc(options =>
+            providers.AddMvc(options =>
             {
                 options.EnableEndpointRouting = false;
                 //Authorize Filter
@@ -66,8 +66,8 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
                 options.Filters.Add(new AuthorizeFilter(policy));
             }).AddApplicationPart(typeof(Startup).Assembly);
 
-            services.AddHttpContextAccessor();
-            services.AddAuthentication(options =>
+            providers.AddHttpContextAccessor();
+            providers.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
@@ -84,7 +84,7 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
                 };
             });
 
-            services.AddApplicationServices(Configuration);
+            providers.AddApplicationProviders(Configuration);
 
 
 
@@ -98,7 +98,7 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
             //var options = new DbContextOptionsBuilder<FalconDbContext>().UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()).Options;
             /*
              */
-            services
+            providers
                 .AddEntityFrameworkSqlite()
                 .AddDbContext<FalconDbContext>(options =>
                 options.UseSqlite(connection)

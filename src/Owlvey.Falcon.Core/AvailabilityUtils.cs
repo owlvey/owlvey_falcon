@@ -33,7 +33,7 @@ namespace Owlvey.Falcon.Core
             return Math.Floor( (minutes * budget) / 100m);
         }
 
-        public static string BudgetToAction(ServiceQualityMeasureValue measure) {
+        public static string BudgetToAction(JourneyQualityMeasureValue measure) {
             if (measure.AvailabilityErrorBudget > 0 && measure.LatencyErrorBudget > 0 && measure.ExperienceErrorBudget > 0)
             {
                 return "innovate";                
@@ -42,6 +42,35 @@ namespace Owlvey.Falcon.Core
             {
                 return "improve";                
             }            
+        }
+        public static string SecurityRiskToLabel(decimal risk)
+        {
+            if (0 <= risk && risk <= 3)
+            {
+                return "low";
+            }
+            else if (3 < risk && risk <= 6)
+            {
+                return "medium";
+            }
+            else {
+                return "high";
+            }
+
+        }
+        public static string ReliabilityRiskToLabel(decimal slo, decimal risk)
+        {
+            var budget = (365.25m * 24 * 60) * (1 - slo);
+
+            if (risk >= budget)
+            {
+                return "High";
+            }            
+            else
+            {
+                return "Low";
+            }
+
         }
         public static decimal MeasureBudget(decimal avaialbility, decimal slo) {
             return avaialbility - slo;
@@ -54,11 +83,11 @@ namespace Owlvey.Falcon.Core
             return -1 * budget;
         }
         public static decimal MeasureLatencyBudget(decimal latency, decimal slo) {
-            // 2000 1000
-            // 500 1000
-            return slo - latency;
+            
+            return latency - slo;
         }
-        public static decimal MeasureLatencyDebt(decimal latency, decimal slo)
+        public static decimal MeasureLatencyDebt(decimal latency,
+            decimal slo)
         {
             var budget = MeasureLatencyBudget(latency, slo);
             if (budget <= 0)
@@ -146,6 +175,14 @@ namespace Owlvey.Falcon.Core
             {
                 return Math.Round(good / total, 3);
             }
+        }
+        public static decimal CalculateProportion(int total, int good, decimal defaultValue = 1)
+        {
+            return CalculateProportion((decimal)total, (decimal)good, defaultValue);
+        }
+        public static decimal CalculateProportion(int? total, int? good, decimal defaultValue = 1)
+        {
+            return CalculateProportion((decimal)total.GetValueOrDefault(), (decimal)good.GetValueOrDefault(), defaultValue);
         }
         public static decimal CalculateAvailability(decimal total, decimal good, decimal defaultValue = 1) {
             if (total == 0)
