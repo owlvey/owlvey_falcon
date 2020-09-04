@@ -34,14 +34,19 @@ namespace Owlvey.Falcon.Components
         }
 
         public async Task<SourceGetListRp> Update(int id, SourcePutRp model)
-        {            
+        {   
+            var createdBy = this._identityGateway.GetIdentity();
+            var createdOn = this._datetimeGateway.GetCurrentDateTime();         
             var source = this._dbContext.Sources
                 .Include(c=>c.Product).ThenInclude(c=>c.Customer)
                 .Where(c => c.Id == id).SingleOrDefault();
             if (source != null) {
-                return await this.CreateOrUpdate(source.Product.Customer, source.Product.Name,
-                    model.Name, model.Tags, model.Avatar, model.AvailabilityDefinition, model.LatencyDefinition, model.ExperienceDefinition,
-                    model.Description, model.Percentile);
+                source.Update(model.Name, model.Avatar, 
+                  model.AvailabilityDefinition, model.LatencyDefinition, model.ExperienceDefinition, createdOn,
+                     createdBy, model.Tags, model.Description, model.Percentile);
+                this._dbContext.Sources.Update(source);
+                await this._dbContext.SaveChangesAsync();            
+                return this._mapper.Map<SourceGetListRp>(source);                
             }
             throw new ApplicationException("Source does not exists");
         }
