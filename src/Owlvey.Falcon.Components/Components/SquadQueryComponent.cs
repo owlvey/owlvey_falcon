@@ -148,10 +148,11 @@ namespace Owlvey.Falcon.Components
                      Name = tmp.Name,
                      Avatar = tmp.Avatar,
                      Debt = tmp.Debt,
-                     Features = tmp.Features.Count(),
+                     Features = tmp.Features.Select(c=>c.Name).Distinct().Count(),
                      Members = squad.Members.Count()
                 });
             }
+
             return result;
         }
 

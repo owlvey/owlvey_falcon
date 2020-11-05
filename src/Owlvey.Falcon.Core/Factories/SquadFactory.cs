@@ -11,7 +11,7 @@ namespace Owlvey.Falcon.Core.Entities
             public static SquadEntity Create(string name, DateTime on, 
                 string user, CustomerEntity customer)
             {
-                string avatar = "https://cdn.iconscout.com/icon/free/png-256/avatar-375-456327.png";
+                string avatar = "https://icons.iconarchive.com/icons/limav/game-of-thrones/256/Stark-icon.png";
                 var entity = new SquadEntity()
                 {
                     Name = name,                    
