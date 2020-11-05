@@ -1,7 +1,11 @@
-﻿using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
+﻿using KellermanSoftware.CompareNetObjects;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using Owlvey.Falcon.Components;
 using System.Threading.Tasks;
 using Xunit;
+using System.Linq;
+using Owlvey.Falcon.Models;
+using System;
 
 namespace Owlvey.Falcon.ComponentsTests
 {
@@ -118,38 +122,34 @@ namespace Owlvey.Falcon.ComponentsTests
                 Default = true
             });
             var product = await productComponent.CreateProduct(new Models.ProductPostRp() { Name = "test", CustomerId = result.Id });
-            var SecurityThreat = await securityComponent.CreateThreat(new Models.SecurityThreatPostRp() { Name = "test" });
+            
             var source = await sourceComponent.Create(new Models.SourcePostRp()
             {
                 Name = "test",
                 ProductId = product.Id
             });
+
+            var securityThreats =  await securityComponent.CreateDefault();
             var SecurityRisk = await securityComponent.Create(new Models.SecurityRiskPost()
             {
                 SourceId = source.Id,
-                Name = SecurityThreat.Name
+                Name = "test risk"
             });
-            var reliabilityThreat = await reliabilityComponent.CreateThreat(new Models.ReliabilityThreatPostRp()
-            { Name = "test threat" });
-
+            var reliabiltyThreats =  await reliabilityComponent.CreateDefault();
+            
             var reliabilityRisk = await reliabilityComponent.Create(new Models.ReliabilityRiskPostRp()
             {
-                Name = "test risk",
+                Name = "reliability risk",
                 SourceId = source.Id
             });
 
             var stream = await migrationComponent.Backup(true);
 
-            var customers = await customerQueryComponet.GetCustomers();
+            await migrationComponent.ClearData();
 
-            foreach (var item in customers)
-            {
-                await customerComponet.DeleteCustomer(item.Id);
-            }
-
-            customers = await customerQueryComponet.GetCustomers();
-
-            Assert.Empty(customers);
+            Assert.Empty(await customerQueryComponet.GetCustomers());            
+            Assert.Empty(await securityComponent.GetThreats());            
+            Assert.Empty(await reliabilityComponent.GetThreats());            
 
             await migrationComponent.Restore(stream);
 
@@ -188,10 +188,7 @@ namespace Owlvey.Falcon.ComponentsTests
             }
             
             var features = await featureComponent.GetFeatures(customer_target.Id);
-            Assert.NotEmpty(features);
-
-            var securityThreats = await  securityComponent.GetThreats();
-            Assert.NotEmpty(securityThreats);
+            Assert.NotEmpty(features);            
 
             var securityRisks = await securityComponent.GetRisks(null);
             Assert.NotEmpty(securityRisks);
@@ -199,8 +196,37 @@ namespace Owlvey.Falcon.ComponentsTests
             var reliabilityThreats = await reliabilityComponent.GetThreats();
             Assert.NotEmpty(reliabilityThreats);
 
+
             var reliabilityRisks = await reliabilityComponent.GetRisks(null);
             Assert.NotEmpty(reliabilityRisks);
+
+            
+            
+            ComparisonConfig config = new ComparisonConfig();            
+            config.IgnoreProperty((SecurityThreatGetRp c)=>c.Id);
+            config.IgnoreProperty((ReliabilityThreatGetRp c)=>c.Id);
+            config.MaxDifferences = 5;
+            var ThreatsCompare = new CompareLogic(config);        
+               
+            var targets = await securityComponent.GetThreats();
+            foreach( var item in securityThreats){                
+                var target = targets.Where(e=>e.Name == item.Name).Single();
+                var temp = ThreatsCompare.Compare(item,  target);
+                if (!temp.AreEqual)
+                {
+                    throw new ApplicationException(target.Name + " " + temp.DifferencesString);   
+                }                
+            }
+
+            var reliabilityThreatsRestored = await reliabilityComponent.GetThreats();
+            foreach(var item in reliabiltyThreats){
+                var target = reliabilityThreatsRestored.Where(e=>e.Name == item.Name).Single();
+                var temp = ThreatsCompare.Compare(item,  target);
+                if (!temp.AreEqual)
+                {
+                    throw new ApplicationException(target.Name + " " + temp.DifferencesString);   
+                }                
+            } 
         }
     }
 }

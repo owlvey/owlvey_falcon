@@ -412,13 +412,7 @@ namespace Owlvey.Falcon.Components
 
         #region backups
 
-
-        public async Task<IEnumerable<string>> Restore(MemoryStream input)
-        {
-            var logs = new List<string>();
-            var createdBy = this._identityGateway.GetIdentity();
-            var createdOn = this._datetimeGateway.GetCurrentDateTime();
-
+        public async Task ClearData(){
             var previous = await this._dbContext.Customers.ToListAsync();
             foreach (var item in previous)
             {
@@ -434,6 +428,14 @@ namespace Owlvey.Falcon.Components
             {
                 await this._reliabilityRiskComponent.DeleteThreat(item.Id);
             }
+        }
+        public async Task<IEnumerable<string>> Restore(MemoryStream input)
+        {
+            var logs = new List<string>();
+            var createdBy = this._identityGateway.GetIdentity();
+            var createdOn = this._datetimeGateway.GetCurrentDateTime();
+
+            await this.ClearData();           
 
             using (var package = new ExcelPackage(input))
             {
