@@ -82,6 +82,7 @@ namespace Owlvey.Falcon.Core
             }
             return -1 * budget;
         }
+
         public static decimal MeasureLatencyBudget(decimal latency, decimal latencySlo) {
             return latencySlo - latency;             
         }
