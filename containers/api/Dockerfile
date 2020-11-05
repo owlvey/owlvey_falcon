@@ -16,9 +16,3 @@ WORKDIR /app
 COPY --from=builder /build/src/Owlvey.Falcon.API/bin/Release/netcoreapp3.1 . 
 EXPOSE 80/tcp
 ENTRYPOINT ["dotnet", "Owlvey.Falcon.API.dll"] 
-
-
-
-
-
-

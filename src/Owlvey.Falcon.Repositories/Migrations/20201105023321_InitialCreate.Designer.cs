@@ -9,7 +9,7 @@ using Owlvey.Falcon.Repositories;
 namespace Owlvey.Falcon.Repositories.Migrations
 {
     [DbContext(typeof(FalconDbContext))]
-    [Migration("20200903163529_InitialCreate")]
+    [Migration("20201105023321_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
