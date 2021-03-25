@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.ComponentsTests.Mocks;
 using Owlvey.Falcon.Core.Values;
 
+
 namespace Owlvey.Falcon.ComponentsTests
 {
     public static class OwlveyCalendar
@@ -48,9 +49,8 @@ namespace Owlvey.Falcon.ComponentsTests
             container.RegisterInstance<IUserIdentityGateway>(BuildIdentityGateway());
             container.Register<IDateTimeGateway, MockDateTimeGateway>();            
             
-            var context = new FalconDbContextInMemory();
-
-            context.Database.OpenConnection();
+            var context = new  FalconDbContext();
+            context.Database.OpenConnection(); 
             context.Database.EnsureCreated();
             //context.Migrate("Development");
             context.SeedData("Development", new MockDateTimeGateway().GetCurrentDateTime());            

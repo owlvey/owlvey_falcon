@@ -18,7 +18,7 @@ namespace Owlvey.Falcon.ManualTests
             container.RegisterInstance<IMapper>(mapper);
             container.RegisterInstance<IUserIdentityGateway>(BuildIdentityGateway());
             container.RegisterInstance<IDateTimeGateway>(BuildDateTimeGateway());
-            container.RegisterInstance<FalconDbContext>(new FalconDbContextInMemory());
+            container.RegisterInstance<FalconDbContext>(new FalconDbContext());
             return container;
         }
 

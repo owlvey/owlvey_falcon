@@ -13,30 +13,17 @@ namespace Owlvey.Falcon.IoC
     {
         public static void SetupDataBase(this IServiceCollection providers, IConfiguration configuration, string env)
         {
-
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
-
-            if (env.Equals("development", StringComparison.InvariantCultureIgnoreCase))
-            {
-                providers.AddDbContext<FalconDbContext>(options =>
-                    options.UseSqlite(connectionString)
-                );
-            }
-            else
-            {
-                providers.AddDbContext<FalconDbContext>(options =>
-                    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
-                           sqlServerOptionsAction: sqlOptions =>
-                           {
-                               sqlOptions.EnableRetryOnFailure(
-                               maxRetryCount: 3,
-                               maxRetryDelay: TimeSpan.FromSeconds(30),
-                               errorNumbersToAdd: null);
-                           }).AddInterceptors(new OwlveyCommandInterceptor())
-                );
-            }
-
-
+            var connectionString = configuration.GetConnectionString("DefaultConnection");            
+            providers.AddDbContext<FalconDbContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+                        sqlServerOptionsAction: sqlOptions =>
+                        {
+                            sqlOptions.EnableRetryOnFailure(
+                            maxRetryCount: 3,
+                            maxRetryDelay: TimeSpan.FromSeconds(30),
+                            errorNumbersToAdd: null);
+                        }).AddInterceptors(new OwlveyCommandInterceptor())
+            );
 
             /*
             services.AddDbContext<FalconDbContext>(options =>

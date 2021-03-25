@@ -3,7 +3,6 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -86,22 +85,23 @@ namespace Owlvey.Falcon.IntegrationTests.Setup
 
             providers.AddApplicationProviders(Configuration);
 
+            
 
 
-            var connectionStringBuilder = new SqliteConnectionStringBuilder()
-            {
-                DataSource = ":memory:"
-            };
-            var connectionString = connectionStringBuilder.ToString();
-            var connection = new SqliteConnection(connectionString);
+            
+
+            //var connectionString = connectionStringBuilder.ToString();
+
+            var connectionString = "";
+
+            var connection = "";
 
             //var options = new DbContextOptionsBuilder<FalconDbContext>().UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()).Options;
             /*
              */
-            providers
-                .AddEntityFrameworkSqlite()
+            providers                
                 .AddDbContext<FalconDbContext>(options =>
-                options.UseSqlite(connection)
+                options.UseSqlServer(connection)
             );
             
         }

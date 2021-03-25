@@ -41,15 +41,9 @@ namespace Owlvey.Falcon.Repositories
                 connectionString = args[0];
             }
 
-            if (env.Equals("development", StringComparison.InvariantCultureIgnoreCase))
-            {
-                builder.UseSqlite(connectionString);
-            }
-            else
-            {
-                builder.UseSqlServer(connectionString).AddInterceptors(new OwlveyCommandInterceptor());
-            }
             
+            builder.UseSqlServer(connectionString).AddInterceptors(new OwlveyCommandInterceptor());
+                        
             return new FalconDbContext(builder.Options);
         }
     }
