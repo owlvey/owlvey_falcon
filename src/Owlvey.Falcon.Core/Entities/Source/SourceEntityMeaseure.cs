@@ -74,7 +74,8 @@ namespace Owlvey.Falcon.Core.Entities
             IEnumerable<SourceItemEntity> data;
             if (period != null)
             {
-                data = this.SourceItems.Where(c => c.Group == SourceGroupEnum.Availability &&  c.Target >= period.Start && c.Target <= period.End);
+                data = this.SourceItems.Where(c => c.Group == SourceGroupEnum.Availability &&  
+                    c.Target >= period.Start && c.Target <= period.End);
             }
             else
             {

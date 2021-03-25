@@ -20,18 +20,27 @@ namespace Owlvey.Falcon.API
     {        
         public static int Main(string[] args)
         {
+            
+
             var configuration = new ConfigurationBuilder()
                     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                     .AddEnvironmentVariables()
                     .AddCommandLine(args)                    
                     .Build();
 
+            
+
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();
 
             try
-            {                
+            {  
+                
+                Console.WriteLine("===============");
+                Console.WriteLine(configuration.GetValue<String>("ConnectionStrings:DefaultConnection"));
+                Console.WriteLine("===============");
+
                 Log.Information("Starting web host at " + DateTime.Now.ToLongTimeString() );                                    
                 BuildWebHost(args, configuration).Run();
                 return 0;
