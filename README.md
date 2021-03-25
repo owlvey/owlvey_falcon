@@ -10,6 +10,12 @@ owlvey falcon project
 
 ## features
 
+## continuous integration
+
+- Entity framework generate script 
+    dotnet tool install --global dotnet-ef
+- flyway database 
+
 ### continuous testing 
 
 - unit test 

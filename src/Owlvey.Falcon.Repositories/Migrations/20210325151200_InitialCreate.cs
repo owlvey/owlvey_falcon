@@ -12,7 +12,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -31,7 +31,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -50,7 +50,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -76,7 +76,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -113,7 +113,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -133,7 +133,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -160,7 +160,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -187,7 +187,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -212,7 +212,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -239,7 +239,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -271,7 +271,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -304,7 +304,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -338,7 +338,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -368,7 +368,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -398,7 +398,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -428,7 +428,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -458,7 +458,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -490,7 +490,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -523,7 +523,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -567,7 +567,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
@@ -595,7 +595,7 @@ namespace Owlvey.Falcon.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false),
