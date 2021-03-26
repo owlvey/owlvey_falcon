@@ -41,4 +41,14 @@
     <ProjectReference Include="..\..\src\Owlvey.Falcon.Components\Owlvey.Falcon.Components.csproj" />
     <ProjectReference Include="..\..\src\Owlvey.Falcon.Repositories\Owlvey.Falcon.Repositories.csproj" />
   </ItemGroup>
+
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="xunit.runner.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

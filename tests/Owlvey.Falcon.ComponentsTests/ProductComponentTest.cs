@@ -6,6 +6,7 @@ using Xunit;
 using System.Linq;
 using Owlvey.Falcon.Core.Values;
 using Moq;
+using Owlvey.Falcon.ComponentsTests.Mocks;
 
 namespace Owlvey.Falcon.ComponentsTests
 {
@@ -49,7 +50,7 @@ namespace Owlvey.Falcon.ComponentsTests
             await productComponet.CreateProduct(new Models.ProductPostRp()
             {
                 CustomerId = customerId,
-                Name = "test"
+                Name = MockUtils.GenerateRandomName()
             });
 
             var products = await productQueryComponent.GetProducts(customerId);
@@ -68,21 +69,22 @@ namespace Owlvey.Falcon.ComponentsTests
             var productComponet = container.GetInstance<ProductComponent>();
             var productQueryComponent = container.GetInstance<ProductQueryComponent>();
 
+            var name = MockUtils.GenerateRandomName();
             await productComponet.CreateProduct(new Models.ProductPostRp()
             {
                 CustomerId = customerId,
-                Name = "test"
+                Name = name
             });
 
             await productComponet.CreateProduct(new Models.ProductPostRp()
             {
                 CustomerId = customerId,
-                Name = "test"
+                Name = name
             });
 
             var products = await productQueryComponent.GetProducts(customerId);
             Assert.NotEmpty(products);
-            Assert.Equal(1, products.Count());
+            Assert.Single(products);
         }
 
 

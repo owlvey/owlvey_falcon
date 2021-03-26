@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Owlvey.Falcon.Components;
+using Owlvey.Falcon.ComponentsTests.Mocks;
 using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Repositories;
 using Xunit;
@@ -83,19 +84,21 @@ namespace Owlvey.Falcon.ComponentsTests
                 OwlveyCalendar.January201903, OwlveyCalendar.January201905);
                         
             var securityRisk = await securityRiskComponent.Create(new SecurityRiskPost()
-            {   SourceId = result.sourceId, Name = "test"
+            {   SourceId = result.sourceId, 
+                Name =  MockUtils.GenerateRandomName()
             });
 
             var reliabilityRisk = await reliabilityRiskComponent.Create(new ReliabilityRiskPostRp()
             {
-                 SourceId = result.sourceId, Name = "test reliabilty"
+                SourceId = result.sourceId, 
+                Name = "test reliabilty"
             });
             await source.Delete(result.sourceId);
 
-            var securityRisks = await securityRiskComponent.GetRisks(null);
+            var securityRisks = await securityRiskComponent.GetRisks(result.sourceId);
             Assert.Empty(securityRisks);
 
-            var reliabilityRisks = await reliabilityRiskComponent.GetRisks(null);
+            var reliabilityRisks = await reliabilityRiskComponent.GetRisks(result.sourceId);
             Assert.Empty(reliabilityRisks);
 
             var sources = await source.GetById(result.sourceId);

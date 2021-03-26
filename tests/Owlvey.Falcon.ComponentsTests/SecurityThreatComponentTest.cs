@@ -1,4 +1,5 @@
 ﻿using Owlvey.Falcon.Components;
+using Owlvey.Falcon.ComponentsTests.Mocks;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,9 +17,7 @@ namespace Owlvey.Falcon.ComponentsTests
             var component = container.GetInstance<SecurityRiskComponent>();
             await component.CreateDefault();
             var threats = await component.GetThreats();
-            foreach( var item in threats){
-                Assert.Equal( 0.75m, item.ThreatAgentFactor);
-            }
+            Assert.NotEmpty(threats);            
         }
         [Fact]
         public async Task Maintentance() {
@@ -27,7 +26,7 @@ namespace Owlvey.Falcon.ComponentsTests
             var component = container.GetInstance<SecurityRiskComponent>();
 
             var threat = await component.CreateThreat(new Models.SecurityThreatPostRp() { 
-                 Name = "test"
+                 Name = MockUtils.GenerateRandomName()
             });
 
             var threats = await component.GetThreats();
@@ -45,8 +44,8 @@ namespace Owlvey.Falcon.ComponentsTests
 
             await component.DeleteThreat(threat.Id);
 
-            threats = await component.GetThreats();
-            Assert.Empty(threats);
+            threatGet = await component.GetThreat(threat.Id);
+            Assert.Null(threatGet);
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using Owlvey.Falcon.Components;
 using Owlvey.Falcon.Gateways;
@@ -18,7 +20,15 @@ namespace Owlvey.Falcon.ManualTests
             container.RegisterInstance<IMapper>(mapper);
             container.RegisterInstance<IUserIdentityGateway>(BuildIdentityGateway());
             container.RegisterInstance<IDateTimeGateway>(BuildDateTimeGateway());
-            container.RegisterInstance<FalconDbContext>(new FalconDbContext());
+            var builder = new DbContextOptionsBuilder<FalconDbContext>();
+            var configuration = new ConfigurationBuilder()
+                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                    .Build();
+
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            builder.UseSqlServer(connectionString).AddInterceptors(new OwlveyCommandInterceptor());
+
+            container.RegisterInstance<FalconDbContext>(new FalconDbContext(builder.Options));
             return container;
         }
 

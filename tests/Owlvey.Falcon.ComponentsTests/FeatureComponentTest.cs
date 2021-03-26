@@ -90,8 +90,7 @@ namespace Owlvey.Falcon.ComponentsTests
                 OwlveyCalendar.StartJuly2019);
 
             Assert.Equal(163, daily.Series[0].Items.Count());
-            Assert.Equal(163, daily.Series[1].Items.Count());
-            
+            Assert.Equal(163, daily.Series[1].Items.Count());            
 
             Assert.NotEmpty(features);
         }

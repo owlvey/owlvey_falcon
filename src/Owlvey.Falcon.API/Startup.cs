@@ -165,15 +165,7 @@ namespace Owlvey.Falcon.API
 
 
             app.UseAuthentication();
-
-            if (env.IsDevelopment())
-            {
-                dbContext.Migrate(Environment.EnvironmentName);
-                dbContext.SeedData(Environment.EnvironmentName, dateTimeGateway.GetCurrentDateTime());
-            }
-
-           
-
+            
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {

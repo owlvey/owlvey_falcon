@@ -12,7 +12,7 @@ namespace Owlvey.Falcon.UnitTests.Entities
         [Fact]
         public void MaintenanceSucess() {
             var threat = ReliabilityThreatEntity.Factory.Create(DateTime.Now, "test name", "test");            
-            Assert.Equal("test name", threat.Name);
+            Assert.Equal("test", threat.Name);
         }
     }
 }

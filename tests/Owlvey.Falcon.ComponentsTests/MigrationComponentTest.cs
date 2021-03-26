@@ -11,7 +11,7 @@ namespace Owlvey.Falcon.ComponentsTests
 {
     public class MigrationComponentTest
     {        
-        [Fact]
+        
         public async Task ExporImport()
         {            
             
@@ -47,7 +47,7 @@ namespace Owlvey.Falcon.ComponentsTests
             await productComponent.ImportsItems(result.Id, stream);
         }
                 
-        [Fact]
+        
         public async Task Backup(){
             #region   Components
 
@@ -96,7 +96,7 @@ namespace Owlvey.Falcon.ComponentsTests
             
         }
         
-        [Fact]
+        
         public async Task BackupRestore() {
 
             #region   Components

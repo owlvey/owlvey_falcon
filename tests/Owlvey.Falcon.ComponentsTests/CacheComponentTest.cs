@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Owlvey.Falcon.Components;
+using Owlvey.Falcon.ComponentsTests.Mocks;
 using Owlvey.Falcon.Models;
 using Xunit;
 
@@ -26,12 +28,12 @@ namespace Owlvey.Falcon.ComponentsTests
             var mark2 = await cache.GetLastModified();
 
             Assert.Equal(mark, mark2);
-
+            Thread.Sleep(500);
             var customerComponent = container.GetInstance<CustomerComponent>();
             await customerComponent.CreateCustomer(new CustomerPostRp()
             {
-                Name = "test"
-            });
+                Name = MockUtils.GenerateRandomName()
+            });            
 
             var mark3 = await cache.GetLastModified();
 

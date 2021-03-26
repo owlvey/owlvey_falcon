@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Xunit;
 using Owlvey.Falcon.Models;
 using Owlvey.Falcon.Core.Values;
+using Owlvey.Falcon.ComponentsTests.Mocks;
 
 namespace Owlvey.Falcon.ComponentsTests
 {
@@ -24,7 +25,7 @@ namespace Owlvey.Falcon.ComponentsTests
 
             await squadComponent.CreateSquad(new Models.SquadPostRp()
             {
-                Name = "test",
+                Name = MockUtils.GenerateRandomName(),
                 CustomerId = customer
             });
 
@@ -45,7 +46,7 @@ namespace Owlvey.Falcon.ComponentsTests
 
             var squadResponse = await squadComponent.CreateSquad(new Models.SquadPostRp()
             {
-                Name = "test",
+                Name = MockUtils.GenerateRandomName(),
                 CustomerId = customer
             });
 
@@ -53,7 +54,7 @@ namespace Owlvey.Falcon.ComponentsTests
 
             var feature = await ComponentTestFactory.BuildFeature(container, product);
 
-            await featureComponent.RegisterSquad(new Models.SquadFeaturePostRp()
+            await featureComponent.RegisterSquad(new SquadFeaturePostRp()
             {
                 SquadId = squad.Id,
                 FeatureId = feature

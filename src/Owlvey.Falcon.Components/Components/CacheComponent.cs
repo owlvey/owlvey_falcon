@@ -32,7 +32,7 @@ namespace Owlvey.Falcon.Components
 
         public async Task<string> GetLastModified() {
 
-            var customer = await this.DbContext.Customers.OrderByDescending(c => c.ModifiedOn ).FirstOrDefaultAsync();
+            var customer = await this.DbContext.Customers.OrderByDescending(c => c.ModifiedOn).FirstOrDefaultAsync();
             var product = await this.DbContext.Products.OrderByDescending(c => c.ModifiedOn).FirstOrDefaultAsync();
             var journey = await this.DbContext.Journeys.OrderByDescending(c => c.ModifiedOn).FirstOrDefaultAsync(); 
             var journeyMap = await this.DbContext.JourneyMaps.OrderByDescending(c => c.ModifiedOn).FirstOrDefaultAsync();

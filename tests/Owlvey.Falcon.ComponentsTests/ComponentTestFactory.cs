@@ -11,7 +11,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Owlvey.Falcon.ComponentsTests.Mocks;
 using Owlvey.Falcon.Core.Values;
-
+using Microsoft.Extensions.Configuration;
 
 namespace Owlvey.Falcon.ComponentsTests
 {
@@ -47,13 +47,19 @@ namespace Owlvey.Falcon.ComponentsTests
             var mapper = BuildMapper();
             container.RegisterInstance<IMapper>(mapper);
             container.RegisterInstance<IUserIdentityGateway>(BuildIdentityGateway());
-            container.Register<IDateTimeGateway, MockDateTimeGateway>();            
-            
-            var context = new  FalconDbContext();
+            container.Register<IDateTimeGateway, MockDateTimeGateway>();
+
+            var builder = new DbContextOptionsBuilder<FalconDbContext>();
+            var configuration = new ConfigurationBuilder()
+                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)                                        
+                    .Build();
+
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            builder.UseSqlServer(connectionString).AddInterceptors(new OwlveyCommandInterceptor());
+            var context = new  FalconDbContext(builder.Options);
+
             context.Database.OpenConnection(); 
-            context.Database.EnsureCreated();
-            //context.Migrate("Development");
-            context.SeedData("Development", new MockDateTimeGateway().GetCurrentDateTime());            
+            context.Database.EnsureCreated();                        
             container.RegisterInstance<FalconDbContext>(context);
             return container;
         }
@@ -91,7 +97,8 @@ namespace Owlvey.Falcon.ComponentsTests
         
 
 
-        public static async Task<int> BuildCustomer(Container container, string name = "test", bool defaultValue=false) {            
+        public static async Task<int> BuildCustomer(Container container, string name = null, bool defaultValue=false) {
+            name ??= MockUtils.GenerateRandomName();
             var customerComponet = container.GetInstance<CustomerComponent>();
             var customerQueryComponent = container.GetInstance<CustomerQueryComponent>();
             await customerComponet.CreateCustomer(new Models.CustomerPostRp()
@@ -184,7 +191,11 @@ namespace Owlvey.Falcon.ComponentsTests
         }
 
         public static async Task<(int customer, int product)> BuildCustomerProduct(Container container,
-            string customerName="customer", string productName="product", bool defaultValues = false) {
+            string customerName="customer", 
+            string productName = null, 
+            bool defaultValues = false) {
+
+            productName ??= MockUtils.GenerateRandomName();
 
             var customerComponet = container.GetInstance<CustomerComponent>();
             var customerQueryComponent = container.GetInstance<CustomerQueryComponent>();
@@ -225,13 +236,13 @@ namespace Owlvey.Falcon.ComponentsTests
             
             var journey = await journeyComponent.Create(new Models.JourneyPostRp()
             {
-                Name = "test journey",
+                Name = MockUtils.GenerateRandomName(),
                 ProductId = product
             });
 
             var feature = await featureComponent.CreateFeature(new Models.FeaturePostRp()
             {
-                Name = "test",
+                Name = MockUtils.GenerateRandomName(),
                 ProductId = product
             });
 
@@ -243,7 +254,7 @@ namespace Owlvey.Falcon.ComponentsTests
 
             var source = await sourceComponent.Create(new SourcePostRp()
             {
-                Name = "test source",
+                Name = MockUtils.GenerateRandomName(),
                 ProductId = product
             });
 
@@ -258,7 +269,9 @@ namespace Owlvey.Falcon.ComponentsTests
 
             await indicatorComponent.Create(feature.Id, source.Id);
 
-            var squad = await squadComponent.CreateSquad(new SquadPostRp() { Name = "test", CustomerId = customer });
+            var squad = await squadComponent.CreateSquad(new SquadPostRp() {
+                Name = MockUtils.GenerateRandomName(), 
+                CustomerId = customer });
 
             await featureComponent.RegisterSquad(new SquadFeaturePostRp() { FeatureId = feature.Id, SquadId = squad.Id });
 
